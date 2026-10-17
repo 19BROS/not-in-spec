@@ -11,7 +11,7 @@ worker/   APScheduler worker        (thin wrapper over core)
 web/      React + Vite + TS SPA
 action/   reusable GitHub Action
 deploy/   docker-compose, nginx, env template, fixtures
-docs/     SPEC, FAQ, INSPIRATION, assignment
+docs/     SPEC, FAQ, INSPIRATION, assignment, DEPLOY (production runbook)
 ```
 
 Python packages form one **uv workspace** (root `pyproject.toml`). Each lives in `<dir>/src/<module>` with tests in `<dir>/tests`.

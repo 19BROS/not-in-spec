@@ -33,6 +33,6 @@ jobs:
         with: { ref: "${{ github.event.workflow_run.head_sha }}" }
       - run: echo "IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - run: $COMPOSE pull postgres api worker web
-      - run: $COMPOSE up -d --no-build --wait postgres api worker web
+      - run: $COMPOSE pull postgres api worker web backup
+      - run: $COMPOSE up -d --no-build --wait postgres api worker web backup
       - run: docker image prune -f
