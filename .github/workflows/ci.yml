@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: ci
-      BACKUP_DIR: ${{ runner.temp }}/backups
+      BACKUP_DIR: /tmp/notinspec-backups # runner context isn't allowed in job-level env
     steps:
       - uses: actions/checkout@v7
       - run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup up -d --build --wait
