@@ -50,7 +50,8 @@ services:
   prism:
     profiles: [prism]
     image: stoplight/prism:5
-    command: mock -h 0.0.0.0 /spec/openapi.yaml
+    # multiprocess mode crashes in the container (cluster.isPrimary undefined)
+    command: mock -h 0.0.0.0 --multiprocess=false /spec/openapi.yaml
     volumes:
       - ${PRISM_SPEC:-./fixtures/openapi.yaml}:/spec/openapi.yaml:ro
     ports:
