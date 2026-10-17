@@ -1,0 +1,38 @@
+name: Deploy
+
+# Runs on the self-hosted runner on the faculty VM (SPEC §8).
+# Only after CI succeeded for a *push* to main. Never for PRs (forks included),
+# whose workflow_run event is "pull_request" even if their branch is named main.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: [self-hosted, notinspec-deploy]
+    environment: production
+    env:
+      TAG: ${{ github.event.workflow_run.head_sha }}
+      COMPOSE: docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env
+    steps:
+      - uses: actions/checkout@v5
+        with: { ref: "${{ github.event.workflow_run.head_sha }}" }
+      - run: echo "IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: $COMPOSE pull postgres api worker web
+      - run: $COMPOSE up -d --no-build --wait postgres api worker web
+      - run: docker image prune -f

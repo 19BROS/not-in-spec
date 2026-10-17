@@ -1,0 +1,18 @@
+# Reusable GitHub Action (SPEC §7). Placeholder: inputs are the agreed contract, logic lands in semester 2.
+name: NOT-IN-SPEC docs accuracy check
+description: Fails a PR when a documentation/OpenAPI change lowers LLM answer accuracy.
+inputs:
+  spec:
+    description: Path to the OpenAPI spec in the caller repo
+    required: true
+  threshold:
+    description: Max allowed hard-layer accuracy drop, in percentage points
+    default: "5"
+  openrouter-api-key:
+    description: Caller's own OpenRouter key (pass from secrets)
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: echo "::warning::notinspec action is not implemented yet"

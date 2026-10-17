@@ -1,0 +1,2 @@
+# LF everywhere: shell steps and Docker builds break on CRLF (team is on Windows + Linux)
+* text=auto eol=lf
