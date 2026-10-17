@@ -4,6 +4,7 @@ Measures how reliably language models answer questions about a specific API, and
 
 - What we build and why: [docs/SPEC.md](docs/SPEC.md) (start here), [docs/FAQ.md](docs/FAQ.md), [docs/INSPIRATION.md](docs/INSPIRATION.md), [docs/assignment.md](docs/assignment.md)
 - How to work in the repo (layout, commands, rules, git worktrees): [AGENTS.md](AGENTS.md)
+- How production runs, backups, rollback, VM access: [docs/DEPLOY.md](docs/DEPLOY.md)
 
 ## Quick start
 

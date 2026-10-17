@@ -46,6 +46,36 @@ services:
       api: { condition: service_healthy }
     restart: unless-stopped
 
+  # daily pg_dump on the VM (SPEC §6), started only by the deploy workflow; see docs/DEPLOY.md
+  backup:
+    profiles: [backup]
+    image: postgres:17
+    environment:
+      PGHOST: postgres
+      PGUSER: notinspec
+      PGDATABASE: notinspec
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ${BACKUP_DIR:-/data/backups}:/backups
+    entrypoint: ["sh", "-c"]
+    # shortcut: dumps stay on the VM's data disk, off-machine copy is a manual pull (docs/DEPLOY.md)
+    command:
+      - |
+        while true; do
+          f=/backups/notinspec-$$(date -u +%Y%m%dT%H%MZ).dump
+          # prune old dumps only after a good one, so failing backups never delete the last good dump
+          if pg_dump -Fc -f "$$f.tmp"; then
+            mv "$$f.tmp" "$$f" && echo "backup ok: $$f"
+            find /backups -name 'notinspec-*.dump' -mtime +14 -delete
+          else
+            rm -f "$$f.tmp"; echo "BACKUP FAILED"
+          fi
+          sleep 86400
+        done
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: unless-stopped
+
   # mock server for local dev / integration tests: docker compose --profile prism up
   prism:
     profiles: [prism]
