@@ -48,7 +48,7 @@ Each answer has three parts:
 - *"Verified by running code, not by another model's opinion."* A readability score for an arbitrary document could only come from heuristics or an AI's opinion.
 - Everything is measured **over time**. A one-off upload has no time dimension.
 
-Uploading a document *is* supported, but as one input among others (the soft layer, see §2). The output is still a list of failures, not a score.
+The only evaluated input is an OpenAPI specification and its version history. Arbitrary document uploads and documentation crawling are outside the agreed scope.
 
 **Example.** A score says *"Your docs: 73/100."* Our output says *"Models think the refund endpoint is `POST /v1/refund`. It is `POST /v1/refunds`. 3 of 4 models get this wrong. It started failing after your March release."* Only the second one tells the maintainer what to fix.
 
@@ -94,28 +94,13 @@ source: openapi.yaml#/paths/~1v1~1charges/post
 
 **In plain words.** We break the manual into individual statements we can test, like a teacher turning a textbook chapter into exam questions. Each statement also says how it will be marked.
 
-### What are the hard, medium and soft layers, and why are they never averaged?
+### What is the hard layer, and why is it the only verification layer?
 
-**How it works.** Claims differ in how certainly we can check them:
+**How it works.** All evaluated claims come from an OpenAPI specification and its version history. The model returns a structured HTTP request. Code checks its format, conformance to the current spec and satisfaction of the task; Prism supplies the mock server. No model grades another model's answer.
 
-| Layer | Source | How it's checked | Certainty |
-|---|---|---|---|
-| **Hard** | OpenAPI spec + its version history | run the model's request against a mock server | very high: it either works or it doesn't |
-| **Medium** | `llms.txt` / `llms-full.txt` | NLI model compares answer with text | medium |
-| **Soft** | documentation website, uploaded documents | NLI model, judge if unsure | lower |
+**Example.** A task requests 10 charges. The request must use the correct operation and the current parameter name and location, with the value 10. A request that the mock accepts but that requests 20 charges fails the task.
 
-Averaging them would mix a precise measurement with a fuzzy one. A 90% hard score and a 40% soft score don't average to "65% good". They describe different things.
-
-**Example.** The report shows three separate rows:
-```
-Acme / model-A / no context
-  hard    58%  (±10)
-  medium  71%  (±12)
-  soft    64%  (±14)
-```
-There is no "overall: 64%" line, by design.
-
-**In plain words.** Some facts can be tested like a lab result (does this request work, yes or no?), others only like a reading-comprehension check. We report them separately so a weak area can't hide behind a strong one.
+**In plain words.** We test concrete API requests against the official blueprint and the question asked. The three context modes remain, but all use this same checking method.
 
 ### What does the OpenAPI adapter do?
 
@@ -163,25 +148,6 @@ Resulting claims:
 
 **In plain words.** Instead of reading the product's release notes, which can be vague, we compare last year's blueprint with this year's, line by line. That shows exactly what was removed or renamed. These are the facts an AI trained on old data is most likely to get wrong.
 
-### How do the medium (llms.txt) and soft (docs website) adapters work?
-
-**How it works.**
-- **`llms.txt`** is a Markdown file that a website publishes for AI tools: a title, a short summary, then sections of links with one-line descriptions. `llms-full.txt` contains the full text. The adapter reads this structure and turns descriptions and key statements into claims.
-- **Docs website**: a crawler downloads the pages, and Markdown/MDX parsers turn them into clean text. Uploaded documents go through the same parsers.
-- Claims are pulled out of prose **with fixed rules, not an AI**, so they stay deterministic. Sentences with a number, a code identifier, or words like "must", "required", "deprecated" or "default" are chosen.
-
-**Example.** A docs page says:
-> Failed webhooks are retried for up to 3 days with exponential backoff.
-
-It matches the rule (contains a number), so it becomes:
-```yaml
-layer: soft
-fact: "Failed webhooks are retried for up to 3 days with exponential backoff."
-verify: nli
-```
-
-**In plain words.** Not everything important is in the technical blueprint. Some facts only appear in normal written help pages. We collect those too, but we mark them as "less certain to check", because checking a sentence is harder than checking whether a request works.
-
 ---
 
 ## 3. Task generation
@@ -216,7 +182,7 @@ The same template covers all 640 `required-field` claims in Acme.
 1. Adapters produce the full list of claims.
 2. Claims are sorted by a stable ID.
 3. A sample is drawn with a fixed random seed (see the next question).
-4. Each sampled claim is filled into its type's template.
+4. Each sampled claim is filled into its type's template, together with machine-checkable expected conditions for the requested operation, names, locations and values.
 5. Each task is combined with each mode (none / snippet / full).
 6. The whole task set is hashed. Same input + same generator version = same hash. A test enforces this.
 
@@ -229,11 +195,7 @@ Respond only with the HTTP request as JSON matching the given schema.
 ```
 Expected: the model uses `customer`. If it uses `customer_id`, it fails, and the cause is `stale-knowledge`.
 
-For a soft claim, the template is a fill-in-the-blank built from the source sentence:
-```
-According to the Acme Payments documentation:
-"Failed webhooks are retried for up to ___ with exponential backoff."
-```
+The expected conditions are derived from the spec and task parameters, so the verifier checks both API validity and what the task actually asks for.
 
 **In plain words.** The exam questions are written by a fixed recipe, not by an AI. So the same manual always produces exactly the same exam. That's what makes week-to-week comparison fair. If the questions changed each time, we couldn't tell whether the AI got worse or the exam got harder. It also prevents a circular setup where one AI writes the questions another AI is graded on.
 
@@ -265,9 +227,17 @@ Acme claims: 3,412 total
 
 ## 4. Asking the models
 
+### Does the model keep trying until it gets the answer right?
+
+**How it works.** No. Each task × model × mode has one answer per run. Incorrect answers, refusals and malformed output are recorded without feedback or a repair attempt. The three modes are independent experiments, not successive attempts to fix an answer. Rate-limit or transport retries apply only when no answer was obtained; infrastructure errors are tracked separately. Resuming a run reuses completed answers.
+
+**Example.** Model-A uses `customer_id` in the `none` condition and fails. That failure stays recorded. A separate `snippet` condition starts with its own prompt and no earlier answer. Next week's run asks again to measure change over time.
+
+**In plain words.** We record the first answer under each set of conditions. A weekly check measures whether the model changed; it does not coach the model until it passes.
+
 ### What are the three modes?
 
-**How it works.** Every task is asked three times, with different help given to the model:
+**How it works.** Every task is evaluated once in each of three independent conditions, with different context. No previous answer or verification feedback is carried between conditions:
 
 | Mode | Context in the prompt | What it measures |
 |---|---|---|
@@ -277,7 +247,7 @@ Acme claims: 3,412 total
 
 Comparing the modes shows **where** the problem is:
 - wrong in `none`, right in `snippet` → the model is outdated, but the docs are fine
-- wrong even in `full` → **the docs themselves are unclear or wrong**, which the maintainer can fix
+- wrong even in `full` → inspect the model response, supplied context and task; this alone does not prove the docs are wrong
 
 **Example.**
 ```
@@ -288,7 +258,7 @@ Question: rename customer_id → customer
 ```
 Conclusion: the docs are fine. The model just needs them provided.
 
-**In plain words.** We test the AI three ways: from memory, with a quick search, and with the full manual open. If it fails from memory but passes with the manual, the AI is out of date. If it fails even with the manual open, the manual is the problem, and that's something the company can fix.
+**In plain words.** We test the AI three ways: from memory, with a quick search, and with the full manual open. If it fails from memory but passes with the manual, the AI is out of date. If it fails even with the manual open, we inspect the failure; the model, context handling or documentation may be responsible.
 
 ### How does the "snippet" mode find snippets? What is BM25, and what are embeddings/pgvector?
 
@@ -334,20 +304,15 @@ Conclusion: the docs are fine. The model just needs them provided.
 
 ### What is Prism and how does the mock server check answers?
 
-**How it works.** **Prism** (by Stoplight) reads an OpenAPI spec and starts a fake ("mock") version of that API. It doesn't do anything real. It checks every incoming request against the spec and rejects anything that doesn't match: unknown path, missing required field, wrong type, invalid enum value, wrong auth. We send the model's JSON request to Prism. If Prism accepts it, the claim passes. If Prism returns a validation error (e.g. 404 for an unknown path, 422 for an invalid body), it fails.
+**How it works.** Prism reads the OpenAPI spec and serves a mock API. We validate the model's output format, send its request to the mock, and combine the validation result with deterministic checks against the source spec and the task's expected conditions. A pass requires all checks to succeed. A successful HTTP status by itself does not establish correctness.
 
-**Example.** The model sends:
-```json
-{ "method": "POST", "path": "/v1/charges",
-  "body": { "amount": 1000, "currency": "eur", "customer_id": "cus_123" } }
-```
-Prism, running the current Acme spec, rejects it because `customer_id` is not an allowed property. Result: **fail**.
+**Example.** The task asks for charges belonging to customer `cus_123`. The current body field is `customer`, but the model sends `customer_id`. Even if the schema permits additional properties and the mock accepts the request, our task-condition check fails it because the requested customer was not supplied under the correct field.
 
-**In plain words.** We built a perfect replica of the product's front door, generated from the official blueprint. We don't ask another AI whether the answer "looks right". We try the AI's key in the door. It either opens or it doesn't. That's the "verified by running code" promise from the assignment.
+**In plain words.** We try the request against a fake API and also check that it does what the question asked. Another AI does not decide the result.
 
 ### Do we have to build the mock server ourselves?
 
-**How it works.** No. Prism is an existing tool, so we write no mock code. We give it the spec file, and it serves a fake API that matches that spec. In Docker Compose it is a single service. Our code only sends the model's JSON request to it and reads the status code it returns. If the spec changes, we restart Prism with the new file. Nothing needs to be rewritten.
+**How it works.** No. Prism is an existing tool, so we write no mock code. We give it the spec file, and it serves a fake API that matches that spec. In Docker Compose it is a single service. Our code sends the model's JSON request, reads validation results, and checks the task conditions and targeted spec elements. If the spec changes, we restart Prism with the new file. Nothing needs to be rewritten.
 
 The only spec we write by hand is a **small fixture spec** for the automated tests (§14), so the tests don't depend on a real API.
 
@@ -359,10 +324,10 @@ prism:
   volumes:
     - ./specs:/specs
 ```
-The model answers `POST /v1/charges` with `amount` and `currency` → Prism replies `2xx` → **pass**.
+The model answers `POST /v1/charges` with the requested values → mock validation and task checks both succeed → **pass**.
 The model leaves out `amount` → Prism replies `422` → **fail**.
 
-**Watch out.** Prism rejects an unknown field like `customer_id` only if the spec's schema sets `additionalProperties: false`. Many real specs don't set it. In that case a model that uses an old field name would still pass. We need to check this early on a real spec and decide how to handle it, for example by tightening the schema before giving it to Prism.
+**Important.** Real specs may permit additional properties, and a mock may ignore unknown query parameters. The verifier explicitly checks the targeted parameter/field names, locations and requested values. We preserve the original spec rather than silently changing its constraints.
 
 **In plain words.** We don't build the replica of the front door ourselves. A ready-made tool builds it straight from the blueprint. When the blueprint changes, we just hand the tool the new one.
 
@@ -373,11 +338,12 @@ The model leaves out `amount` → Prism replies `422` → **fail**.
 | Cause | Rule |
 |---|---|
 | `stale-knowledge` | the request is valid against an older spec version |
-| `hallucinated` | uses a name that never existed in any version |
+| `hallucinated` | uses a name absent from all inspected spec versions |
 | `wrong-location` | right name, wrong place (query instead of body, etc.) |
 | `missing-required` | a required field is missing |
 | `invalid-value` | wrong type or enum value |
 | `wrong-auth` | wrong authentication |
+| `task-mismatch` | valid API request, but wrong requested operation or values |
 | `malformed-output` | the answer doesn't match the JSON schema |
 | `refusal` | the model refused or said "I don't know" |
 
@@ -385,50 +351,19 @@ The model leaves out `amount` → Prism replies `422` → **fail**.
 
 **In plain words.** We don't just mark answers wrong, we find out why. The most interesting case: the AI's answer *used to be* correct. It learned from an old version of the manual and nobody told it things changed. We can prove this because we keep every old version of the blueprint and try the answer against them.
 
-### What is NLI, and how does it check text answers?
-
-**How it works.** **NLI (Natural Language Inference)** models read two texts, a *premise* and a *hypothesis*, and output the probability that the premise **entails**, **contradicts**, or is **neutral** to the hypothesis. We use a small model (`cross-encoder/nli-deberta-v3-small`) that runs on a normal CPU. The premise is the source snippet and the hypothesis is the model's answer filled into the claim.
-
-**Example.**
-- Premise: *"Failed webhooks are retried for up to 3 days with exponential backoff."*
-- Model answer: *"3 days"* → hypothesis: *"Failed webhooks are retried for up to 3 days."*
-  → entailment 0.96 → **pass**
-- Model answer: *"24 hours"* → contradiction 0.91 → **fail**
-- Model answer: *"several days"* → entailment 0.55 → **unsure**, goes to the judge
-
-**In plain words.** For facts that are sentences rather than technical requests, we use a small specialised AI whose only skill is deciding whether one sentence agrees with another. It's not a chatbot giving an opinion. It's a narrow tool trained for this one job, and it runs cheaply on our own server.
-
-### When is "LLM as a judge" used, and why only as a last resort?
-
-**How it works.** LLM-as-judge means asking a language model to grade another model's answer. It's mandatory in the assignment, but the assignment also says to use it only as a last resort, because a judge model can be wrong, biased, or inconsistent. Our rules:
-- used **only** for medium/soft answers where the NLI score is in the "unsure" band
-- **never** used for hard claims (Prism decides those)
-- the judge's verdict is stored in **its own column**, so reports can always show how many results depended on it
-- **calibration**: the team hand-labels ~200 answers as correct/incorrect. This set is used to choose the NLI thresholds and the unsure band, and to measure how often the judge and NLI agree with humans.
-
-**Example.** With calibrated thresholds:
-```
-entailment ≥ 0.80          → pass (NLI)
-contradiction ≥ 0.80       → fail (NLI)
-anything else              → judge decides, flagged "judged"
-```
-The report might say: *"Soft layer: 64% correct, 9% of verdicts from judge. Judge agreement with human labels: 87%."*
-
-**In plain words.** An AI grading another AI is like a student marking a classmate's exam: useful when nothing else works, but not fully trustworthy. So we only use it for the borderline cases, we label every result it decided, and we test it against human marking to know how far to trust it.
-
 ---
 
 ## 6. Results and reports
 
 ### What does the report show, and why no single score?
 
-**How it works.** The main table is **accuracy per API × layer × mode × model**. Next to it:
-- **coverage**: how much of the documentation the sample covers
+**How it works.** The main table is **accuracy per API × mode × model**. Next to it:
+- **coverage**: sampled claims / total claims in the OpenAPI-derived pool
 - **failure-cause distribution**: e.g. 60% stale-knowledge, 25% hallucinated
 - **delta vs previous run**: change in percentage points
 - **newly failing / newly passing questions**: the most actionable part
 
-**Example.**
+**Example.** If 73 of 100 evaluated tasks pass, accuracy for that API, model and mode is 73%. This is a summary statistic, not a primary 73/100 points grade. The sample size is configurable (about 100 is the budget cap), and the report still leads with failing questions, causes and history. Infrastructure errors and unfinished tasks are shown separately.
 ```
 Acme / hard / none
              accuracy   Δ vs last week   top cause
@@ -458,8 +393,8 @@ Newly failing (model-A):
 
 **How it works.**
 - The **worker** container runs each target API **weekly**, and also when it notices the input changed (e.g. a new spec commit).
-- Every run is compared ("diffed") with the previous run of the same target, task by task.
-- If accuracy for any API × layer × mode × model drops by more than a threshold (default **5 percentage points**), a message is posted to **Slack**.
+- Every run is compared ("diffed") with the previous run of the same target, model and mode on comparable task IDs. Added/removed tasks and input or generator changes are shown separately.
+- If accuracy for any API × mode × model drops by more than a threshold (default **5 percentage points**), a message is posted to **Slack**.
 - Runs are **resumable**. If the daily API limit is reached halfway, the run pauses and continues the next day from where it stopped.
 
 **Example.** Slack message:
@@ -510,7 +445,7 @@ One run of one API = 100 claims × 3 modes × 4 models = **1,200 requests**.
 | $0 | 50 | ~72 days | impossible; ~1 API run per month |
 | **$10 once** | 1,000 | ~4 days | **weekly works** |
 
-The judge (§5) also uses requests, so the real numbers are slightly higher.
+Verification uses code and Prism, so no additional model calls are needed to grade answers. Transport retries and interrupted calls can still affect actual quota usage.
 
 **In plain words.** The free plan lets us ask about 50 questions a day. One weekly check-up needs about 3,600. A one-time $10 purchase raises the daily allowance 20×, which is the difference between a working project and one that can't do its main job. It's the cheapest item in the whole project and the most important.
 
@@ -569,7 +504,7 @@ The judge (§5) also uses requests, so the real numbers are slightly higher.
 ### What does the GitHub Action do?
 
 **How it works.** **GitHub Actions** is GitHub's built-in automation (CI). Our **reusable action** lets any API maintainer add NOT-IN-SPEC to their own repository:
-1. It triggers on a pull request that changes the OpenAPI spec, `llms.txt` or docs.
+1. It triggers on a pull request that changes the OpenAPI spec.
 2. Inside the GitHub runner, it starts Prism and runs our CLI twice: on the **base branch** and on the **PR branch**.
 3. It posts a PR comment with the questions that newly fail.
 4. It **fails the build** if hard-layer accuracy drops by more than a configurable threshold.
@@ -580,7 +515,7 @@ The user provides their own OpenRouter key as a repository secret. Our hosted se
 ```yaml
 on:
   pull_request:
-    paths: ["openapi.yaml", "llms.txt", "docs/**"]
+    paths: ["openapi.yaml"]
 jobs:
   notinspec:
     runs-on: ubuntu-latest
@@ -616,7 +551,7 @@ Newly failing:
 ### What does the web interface show, and why is it read-only?
 
 **How it works.** A **React + Vite + TypeScript** single-page app, served as static files by **nginx**, reads data from our FastAPI service. Charts use **ECharts or Recharts**. Pages:
-- **Leaderboard**: target APIs side by side, per layer/mode/model
+- **Leaderboard**: target APIs side by side, per API/mode/model
 - **API detail**: failing questions with causes, filterable
 - **History**: accuracy over time, with markers for spec releases and model changes
 - **Question detail**: every raw answer for one question across runs
@@ -753,12 +688,12 @@ def test_generator_is_deterministic():
 | Format | What it is | Our use |
 |---|---|---|
 | **AGENTS.md** | a file in a repo telling AI coding tools (Claude Code, Codex, …) how the project works: commands, conventions | in our repo, so the team's own AI tools work better |
-| **llms.txt** | a file a website publishes for AI tools: a summary plus links to the important pages | we **measure** these (medium layer) and publish **our own** |
+| **llms.txt** | a file a website publishes for AI tools: a summary plus links to the important pages | publish **our own** as project documentation; it is not an evaluated input |
 | **MCP** (Model Context Protocol) | a standard way for AI assistants to call external tools and data | stretch goal: an MCP server that answers "which questions do models get wrong about API X?" |
 
 **Example.** With the MCP server, a developer asks Claude Code: *"Before I integrate Acme, what do models usually get wrong about it?"* The assistant calls our MCP tool and gets: *"customer_id was renamed to customer in 2025-03; models still use the old name."*
 
-**In plain words.** These are the new standard ways for products to talk to AI assistants. We use them ourselves, we measure how well others use them, and later we may let AI assistants ask our system directly for warnings about common mistakes.
+**In plain words.** These are the new standard ways for products to talk to AI assistants. We use them for our own project, and later we may let AI assistants ask our system directly for warnings about common API mistakes.
 
 ---
 
@@ -766,7 +701,7 @@ def test_generator_is_deterministic():
 
 ### Why do weekly runs need to start by mid-semester 1?
 
-**How it works.** The long-term dataset only starts when the first run happens. Past model answers can't be collected retroactively. Every week of delay is a permanent gap in the main deliverable. So semester 1 aims for the hard layer working end-to-end on Stripe, GitHub and Twilio, running weekly, before adding the other layers.
+**How it works.** The long-term dataset only starts when the first run happens. Past model answers can't be collected retroactively. Every week of delay is a permanent gap in the main deliverable. So semester 1 aims for the hard layer working end-to-end on Stripe, GitHub and Twilio, running weekly, before polishing the reports and adding optional features.
 
 **In plain words.** You can't go back and record last month's weather. The sooner the recorder is switched on, the more valuable the history becomes. Extra features can come later. Lost weeks can't be recovered.
 
@@ -774,9 +709,9 @@ def test_generator_is_deterministic():
 
 **How it works.**
 - **Semester 1 (MVP):** OpenAPI + oasdiff adapter, hard claims, generator, 3 modes, runner, Prism verification, failure causes, CLI, database, worker with Slack alerts, basic web UI, CI/CD, weekly runs.
-- **Semester 2:** llms.txt and docs adapters (medium/soft layers), NLI + judge with calibration, public GitHub Action + demo repo, leaderboard polish, embedding retrieval experiment, MCP server (stretch), evaluation write-up.
+- **Semester 2:** public GitHub Action + demo repo, leaderboard polish, embedding retrieval experiment, MCP server (stretch), evaluation write-up. Verification remains hard layer only.
 
-**In plain words.** First we build the part that can be measured most precisely and start collecting data. Then we extend it to fuzzier documentation, build the tool for other companies, and write up what we learned.
+**In plain words.** First we build the part that can be measured most precisely and start collecting data. Then we improve reporting and retrieval, build the tool for API maintainers, and write up what we learned.
 
 ### How are the 7 roles split?
 
@@ -785,9 +720,9 @@ def test_generator_is_deterministic():
 | # | Role | Owns |
 |---|---|---|
 | 1 | Lead / architecture | core package, task generator, SPEC.md |
-| 2 | Input adapters | OpenAPI, oasdiff history, llms.txt, crawler |
-| 3 | Runner & verification | OpenRouter client, rate limiting, Prism, failure causes |
-| 4 | ML / evaluation | NLI, judge, retrieval, labeled set, statistics |
+| 2 | Input adapters | OpenAPI, oasdiff history |
+| 3 | Runner & verification | OpenRouter client, rate limiting, Prism, task-condition checks, failure causes |
+| 4 | ML / evaluation | retrieval, sampling, coverage, statistics, stale-knowledge analysis |
 | 5 | Backend & data | FastAPI, Postgres schema, migrations, worker |
 | 6 | Frontend & viz | web UI, leaderboard, charts |
 | 7 | DevOps | CI, Compose, GHCR, self-hosted runner, GitHub Action, monitoring |

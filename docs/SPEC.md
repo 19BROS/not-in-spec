@@ -7,12 +7,12 @@ Source of requirements: [assignment.md](assignment.md). This document is the agr
 
 `notinspec` is a service that measures **how reliably language models answer questions about a specific API**, and how that reliability changes over time.
 
-Given an OpenAPI specification (plus its version history), an `llms.txt` file, or a documentation website, the system:
+Given an OpenAPI specification and its version history, the system:
 
-1. normalizes the input into **snippets** and **claims**, each claim carrying its own verification method;
+1. normalizes the input into **snippets** and **hard claims**;
 2. **deterministically** generates test tasks from the claims (no LLM invents tasks);
 3. runs every task against several LLMs in **three modes**: no context, retrieved snippet, full text;
-4. **verifies** answers: hard claims by executing the model's proposed request against a **mock server generated from the spec**, soft claims by NLI;
+4. **verifies** answers by executing the model's proposed request against a **mock server generated from the spec**;
 5. stores every raw response forever, repeats runs on a schedule, diffs against the previous run, and alerts on drops;
 6. reports **a list of questions models get wrong, why, and how that changes over time** — never a single score.
 
@@ -21,8 +21,7 @@ It ships as: a **CLI**, a **web service + public web UI / leaderboard**, a **sch
 ### 1.1 What we are *not* building
 
 - **Not** an "upload any document, get an AI-readability score" website. The assignment explicitly asks for "instead of a single score, a list of questions the models answer incorrectly, the cause of the failure, and how it evolves over time", requires a mock server generated from OpenAPI, and values results "verified by running code, not by another model's opinion". A generic score for arbitrary documents can satisfy none of that.
-  - What *is* in scope: uploading a document (Markdown/MDX/any DOC) in the web UI as an **input to the soft layer**. The output is still per-claim failures, not a score.
-- **No** single aggregated score. Layers (hard / medium / soft) are **never averaged together**.
+- **No** single aggregated score. Results are reported per API, mode, model and claim type.
 - **No** user accounts. The web UI is public and read-only.
 
 ## 2. Architecture
@@ -42,17 +41,14 @@ It ships as: a **CLI**, a **web service + public web UI / leaderboard**, a **sch
 
 **Principle:** all logic lives in `core`. CLI, API, worker and GitHub Action are thin wrappers. The Action needs no hosted service.
 
-### 2.1 Input adapters and claim layers
+### 2.1 Input adapters
 
-| Layer | Input | Claims | Verification |
-|---|---|---|---|
-| **Hard** | OpenAPI 3.x spec + its version history (git) | see §2.2 | Request executed against Prism mock server |
-| **Medium** | `llms.txt` / `llms-full.txt` | statements extracted from structured sections | NLI (+ judge fallback) |
-| **Soft** | Documentation website (crawler), Markdown/MDX, uploaded documents | statements extracted from text | NLI (+ judge fallback) |
+| Input | Claims | Verification |
+|---|---|---|
+| OpenAPI 3.x spec + its version history (git) | Hard claims (see §2.2) | Request executed against Prism mock server |
 
 - **Changelog source:** change claims come from **diffing historical OpenAPI versions with `oasdiff`** (old versions taken from the API's public spec git repo). Changelog prose is used only as supporting evidence. This is deterministic and yields exact "removed X" claims. oasdiff reports a rename as a removal plus an addition, so "renamed X → Y" claims come from a deterministic pairing rule (same operation and location, same type, removed and added in the same version).
-- Medium/soft claims are extracted from prose by **fixed rules, not an LLM** (sentences containing a number, a code identifier, or "must / required / deprecated / default"), and turned into fill-in-the-blank questions, keeping generation deterministic.
-- Build order: **hard (OpenAPI → oasdiff history) → medium → soft.**
+- Build order: **OpenAPI → oasdiff history**, using only hard claims.
 
 ### 2.2 Hard claim types (MVP)
 
@@ -85,8 +81,6 @@ Each type has a fixed prompt template, versioned with the generator.
 ### 2.5 Answer format and verification
 
 - **Hard layer:** the model returns a **structured HTTP request** (JSON constrained by a schema: method, path, query, headers, body). The request is sent to **Prism** running the current spec in validation mode. A validation error = fail.
-- **Medium/soft layers:** short free-text answer, checked for entailment against the source snippet by a CPU NLI model (`cross-encoder/nli-deberta-v3-small` or `-xsmall`).
-- **LLM as judge** (mandatory tech, last resort): used **only** when the NLI score falls in a calibrated "unsure" band. Stored in a separate column; never used for hard claims. Thresholds calibrated on a hand-labeled set of ~200 items; judge-vs-NLI agreement is reported.
 
 ### 2.6 Failure causes (determined by code, not by a model)
 
@@ -105,15 +99,15 @@ A failed hard answer is additionally validated against **older spec versions**.
 
 ### 2.7 Reports and metrics
 
-- Primary table: **accuracy per API × layer × mode × model**, with 95% bootstrap confidence intervals.
+- Primary table: **accuracy per API × mode × model**, with 95% bootstrap confidence intervals.
 - Alongside: coverage, failure-cause distribution, delta vs. previous run, **newly failing / newly passing questions**.
-- Never a single overall score; layers never averaged.
+- Never a single overall score.
 
 ### 2.8 Repeated runs, diffs and alerts
 
 - Worker runs each target **weekly**, plus on detected input change.
 - Each run is diffed against the previous run of the same target.
-- **Slack** webhook alert when accuracy (per layer × mode × model) drops by more than a threshold (default **5 percentage points**, configurable).
+- **Slack** webhook alert when accuracy (per API × mode × model) drops by more than a threshold (default **5 percentage points**, configurable).
 - Runs are **resumable**: if rate limits stop a run, the worker continues it later.
 
 ## 3. Models under test
@@ -149,7 +143,7 @@ Initial: **Stripe, GitHub REST, Twilio**. All publish official OpenAPI specs in 
 | API | FastAPI; its generated OpenAPI is validated in CI |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server), **oasdiff** (spec diffs), **Schemathesis** (tests our own API) |
 | LLM access | OpenRouter (OpenAI-compatible API) |
-| Evaluation | `rank_bm25`, `transformers` (NLI, CPU), scikit-learn, LLM judge via OpenRouter |
+| Evaluation | `rank_bm25`, scikit-learn |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic; pgvector in semester 2 |
 | Scheduler | APScheduler in a dedicated `worker` container, job state in Postgres (no Redis/Celery) |
 | Web UI | React + Vite + TypeScript SPA, ECharts or Recharts, served by nginx |
@@ -166,7 +160,7 @@ Initial: **Stripe, GitHub REST, Twilio**. All publish official OpenAPI specs in 
 ## 7. GitHub Action
 
 - Reusable action (Docker / composite) that runs the CLI + Prism inside the CI runner. No dependency on our hosted service.
-- Triggers on PRs touching the OpenAPI spec, `llms.txt` or docs.
+- Triggers on PRs touching the OpenAPI spec.
 - Runs the suite on the base branch and the PR branch, posts a PR comment listing newly failing questions, and **fails the build when hard-layer accuracy drops by more than a configurable threshold**.
 - User provides their own `OPENROUTER_API_KEY` as a secret.
 
@@ -209,21 +203,20 @@ Faculty checkpoint dates: **TBD**.
 - **Weekly runs for Stripe, GitHub, Twilio from mid-semester.** The long-term dataset only starts when the first run happens, so this date matters more than features.
 
 **Semester 2 — breadth and evaluation**
-- `llms.txt` adapter (medium layer), docs crawler + document upload (soft layer), NLI + judge with calibration
 - Public GitHub Action + demo repo
 - Leaderboard polish, data visualization
 - Embedding retrieval experiment (pgvector)
 - MCP server exposing results (stretch)
-- Evaluation write-up: judge vs NLI agreement, stale-knowledge findings, trends over time
+- Evaluation write-up: accuracy by claim type, stale-knowledge findings, trends over time
 
 ## 11. Roles
 
 | # | Role | Owns |
 |---|---|---|
 | 1 | Lead / architecture | core package, task generator, this spec |
-| 2 | Input adapters | OpenAPI, oasdiff history, llms.txt, crawler |
+| 2 | Input adapters | OpenAPI, oasdiff history |
 | 3 | Runner & verification | OpenRouter client, rate limiting, Prism, failure causes |
-| 4 | ML / evaluation | NLI, judge, retrieval, labeled set, statistics |
+| 4 | ML / evaluation | retrieval, sampling, coverage, statistics, stale-knowledge analysis |
 | 5 | Backend & data | FastAPI, Postgres schema, migrations, worker |
 | 6 | Frontend & viz | web UI, leaderboard, charts |
 | 7 | DevOps | CI, Compose, GHCR, self-hosted runner, GitHub Action, monitoring |
