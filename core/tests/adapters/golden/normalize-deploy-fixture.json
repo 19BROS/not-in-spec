@@ -1,0 +1,36 @@
+{
+  "openapi_version": "3.1.0",
+  "title": "Fixture API",
+  "api_version": "1.0.0",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/pets/{petId}",
+      "operation_id": "getPet",
+      "summary": null,
+      "description": null,
+      "tags": [],
+      "deprecated": false,
+      "parameters": [
+        {
+          "location": "path",
+          "name": "petId",
+          "type": "integer",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1pets~1{petId}/get/parameters/0"
+        }
+      ],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [],
+      "source": "#/paths/~1pets~1{petId}/get"
+    }
+  ],
+  "security_schemes": [],
+  "problems": []
+}

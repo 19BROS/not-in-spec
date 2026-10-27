@@ -1,0 +1,293 @@
+{
+  "openapi_version": "3.1.0",
+  "title": "Acme Payments",
+  "api_version": "2025-03",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/health",
+      "operation_id": null,
+      "summary": "Health check, no tag and no auth.",
+      "description": null,
+      "tags": [],
+      "deprecated": false,
+      "parameters": [],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [],
+      "source": "#/paths/~1health/get"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/charges",
+      "operation_id": "listCharges",
+      "summary": null,
+      "description": null,
+      "tags": [
+        "Charges"
+      ],
+      "deprecated": false,
+      "parameters": [
+        {
+          "location": "query",
+          "name": "expand",
+          "type": "string",
+          "required": false,
+          "enum": [
+            "customer",
+            "refunds"
+          ],
+          "deprecated": false,
+          "description": "Related objects to include.",
+          "example": null,
+          "source": "#/components/parameters/Expand"
+        },
+        {
+          "location": "query",
+          "name": "limit",
+          "type": "integer",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": 10,
+          "source": "#/paths/~1v1~1charges/get/parameters/0"
+        },
+        {
+          "location": "header",
+          "name": "Idempotency-Key",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1v1~1charges/parameters/0"
+        }
+      ],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [
+        [
+          "bearerAuth"
+        ]
+      ],
+      "source": "#/paths/~1v1~1charges/get"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/charges",
+      "operation_id": "createCharge",
+      "summary": "Create a charge.",
+      "description": null,
+      "tags": [
+        "Charges"
+      ],
+      "deprecated": false,
+      "parameters": [
+        {
+          "location": "header",
+          "name": "idempotency-key",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1v1~1charges/post/parameters/0"
+        }
+      ],
+      "body_media_type": "application/json",
+      "body_required": true,
+      "body_fields": [
+        {
+          "location": "body",
+          "name": "amount",
+          "type": "integer",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": "Amount in the smallest currency unit.",
+          "example": 1000,
+          "source": "#/components/schemas/ChargeCreate/properties/amount"
+        },
+        {
+          "location": "body",
+          "name": "capture",
+          "type": "string",
+          "required": false,
+          "enum": [
+            "automatic",
+            "manual"
+          ],
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/capture"
+        },
+        {
+          "location": "body",
+          "name": "currency",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": "eur",
+          "source": "#/components/schemas/ChargeCreate/properties/currency"
+        },
+        {
+          "location": "body",
+          "name": "customer",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/customer"
+        },
+        {
+          "location": "body",
+          "name": "metadata",
+          "type": "object",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/metadata"
+        },
+        {
+          "location": "body",
+          "name": "shipping",
+          "type": "object",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/shipping"
+        },
+        {
+          "location": "body",
+          "name": "shipping.address",
+          "type": "object",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/shipping/properties/address"
+        },
+        {
+          "location": "body",
+          "name": "shipping.name",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/ChargeCreate/properties/shipping/properties/name"
+        }
+      ],
+      "security": [
+        [
+          "bearerAuth"
+        ]
+      ],
+      "source": "#/paths/~1v1~1charges/post"
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/charges/{id}",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [
+        "Charges"
+      ],
+      "deprecated": true,
+      "parameters": [
+        {
+          "location": "path",
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1v1~1charges~1{id}/delete/parameters/0"
+        }
+      ],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [
+        [
+          "bearerAuth"
+        ]
+      ],
+      "source": "#/paths/~1v1~1charges~1{id}/delete"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/charges/{id}",
+      "operation_id": "getCharge",
+      "summary": null,
+      "description": null,
+      "tags": [
+        "Charges"
+      ],
+      "deprecated": false,
+      "parameters": [
+        {
+          "location": "path",
+          "name": "id",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1v1~1charges~1{id}/get/parameters/0"
+        }
+      ],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [
+        [
+          "apiKey"
+        ],
+        [
+          "bearerAuth"
+        ]
+      ],
+      "source": "#/paths/~1v1~1charges~1{id}/get"
+    }
+  ],
+  "security_schemes": [
+    {
+      "name": "apiKey",
+      "type": "apiKey",
+      "scheme": null,
+      "location": "header",
+      "param_name": "X-Api-Key",
+      "source": "#/components/securitySchemes/apiKey"
+    },
+    {
+      "name": "bearerAuth",
+      "type": "http",
+      "scheme": "bearer",
+      "location": null,
+      "param_name": null,
+      "source": "#/components/securitySchemes/bearerAuth"
+    }
+  ],
+  "problems": []
+}
