@@ -1,0 +1,107 @@
+# Schema composition and real-spec pitfalls (role guide §15): allOf / oneOf / anyOf,
+# recursive $refs, a ref-to-ref cycle, a missing ref, form-encoded bodies, YAML 1.1 scalars.
+openapi: 3.1.0
+info: { title: Composition, version: 1.0.0 }
+components:
+  schemas:
+    Base:
+      type: object
+      required: [kind]
+      properties:
+        kind: { type: string }
+    Card:
+      type: object
+      required: [number, exp]
+      properties:
+        number: { type: string }
+        exp: { type: string }
+    Bank:
+      type: object
+      required: [number, iban]
+      properties:
+        number: { type: string }
+        iban: { type: string }
+    Node:
+      type: object
+      properties:
+        label: { type: string }
+        parent: { $ref: "#/components/schemas/Node" }
+        children: { type: array, items: { $ref: "#/components/schemas/Node" } }
+    LoopA: { $ref: "#/components/schemas/LoopB" }
+    LoopB: { $ref: "#/components/schemas/LoopA" }
+paths:
+  /payments:
+    post:
+      tags: [Payments]
+      requestBody:
+        content:
+          application/json; charset=utf-8:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Base"
+                - type: object
+                  required: [method]
+                  properties:
+                    method:
+                      # number is required in both branches, exp / iban in one only
+                      oneOf:
+                        - $ref: "#/components/schemas/Card"
+                        - $ref: "#/components/schemas/Bank"
+                    mode:
+                      # enum only in some branches: not an enum field
+                      anyOf:
+                        - { type: string, enum: [fast, slow] }
+                        - { type: string }
+                    status:
+                      # enum in every branch: union of values; YAML `on` stays a string
+                      anyOf:
+                        - { type: string, enum: [on, off] }
+                        - { type: integer, enum: [1, 2] }
+                    flag: { const: true }
+                    nullable_note: { type: [string, "null"] }
+                    created: { type: string, example: 2024-01-01 }
+      responses:
+        "200": { description: OK }
+  /tree:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Node" }
+      responses:
+        "200": { description: OK }
+  /form:
+    post:
+      tags: [Form]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: { type: object, properties: { ignored: { type: string } } }
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [amount]
+              properties:
+                amount: { type: integer }
+                expand: { type: array, items: { type: string } }
+      responses:
+        "200": { description: OK }
+  /upload:
+    put:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema: { type: object, properties: { file: { type: string } } }
+      responses:
+        "200": { description: OK }
+  /broken:
+    get:
+      security:
+        - missingScheme: []
+      parameters:
+        - { name: nameless }
+        - $ref: "#/components/parameters/DoesNotExist"
+        - { name: loop, in: query, schema: { $ref: "#/components/schemas/LoopA" } }
+      responses:
+        "200": { description: OK }
+  x-internal: { note: vendor extension, ignored }

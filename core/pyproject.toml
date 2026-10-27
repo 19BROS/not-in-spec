@@ -3,7 +3,11 @@ name = "notinspec"
 version = "0.0.0"
 description = "Measures how well LLMs can use software based on its documentation."
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "openapi-spec-validator>=0.9.0",
+    "orjson>=3.13.0",
+    "pyyaml>=6.0.3",
+]
 
 [project.scripts]
 notinspec = "notinspec.cli:main"
