@@ -295,7 +295,7 @@ Result:
 
 ```
 acme/hard/renamed/POST-/v1/charges/body/customer        old_name=customer_id  since=2025-03
-acme/hard/removed/DELETE-/v1/charges/{id}               since=2025-03
+acme/hard/removed/DELETE-/v1/charges/{}                 since=2025-03
 ```
 
 **In plain words.** I lay last month's blueprint next to this month's and mark every line that disappeared. When a line disappeared and a very similar one appeared in the same spot, I call it a rename, but only when there is no doubt.
