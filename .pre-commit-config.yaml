@@ -1,5 +1,8 @@
 # Uses the project's own tool versions via uv (no separate pins to keep in sync).
 # Install once: uv run pre-commit install
+# Fast checks on commit; tests and web build on push (Compose smoke test is left to CI).
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
 repos:
   - repo: local
     hooks:
@@ -19,3 +22,24 @@ repos:
         language: system
         pass_filenames: false
         files: ^core/
+      - id: pytest
+        name: pytest
+        entry: uv run pytest --cov=notinspec -q
+        language: system
+        pass_filenames: false
+        types: [python]
+        stages: [pre-push]
+      - id: web-lint
+        name: web lint
+        entry: npm --prefix web run lint
+        language: system
+        pass_filenames: false
+        files: ^web/
+        stages: [pre-push]
+      - id: web-build
+        name: web build
+        entry: npm --prefix web run build
+        language: system
+        pass_filenames: false
+        files: ^web/
+        stages: [pre-push]
