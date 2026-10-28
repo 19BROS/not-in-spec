@@ -297,7 +297,7 @@ Výsledok:
 
 ```
 acme/hard/renamed/POST-/v1/charges/body/customer        old_name=customer_id  since=2025-03
-acme/hard/removed/DELETE-/v1/charges/{id}               since=2025-03
+acme/hard/removed/DELETE-/v1/charges/{}                 since=2025-03
 ```
 
 **Jednoducho povedané.** Položím plán z minulého mesiaca vedľa toho z tohto mesiaca a označím každý riadok, ktorý zmizol. Keď riadok zmizol a na tom istom mieste sa objavil veľmi podobný, nazvem to premenovaním, ale iba ak o tom niet pochýb.
