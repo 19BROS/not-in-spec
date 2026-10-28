@@ -3,7 +3,9 @@ name = "notinspec"
 version = "0.0.0"
 description = "Measures how reliably LLMs answer questions about an API, over time."
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "httpx2>=2.13.1",
+]
 
 [project.scripts]
 notinspec = "notinspec.cli:main"
