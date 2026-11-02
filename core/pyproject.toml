@@ -1,7 +1,7 @@
 [project]
 name = "notinspec"
 version = "0.0.0"
-description = "Measures how reliably LLMs answer questions about an API, over time."
+description = "Measures how well LLMs can use software based on its documentation."
 requires-python = ">=3.12"
 dependencies = []
 

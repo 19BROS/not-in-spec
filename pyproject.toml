@@ -36,6 +36,7 @@ files = ["core/src"]
 [tool.pytest.ini_options]
 testpaths = ["core/tests", "api/tests", "worker/tests"]
 addopts = "--import-mode=importlib"
+markers = ["slow: needs a real NLI model or Prism; skip with -m 'not slow'"]
 
 [tool.coverage.report]
 # coverage gate on core only (SPEC §9); the --cov target in CI decides what is measured
