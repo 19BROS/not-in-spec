@@ -11,7 +11,7 @@ worker/   APScheduler worker        (thin wrapper over core)
 web/      React + Vite + TS SPA
 action/   reusable GitHub Action
 deploy/   docker-compose, nginx, env template, fixtures
-docs/     SPEC, FAQ, INSPIRATION, assignment, DEPLOY (production runbook)
+docs/     SPEC, assignment, DEPLOY (production runbook)
 ```
 
 Python packages form one **uv workspace** (root `pyproject.toml`). Each lives in `<dir>/src/<module>` with tests in `<dir>/tests`.
@@ -40,16 +40,40 @@ Add a dependency to a package: `uv add --package notinspec-api <dep>` (never pip
 ## Rules that must not be broken
 
 - **All logic in `core/`.** API, worker, CLI and Action only call into it.
-- **CI never calls OpenRouter.** Tests use the fake provider with recorded responses.
-- **Raw LLM responses are append-only.** Never UPDATE or DELETE them.
-- **Task generation is deterministic.** Same input + generator version ⇒ same task-set hash. No LLM generates tasks or extracts claims.
-- **Never average layers** (hard / medium / soft) and never produce a single overall score.
+- **CI never calls a real LLM.** Every LLM role (models under test, claim extractors, task-text writer, judge) uses the fake provider with recorded responses.
+- **Raw LLM responses are append-only**, for every LLM call. Never UPDATE or DELETE them.
+- **References are computed by code.** Same input + generator version ⇒ same references. An LLM only writes task text and extracts claims; both are frozen in the golden set.
+- **Never average levels** (L0–L4) and never produce a single overall score.
 - Secrets only via env (`deploy/.env`, GitHub secrets). Never commit them.
 
 ## Git workflow
 
 - `main` is protected and auto-deploys. Work on short-lived branches, open a PR, CI must be green.
 - Branch names: `<area>/<short-topic>`, e.g. `core/oasdiff-adapter`, `web/leaderboard`.
+- Stay in your own directory. Shared files (`pyproject.toml`, `uv.lock`, `deploy/`, `.github/`) change in small separate PRs.
+- Before opening a PR: `git pull --rebase origin main`.
+- **Lock file conflict** (`uv.lock` or `web/package-lock.json`): never merge it by hand. Resolve `pyproject.toml` / `package.json` first, then regenerate the lock (it is rebuilt from those, so either side is fine to start from):
+  ```sh
+  git checkout --ours uv.lock && uv lock && git add uv.lock
+  cd web && git checkout --ours package-lock.json && npm install && git add package-lock.json
+  ```
+
+### Adding a new service (new top-level directory)
+
+Touch every place below in the same PR, or the service will build but never deploy:
+
+| Where | What |
+|---|---|
+| `<dir>/pyproject.toml`, `<dir>/src/<module>`, `<dir>/tests` | Python package, same shape as `api/` |
+| root `pyproject.toml` | add to `[tool.uv.workspace] members`, `known-first-party`, pytest `testpaths`; then `uv lock` |
+| `<dir>/Dockerfile` | copy `api/Dockerfile` or `worker/Dockerfile` |
+| `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `web` |
+| `deploy/nginx.conf` | only if browsers must reach it (route under `/api` or a new prefix) |
+| `.github/workflows/ci.yml` | add to the `images` matrix |
+| `.github/workflows/deploy.yml` | add to both `pull` and `up` lists |
+| `AGENTS.md` layout, `docs/SPEC.md` §12 | one line each |
+
+Non-Python services (like `web/`) skip the workspace row and get their own CI job instead.
 
 ### Parallel work with git worktrees
 

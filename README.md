@@ -1,8 +1,8 @@
 # NOT-IN-SPEC
 
-Measures how reliably language models answer questions about a specific API, and how that changes over time. Team project 2026/2027, no. 8.
+Measures how well language models can use software based on its documentation, which documentation sections cause the failures, and how that changes over time. Team project 2026/2027, no. 8.
 
-- What we build and why: [docs/SPEC.md](docs/SPEC.md) (start here), [docs/FAQ.md](docs/FAQ.md), [docs/INSPIRATION.md](docs/INSPIRATION.md), [docs/assignment.md](docs/assignment.md)
+- What we build and why: [docs/SPEC.md](docs/SPEC.md) (start here), [docs/assignment.md](docs/assignment.md)
 - How to work in the repo (layout, commands, rules, git worktrees): [AGENTS.md](AGENTS.md)
 - How production runs, backups, rollback, VM access: [docs/DEPLOY.md](docs/DEPLOY.md)
 

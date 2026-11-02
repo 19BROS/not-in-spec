@@ -127,7 +127,8 @@ Only if the instance is lost. Then restore the database from your off-machine du
    POSTGRES_PASSWORD=$(openssl rand -hex 24)
    IMAGE_OWNER=19bros
    WEB_PORT=80
-   OPENROUTER_API_KEY=
+   LLM_API_KEY=
+   LLM_BASE_URL=
    SLACK_WEBHOOK_URL=
    EOF
    sudo chown -R deploy:deploy /opt/notinspec && sudo chmod 600 /opt/notinspec/.env
