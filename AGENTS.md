@@ -67,7 +67,7 @@ Touch every place below in the same PR, or the service will build but never depl
 | `<dir>/pyproject.toml`, `<dir>/src/<module>`, `<dir>/tests` | Python package, same shape as `api/` |
 | root `pyproject.toml` | add to `[tool.uv.workspace] members`, `known-first-party`, pytest `testpaths`; then `uv lock` |
 | `<dir>/Dockerfile` | copy `api/Dockerfile` or `worker/Dockerfile` |
-| `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `web` |
+| `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `proxy` (Caddy, TLS) |
 | `deploy/nginx.conf` | only if browsers must reach it (route under `/api` or a new prefix) |
 | `.github/workflows/ci.yml` | add to the `images` matrix |
 | `.github/workflows/deploy.yml` | add to both `pull` and `up` lists |
@@ -89,4 +89,4 @@ git worktree list                                                # see what's op
 ```
 
 - `deploy/.env` is gitignored, so copy it into the new worktree if you need Compose there.
-- Two worktrees running Compose at once collide on project name and ports. Give one its own: `COMPOSE_PROJECT_NAME=notinspec-oasdiff WEB_PORT=8081 docker compose -f deploy/docker-compose.yml up` (Prism's 4010 is fixed, so run it in one worktree only).
+- Two worktrees running Compose at once collide on project name and ports. Give one its own: `COMPOSE_PROJECT_NAME=notinspec-oasdiff WEB_PORT=8081 HTTPS_PORT=8444 docker compose -f deploy/docker-compose.yml up` (Prism's 4010 is fixed, so run it in one worktree only).

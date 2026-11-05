@@ -42,12 +42,17 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: ci
+      INGEST_TOKEN: ci
       BACKUP_DIR: /tmp/notinspec-backups # runner context isn't allowed in job-level env
     steps:
       - uses: actions/checkout@v7
       - run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup up -d --build --wait
       - run: curl -fsS localhost:8080/api/health
       - run: curl -fsS localhost:4010/pets/1
+      # what the Action pushes reaches the api through nginx and lands on the results volume
+      - run: >-
+          curl -fsS -X POST localhost:8080/api/runs -H "Authorization: Bearer ci"
+          --data-binary @action/example-results.json
       # the backup service dumps on start; prove the dump exists and Postgres can read it
       - run: timeout 60 sh -c 'until ls "$BACKUP_DIR"/*.dump; do sleep 2; done'
       - run: docker run --rm -v "$BACKUP_DIR":/b postgres:17 sh -c 'pg_restore -l /b/*.dump > /dev/null'
@@ -56,9 +61,41 @@ jobs:
       - if: always()
         run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup down -v
 
+  # the Action as a caller repo uses it, on our fixtures with a locally built image
+  action:
+    # fork PRs: the Action skips itself (no secrets), so there is no verdict to check
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # the Action's PR comment
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+      - run: docker build -t notinspec-cli:ci action
+      - id: notinspec
+        uses: ./action
+        with: { config: deploy/fixtures/notinspec.yaml, image: "notinspec-cli:ci" }
+      - run: test "${{ steps.notinspec.outputs.verdict }}" = pass
+      # CLI contract on a throwaway repo: a changed file with the fail marker exits 1, a broken
+      # config exits 2 (never 1), and a pattern pointing outside the config's folder reads nothing
+      - run: |
+          d=$(mktemp -d) && mkdir "$d/repo" && cp -r deploy/fixtures/. "$d/repo" && echo x > "$d/outside.md"
+          cd "$d/repo"
+          sed -i 's|"docs/\*\*/\*.md"|"docs/**/*.md", "../*.md"|' notinspec.yaml
+          printf 'docs:\n  paths: ["docs/**/*.md"]\nmodels: [not-a-mapping]\n' > broken.yaml
+          git init -q -b main && git add -A && git -c user.name=ci -c user.email=ci@ci commit -qm base
+          git update-ref refs/remotes/origin/main HEAD
+          echo '<!-- notinspec-mock: fail -->' >> docs/pets.md
+          git -c user.name=ci -c user.email=ci@ci commit -qam change
+          cli() { docker run --rm --user "$(id -u):$(id -g)" -v "$d:/w" -w /w/repo -e GITHUB_BASE_REF=main notinspec-cli:ci ci --out out "$@" > /dev/null; }
+          code=0; cli --config notinspec.yaml || code=$?; test "$code" -eq 1
+          code=0; cli --config broken.yaml || code=$?; test "$code" -eq 2
+          python3 -c 'import json; d = json.load(open("out/results.json"))["docs"]; assert d["files"] == ["docs/index.md", "docs/pets.md", "openapi.yaml"], d; assert d["changed"] == ["docs/pets.md"], d'
+
   images:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [compose]
+    needs: [compose, action]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -69,6 +106,7 @@ jobs:
           - { name: api, context: ., file: api/Dockerfile }
           - { name: worker, context: ., file: worker/Dockerfile }
           - { name: web, context: web, file: web/Dockerfile }
+          - { name: cli, context: action, file: action/Dockerfile }
     steps:
       - uses: actions/checkout@v7
       - run: echo "OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"

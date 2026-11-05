@@ -1,0 +1,101 @@
+{
+  "schema_version": 0,
+  "tool": {
+    "name": "notinspec",
+    "version": "0.0.0-mock"
+  },
+  "repo": "19BROS/notinspec-demo",
+  "commit": "8b27bd96bb0f2f78fdbf94e4be86961a2f9a8f39",
+  "ref": "refs/pull/7/merge",
+  "event": "pull_request",
+  "pr": 7,
+  "created_at": "2026-11-05T11:57:39+00:00",
+  "docs": {
+    "files": [
+      "docs/index.md",
+      "docs/pets.md",
+      "openapi.yaml"
+    ],
+    "changed": [
+      "docs/pets.md"
+    ],
+    "diff": "git diff origin/main...HEAD"
+  },
+  "results": [
+    {
+      "level": "L0",
+      "model": "mock-small",
+      "mode": "none",
+      "items": 10,
+      "passed": 7,
+      "baseline_passed": 7
+    },
+    {
+      "level": "L0",
+      "model": "mock-small",
+      "mode": "gold",
+      "items": 10,
+      "passed": 10,
+      "baseline_passed": 10
+    },
+    {
+      "level": "L1",
+      "model": "mock-small",
+      "mode": "none",
+      "items": 10,
+      "passed": 5,
+      "baseline_passed": 5
+    },
+    {
+      "level": "L1",
+      "model": "mock-small",
+      "mode": "gold",
+      "items": 10,
+      "passed": 8,
+      "baseline_passed": 8
+    },
+    {
+      "level": "L3",
+      "model": "mock-small",
+      "mode": "none",
+      "items": 10,
+      "passed": 5,
+      "baseline_passed": 9
+    },
+    {
+      "level": "L3",
+      "model": "mock-small",
+      "mode": "gold",
+      "items": 10,
+      "passed": 2,
+      "baseline_passed": 6
+    },
+    {
+      "level": "L4",
+      "model": "mock-small",
+      "mode": "none",
+      "items": 10,
+      "passed": 8,
+      "baseline_passed": 8
+    },
+    {
+      "level": "L4",
+      "model": "mock-small",
+      "mode": "gold",
+      "items": 10,
+      "passed": 10,
+      "baseline_passed": 10
+    }
+  ],
+  "findings": [
+    {
+      "check": "K4",
+      "file": "docs/pets.md",
+      "message": "example uses a removed parameter (mock)"
+    }
+  ],
+  "verdict": "fail",
+  "reasons": [
+    "L3 dropped in docs/pets.md (mock)"
+  ]
+}

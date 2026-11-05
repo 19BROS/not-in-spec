@@ -439,7 +439,7 @@ Every test item × model × mode. **All raw responses are stored.**
   deploy/   docker-compose, nginx, env templates, fixtures
   docs/     SPEC, assignment, DEPLOY
   ```
-- **Docker Compose** services: `postgres`, `api`, `worker` (starts Prism per spec when needed), `web` (nginx), `backup`; `prism` profile for local dev.
+- **Docker Compose** services: `postgres`, `api`, `worker` (starts Prism per spec when needed), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
 - **CI (GitHub Actions):** lint (ruff, mypy, oxlint), unit tests, Compose integration tests, build images, push to **GHCR** (including the CLI image used by the Action).
 - **CD:** the faculty VM is reachable only over VPN, so a **self-hosted GitHub runner on the VM** pulls images from GHCR and runs `docker compose up -d`. The repo is public, so the runner is used **only by the deploy job on pushes to `main`** (dedicated runner label + protected `production` environment). Fork PRs never run on the VM.
 - Public GitHub repository under a team organization, **MIT license**.
