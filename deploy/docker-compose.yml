@@ -1,5 +1,8 @@
 name: notinspec
 
+x-app-env: &app-env
+  DATABASE_URL: postgresql://notinspec:${POSTGRES_PASSWORD}@postgres:5432/notinspec
+
 services:
   postgres:
     image: postgres:17
@@ -18,8 +21,13 @@ services:
   api:
     image: ghcr.io/${IMAGE_OWNER:-local}/notinspec-api:${TAG:-latest}
     build: { context: .., dockerfile: api/Dockerfile }
-    environment: &app-env
-      DATABASE_URL: postgresql://notinspec:${POSTGRES_PASSWORD}@postgres:5432/notinspec
+    environment:
+      <<: *app-env
+      # results.json pushed by the GitHub Action (POST /api/runs); empty = ingest disabled
+      INGEST_TOKEN: ${INGEST_TOKEN:-}
+      RESULTS_DIR: /results
+    volumes:
+      - results:/results
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -41,10 +49,29 @@ services:
     build: { context: ../web }
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    ports:
-      - "${WEB_PORT:-8080}:80"
     depends_on:
       api: { condition: service_healthy }
+    restart: unless-stopped
+
+  # the only service with published ports; see deploy/Caddyfile
+  proxy:
+    image: caddy:2
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # keep certs across deploys, or every deploy re-issues and hits Let's Encrypt rate limits
+      - caddy-data:/data
+    ports:
+      - "${WEB_PORT:-8080}:80"
+      - "${HTTPS_PORT:-8443}:443"
+    # the image has none, so `up --wait` would accept a Caddy that crash-loops on a bad config;
+    # 127.0.0.1, not localhost: busybox resolves localhost to ::1, the admin API listens on IPv4
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:2019/config/"]
+      interval: 5s
+      retries: 10
+    depends_on: [web]
     restart: unless-stopped
 
   # daily pg_dump on the VM (SPEC §6), started only by the deploy workflow; see docs/DEPLOY.md
@@ -90,3 +117,5 @@ services:
 
 volumes:
   pgdata:
+  results:
+  caddy-data:

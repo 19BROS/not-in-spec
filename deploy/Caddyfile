@@ -1,0 +1,6 @@
+# TLS front for the whole stack (SPEC §12). SITE_ADDRESS :80 = plain HTTP (local, CI).
+# With a hostname (VM: 147-175-151-17.sslip.io) Caddy gets a Let's Encrypt cert over port 80,
+# serves HTTPS on 443 and redirects HTTP there. Certs live in the caddy-data volume.
+{$SITE_ADDRESS} {
+	reverse_proxy web:80
+}

@@ -20,6 +20,7 @@ Full stack: `cp deploy/.env.example deploy/.env && docker compose -f deploy/dock
 | Workflow | When | What |
 |---|---|---|
 | `ci.yml` | every PR and push to `main` | ruff, mypy, pytest (coverage gate on core), oxlint + web build, Compose smoke test; on `main` also pushes images to GHCR |
+| `release.yml` | tag `vX.Y.Z` | pushes the Action's `notinspec-cli:X.Y.Z` image and moves the `vX` tag, see [action/README.md](action/README.md) |
 | `deploy.yml` | after CI succeeds on a push to `main` | self-hosted runner on the faculty VM pulls images and runs `docker compose up -d` |
 
 ## License

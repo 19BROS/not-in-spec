@@ -1,18 +1,112 @@
-# Reusable GitHub Action (SPEC §7). Placeholder: inputs are the agreed contract, logic lands in semester 2.
-name: NOT-IN-SPEC docs accuracy check
-description: Fails a PR when a documentation/OpenAPI change lowers LLM answer accuracy.
+# Reusable GitHub Action (SPEC §11). Runs in the caller's runner; logic is a mock until core lands.
+name: NOT-IN-SPEC
+description: Tests how well LLMs can use your software from its documentation (mock results for now).
 inputs:
-  spec:
-    description: Path to the OpenAPI spec in the caller repo
-    required: true
-  threshold:
-    description: Max allowed hard-layer accuracy drop, in percentage points
-    default: "5"
-  openrouter-api-key:
-    description: Caller's own OpenRouter key (pass from secrets)
-    required: true
+  config:
+    description: Path to notinspec.yaml in the caller repo
+    default: notinspec.yaml
+  api-key:
+    description: Model API key (pass from secrets). Unused by the mock.
+    default: ""
+  base-url:
+    description: Model API base URL (OpenAI-compatible). Unused by the mock.
+    default: ""
+  server-url:
+    description: NOT-IN-SPEC server to send results to (https). Empty = don't send.
+    default: ""
+  server-token:
+    description: Token for the server (pass from secrets)
+    default: ""
+  image:
+    # exact version, so `@v0.1.0` and its image always match; release.yml checks it equals the tag
+    description: notinspec-cli image to run
+    default: ghcr.io/19bros/notinspec-cli:0.1.0
+  github-token:
+    description: Token for the PR comment; needs pull-requests write
+    default: ${{ github.token }}
+outputs:
+  verdict:
+    description: pass or fail
+    value: ${{ steps.run.outputs.verdict }}
 runs:
   using: composite
   steps:
-    - shell: bash
-      run: echo "::warning::notinspec action is not implemented yet"
+    # fork PRs get no secrets and a read-only token; never use pull_request_target instead
+    - id: fork
+      shell: bash
+      env:
+        HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+      run: |
+        if [ -n "$HEAD_REPO" ] && [ "$HEAD_REPO" != "$GITHUB_REPOSITORY" ]; then
+          echo "::warning::NOT-IN-SPEC skipped: pull request from a fork has no secrets"
+          echo "skip=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - id: run
+      if: steps.fork.outputs.skip != 'true'
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+        CONFIG: ${{ inputs.config }}
+        LLM_API_KEY: ${{ inputs.api-key }}
+        LLM_BASE_URL: ${{ inputs.base-url }}
+        NOTINSPEC_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        NOTINSPEC_PR: ${{ github.event.pull_request.number }}
+      run: |
+        set +e
+        docker run --rm --user "$(id -u):$(id -g)" \
+          -v "$GITHUB_WORKSPACE:/work" -w /work \
+          -e GITHUB_REPOSITORY -e GITHUB_REF -e GITHUB_EVENT_NAME -e GITHUB_BASE_REF \
+          -e NOTINSPEC_COMMIT -e NOTINSPEC_PR -e LLM_API_KEY -e LLM_BASE_URL \
+          "$IMAGE" ci --config "$CONFIG" --out notinspec-out
+        code=$?
+        echo "code=$code" >> "$GITHUB_OUTPUT"
+        [ "$code" -eq 0 ] && echo "verdict=pass" >> "$GITHUB_OUTPUT"
+        [ "$code" -eq 1 ] && echo "verdict=fail" >> "$GITHUB_OUTPUT"
+        [ -f notinspec-out/comment.md ] && cat notinspec-out/comment.md >> "$GITHUB_STEP_SUMMARY"
+        exit 0
+
+    - if: steps.run.outputs.verdict != ''
+      uses: actions/upload-artifact@v7
+      with:
+        name: notinspec-results
+        path: notinspec-out/
+
+    # one comment per PR, updated on every push instead of adding a new one
+    - if: steps.run.outputs.verdict != '' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PR: ${{ github.event.pull_request.number }}
+      run: |
+        id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+          --jq '.[] | select(.body | startswith("<!-- notinspec -->")) | .id' | head -n1)
+        if [ -n "$id" ]; then
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@notinspec-out/comment.md > /dev/null
+        else
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@notinspec-out/comment.md > /dev/null
+        fi
+
+    # our server being down must never fail the caller's PR
+    - if: steps.run.outputs.verdict != '' && inputs.server-url != ''
+      shell: bash
+      env:
+        SERVER_URL: ${{ inputs.server-url }}
+        SERVER_TOKEN: ${{ inputs.server-token }}
+      run: |
+        case "$SERVER_URL" in
+          https://*|http://localhost*|http://127.0.0.1*) ;;
+          *) echo "::warning::server-url must be https, results not sent"; exit 0 ;;
+        esac
+        curl -fsS --max-time 30 -X POST "${SERVER_URL%/}/api/runs" \
+          -H "Authorization: Bearer $SERVER_TOKEN" -H "Content-Type: application/json" \
+          --data-binary @notinspec-out/results.json ||
+          echo "::warning::could not send results to $SERVER_URL"
+
+    - if: steps.run.outputs.code != '' && steps.run.outputs.code != '0'
+      shell: bash
+      env:
+        CODE: ${{ steps.run.outputs.code }}
+      run: |
+        [ "$CODE" -eq 1 ] && echo "::error::NOT-IN-SPEC: documentation change lowers usage (see PR comment)"
+        exit "$CODE"

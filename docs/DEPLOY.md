@@ -6,7 +6,7 @@ How production runs, and what to do when something breaks. For the design behind
 
 | | |
 |---|---|
-| Site | http://147.175.151.17 (API: `/api/health`) — **faculty VPN required** |
+| Site | https://147-175-151-17.sslip.io (API: `/api/health`) — **public**: 80 and 443 reachable from the internet, SSH (22) only from the STU network / VPN (checked 2026-11-05 from outside STU). [sslip.io](https://sslip.io) resolves the name to the IP, so Let's Encrypt can issue a cert without our own domain. |
 | VM | OpenStack project `fiit-tp2026-team19`, instance `notinspec`, Ubuntu 24.04, 4 vCPU / 16 GB |
 | Login | `ssh notinspec` with the SSH config below (key-only, `ubuntu` has passwordless sudo) |
 | Expires | **2027-06-30** — request an extension from FIIT before then, or the VM is blocked and later deleted |
@@ -27,7 +27,7 @@ Host notinspec
 
 Nobody deploys by hand. Merging a PR into `main` does it:
 
-1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web` images to GHCR tagged with the commit SHA.
+1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web`, `cli` images to GHCR tagged with the commit SHA.
 2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`).
 3. It checks out that commit, pulls the images for that SHA and runs `docker compose up -d` with `/opt/notinspec/.env`.
 
@@ -49,7 +49,7 @@ The runner runs as user `deploy`: in the `docker` group, no password, no sudo.
 
 ```sh
 sudo docker ps                                    # what is running
-sudo docker logs -f --tail 100 notinspec-api-1    # logs of one service (api, worker, web, postgres, backup)
+sudo docker logs -f --tail 100 notinspec-api-1    # logs of one service (api, worker, web, proxy, postgres, backup)
 sudo systemctl status 'actions.runner.*'          # is the runner alive?
 sudo systemctl restart 'actions.runner.*'         # restart it
 df -h / /data                                     # disk space
@@ -127,9 +127,12 @@ Only if the instance is lost. Then restore the database from your off-machine du
    POSTGRES_PASSWORD=$(openssl rand -hex 24)
    IMAGE_OWNER=19bros
    WEB_PORT=80
+   HTTPS_PORT=443
+   SITE_ADDRESS=147-175-151-17.sslip.io
    LLM_API_KEY=
    LLM_BASE_URL=
    SLACK_WEBHOOK_URL=
+   INGEST_TOKEN=$(openssl rand -hex 24)
    EOF
    sudo chown -R deploy:deploy /opt/notinspec && sudo chmod 600 /opt/notinspec/.env
    ```
