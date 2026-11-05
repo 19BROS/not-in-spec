@@ -1,0 +1,8 @@
+# fixture config for the Action test in CI and the demo repo (SPEC §2.3, shape is a candidate)
+# paths are relative to this file
+docs:
+  paths: ["docs/**/*.md"]
+  openapi: "openapi.yaml"
+formats: [curl]
+models:
+  pr: [mock-small]
