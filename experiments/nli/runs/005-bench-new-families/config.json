@@ -1,0 +1,59 @@
+{
+  "started": "2026-11-07T18:35:00",
+  "models": [
+    "lytang/MiniCheck-DeBERTa-v3-Large",
+    "vectara/hallucination_evaluation_model",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "cross-encoder/nli-deberta-v3-base"
+  ],
+  "contexts": [
+    "breadcrumb"
+  ],
+  "premises": [
+    "window"
+  ],
+  "radius": 1,
+  "sections": "all",
+  "batch": 8,
+  "git": {
+    "commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_windows_sha256": "a04e136ff451",
+    "labels_sha256": "44ded39573b9"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "bench": {
+    "pairs": 24,
+    "default_threads": 10,
+    "results": [
+      {
+        "model": "lytang/MiniCheck-DeBERTa-v3-Large",
+        "threads": 10,
+        "seconds": 35.3
+      },
+      {
+        "model": "vectara/hallucination_evaluation_model",
+        "threads": 10,
+        "seconds": 11.3
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+        "threads": 10,
+        "seconds": 38.9
+      },
+      {
+        "model": "cross-encoder/nli-deberta-v3-base",
+        "threads": 10,
+        "seconds": 12.1
+      }
+    ]
+  },
+  "finished": "2026-11-07T18:37:18"
+}

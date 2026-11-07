@@ -1,0 +1,8 @@
+{"claims": [
+{"id": "o1", "claim": "urllib3.Timeout accepts a total parameter that limits the combined connect and read time.", "citation": "For more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:", "type": "fact", "kind": "outside"},
+{"id": "o2", "claim": "urllib3 retries a request that fails with a timeout error by default.", "citation": "# MaxRetryError caused by ReadTimeoutError", "type": "fact", "kind": "outside"},
+{"id": "o3", "claim": "The urllib3.request() function uses a shared PoolManager internally to send requests.", "citation": "resp = urllib3.request(", "type": "fact", "kind": "outside"},
+{"id": "b1", "claim": "A PoolManager-level timeout applies to every request made through that PoolManager and cannot be overridden.", "citation": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:", "type": "fact", "kind": "beyond"},
+{"id": "b2", "claim": "A float timeout passed to request() is split evenly between the connect timeout and the read timeout.", "citation": "you can specify a timeout as a `float` to `request()`:", "type": "fact", "kind": "beyond"},
+{"id": "b3", "claim": "Timeouts exist in urllib3 so that requests to slow servers are aborted to protect against denial-of-service attacks.", "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.", "type": "fact", "kind": "beyond"}
+]}

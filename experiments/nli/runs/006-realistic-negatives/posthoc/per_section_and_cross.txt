@@ -1,0 +1,159 @@
+## recall / false keeps per section, window 400 (non-cross, labelled, ok rows)
+nli-deberta-v3-base          window changelog-2-8-:33/74 fk1/18  changelog-2-8-:14/28 fk1/17  configuring-ex:37/50 fk0/10  httpx-timeouts:7/26 fk3/17  retrying-reque:52/69 fk1/10  using-timeouts:13/14 fk3/17
+nli-deberta-v3-base          local  changelog-2-8-:73/74 fk5/18  changelog-2-8-:21/28 fk5/17  configuring-ex:47/50 fk1/10  httpx-timeouts:21/26 fk3/17  retrying-reque:66/69 fk2/10  using-timeouts:12/14 fk3/17
+DeBERTa-v3-base-mnli-fever-a window changelog-2-8-:73/74 fk6/18  changelog-2-8-:28/28 fk5/17  configuring-ex:50/50 fk1/10  httpx-timeouts:12/26 fk2/17  retrying-reque:69/69 fk2/10  using-timeouts:13/14 fk2/17
+DeBERTa-v3-base-mnli-fever-a local  changelog-2-8-:73/74 fk4/18  changelog-2-8-:24/28 fk6/17  configuring-ex:49/50 fk1/10  httpx-timeouts:20/26 fk2/17  retrying-reque:69/69 fk1/10  using-timeouts:13/14 fk2/17
+DeBERTa-v3-large-mnli-fever- window changelog-2-8-:73/74 fk8/18  changelog-2-8-:28/28 fk4/17  configuring-ex:50/50 fk1/10  httpx-timeouts:26/26 fk4/17  retrying-reque:69/69 fk2/10  using-timeouts:14/14 fk3/17
+DeBERTa-v3-large-mnli-fever- local  changelog-2-8-:74/74 fk4/18  changelog-2-8-:27/28 fk5/17  configuring-ex:47/50 fk0/10  httpx-timeouts:24/26 fk1/17  retrying-reque:69/69 fk0/10  using-timeouts:14/14 fk3/17
+MiniCheck-DeBERTa-v3-Large   local  changelog-2-8-:72/74 fk4/18  changelog-2-8-:21/28 fk3/17  configuring-ex:40/50 fk1/10  httpx-timeouts:24/26 fk2/17  retrying-reque:65/69 fk2/10  using-timeouts:13/14 fk2/17
+hallucination_evaluation_mod local  changelog-2-8-:74/74 fk13/18  changelog-2-8-:24/28 fk7/17  configuring-ex:50/50 fk4/10  httpx-timeouts:25/26 fk7/17  retrying-reque:69/69 fk4/10  using-timeouts:14/14 fk4/17
+
+## cross kept, DeBERTa-v3-large-mnli-fever-anli-ling-wanli window, window 400
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c1 p=0.99 | In urllib3 2.8.0, an issue where the TLS configuration for HTTPS proxies could be ignored or overridden was fi
+        prem-sentence: Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c3 p=0.47 | In urllib3 2.8.0, an issue where `read_chunked()` could buffer a chunk-size line of unbounded length in memory
+        prem-sentence: Fixed a bug where PoolManager passed the assert_hostname and assert_fingerprint parameters to HTTP connection pools.
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c5 p=1.00 | urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c6 p=0.99 | Configurations relying on HTTPS proxy TLS configuration being ignored or overridden by destination settings ma
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c7 p=0.82 | In urllib3, proxy CA certificates are configured in `proxy_ssl_context`.
+        prem-sentence: Fixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True.
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c8 p=0.55 | In urllib3, proxy client certificates are configured in `proxy_ssl_context`.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c9 p=0.95 | In urllib3, proxy identity checks are configured with `proxy_assert_hostname` or `proxy_assert_fingerprint`.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c10 p=1.00 | In urllib3, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c11 p=1.00 | In urllib3, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c1 p=0.98 | In urllib3 2.8.0, a security issue was fixed where the TLS configuration for HTTPS proxies could be ignored or
+        prem-sentence: Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c5 p=0.55 | In urllib3 2.8.0, a security issue was fixed where `read_chunked()` could buffer a chunk-size line of unbounde
+        prem-sentence: Fixed a bug where PoolManager passed the assert_hostname and assert_fingerprint parameters to HTTP connection pools.
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c11 p=1.00 | urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c12 p=1.00 | Configurations of urllib3 relying on HTTPS proxy TLS configuration being ignored or overridden by destination 
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c14 p=0.84 | In urllib3, proxy identity checks should be configured with `proxy_assert_hostname` or `proxy_assert_fingerpri
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c15 p=1.00 | In urllib3 2.8.0, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c16 p=1.00 | In urllib3 2.8.0, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-bugfixes~flash-3.6-high] c22 p=0.57 | urllib3 fixed `HTTPSConnection.connect()` overriding `ProxyConfig.ssl_context`'s certificate policy and proxy 
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [changelog-2- <- changelog-2-8-0-bugfixes~flash-3.6-high] c23 p=0.93 | `HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshak
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c15 p=0.61 | The non-standard IPv4 forms detected by urllib3's is_ipaddress() include hex such as 0x7f000001.
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c16 p=0.78 | The non-standard IPv4 forms detected by urllib3's is_ipaddress() include octal such as 0177.0.0.1.
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c17 p=0.67 | The non-standard IPv4 forms detected by urllib3's is_ipaddress() include decimal integers such as 2130706433.
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c26 p=0.67 | Users on newer Python versions than 3.10, 3.11 and 3.12 should upgrade to Python 3.13.14+ or 3.14.5+ to get th
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c27 p=0.92 | In urllib3 2.8.0, HTTPSConnection.connect() was fixed so that it no longer overrides ProxyConfig.ssl_context's
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c28 p=0.87 | HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c38 p=0.83 | Using cryptography APIs in urllib3.contrib.pyopenssl avoids a DeprecationWarning raised by pyOpenSSL 26.3.0+.
+        prem-sentence: urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+  [configuring- <- retrying-requests~flash-3.6-high] c6 p=0.99 | Specifying an integer for the retries parameter changes the number of retries in urllib3.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~flash-3.6-high] c9 p=0.98 | A Retry instance can be used for more granular control of retries in urllib3.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c6 p=0.91 | The number of retries in urllib3 can be changed by specifying an integer.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c9 p=0.95 | A Retry instance can be used in urllib3 for more granular control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c10 p=0.86 | The Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~haiku-high] c6 p=0.99 | Specifying an integer for the retries parameter of request() changes the number of retries urllib3 performs.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~haiku-high] c9 p=1.00 | A Retry instance gives more granular control over retries in urllib3.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~haiku-high] c13 p=0.76 | A pool-level retry policy set on PoolManager can be overridden by specifying retries for request().
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~opus-high] c6 p=1.00 | Specifying an integer for the retries parameter of urllib3's request() changes the number of retries.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~opus-high] c17 p=0.69 | A urllib3 PoolManager-level retry policy can be overridden by specifying retries to request().
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~sonnet-medium] c6 p=1.00 | Specifying an integer as the retries parameter of urllib3's request() changes the number of retries.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~sonnet-medium] c11 p=0.84 | The urllib3 Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [httpx-timeou <- using-timeouts~flash-3.6-high] c1 p=0.55 | Timeouts allow controlling how long requests are allowed to run before being aborted.
+        prem-sentence: There are four different types of timeouts that may occur.
+  [httpx-timeou <- using-timeouts~flash-3.6-high] c4 p=1.00 | A Timeout instance allows specifying separate connect and read timeouts.
+        prem-sentence: These are connect, read, write, and pool timeouts.
+  [httpx-timeou <- using-timeouts~sonnet-medium] c5 p=0.91 | A urllib3 Timeout instance lets you specify separate connect and read timeouts.
+        prem-sentence: HTTPX also allows you to specify the timeout behavior in more fine grained detail.
+
+## cross kept, DeBERTa-v3-large-mnli-fever-anli-ling-wanli local, window 400
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c1 p=1.00 | In urllib3 2.8.0, an issue where the TLS configuration for HTTPS proxies could be ignored or overridden was fi
+        prem-sentence: Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c2 p=0.87 | In urllib3 2.8.0, an issue where `HTTPResponse.stream()` could buffer a chunk-size line of unbounded length in
+        prem-sentence: Fixed HTTPResponse.drain_conn() to discard unread response data in 64 KiB chunks (same as the default amt when doing HTTPResponse.stream(...)).
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c5 p=1.00 | urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c6 p=0.97 | Configurations relying on HTTPS proxy TLS configuration being ignored or overridden by destination settings ma
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c8 p=0.96 | In urllib3, proxy client certificates are configured in `proxy_ssl_context`.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c10 p=1.00 | In urllib3, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c11 p=1.00 | In urllib3, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c1 p=0.96 | In urllib3 2.8.0, a security issue was fixed where the TLS configuration for HTTPS proxies could be ignored or
+        prem-sentence: Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c11 p=1.00 | urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c12 p=0.99 | Configurations of urllib3 relying on HTTPS proxy TLS configuration being ignored or overridden by destination 
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c15 p=1.00 | In urllib3 2.8.0, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c16 p=1.00 | In urllib3 2.8.0, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS set
+  [changelog-2- <- changelog-2-8-0-bugfixes~flash-3.6-high] c23 p=0.99 | `HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshak
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c27 p=0.88 | In urllib3 2.8.0, HTTPSConnection.connect() was fixed so that it no longer overrides ProxyConfig.ssl_context's
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [changelog-2- <- changelog-2-8-0-bugfixes~sonnet-medium] c28 p=0.99 | HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes
+        prem-sentence: Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  [configuring- <- retrying-requests~flash-3.6-high] c6 p=0.99 | Specifying an integer for the retries parameter changes the number of retries in urllib3.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~flash-3.6-high] c9 p=0.99 | A Retry instance can be used for more granular control of retries in urllib3.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c6 p=0.91 | The number of retries in urllib3 can be changed by specifying an integer.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c9 p=0.90 | A Retry instance can be used in urllib3 for more granular control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c10 p=0.97 | The Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~haiku-high] c6 p=0.99 | Specifying an integer for the retries parameter of request() changes the number of retries urllib3 performs.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~haiku-high] c9 p=0.99 | A Retry instance gives more granular control over retries in urllib3.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~opus-high] c6 p=0.99 | Specifying an integer for the retries parameter of urllib3's request() changes the number of retries.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~opus-high] c11 p=0.96 | A urllib3 Retry instance can be used for more granular control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~sonnet-medium] c6 p=0.99 | Specifying an integer as the retries parameter of urllib3's request() changes the number of retries.
+        prem-sentence: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries.
+  [configuring- <- retrying-requests~sonnet-medium] c11 p=0.96 | The urllib3 Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [httpx-timeou <- using-timeouts~flash-3.6-high] c4 p=1.00 | A Timeout instance allows specifying separate connect and read timeouts.
+        prem-sentence: These are connect, read, write, and pool timeouts.
+
+## cross kept, MiniCheck-DeBERTa-v3-Large local, window 400
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c8 p=0.82 | In urllib3, proxy client certificates are configured in `proxy_ssl_context`.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~flash-3.6-high] c10 p=0.64 | In urllib3, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [changelog-2- <- changelog-2-8-0-security~sonnet-medium] c15 p=0.51 | In urllib3 2.8.0, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+        prem-sentence: HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as
+  [configuring- <- retrying-requests~flash-lite-3.6-high] c10 p=0.57 | The Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons
+  [configuring- <- retrying-requests~sonnet-medium] c11 p=0.56 | The urllib3 Retry class allows far greater control of how requests are retried.
+        prem-sentence: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a respons

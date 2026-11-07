@@ -1,0 +1,52 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "By default, Retry does not sleep between retry attempts.",
+      "citation": "By default, `Retry` does not sleep between retry attempts",
+      "type": "fact"
+    },
+    {
+      "id": "c2",
+      "claim": "The default backoff_factor value for Retry is 0.",
+      "citation": "backoff_factor=0",
+      "type": "fact"
+    },
+    {
+      "id": "c3",
+      "claim": "Retry respects delays requested by the server when a response includes a Retry-After header.",
+      "citation": "respect delays requested by the server when a response includes a `Retry-After` header",
+      "type": "fact"
+    },
+    {
+      "id": "c4",
+      "claim": "A non-zero backoff_factor can be set to introduce exponential delays between retries when no server-requested delay is applied.",
+      "citation": "you can set a non-zero `backoff_factor` to introduce exponential delays between retries",
+      "type": "fact"
+    },
+    {
+      "id": "c5",
+      "claim": "There is no delay before the second attempt (the first retry) in Retry.",
+      "citation": "with no delay before the second attempt (the first retry)",
+      "type": "fact"
+    },
+    {
+      "id": "c6",
+      "claim": "A backoff_factor of 0.5 yields retry sleeps of 0.0s, 1.0s, 2.0s, etc., up to backoff_max.",
+      "citation": "a `backoff_factor` of `0.5` yields retry sleeps of `0.0s`, `1.0s`, `2.0s`, etc., up to `backoff_max`",
+      "type": "fact"
+    },
+    {
+      "id": "c7",
+      "claim": "Adding backoff_jitter introduces random variance.",
+      "citation": "Adding `backoff_jitter` introduces random variance",
+      "type": "fact"
+    },
+    {
+      "id": "c8",
+      "claim": "backoff_jitter avoids the \"thundering herd\" problem where many clients retry in lockstep against a server.",
+      "citation": "to avoid the \"thundering herd\" problem where many clients retry in lockstep against a server",
+      "type": "fact"
+    }
+  ]
+}

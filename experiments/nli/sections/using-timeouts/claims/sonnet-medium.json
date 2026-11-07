@@ -1,0 +1,9 @@
+{"claims": [
+  {"id": "c1", "claim": "Timeouts in urllib3 control how long requests are allowed to run before being aborted.", "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.", "type": "fact"},
+  {"id": "c2", "claim": "Timeouts in urllib3 are specified in seconds.", "citation": "how long (in seconds) requests are allowed to run", "type": "fact"},
+  {"id": "c3", "claim": "In simple cases, a timeout can be specified as a float to urllib3's request().", "citation": "In simple cases, you can specify a timeout as a `float` to `request()`", "type": "fact"},
+  {"id": "c4", "claim": "A urllib3.Timeout instance can be used for more granular control over timeouts.", "citation": "For more granular control you can use a `Timeout` instance", "type": "fact"},
+  {"id": "c5", "claim": "A urllib3 Timeout instance lets you specify separate connect and read timeouts.", "citation": "which lets you specify separate connect and read timeouts", "type": "fact"},
+  {"id": "c6", "claim": "A timeout can be specified at the urllib3 PoolManager level so that all requests are subject to the same timeout.", "citation": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level", "type": "fact"},
+  {"id": "c7", "claim": "A pool-level timeout set on a urllib3 PoolManager can be overridden by specifying timeout to request().", "citation": "You still override this pool-level timeout by specifying `timeout` to `request()`.", "type": "fact"}
+]}

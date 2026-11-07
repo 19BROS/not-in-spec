@@ -1,0 +1,159 @@
+{
+  "chunk_id": "242b1c7250019f17",
+  "slug": "changelog-2-8-0-bugfixes",
+  "tokenizer": "cross-encoder/nli-deberta-v3-base",
+  "max_tokens": 400,
+  "overlap_sentences": 1,
+  "pair_limit": 512,
+  "sentences": [
+    {
+      "i": 0,
+      "block": 0,
+      "text": "Fixed response header handling to replace obsolete folded header lines (obs-fold) with spaces in accordance with RFC 9112, preventing raw CRLF sequences from appearing in header values such as Set-Cookie."
+    },
+    {
+      "i": 1,
+      "block": 1,
+      "text": "Fixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True."
+    },
+    {
+      "i": 2,
+      "block": 1,
+      "text": "Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0."
+    },
+    {
+      "i": 3,
+      "block": 2,
+      "text": "Changed behavior of the default ConnectionPool.pool initialization."
+    },
+    {
+      "i": 4,
+      "block": 2,
+      "text": "LifoQueue is now resolved from the queue module after the ConnectionPool is instantiated instead of using the default cached QueueCls class property."
+    },
+    {
+      "i": 5,
+      "block": 2,
+      "text": "This is done because sometimes the queue.LifoQueue is monkey-patched late in the program, such as by gevent."
+    },
+    {
+      "i": 6,
+      "block": 3,
+      "text": "Raised UnrewindableBodyError instead of ValueError when retrying a request whose body had tell() but not seek()."
+    },
+    {
+      "i": 7,
+      "block": 4,
+      "text": "Decoded percent-encoded SOCKS proxy credentials before authenticating with the proxy server."
+    },
+    {
+      "i": 8,
+      "block": 5,
+      "text": "Fixed HTTPResponse.drain_conn() to discard unread response data in 64 KiB chunks (same as the default amt when doing HTTPResponse.stream(...))."
+    },
+    {
+      "i": 9,
+      "block": 6,
+      "text": "Fixed is_ipaddress() to detect non-standard IPv4 forms accepted by socket.connect, such as hex (0x7f000001), octal (0177.0.0.1), and decimal integers (2130706433), ensuring SSL certificate verification uses the correct mode for these addresses."
+    },
+    {
+      "i": 10,
+      "block": 7,
+      "text": "Fixed HTTPConnectionPool.urlopen raising a misleading FullPoolError instead of ValueError when called with an invalid timeout argument on a pool created with block=True."
+    },
+    {
+      "i": 11,
+      "block": 8,
+      "text": "Fixed port-zero handling to preserve explicit :0 values instead of substituting the default ports 80 or 443 in URL parsing, pool selection, proxy configuration, connection_from_url(), and HTTP/2 request authority."
+    },
+    {
+      "i": 12,
+      "block": 9,
+      "text": "Fixed a bug where PoolManager passed the assert_hostname and assert_fingerprint parameters to HTTP connection pools."
+    },
+    {
+      "i": 13,
+      "block": 10,
+      "text": "Fixed HTTPConnectionPool.urlopen() and HTTP proxy forwarding to strip URL fragments from absolute request targets before sending requests."
+    },
+    {
+      "i": 14,
+      "block": 11,
+      "text": "Added safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers."
+    },
+    {
+      "i": 15,
+      "block": 11,
+      "text": "This change affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix; those on newer Python versions should upgrade to 3.13.14+ or 3.14.5+ to get the same security fixes."
+    },
+    {
+      "i": 16,
+      "block": 12,
+      "text": "Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy."
+    },
+    {
+      "i": 17,
+      "block": 12,
+      "text": "HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target."
+    },
+    {
+      "i": 18,
+      "block": 13,
+      "text": "Fixed URL parsing to more strictly enforce RFC 3986 host syntax, rejecting invalid host input such as raw spaces and control characters, malformed percent-encodings, and percent-encoded control characters in HTTP(S) hosts and IPv6 zone identifiers, including proxy CONNECT tunnel targets."
+    },
+    {
+      "i": 19,
+      "block": 13,
+      "text": "Host normalization now also follows RFC 3986 normalization rules for percent-encoded octets by decoding percent-encoded unreserved characters and uppercasing the hexadecimal digits of retained percent-encoded octets."
+    },
+    {
+      "i": 20,
+      "block": 14,
+      "text": "Fixed an AttributeError on Python built with OpenSSL 4+, where ssl.PROTOCOL_TLSv1 no longer exists."
+    },
+    {
+      "i": 21,
+      "block": 15,
+      "text": "Fixed urllib3.contrib.pyopenssl to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding DeprecationWarning raised by pyOpenSSL 26.3.0+."
+    },
+    {
+      "i": 22,
+      "block": 16,
+      "text": "Fixed handling of HTTP 303 redirects for requests with chunked or file-like bodies."
+    },
+    {
+      "i": 23,
+      "block": 17,
+      "text": "Fixed assert_fingerprint() to raise SSLError instead of binascii.Error when a fingerprint has a supported length but contains non-hexadecimal characters."
+    }
+  ],
+  "windows": [
+    {
+      "id": "242b1c7250019f17:s0-s11",
+      "sentences": [
+        0,
+        11
+      ],
+      "tokens": 390,
+      "text": "Fixed response header handling to replace obsolete folded header lines (obs-fold) with spaces in accordance with RFC 9112, preventing raw CRLF sequences from appearing in header values such as Set-Cookie.\n\nFixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True. Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.\n\nChanged behavior of the default ConnectionPool.pool initialization. LifoQueue is now resolved from the queue module after the ConnectionPool is instantiated instead of using the default cached QueueCls class property. This is done because sometimes the queue.LifoQueue is monkey-patched late in the program, such as by gevent.\n\nRaised UnrewindableBodyError instead of ValueError when retrying a request whose body had tell() but not seek().\n\nDecoded percent-encoded SOCKS proxy credentials before authenticating with the proxy server.\n\nFixed HTTPResponse.drain_conn() to discard unread response data in 64 KiB chunks (same as the default amt when doing HTTPResponse.stream(...)).\n\nFixed is_ipaddress() to detect non-standard IPv4 forms accepted by socket.connect, such as hex (0x7f000001), octal (0177.0.0.1), and decimal integers (2130706433), ensuring SSL certificate verification uses the correct mode for these addresses.\n\nFixed HTTPConnectionPool.urlopen raising a misleading FullPoolError instead of ValueError when called with an invalid timeout argument on a pool created with block=True.\n\nFixed port-zero handling to preserve explicit :0 values instead of substituting the default ports 80 or 443 in URL parsing, pool selection, proxy configuration, connection_from_url(), and HTTP/2 request authority."
+    },
+    {
+      "id": "242b1c7250019f17:s11-s20",
+      "sentences": [
+        11,
+        20
+      ],
+      "tokens": 369,
+      "text": "Fixed port-zero handling to preserve explicit :0 values instead of substituting the default ports 80 or 443 in URL parsing, pool selection, proxy configuration, connection_from_url(), and HTTP/2 request authority.\n\nFixed a bug where PoolManager passed the assert_hostname and assert_fingerprint parameters to HTTP connection pools.\n\nFixed HTTPConnectionPool.urlopen() and HTTP proxy forwarding to strip URL fragments from absolute request targets before sending requests.\n\nAdded safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers. This change affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix; those on newer Python versions should upgrade to 3.13.14+ or 3.14.5+ to get the same security fixes.\n\nFixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.\n\nFixed URL parsing to more strictly enforce RFC 3986 host syntax, rejecting invalid host input such as raw spaces and control characters, malformed percent-encodings, and percent-encoded control characters in HTTP(S) hosts and IPv6 zone identifiers, including proxy CONNECT tunnel targets. Host normalization now also follows RFC 3986 normalization rules for percent-encoded octets by decoding percent-encoded unreserved characters and uppercasing the hexadecimal digits of retained percent-encoded octets.\n\nFixed an AttributeError on Python built with OpenSSL 4+, where ssl.PROTOCOL_TLSv1 no longer exists."
+    },
+    {
+      "id": "242b1c7250019f17:s20-s23",
+      "sentences": [
+        20,
+        23
+      ],
+      "tokens": 118,
+      "text": "Fixed an AttributeError on Python built with OpenSSL 4+, where ssl.PROTOCOL_TLSv1 no longer exists.\n\nFixed urllib3.contrib.pyopenssl to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding DeprecationWarning raised by pyOpenSSL 26.3.0+.\n\nFixed handling of HTTP 303 redirects for requests with chunked or file-like bodies.\n\nFixed assert_fingerprint() to raise SSLError instead of binascii.Error when a fingerprint has a supported length but contains non-hexadecimal characters."
+    }
+  ]
+}

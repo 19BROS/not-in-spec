@@ -1,0 +1,10 @@
+{
+  "_comment": "Reconstructed: this run happened before run tracking existed (nli_run.py v1). No labels, no negatives, no context.",
+  "started": "2026-11-07T13:30",
+  "models": ["cross-encoder/nli-deberta-v3-base"],
+  "contexts": ["none"],
+  "sections": "all",
+  "batch": 16,
+  "git": {"commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048", "branch": "feat/nli-and-extractors-testing", "dirty_experiment_files": true},
+  "seconds": {"cross-encoder/nli-deberta-v3-base": {"none": 97.3}}
+}

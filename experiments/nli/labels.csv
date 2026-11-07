@@ -1,0 +1,351 @@
+section,extractor,claim_id,gold,borderline,annotator,note
+retrying-requests,flash-3.6-high,c1,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c2,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c3,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c4,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c5,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c6,entailment,,claude-draft,"""for the retries parameter"" comes from the previous sentence"
+retrying-requests,flash-3.6-high,c7,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c8,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c9,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c10,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c11,entailment,,claude-draft,
+retrying-requests,flash-3.6-high,c12,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c1,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c2,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c3,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c4,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c5,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c6,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c7,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c8,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c9,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c10,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c11,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c12,entailment,,claude-draft,
+retrying-requests,flash-lite-3.6-high,c13,entailment,,claude-draft,
+retrying-requests,haiku-high,c1,entailment,,claude-draft,
+retrying-requests,haiku-high,c2,entailment,,claude-draft,
+retrying-requests,haiku-high,c3,entailment,,claude-draft,"""number of retries"" narrows ""control the retries"""
+retrying-requests,haiku-high,c4,entailment,,claude-draft,
+retrying-requests,haiku-high,c5,entailment,,claude-draft,
+retrying-requests,haiku-high,c6,entailment,,claude-draft,
+retrying-requests,haiku-high,c7,entailment,,claude-draft,
+retrying-requests,haiku-high,c8,entailment,,claude-draft,
+retrying-requests,haiku-high,c9,entailment,,claude-draft,
+retrying-requests,haiku-high,c10,entailment,yes,claude-draft,Retry is the means only by paragraph order; the actual config is in code
+retrying-requests,haiku-high,c11,entailment,,claude-draft,
+retrying-requests,haiku-high,c12,entailment,,claude-draft,
+retrying-requests,haiku-high,c13,entailment,,claude-draft,
+retrying-requests,opus-high,c1,entailment,,claude-draft,
+retrying-requests,opus-high,c2,entailment,,claude-draft,
+retrying-requests,opus-high,c3,entailment,,claude-draft,
+retrying-requests,opus-high,c4,entailment,,claude-draft,
+retrying-requests,opus-high,c5,entailment,,claude-draft,
+retrying-requests,opus-high,c6,entailment,,claude-draft,
+retrying-requests,opus-high,c7,entailment,,claude-draft,
+retrying-requests,opus-high,c8,entailment,,claude-draft,
+retrying-requests,opus-high,c9,entailment,,claude-draft,
+retrying-requests,opus-high,c10,entailment,,claude-draft,
+retrying-requests,opus-high,c11,entailment,,claude-draft,
+retrying-requests,opus-high,c12,entailment,yes,claude-draft,Retry is the means only by paragraph order; the actual config is in code
+retrying-requests,opus-high,c13,entailment,yes,claude-draft,"prose says ""you can also disable exceptions"", attributing it to Retry relies on paragraph order"
+retrying-requests,opus-high,c14,entailment,yes,claude-draft,same as c13
+retrying-requests,opus-high,c15,entailment,,claude-draft,
+retrying-requests,opus-high,c16,entailment,,claude-draft,
+retrying-requests,opus-high,c17,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c1,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c2,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c3,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c4,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c5,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c6,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c7,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c8,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c9,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c10,neutral,,claude-draft,"""passed as the retries parameter"" is only in code"
+retrying-requests,sonnet-medium,c11,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c12,entailment,yes,claude-draft,Retry is the means only by paragraph order; the actual config is in code
+retrying-requests,sonnet-medium,c13,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c14,entailment,,claude-draft,
+retrying-requests,sonnet-medium,c15,entailment,,claude-draft,
+retrying-requests,negatives-handmade,n1,contradiction,,claude-draft,number changed 3 -> 5
+retrying-requests,negatives-handmade,n2,contradiction,,claude-draft,number changed 3 -> 10
+retrying-requests,negatives-handmade,n3,contradiction,,claude-draft,
+retrying-requests,negatives-handmade,n4,contradiction,,claude-draft,
+retrying-requests,negatives-handmade,n5,contradiction,,claude-draft,negation
+retrying-requests,negatives-handmade,n6,neutral,,claude-draft,prose only mentions idempotent requests
+retrying-requests,negatives-handmade,n7,contradiction,,claude-draft,
+retrying-requests,negatives-handmade,n8,neutral,,claude-draft,unrelated fact
+retrying-requests,negatives-handmade,n9,neutral,,claude-draft,backoff is not mentioned in this section
+configuring-exponential-backoff,flash-3.6-high,c1,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c2,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c3,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c4,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c5,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c6,entailment,,claude-draft,
+configuring-exponential-backoff,flash-3.6-high,c7,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c1,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c2,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c3,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c4,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c5,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c6,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c7,entailment,,claude-draft,
+configuring-exponential-backoff,flash-lite-3.6-high,c8,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c1,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c2,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c3,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c4,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c5,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c6,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c7,entailment,,claude-draft,"unit ""seconds"" follows the formula, which is code and not in any window"
+configuring-exponential-backoff,haiku-high,c8,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c9,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c10,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c11,entailment,,claude-draft,
+configuring-exponential-backoff,haiku-high,c12,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c1,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c2,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c3,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c4,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c5,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c6,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c7,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c8,entailment,,claude-draft,
+configuring-exponential-backoff,opus-high,c9,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c1,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c2,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c3,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c4,entailment,yes,claude-draft,"vague; prose only says ""(see respect_retry_after_header)"""
+configuring-exponential-backoff,sonnet-medium,c5,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c6,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c7,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c8,neutral,,claude-draft,formula is only in a code block (dropped by the citation check)
+configuring-exponential-backoff,sonnet-medium,c9,entailment,,claude-draft,"unit ""seconds"" follows the formula, which is code and not in any window"
+configuring-exponential-backoff,sonnet-medium,c10,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c11,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c12,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c13,entailment,,claude-draft,
+configuring-exponential-backoff,sonnet-medium,c14,entailment,yes,claude-draft,"""to the retry delays"" is a small addition"
+configuring-exponential-backoff,sonnet-medium,c15,entailment,,claude-draft,
+configuring-exponential-backoff,negatives-handmade,n1,contradiction,,claude-draft,negation
+configuring-exponential-backoff,negatives-handmade,n2,contradiction,,claude-draft,number changed 0 -> 0.5
+configuring-exponential-backoff,negatives-handmade,n3,contradiction,,claude-draft,
+configuring-exponential-backoff,negatives-handmade,n4,contradiction,,claude-draft,number changed 0.0s -> 0.5s
+configuring-exponential-backoff,negatives-handmade,n5,contradiction,,claude-draft,negation
+configuring-exponential-backoff,negatives-handmade,n6,contradiction,,claude-draft,exponential -> linear
+configuring-exponential-backoff,negatives-handmade,n7,neutral,,claude-draft,true in the real urllib3 but not stated in the section (tests outside knowledge)
+configuring-exponential-backoff,negatives-handmade,n8,contradiction,,claude-draft,
+configuring-exponential-backoff,negatives-handmade,n9,contradiction,yes,claude-draft,"prose says it ""can overwhelm"", not literally ""not recommended"""
+using-timeouts,negatives-handmade,n1,contradiction,,claude-draft,unit changed
+using-timeouts,negatives-handmade,n2,contradiction,,claude-draft,
+using-timeouts,negatives-handmade,n3,contradiction,,claude-draft,negation
+using-timeouts,negatives-handmade,n4,contradiction,,claude-draft,
+using-timeouts,negatives-handmade,n5,neutral,,claude-draft,"3.0 appears only in code, and as an example, not a default"
+using-timeouts,negatives-handmade,n6,neutral,,claude-draft,only a code comment mentions the error (MaxRetryError caused by ReadTimeoutError)
+changelog-2-8-0-security,negatives-handmade,n1,contradiction,,claude-draft,severity changed
+changelog-2-8-0-security,negatives-handmade,n2,contradiction,,claude-draft,negation (no longer -> still)
+changelog-2-8-0-security,negatives-handmade,n3,contradiction,,claude-draft,parameter swapped
+changelog-2-8-0-security,negatives-handmade,n4,contradiction,,claude-draft,
+changelog-2-8-0-security,negatives-handmade,n5,neutral,,claude-draft,consequence not stated
+changelog-2-8-0-security,negatives-handmade,n6,contradiction,yes,claude-draft,"version changed; section says 2.8.0, never mentions 2.7.0"
+changelog-2-8-0-bugfixes,negatives-handmade,n1,contradiction,,claude-draft,number changed
+changelog-2-8-0-bugfixes,negatives-handmade,n2,contradiction,,claude-draft,future error stated as current
+changelog-2-8-0-bugfixes,negatives-handmade,n3,contradiction,,claude-draft,
+changelog-2-8-0-bugfixes,negatives-handmade,n4,contradiction,yes,claude-draft,"3.13 users are told to upgrade Python, not said to be affected"
+changelog-2-8-0-bugfixes,negatives-handmade,n5,contradiction,,claude-draft,swapped
+changelog-2-8-0-bugfixes,negatives-handmade,n6,neutral,,claude-draft,what the fix does is not stated
+changelog-2-8-0-bugfixes,negatives-handmade,n7,contradiction,,claude-draft,swapped; item is in the last NLI window
+httpx-timeouts-fine-tuning,negatives-handmade,n1,contradiction,,claude-draft,number changed
+httpx-timeouts-fine-tuning,negatives-handmade,n2,contradiction,,claude-draft,exception swapped
+httpx-timeouts-fine-tuning,negatives-handmade,n3,contradiction,,claude-draft,definition swapped with write
+httpx-timeouts-fine-tuning,negatives-handmade,n4,contradiction,,claude-draft,
+httpx-timeouts-fine-tuning,negatives-handmade,n5,neutral,,claude-draft,"true for httpx but stated in the page intro, a different section (outside knowledge)"
+httpx-timeouts-fine-tuning,negatives-handmade,n6,neutral,,claude-draft,"60s is only in the code example, and not a default"
+using-timeouts,sonnet-medium,c1,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c2,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c3,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c4,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c5,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c6,entailment,,claude-draft,
+using-timeouts,sonnet-medium,c7,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c1,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c2,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c3,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c4,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c5,entailment,,claude-draft,
+using-timeouts,flash-3.6-high,c6,entailment,,claude-draft,
+using-timeouts,sonnet-medium-outside,o1,neutral,,claude-draft,
+using-timeouts,sonnet-medium-outside,o2,neutral,,claude-draft,
+using-timeouts,sonnet-medium-outside,o3,neutral,,claude-draft,
+using-timeouts,sonnet-medium-outside,b1,contradiction,,claude-draft,section says it can be overridden
+using-timeouts,sonnet-medium-outside,b2,neutral,,claude-draft,
+using-timeouts,sonnet-medium-outside,b3,neutral,,claude-draft,purpose not stated
+using-timeouts,flash-3.6-high-outside,o1,neutral,,claude-draft,return type only in code
+using-timeouts,flash-3.6-high-outside,o2,neutral,,claude-draft,only a code comment
+using-timeouts,flash-3.6-high-outside,o3,neutral,,claude-draft,PoolManager(timeout=Timeout(...)) only in code
+using-timeouts,flash-3.6-high-outside,b1,neutral,,claude-draft,'can' -> 'must'
+using-timeouts,flash-3.6-high-outside,b2,neutral,yes,claude-draft,"'must'; the Timeout instance is the only stated way, but not said to be required"
+using-timeouts,flash-3.6-high-outside,b3,entailment,yes,claude-draft,pool-level timeout for all requests + per-request override = a default
+httpx-timeouts-fine-tuning,sonnet-medium,c1,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c2,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c3,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c4,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c5,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c6,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c7,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c8,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c9,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c10,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c11,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c12,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c13,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium,c14,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c1,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c2,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c3,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c4,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c5,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c6,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c7,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c8,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c9,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c10,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high,c11,entailment,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium-outside,o1,neutral,,claude-draft,only in code
+httpx-timeouts-fine-tuning,sonnet-medium-outside,o2,neutral,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium-outside,o3,neutral,,claude-draft,
+httpx-timeouts-fine-tuning,sonnet-medium-outside,b1,neutral,yes,claude-draft,"connect timeout is about establishing the connection, not completing the request"
+httpx-timeouts-fine-tuning,sonnet-medium-outside,b2,neutral,,claude-draft,purpose not stated
+httpx-timeouts-fine-tuning,sonnet-medium-outside,b3,neutral,yes,claude-draft,'only' not stated
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,o1,neutral,,claude-draft,only in code
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,o2,neutral,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,o3,neutral,,claude-draft,
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,b1,entailment,yes,claude-draft,'There are four different types ... These are' reads as exactly four
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,b2,contradiction,yes,claude-draft,chunk vs entire body; could be neutral
+httpx-timeouts-fine-tuning,flash-3.6-high-outside,b3,neutral,yes,claude-draft,"limits = max connections, only 'related' to the pool timeout"
+changelog-2-8-0-security,sonnet-medium,c1,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c2,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c3,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c4,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c5,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c6,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c7,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c8,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c9,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c10,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c11,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c12,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c13,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c14,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c15,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium,c16,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c1,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c2,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c3,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c4,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c5,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c6,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c7,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c8,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c9,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c10,entailment,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high,c11,entailment,,claude-draft,
+changelog-2-8-0-security,sonnet-medium-outside,o1,entailment,yes,claude-draft,outside claim that IS stated: proxy CA/client certs go in proxy_ssl_context
+changelog-2-8-0-security,sonnet-medium-outside,o2,neutral,yes,claude-draft,"implied by read_chunked() next to stream(), not stated"
+changelog-2-8-0-security,sonnet-medium-outside,o3,neutral,yes,claude-draft,"implied by 'Chunked Deflate streaming', not stated"
+changelog-2-8-0-security,sonnet-medium-outside,b1,neutral,,claude-draft,'may require' -> 'requires all'
+changelog-2-8-0-security,sonnet-medium-outside,b2,neutral,,claude-draft,consequence not stated
+changelog-2-8-0-security,sonnet-medium-outside,b3,neutral,,claude-draft,'could' -> 'always'
+changelog-2-8-0-security,flash-3.6-high-outside,o1,neutral,,claude-draft,class not named
+changelog-2-8-0-security,flash-3.6-high-outside,o2,neutral,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high-outside,o3,neutral,,claude-draft,
+changelog-2-8-0-security,flash-3.6-high-outside,b1,neutral,,claude-draft,'could' -> 'always'
+changelog-2-8-0-security,flash-3.6-high-outside,b2,neutral,,claude-draft,generalized from forwarding proxy connections to all HTTPS
+changelog-2-8-0-security,flash-3.6-high-outside,b3,contradiction,yes,claude-draft,section says 'or'
+changelog-2-8-0-bugfixes,sonnet-medium,c1,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c2,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c3,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c4,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c5,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c6,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c7,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c8,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c9,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c10,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c11,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c12,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c13,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c14,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c15,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c16,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c17,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c18,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c19,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c20,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c21,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c22,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c23,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c24,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c25,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c26,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c27,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c28,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c29,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c30,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c31,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c32,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c33,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c34,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c35,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c36,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c37,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c38,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c39,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium,c40,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c1,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c2,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c3,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c4,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c5,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c6,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c7,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c8,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c9,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c10,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c11,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c12,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c13,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c14,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c15,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c16,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c17,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c18,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c19,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c20,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c21,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c22,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c23,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c24,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c25,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c26,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c27,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c28,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c29,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c30,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c31,entailment,yes,claude-draft,warning is tied to the old APIs only implicitly
+changelog-2-8-0-bugfixes,flash-3.6-high,c32,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high,c33,entailment,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium-outside,o1,neutral,yes,claude-draft,amt is implied to be a stream() parameter; its meaning is not stated
+changelog-2-8-0-bugfixes,sonnet-medium-outside,o2,neutral,,claude-draft,generalized to redirects
+changelog-2-8-0-bugfixes,sonnet-medium-outside,o3,neutral,,claude-draft,
+changelog-2-8-0-bugfixes,sonnet-medium-outside,b1,neutral,,claude-draft,"conditions (HTTPS proxy, use_forwarding_for_https=True) dropped"
+changelog-2-8-0-bugfixes,sonnet-medium-outside,b2,entailment,yes,claude-draft,'sometimes ... such as by gevent' -> 'because gevent'
+changelog-2-8-0-bugfixes,sonnet-medium-outside,b3,neutral,,claude-draft,consequence not stated
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o1,neutral,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o2,neutral,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o3,neutral,,claude-draft,
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o4,neutral,,claude-draft,mechanism not stated
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o5,neutral,,claude-draft,condition block=True dropped
+changelog-2-8-0-bugfixes,flash-3.6-high-outside,o6,neutral,,claude-draft,condition 'supported length' dropped

@@ -1,0 +1,78 @@
+{
+  "_comment": "Hand-simulated Sphinx reader output (SPEC 6.1). Text copied from docs/user-guide.rst; :meth:/:class: references rendered as Sphinx displays them, in backticks. Source typo 'You still override' kept verbatim.",
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "docs/user-guide.rst",
+    "lines": [
+      476,
+      543
+    ]
+  },
+  "breadcrumb": [
+    "User Guide",
+    "Using Timeouts"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a `float` to `request()`:",
+      "refs": [
+        {
+          "role": "py:meth",
+          "target": "urllib3.PoolManager.request",
+          "display": "request()"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=4.0\n)\n\nprint(type(resp))\n# <class \"urllib3.response.HTTPResponse\">\n\n# This request will take more time to process than timeout.\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=2.5\n)\n# MaxRetryError caused by ReadTimeoutError"
+    },
+    {
+      "type": "paragraph",
+      "text": "For more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:",
+      "refs": [
+        {
+          "role": "py:class",
+          "target": "util.timeout.Timeout",
+          "display": "Timeout"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0)\n)\n\nprint(type(resp))\n# <urllib3.response.HTTPResponse>\n\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n# MaxRetryError caused by ReadTimeoutError"
+    },
+    {
+      "type": "paragraph",
+      "text": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:",
+      "refs": [
+        {
+          "role": "py:class",
+          "target": "urllib3.poolmanager.PoolManager",
+          "display": "PoolManager"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nhttp = urllib3.PoolManager(timeout=3.0)\n\nhttp = urllib3.PoolManager(\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)"
+    },
+    {
+      "type": "paragraph",
+      "text": "You still override this pool-level timeout by specifying `timeout` to `request()`.",
+      "refs": [
+        {
+          "role": "py:meth",
+          "target": "urllib3.PoolManager.request",
+          "display": "request()"
+        }
+      ]
+    }
+  ]
+}

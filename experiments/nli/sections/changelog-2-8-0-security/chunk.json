@@ -1,0 +1,24 @@
+{
+  "chunk_id": "5713229ddb2d40bf",
+  "slug": "changelog-2-8-0-security",
+  "breadcrumb": [
+    "Changelog",
+    "2.8.0 (2026-09-15)",
+    "Security"
+  ],
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "CHANGES.rst",
+    "lines": [
+      4,
+      28
+    ]
+  },
+  "components": [
+    "D"
+  ],
+  "tokens": 216,
+  "markdown": "### Security\n\nFixed the following security issues:\n\n- The TLS configuration for HTTPS proxies could be ignored or overridden. (High severity, GHSA-8988-9cw3-xx77)\n\n- `HTTPResponse.stream()` and `read_chunked()` could buffer a chunk-size line of unbounded length in memory. (High severity, GHSA-vxq7-64xx-v4gw)\n\n- Chunked Deflate streaming could enter an infinite loop. (Medium severity, GHSA-gh4c-6fx4-qh6g)\n\n> **Caution:** urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings. Configurations relying on that behavior may require changes.\n>\n> Configure proxy CA certificates and client certificates in `proxy_ssl_context`, and proxy identity checks with `proxy_assert_hostname` or `proxy_assert_fingerprint`. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.\n"
+}

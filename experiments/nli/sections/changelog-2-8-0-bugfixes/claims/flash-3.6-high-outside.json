@@ -1,0 +1,46 @@
+{
+  "claims": [
+    {
+      "id": "o1",
+      "claim": "urllib3.ProxyManager is a subclass of urllib3.PoolManager.",
+      "citation": "Fixed usage of `proxy_ssl_context` with `ProxyManager` when `use_forwarding_for_https=True`.",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o2",
+      "claim": "urllib3.contrib.pyopenssl includes the inject_into_urllib3() function for integrating PyOpenSSL with urllib3.",
+      "citation": "Fixed `urllib3.contrib.pyopenssl` to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding `DeprecationWarning` raised by pyOpenSSL 26.3.0+.",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o3",
+      "claim": "UnrewindableBodyError is an exception class defined in the urllib3.exceptions module.",
+      "citation": "Raised `UnrewindableBodyError` instead of `ValueError` when retrying a request whose body had `tell()` but not `seek()`.",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o4",
+      "claim": "HTTPResponse.drain_conn() discards unread response data by invoking HTTPResponse.stream() with a 64 KiB chunk size.",
+      "citation": "Fixed `HTTPResponse.drain_conn()` to discard unread response data in 64 KiB chunks (same as the default `amt` when doing `HTTPResponse.stream(...)`).",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "o5",
+      "claim": "HTTPConnectionPool.urlopen raises a ValueError whenever it is called with an invalid timeout argument.",
+      "citation": "Fixed `HTTPConnectionPool.urlopen` raising a misleading `FullPoolError` instead of `ValueError` when called with an invalid `timeout` argument on a pool created with `block=True`.",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "o6",
+      "claim": "assert_fingerprint() raises an SSLError whenever a fingerprint contains non-hexadecimal characters.",
+      "citation": "Fixed `assert_fingerprint()` to raise `SSLError` instead of `binascii.Error` when a fingerprint has a supported length but contains non-hexadecimal characters.",
+      "type": "fact",
+      "kind": "beyond"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "chunk_id": "91e91080e7a6a478",
+  "slug": "retrying-requests",
+  "breadcrumb": [
+    "User Guide",
+    "Retrying Requests"
+  ],
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "docs/user-guide.rst",
+    "lines": [
+      544,
+      641
+    ]
+  },
+  "components": [
+    "C",
+    "D"
+  ],
+  "tokens": 580,
+  "markdown": "## Retrying Requests\n\nurllib3 can automatically retry idempotent requests. This same mechanism also handles redirects. You can control the retries using the `retries` parameter to `request()`. By default, urllib3 will retry requests 3 times and follow up to 3 redirects.\n\nTo change the number of retries just specify an integer:\n\n```python\nimport urllib3\n\nurllib3.request(\"GET\", \"https://httpbin.org/ip\", retries=10)\n```\n\nTo disable all retry and redirect logic specify `retries=False`:\n\n```python\nimport urllib3\n\nurllib3.request(\n    \"GET\",\n    \"https://nxdomain.example.com\",\n    retries=False\n)\n# NewConnectionError\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/1\",\n    retries=False\n)\n\nprint(resp.status)\n# 302\n```\n\nTo disable redirects but keep the retrying logic, specify `redirect=False`:\n\n```python\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/1\",\n    redirect=False\n)\n\nprint(resp.status)\n# 302\n```\n\nFor more granular control you can use a `Retry` instance. This class allows you far greater control of how requests are retried.\n\nFor example, to do a total of 3 retries, but limit to only 2 redirects:\n\n```python\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/3\",\n    retries=urllib3.Retry(3, redirect=2)\n)\n# MaxRetryError\n```\n\nYou can also disable exceptions for too many redirects and just return the `302` response:\n\n```python\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/3\",\n    retries=urllib3.Retry(\n        redirect=2,\n        raise_on_redirect=False\n    )\n)\n\nprint(resp.status)\n# 302\n```\n\nIf you want all requests to be subject to the same retry policy, you can specify the retry at the `PoolManager` level:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(retries=False)\n\nhttp = urllib3.PoolManager(\n    retries=urllib3.Retry(5, redirect=2)\n)\n```\n\nYou can still override this pool-level retry policy by specifying `retries` to `request()`.\n"
+}

@@ -1,0 +1,3 @@
+extend = "../../pyproject.toml"
+# generated chunk.md / prompt.md quote urllib3 code verbatim; ruff format would rewrite it
+extend-exclude = ["sections"]

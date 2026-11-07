@@ -1,0 +1,46 @@
+{
+  "claims": [
+    {
+      "id": "o1",
+      "claim": "An httpx.Timeout instance can be passed to the timeout parameter of httpx.Client.",
+      "citation": "You can configure the timeout behavior for any of these values...",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o2",
+      "claim": "HTTPX timeout exception classes inherit from httpx.TimeoutException.",
+      "citation": "If HTTPX is unable to connect within this time frame, a `ConnectTimeout` exception is raised.",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o3",
+      "claim": "HTTPX allows timeout values to be set to None to disable timeouts for network operations.",
+      "citation": "You can configure the timeout behavior for any of these values...",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "b1",
+      "claim": "HTTPX supports only four types of timeouts.",
+      "citation": "There are four different types of timeouts that may occur.",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b2",
+      "claim": "The HTTPX read timeout specifies the maximum duration to wait for an entire response body to be received.",
+      "citation": "The read timeout specifies the maximum duration to wait for a chunk of data to be received (for example, a chunk of the response body).",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b3",
+      "claim": "The limits argument is used to configure pool timeouts in HTTPX.",
+      "citation": "A related configuration here is the maximum number of allowable connections in the connection pool, which is configured by the `limits` argument.",
+      "type": "fact",
+      "kind": "beyond"
+    }
+  ]
+}

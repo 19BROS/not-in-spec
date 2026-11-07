@@ -1,0 +1,76 @@
+{
+  "chunk_id": "5713229ddb2d40bf",
+  "slug": "changelog-2-8-0-security",
+  "tokenizer": "cross-encoder/nli-deberta-v3-base",
+  "max_tokens": 400,
+  "overlap_sentences": 1,
+  "pair_limit": 512,
+  "sentences": [
+    {
+      "i": 0,
+      "block": 0,
+      "text": "Fixed the following security issues:"
+    },
+    {
+      "i": 1,
+      "block": 1,
+      "text": "The TLS configuration for HTTPS proxies could be ignored or overridden."
+    },
+    {
+      "i": 2,
+      "block": 1,
+      "text": "(High severity, GHSA-8988-9cw3-xx77)"
+    },
+    {
+      "i": 3,
+      "block": 2,
+      "text": "HTTPResponse.stream() and read_chunked() could buffer a chunk-size line of unbounded length in memory."
+    },
+    {
+      "i": 4,
+      "block": 2,
+      "text": "(High severity, GHSA-vxq7-64xx-v4gw)"
+    },
+    {
+      "i": 5,
+      "block": 3,
+      "text": "Chunked Deflate streaming could enter an infinite loop."
+    },
+    {
+      "i": 6,
+      "block": 3,
+      "text": "(Medium severity, GHSA-gh4c-6fx4-qh6g)"
+    },
+    {
+      "i": 7,
+      "block": 4,
+      "text": "urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings."
+    },
+    {
+      "i": 8,
+      "block": 4,
+      "text": "Configurations relying on that behavior may require changes."
+    },
+    {
+      "i": 9,
+      "block": 4,
+      "text": "Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint."
+    },
+    {
+      "i": 10,
+      "block": 4,
+      "text": "Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections."
+    }
+  ],
+  "windows": [
+    {
+      "id": "5713229ddb2d40bf:s0-s10",
+      "sentences": [
+        0,
+        10
+      ],
+      "tokens": 189,
+      "text": "Fixed the following security issues:\n\nThe TLS configuration for HTTPS proxies could be ignored or overridden. (High severity, GHSA-8988-9cw3-xx77)\n\nHTTPResponse.stream() and read_chunked() could buffer a chunk-size line of unbounded length in memory. (High severity, GHSA-vxq7-64xx-v4gw)\n\nChunked Deflate streaming could enter an infinite loop. (Medium severity, GHSA-gh4c-6fx4-qh6g)\n\nurllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings. Configurations relying on that behavior may require changes. Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections."
+    }
+  ]
+}

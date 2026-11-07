@@ -1,0 +1,62 @@
+{
+  "_comment": "Hand-simulated Sphinx reader output. docs/changelog.rst (title 'Changelog') includes ../CHANGES.rst. Bullet items are list_item blocks, the '.. caution::' directive is one admonition block with two paragraphs. Advisory links are rendered as their link text.",
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "CHANGES.rst",
+    "lines": [
+      4,
+      28
+    ]
+  },
+  "breadcrumb": [
+    "Changelog",
+    "2.8.0 (2026-09-15)",
+    "Security"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "Fixed the following security issues:"
+    },
+    {
+      "type": "list_item",
+      "text": "The TLS configuration for HTTPS proxies could be ignored or overridden. (High severity, GHSA-8988-9cw3-xx77)",
+      "refs": [
+        {
+          "role": "advisory",
+          "target": "https://github.com/urllib3/urllib3/security/advisories/GHSA-8988-9cw3-xx77",
+          "display": "GHSA-8988-9cw3-xx77"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "`HTTPResponse.stream()` and `read_chunked()` could buffer a chunk-size line of unbounded length in memory. (High severity, GHSA-vxq7-64xx-v4gw)",
+      "refs": [
+        {
+          "role": "advisory",
+          "target": "https://github.com/urllib3/urllib3/security/advisories/GHSA-vxq7-64xx-v4gw",
+          "display": "GHSA-vxq7-64xx-v4gw"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Chunked Deflate streaming could enter an infinite loop. (Medium severity, GHSA-gh4c-6fx4-qh6g)",
+      "refs": [
+        {
+          "role": "advisory",
+          "target": "https://github.com/urllib3/urllib3/security/advisories/GHSA-gh4c-6fx4-qh6g",
+          "display": "GHSA-gh4c-6fx4-qh6g"
+        }
+      ]
+    },
+    {
+      "type": "admonition",
+      "kind": "caution",
+      "text": "urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings. Configurations relying on that behavior may require changes.\n\nConfigure proxy CA certificates and client certificates in `proxy_ssl_context`, and proxy identity checks with `proxy_assert_hostname` or `proxy_assert_fingerprint`. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections."
+    }
+  ]
+}
