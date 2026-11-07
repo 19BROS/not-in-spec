@@ -13,9 +13,9 @@ We test **usage, not just comprehension**. Studies show a large gap between the 
 - comprehension levels (L0–L2) are **diagnostics** that explain *why* usage fails;
 - a validation track ([§14](#14-validation-outside-ci)) checks that the levels really relate to usage.
 
-Given any software documentation (Markdown docs, a formal spec such as OpenAPI, a changelog, llms.txt, a docs website), the system:
+Given software documentation (a Sphinx project, Markdown docs, a formal spec such as OpenAPI, a changelog, llms.txt; other documentation generators come in later phases, see [§6.1](#61-reading-and-chunking)), the system:
 
-1. normalizes it into **chunks** and detects the **components** in each chunk (spec, API reference, examples, prose);
+1. splits it into **chunks** (whole documentation sections) and detects the **components** in each chunk (spec, API reference, examples, prose);
 2. builds an **inventory** of what exists in the API (symbols, signatures, parameters, constraints, changes), each fact with its source and confidence;
 3. runs **cross-checks** between sources and reports contradictions as **findings**;
 4. derives **test items** whose correct answer (**reference**) is computed by a program, never by an LLM; an LLM only writes the natural-language task text;
@@ -67,7 +67,8 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
 1. A **config file in the repo** (`notinspec.yaml`, shape is a candidate):
    ```yaml
    docs:
-     paths: ["docs/**/*.md"]
+     sphinx: "docs/"                  # Sphinx project (folder with conf.py)
+     paths: ["docs/**/*.md"]          # plain Markdown outside Sphinx, optional
      openapi: "api/openapi.yaml"      # optional
      changelog: "CHANGELOG.md"        # optional
      version: "2.0"
@@ -140,7 +141,8 @@ These exact terms are used in code, diagrams and text.
 
 | Term | DB model | Meaning |
 |---|---|---|
-| **Chunk** | `Chunk` | a documentation section split by headings, with a stable ID (hash of heading path + content) and a breadcrumb |
+| **Chunk** | `Chunk` | one whole documentation section split by headings (no small token limit, code blocks and tables intact, oversized sections split at a soft limit), with a stable ID (hash of heading path + content) and a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
+| **NLI window** | – | short prose-only excerpt of a chunk, sized to fit the NLI model; the premise for NLI. Computed from the chunk, not stored. |
 | **Component** | – | kind of content in a chunk: **A** formal spec, **B** API reference, **C** examples, **D** prose and changelog. One chunk can contain several. |
 | **Symbol** | `Symbol` | anything callable: function, method, class, endpoint, CLI command |
 | **Signature** | `Signature` | header of a symbol: parameters and return type, no body. A symbol can have several (overloads, versions). |
@@ -155,7 +157,7 @@ These exact terms are used in code, diagrams and text.
 | **Adapter** | – | parser + normalization for one language or format (Python, tree-sitter languages, curl, CLI) |
 | **Call record** | `CallRecord` | normalized call: symbol + named arguments. Built from examples and from model answers, in the same shape. |
 | **Claim** | `Claim` | atomic fact from prose or changelog with a citation, verified by NLI grounding. Type *fact* or *change*. |
-| **Grounding** | – | NLI check that a claim follows from its chunk (premise = chunk, hypothesis = claim) |
+| **Grounding** | – | NLI check that a claim follows from its chunk (premise = NLI window(s) around the claim's citation, hypothesis = claim) |
 | **Cross-check** | – | comparison of two sources (K1–K7); a contradiction is a finding |
 | **Operator** | – | rule that turns a call record or signature into a new reference: copy, adaptation, variation, composition, migration |
 | **Reference** | `Reference` | the correct answer of a test item, computed by a program, not by an LLM |
@@ -179,21 +181,37 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 
 ## 6. Pipeline
 
-### 6.1 Normalization and chunking
+### 6.1 Reading and chunking
 
-- Convert all inputs to Markdown (*candidates:* `markitdown`, `trafilatura` for websites; `docling` only if needed, it is heavy). llms.txt is Markdown already. A formal spec is additionally read directly by its parser (component A).
-- Split **by headings**. Code blocks and tables are **never split**.
-- ~150–400 tokens per chunk (NLI model limit), breadcrumb, **stable ID** = hash of heading path + content, for caching and CI diffs.
+**Readers.** Documentation generators are supported in phases. Every reader produces the same `Chunk`s, so everything after this step does not care where the docs came from.
+
+| Phase | Input | How it is read |
+|---|---|---|
+| MVP | **Sphinx** project | from Sphinx's **structured output**, not from rendered HTML and not with our own reST/MyST parser (*candidate:* `sphinx-build -b xml`, i.e. the docutils doctree; `objects.inv` as the list of documented symbols). Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. |
+| MVP | plain Markdown, llms.txt, changelog | Markdown parser |
+| MVP | formal spec (OpenAPI) | its own parser (component A); `description` texts become chunks for component D |
+| next iteration | other generators (*candidates:* MkDocs, Docusaurus, TypeDoc) | their structured output where they have one |
+| future | docs websites without a supported generator | rendered HTML → Markdown (*candidates:* `trafilatura`, `markitdown`) |
+
+**Chunks = sections.**
+
+- A `Chunk` is **one whole section**: split **by headings**, a section runs from its heading to the next heading. **No small token limit.**
+- Code blocks and tables are **never split**.
+- **Soft-limit fallback:** a section over a soft limit (*candidate:* ~2,000 tokens) is split at paragraph boundaries, never inside a code block or table. The parts keep the section's breadcrumb.
+- Breadcrumb, **stable ID** = hash of heading path + content.
+- Sections are the unit for **component detection, the inventory `Source`, gold context, IDs and CI diffs**.
 - Output: `Chunk`.
+
+**NLI windows.** The NLI model accepts only a few hundred tokens, so NLI never sees a whole section. An **NLI window** is a short, **prose-only** excerpt of a chunk (code blocks and tables left out), cut at sentence boundaries and sized to fit the NLI model (*candidate:* ≤ 400 tokens, with overlap). Windows are computed deterministically from the chunk (chunk ID + offset), so they need no storage of their own. Use in grounding: [§6.4](#64-prose-and-changelog--claim).
 
 ### 6.2 Components and techniques
 
-A component detector finds **all** components present in each chunk (file extension, code-block language, Markdown structure). Each goes its own way in parallel; there is no either/or.
+A component detector finds **all** components present in each chunk (file extension, code-block language, Sphinx node types, Markdown structure). Each goes its own way in parallel; there is no either/or.
 
 | Component | What | Technique | Output |
 |---|---|---|---|
 | **A · Formal spec** | OpenAPI, GraphQL schema, `.proto`, JSON Schema | spec parser (YAML/JSON, `graphql-core`, protobuf), deterministic. `description` texts go to D. For OpenAPI a Prism mock is also started. | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` (`deprecated`) |
-| **B · API reference** | signatures, parameter tables, docstrings, JSDoc | signature parser (`ast` / tree-sitter) and Markdown table parser, deterministic | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType` |
+| **B · API reference** | signatures, parameter tables, docstrings, JSDoc, Sphinx API descriptions (`py:function`, autodoc) | Sphinx `desc` nodes, signature parser (`ast` / tree-sitter) and table parser, deterministic | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType` |
 | **C · Examples** | code blocks in any language or format | `Example` → language adapter → normalization using the inventory (variable → class, positional argument → `Parameter`). Invalid code is dropped (`Finding`). | `Example`, `CallRecord`; into the inventory only missing `Symbol` and `Parameter` |
 | **D · Prose and changelog** | guides, concepts, changelog, spec `description` | claim extractor (LLM) → grounding (NLI) → K5a, K5b (NLI) | `Claim`; a *change* claim yields a `Change` |
 
@@ -236,8 +254,8 @@ Source  – attached to every object above
 
 ### 6.4 Prose and changelog → `Claim`
 
-1. **Claim extractor** (LLM; 2 extractors with different models or prompts): atomic, self-contained claims with a citation from the chunk. Type *fact* or *change*.
-2. **Grounding via NLI:** premise = own chunk, hypothesis = claim. `entailment` → keep. `neutral` / `contradiction` → drop (may still serve as an unanswerable L2 question or a fake name for L0).
+1. **Claim extractor** (LLM; 2 extractors with different models or prompts): reads the **whole chunk** (section) and returns atomic, self-contained claims, each with a **citation** (exact quoted span from the chunk). Type *fact* or *change*. A citation not found verbatim in the chunk → drop the claim (deterministic check).
+2. **Grounding via NLI:** premise = the **NLI window(s) around the citation** (the window containing it, plus the neighbouring window when the citation crosses a window boundary), hypothesis = claim. `entailment` → keep. `neutral` / `contradiction` → drop (may still serve as an unanswerable L2 question or a fake name for L0).
 3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions.
 4. **K5b · claim vs. claim across chunks:** embedding prefilter so not all pairs are compared, then NLI in both directions.
 
@@ -250,7 +268,7 @@ Source  – attached to every object above
 
 5. A *change* claim yields a `Change` (low confidence → PR review).
 
-NLI = small local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; cheap and deterministic (*candidates:* `cross-encoder/nli-deberta-v3-base`, a multilingual XNLI model for non-English docs). Watch length limits, numbers, negation and language. Thresholds are calibrated on our own annotated sample.
+NLI = small local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; cheap and deterministic (*candidates:* `cross-encoder/nli-deberta-v3-base`, a multilingual XNLI model for non-English docs). The premise is always an NLI window or a claim, never a whole chunk. Watch numbers, negation and language. Thresholds are calibrated on our own annotated sample.
 
 ### 6.5 Cross-checks K1–K7
 
@@ -326,8 +344,8 @@ If a well-grounded task fails even with gold context, the problem is probably in
 | Mode | Context given to the model |
 |---|---|
 | `none` | nothing (what the model knows from its weights) |
-| `retrieved` | chunks found by retrieval (*candidates:* BM25, embeddings, hybrid) |
-| `gold` | the chunks the test item was derived from (minus the source example for leave-one-out) |
+| `retrieved` | chunks found by retrieval (*candidates:* BM25, embeddings, hybrid). Retrieval may embed smaller sub-parts of a section (paragraphs, code blocks), but always returns the **whole section**. |
+| `gold` | the chunks (whole sections) the test item was derived from (minus the source example for leave-one-out) |
 
 The three modes separate the effect of model weights, text quality and findability.
 
@@ -397,7 +415,7 @@ Every test item × model × mode. **All raw responses are stored.**
 | Language | Python 3.12+ (core, API, worker), TypeScript (web) |
 | Packaging / tooling | uv, ruff, mypy (core), pytest, pre-commit |
 | API | FastAPI; its generated OpenAPI is validated in CI |
-| Normalization | `markitdown`, `trafilatura` (*candidates*) |
+| Reading docs | Sphinx (`xml` builder / docutils doctree, `objects.inv`) in the MVP; `markitdown`, `trafilatura` later (*candidates*) |
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
 | NLI / embeddings | `sentence-transformers` CrossEncoder, `cross-encoder/nli-deberta-v3-base`, mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*), CPU only |
@@ -447,9 +465,9 @@ Every test item × model × mode. **All raw responses are stored.**
 ## 13. Testing
 
 - **Fake LLM provider** replaying recorded responses for every LLM role. **CI never calls a real LLM.**
-- **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter.
+- **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI windows).
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
-- **Integration:** Compose up → fixture docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
+- **Integration:** Compose up → fixture Sphinx docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - Our own API: OpenAPI validated in CI + Schemathesis.
 - Web: Playwright smoke tests.
 - Coverage gate on `core/` only.
@@ -483,8 +501,8 @@ Faculty checkpoint dates: **TBD**.
 
 ### 16.1 MVP
 
-1. One OpenAPI spec with guides + one Python library with examples and a changelog (pilot).
-2. Chunking, component detector, inventory (`Symbol`, `Signature`, `Parameter`, `Constraint`, `Change`, `Source`), `Example` and `CallRecord`.
+1. One OpenAPI spec with guides + one Python library with **Sphinx-based documentation**, examples and a changelog (pilot).
+2. Sphinx and Markdown readers, section chunking, component detector, inventory (`Symbol`, `Signature`, `Parameter`, `Constraint`, `Change`, `Source`), `Example` and `CallRecord`.
 3. Adapters Python `ast` and curl; cross-checks K1, K4, K7.
 4. L1 and L3 tasks (copy, adaptation, variation), L0 from `Change`, L4 via Prism for OpenAPI.
 5. 2 small models + 1 large model, 3 modes.
@@ -494,7 +512,7 @@ Faculty checkpoint dates: **TBD**.
 
 ### 16.2 Next iteration
 
-`Claim` and L2, cross-checks K2, K3, K5, K6, composition, statistics in CI, HTML report.
+`Claim` and L2 (with NLI windows), cross-checks K2, K3, K5, K6, composition, statistics in CI, HTML report, readers for other documentation generators (*candidates:* MkDocs, Docusaurus, TypeDoc).
 
 ### 16.3 Future development
 
@@ -503,6 +521,7 @@ Faculty checkpoint dates: **TBD**.
 - Stateful checking of multi-step tasks (stateful mock or a test backend).
 - Mocks for GraphQL and gRPC (today call-record comparison only).
 - Agentic tasks: the model searches the docs itself via a tool (e.g. MCP).
+- Docs websites without a supported generator (rendered HTML → Markdown).
 
 ## 17. Roles
 
@@ -511,7 +530,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 | # | Role | Owns |
 |---|---|---|
 | 1 | Lead / architecture | core package, golden-set format, this spec |
-| 2 | Inputs & inventory | normalization, chunking, component detector, spec / signature parsers, adapters, inventory |
+| 2 | Inputs & inventory | Sphinx and Markdown readers, chunking, NLI windows, component detector, spec / signature parsers, adapters, inventory |
 | 3 | Runner & evaluation | LLM client, rate limiting, Prism, L0–L4 evaluation, error categories |
 | 4 | ML / NLP | claim extraction, NLI grounding, cross-checks, retrieval, statistics, validation track |
 | 5 | Backend & data | FastAPI, Postgres schema, migrations, worker |
@@ -522,7 +541,10 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 
 - [ ] Faculty API key: provider, endpoint, available models, rate limits, budget, whether it may be used from GitHub-hosted runners
 - [ ] Faculty checkpoint dates
-- [ ] Pilot documentation: which OpenAPI and which Python library
+- [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), and a v1 → v2 migration guide and changelog with renames and removals (e.g. `Retry(method_whitelist=…)` → `allowed_methods`) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
+- [ ] Sphinx build environment: autodoc imports the documented library, so the reader needs the project's dependencies and Sphinx extensions installed (in the Action and in the worker)
+- [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), and grounding only on the windows around the citation can miss it, so good claims get dropped. Measure on the annotated sample; options are wider windows or combining several windows as the premise
+- [ ] Soft limit for oversized sections, NLI window size and overlap
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: how much users will do, which items are auto-approved
