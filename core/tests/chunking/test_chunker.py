@@ -41,8 +41,8 @@ def test_client_golden(client: tuple[Chunk, ...], golden: Golden) -> None:
 
 
 def test_small_parts_golden(golden: Golden) -> None:
-    chunks = chunk_documents(load_documents(FIXTURES, ["*.md"]), max_tokens=40)
-    golden("chunks-client-max40", chunks)
+    chunks = chunk_documents(load_documents(FIXTURES, ["*.md"]), soft_limit=40)
+    golden("chunks-client-soft40", chunks)
 
 
 def test_same_input_same_chunks() -> None:
@@ -149,7 +149,7 @@ def test_duplicate_heading_paths_get_an_occurrence_number() -> None:
 
 def test_long_section_is_split_between_blocks() -> None:
     paragraphs = "\n\n".join(f"Paragraph {i} " + "word " * 20 for i in range(6))
-    chunks = _chunks(f"# Long\n\n{paragraphs}\n", max_tokens=60)
+    chunks = _chunks(f"# Long\n\n{paragraphs}\n", soft_limit=60)
     assert len(chunks) > 1
     assert [c.part for c in chunks] == list(range(1, len(chunks) + 1))
     assert {c.parts for c in chunks} == {len(chunks)}
@@ -158,9 +158,42 @@ def test_long_section_is_split_between_blocks() -> None:
     assert all(c.heading_path == ("Long",) for c in chunks)
 
 
+def test_section_under_the_soft_limit_stays_whole() -> None:
+    paragraphs = "\n\n".join(f"Paragraph {i} " + "word " * 100 for i in range(10))
+    chunks = _chunks(f"# Guide\n\n{paragraphs}\n")  # ~1,000 tokens, default soft limit 2,000
+    assert len(chunks) == 1
+    assert chunks[0].parts == 1
+    assert chunks[0].tokens > 1000
+
+
+def test_parts_are_about_equal_not_full_plus_a_tiny_tail() -> None:
+    paragraphs = "\n\n".join(f"Paragraph {i} " + "word " * 18 for i in range(11))
+    chunks = _chunks(f"# Long\n\n{paragraphs}\n", soft_limit=200)  # ~225 tokens
+    assert [c.parts for c in chunks] == [2, 2]
+    sizes = [c.tokens for c in chunks]
+    assert max(sizes) - min(sizes) <= 25  # greedy would give ~200 + ~25
+
+
+def test_all_parts_of_a_section_share_the_section_id() -> None:
+    paragraphs = "\n\n".join(f"Paragraph {i} " + "word " * 20 for i in range(6))
+    chunks = _chunks(f"# Long\n\n{paragraphs}\n\n# Other\n\ntext\n", soft_limit=60)
+    long = [c for c in chunks if c.heading_path == ("Long",)]
+    assert len(long) > 1
+    assert len({c.section_id for c in long}) == 1
+    assert len({c.location_id for c in long}) == len(long)
+    assert chunks[-1].section_id != long[0].section_id
+
+
+def test_section_id_survives_text_edits() -> None:
+    before = _chunks("# A\n\nold text\n")[0]
+    after = _chunks("# A\n\nnew text\n")[0]
+    assert before.section_id == after.section_id
+    assert before.id != after.id
+
+
 def test_code_block_is_never_cut() -> None:
     code = "\n".join(f"x{i} = {i}" for i in range(50))
-    chunks = _chunks(f"# A\n\nintro\n\n```python\n{code}\n```\n\nafter\n", max_tokens=30)
+    chunks = _chunks(f"# A\n\nintro\n\n```python\n{code}\n```\n\nafter\n", soft_limit=30)
     big = [c for c in chunks if any(b.kind == "code" for b in c.blocks)]
     assert len(big) == 1
     assert big[0].oversized
@@ -169,14 +202,14 @@ def test_code_block_is_never_cut() -> None:
 
 def test_paragraph_stays_with_the_code_after_it() -> None:
     text = "# A\n\n" + "filler " * 25 + "\n\nExample:\n\n```python\nf(1)\n```\n"
-    chunks = _chunks(text, max_tokens=30)
+    chunks = _chunks(text, soft_limit=30)
     with_code = next(c for c in chunks if any(b.kind == "code" for b in c.blocks))
     assert with_code.text.startswith("Example:")
 
 
 def test_table_is_never_cut() -> None:
     rows = "\n".join(f"| p{i} | int | {i} |" for i in range(40))
-    chunks = _chunks(f"# A\n\n| Name | Type | Default |\n|---|---|---|\n{rows}\n", max_tokens=50)
+    chunks = _chunks(f"# A\n\n| Name | Type | Default |\n|---|---|---|\n{rows}\n", soft_limit=50)
     tables = [b for c in chunks for b in c.blocks if b.kind == "table"]
     assert len(tables) == 1
     assert tables[0].end_line - tables[0].start_line + 1 == 42

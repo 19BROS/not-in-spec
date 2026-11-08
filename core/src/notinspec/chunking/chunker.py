@@ -1,20 +1,25 @@
-"""Split Markdown documents into `Chunk`s (SPEC §6.1).
+"""Split Markdown documents into `Chunk`s: one chunk per documentation section (SPEC §6.1).
 
 Rules:
 
-- every heading starts a new chunk; the heading path ("breadcrumb") says where it is
+- a section runs from its heading to the next heading; the heading path ("breadcrumb") says
+  where it is. There is no small token limit: the NLI size limit lives in `windows.py`.
 - code blocks, tables, lists and quotes are never cut
-- a section longer than `max_tokens` is split between blocks into parts; a heading stays with
-  the block after it, and a paragraph stays with the code block right after it ("Example:")
-- a single block longer than `max_tokens` becomes its own part, marked `oversized`
+- soft-limit fallback: a section longer than `soft_limit` is split between blocks (paragraph
+  boundaries) into parts of about equal size. A heading stays with the block after it, and a
+  paragraph stays with the code block right after it ("Example:"). The parts keep the
+  section's breadcrumb and `section_id`.
+- a single block longer than `soft_limit` becomes its own part, marked `oversized`
 - short sections are never merged, so one section's boundaries don't depend on its neighbours
 - a heading with no content of its own (directly followed by a sub-heading) gives no chunk
 
-Three IDs, all derived from content, never from run order (64-bit hex):
+IDs, all derived from content, never from run order (64-bit hex):
 
 - `id`: source + heading path + text (SPEC §6.1). Any edit gives a new `id`.
-- `location_id`: source + heading path only. Survives edits of the text, so a PR diff can tell
-  "this section changed" from "this is a new section".
+- `location_id`: source + heading path + part. Survives edits of the text, so a PR diff can
+  tell "this section changed" from "this is a new section".
+- `section_id`: source + heading path, no part. Same for every part of one section: the key
+  for "the whole section" (gold context, retrieval results, `Source`).
 - `content_hash`: text only.
 """
 
@@ -27,9 +32,9 @@ from notinspec.chunking.documents import Document, normalize_text
 from notinspec.chunking.tokens import approx_tokens
 
 # bump when chunk boundaries or IDs change for the same input
-CHUNKER_VERSION = 1
+CHUNKER_VERSION = 2
 
-DEFAULT_MAX_TOKENS = 400  # upper end of SPEC's ~150–400, below the 512-token NLI limit
+DEFAULT_SOFT_LIMIT = 2000  # SPEC §6.1 candidate; sections above it are split into parts
 
 BREADCRUMB_SEPARATOR = " > "
 
@@ -38,6 +43,7 @@ BREADCRUMB_SEPARATOR = " > "
 class Chunk:
     id: str
     location_id: str
+    section_id: str  # equal for all parts of one section
     content_hash: str
     source: str  # document path
     heading_path: tuple[str, ...]  # () for text before the first heading
@@ -49,7 +55,7 @@ class Chunk:
     start_line: int  # 1-based, inclusive, in the source file
     end_line: int
     tokens: int
-    oversized: bool  # one block alone is longer than max_tokens
+    oversized: bool  # one block alone is longer than soft_limit
     text: str  # exact Markdown of the chunk, heading line included in part 1
     blocks: tuple[Block, ...]
 
@@ -57,7 +63,7 @@ class Chunk:
 def chunk_document(
     document: Document,
     *,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
+    soft_limit: int = DEFAULT_SOFT_LIMIT,
     count_tokens: Callable[[str], int] = approx_tokens,
 ) -> tuple[Chunk, ...]:
     """Chunks of one document, in document order. Pure: same input → equal output."""
@@ -70,10 +76,10 @@ def chunk_document(
             continue
         occurrence = seen.get(path, 0)
         seen[path] = occurrence + 1
-        parts = _pack(_units(section, max_tokens), max_tokens)
+        parts = _pack(_units(section, soft_limit), soft_limit)
         for number in range(1, len(parts) + 1):
             chunks.append(
-                _chunk(document.source, lines, path, level, occurrence, number, parts, max_tokens)
+                _chunk(document.source, lines, path, level, occurrence, number, parts, soft_limit)
             )
     return tuple(chunks)
 
@@ -81,13 +87,13 @@ def chunk_document(
 def chunk_documents(
     documents: Sequence[Document],
     *,
-    max_tokens: int = DEFAULT_MAX_TOKENS,
+    soft_limit: int = DEFAULT_SOFT_LIMIT,
     count_tokens: Callable[[str], int] = approx_tokens,
 ) -> tuple[Chunk, ...]:
     return tuple(
         chunk
         for document in documents
-        for chunk in chunk_document(document, max_tokens=max_tokens, count_tokens=count_tokens)
+        for chunk in chunk_document(document, soft_limit=soft_limit, count_tokens=count_tokens)
     )
 
 
@@ -116,35 +122,55 @@ def _sections(parsed: list[ParsedBlock]) -> Iterator[tuple[tuple[str, ...], int,
         yield path, level, current
 
 
-def _units(section: _Section, max_tokens: int) -> list[_Unit]:
+def _units(section: _Section, soft_limit: int) -> list[_Unit]:
     """Group blocks that must stay in the same part."""
     units: list[_Unit] = []
     i = 0
     while i < len(section):
         unit = [section[i]]
         i += 1
-        while i < len(section) and _glue(unit, section[i], max_tokens):
+        while i < len(section) and _glue(unit, section[i], soft_limit):
             unit.append(section[i])
             i += 1
         units.append(unit)
     return units
 
 
-def _glue(unit: _Unit, following: ParsedBlock, max_tokens: int) -> bool:
+def _glue(unit: _Unit, following: ParsedBlock, soft_limit: int) -> bool:
     last = unit[-1].block.kind
     if last == "heading":
         return True
     if last == "text" and following.block.kind == "code":
-        return _tokens(unit) + following.block.tokens <= max_tokens
+        return _tokens(unit) + following.block.tokens <= soft_limit
     return False
 
 
-def _pack(units: list[_Unit], max_tokens: int) -> list[_Unit]:
-    """Fill parts greedily, in order, without going over max_tokens unless one unit does."""
+def _pack(units: list[_Unit], soft_limit: int) -> list[_Unit]:
+    """Split into as few parts as `soft_limit` allows, of about equal size.
+
+    Greedy packing alone gives e.g. 2,000 + 100 tokens; a tiny last part is a poor gold
+    context. So find the smallest cap that still needs no more parts, and pack with that.
+    """
+    parts = _greedy(units, soft_limit)
+    low = max(_tokens(u) for u in units)
+    if len(parts) < 2 or low > soft_limit:  # one part, or an oversized unit: nothing to even out
+        return parts
+    high = soft_limit
+    while low < high:
+        cap = (low + high) // 2
+        if len(_greedy(units, cap)) <= len(parts):
+            high = cap
+        else:
+            low = cap + 1
+    return _greedy(units, low)
+
+
+def _greedy(units: list[_Unit], cap: int) -> list[_Unit]:
+    """Fill parts in order, without going over `cap` unless one unit does."""
     parts: list[_Unit] = []
     current: _Unit = []
     for unit in units:
-        if current and _tokens(current) + _tokens(unit) > max_tokens:
+        if current and _tokens(current) + _tokens(unit) > cap:
             parts.append(current)
             current = []
         current = current + unit
@@ -165,16 +191,18 @@ def _chunk(
     occurrence: int,
     number: int,
     parts: list[_Unit],
-    max_tokens: int,
+    soft_limit: int,
 ) -> Chunk:
     part = parts[number - 1]
     start, end = part[0].block.start_line, part[-1].block.end_line
     text = "\n".join(lines[start - 1 : end])
     tokens = _tokens(part)
-    location = [source, list(path), occurrence, number]
+    section = [source, list(path), occurrence]
+    location = [*section, number]
     return Chunk(
         id=_hash([*location, text]),
         location_id=_hash(location),
+        section_id=_hash(section),
         content_hash=_hash(text),
         source=source,
         heading_path=path,
@@ -186,7 +214,7 @@ def _chunk(
         start_line=start,
         end_line=end,
         tokens=tokens,
-        oversized=tokens > max_tokens,
+        oversized=tokens > soft_limit,
         text=text,
         blocks=tuple(b for p in part for b in (p.block, *p.nested)),
     )
