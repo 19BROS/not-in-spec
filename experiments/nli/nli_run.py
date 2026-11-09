@@ -69,7 +69,9 @@ CONTEXTS: dict[str, Callable[[dict[str, Any]], str]] = {
     ),
 }
 # Which text is the premise. "both" (derived, not scored): keep only if window AND local entail.
-PREMISES = ("window", "local")
+# "local-block" = like local, but the +-radius sentences stay inside the cited block(s); a cited
+# list item also gets the lead-in sentence of the list ("... the following:"), if there is one.
+PREMISES = ("window", "local", "local-block")
 COLUMNS = [
     "section", "extractor", "window_size", "claim_id", "type", "status", "window_ids",
     "hypothesis", "citation", "gold", "borderline", "label", "keep_ok",
@@ -110,6 +112,7 @@ def load_rows(slugs: list[str], radius: int) -> list[dict[str, Any]]:
     rows = []
     for d in dirs:
         chunk = json.loads((d / "chunk.json").read_text(encoding="utf-8"))
+        blocks = json.loads((d / "section.json").read_text(encoding="utf-8"))["blocks"]
         sentences: dict[str, list[dict[str, Any]]] = {}
         for path in sorted((d / "pairs").glob("*.jsonl")):
             extractor, _, size = path.stem.rpartition(".windows-")
@@ -125,6 +128,7 @@ def load_rows(slugs: list[str], radius: int) -> list[dict[str, Any]]:
                     r["local_premise"] = join_sentences(
                         sents[max(lo - radius, 0) : hi + radius + 1]
                     )
+                    r["local_block_premise"] = local_block(sents, blocks, lo, hi, radius)
                 rows.append(
                     {
                         **r,
@@ -141,8 +145,27 @@ def load_rows(slugs: list[str], radius: int) -> list[dict[str, Any]]:
     return rows
 
 
+def local_block(
+    sents: list[dict[str, Any]], blocks: list[dict[str, Any]], lo: int, hi: int, radius: int
+) -> str:
+    """Cited sentence(s) +- radius, without crossing into other blocks, plus a list's lead-in."""
+    cited = {s["block"] for s in sents[lo : hi + 1]}
+    picked = [s for s in sents[max(lo - radius, 0) : hi + radius + 1] if s["block"] in cited]
+    first = min(cited)
+    if blocks[first]["type"] == "list_item":
+        start = first  # walk back over the bullets of the same list
+        while start > 0 and blocks[start - 1]["type"] == "list_item":
+            start -= 1
+        lead = [s for s in sents if s["block"] == start - 1]
+        if start > 0 and blocks[start - 1]["type"] == "paragraph" and lead:
+            if lead[-1]["text"].rstrip().endswith(":") and lead[-1] not in picked:
+                picked = [lead[-1], *picked]
+    return join_sentences(picked)
+
+
 def premise_text(r: dict[str, Any], ctx: str, prem: str) -> str:
-    return CONTEXTS[ctx](r) + (r["premise"] if prem == "window" else r["local_premise"])
+    body = {"window": "premise", "local": "local_premise", "local-block": "local_block_premise"}
+    return CONTEXTS[ctx](r) + r[body[prem]]
 
 
 # ---------------------------------------------------------------- score cache
@@ -188,10 +211,30 @@ MINICHECK = ("lytang/MiniCheck-DeBERTa-v3-Large", "lytang/MiniCheck-RoBERTa-Larg
 HHEM = "vectara/hallucination_evaluation_model"
 # HHEM needs trust_remote_code: pin the reviewed code revision instead of following main.
 PINNED = {HHEM: "de9a5e6ba9ba49531a022dba17e35ffeb2a6fad8"}
+# 2-label NLI models (entailment / not_entailment), mapped like the binary fact-checkers.
+NLI2 = (
+    "MoritzLaurer/deberta-v3-large-zeroshot-v2.0",
+    "MoritzLaurer/ModernBERT-large-zeroshot-v2.0",
+)
 
 
 def family(model_id: str) -> str:
-    return "minicheck" if model_id in MINICHECK else "hhem" if model_id == HHEM else "nli3"
+    if model_id in MINICHECK:
+        return "minicheck"
+    return "hhem" if model_id == HHEM else "nli2" if model_id in NLI2 else "nli3"
+
+
+def hub_sha(model_id: str) -> str:
+    """Commit of the weights actually in the local HF cache (revision_of() is often empty)."""
+    try:
+        from huggingface_hub import scan_cache_dir
+
+        for repo in scan_cache_dir().repos:
+            if repo.repo_id == model_id:
+                return ",".join(sorted(r.commit_hash for r in repo.revisions))
+    except Exception:  # noqa: BLE001 - provenance only, never fail a run on it
+        pass
+    return ""
 
 
 def revision_of(model_id: str) -> str:
@@ -264,10 +307,11 @@ class Scorer:
             self.model = AutoModelForSequenceClassification.from_pretrained(
                 self.model_id, dtype=torch.float32
             ).eval()
-        if self.family == "nli3":
+        if self.family in ("nli3", "nli2"):
             cfg = self.model.config.id2label
             self.id2label = {i: str(lbl).lower() for i, lbl in cfg.items()}
-            if set(self.id2label.values()) != set(LABELS):
+            want = set(LABELS) if self.family == "nli3" else {"entailment", "not_entailment"}
+            if set(self.id2label.values()) != want:
                 raise SystemExit(f"{self.model_id}: unexpected labels {self.id2label}")
         if variant == "int8":
             self.model = torch.ao.quantization.quantize_dynamic(
@@ -302,6 +346,9 @@ class Scorer:
             return_tensors="pt",
         )
         probs = torch.softmax(self.model(**enc).logits, dim=-1).tolist()
+        if self.family == "nli2":
+            ent = next(i for i, lbl in self.id2label.items() if lbl == "entailment")
+            return [self.binary(p[ent]) for p in probs]
         return [{self.id2label[k]: round(v, 4) for k, v in enumerate(p)} for p in probs]
 
 
@@ -489,7 +536,8 @@ def short(spec: str) -> str:
 def write_run(args: argparse.Namespace, rows: list[dict[str, Any]], config: dict[str, Any]) -> Path:
     run_dir = new_run_dir(args.name)
     (run_dir / "results").mkdir()
-    prems = [*config["premises"], *(["both"] if set(PREMISES) <= set(config["premises"]) else [])]
+    both = {"window", "local"} <= set(config["premises"])
+    prems = [*config["premises"], *(["both"] if both else [])]
     keys: list[Key] = [
         (m, c, p) for m in config["models"] for c in config["contexts"] for p in prems
     ]
@@ -517,7 +565,8 @@ def write_run(args: argparse.Namespace, rows: list[dict[str, Any]], config: dict
     md += [
         "Keep = NLI says entailment (claim survives grounding). Dropped by the citation check "
         "= not kept. `nb` = without borderline labels. Premise `window` = NLI window, `local` = "
-        f"cited sentence(s) +-{args.radius}, `both` = kept only if both say entailment.",
+        f"cited sentence(s) +-{args.radius}, `local-block` = the same but within the cited "
+        "block (+ the list's lead-in), `both` = kept only if window and local say entailment.",
         "",
         *table,
     ]
@@ -725,7 +774,8 @@ def main() -> None:
     )  # fmt: skip
     p.add_argument(
         "--premise", nargs="+", choices=PREMISES, default=["window"],
-        help="window = NLI window, local = cited sentence(s) +- radius; both given = also 'both'",
+        help="window = NLI window, local = cited sentence(s) +- radius, local-block = local "
+        "within the cited block (+ list lead-in); window and local given = also 'both'",
     )  # fmt: skip
     p.add_argument("--radius", type=int, default=1, help="sentences around the citation (local)")
     p.add_argument("--name", default="run", help="short run name, used in the folder name")
@@ -783,6 +833,7 @@ def main() -> None:
     config["seconds"] = {}
     for spec in models:
         config["seconds"][spec] = score(spec, rows, args.context, args.premise, args.batch, cache)
+    config["hub_sha"] = {spec: hub_sha(parse_spec(spec)[0]) for spec in models}
     config["finished"] = datetime.now().isoformat(timespec="seconds")
     run_dir = write_run(args, rows, config)
     print(f"\n-> {run_dir.relative_to(HERE).as_posix()}/summary.md")

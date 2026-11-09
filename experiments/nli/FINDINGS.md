@@ -2,7 +2,7 @@
 
 What we learned, run by run. Raw numbers live in `runs/NNN-*/summary.md`; this file is the narrative. Append new runs at the bottom; don't rewrite old entries (add a "Later:" note instead).
 
-**Caveat for every number below:** gold labels in `labels.csv` are a Claude draft (`annotator=claude-draft`), 139 labelled claims from 2 sections of one library. Treat percentages as directional, not as a benchmark. One claim ≈ 0.7 pp.
+**Caveat for every number below:** gold labels in `labels.csv` are a Claude draft (`annotator=claude-draft`), 139 labelled claims from 2 sections of one library. Treat percentages as directional, not as a benchmark. One claim ≈ 0.7 pp. (Later: a blind human check of 180 claims agrees with the draft on keep/drop for 98% of them; see "Human labels" at the end.)
 
 Metric meanings (all "keep" = NLI says entailment = claim survives grounding):
 - **keep recall**: of the claims that *should* be kept, how many were kept. Low = good claims thrown away.
@@ -225,7 +225,7 @@ The per-section numbers, the cross pairs and 2-model ensembles are in `runs/006-
    - "will raise an error in v3.0" stated as already happening (bugfixes n2).
 
    NLI does not reliably check exact identifiers, numbers or tense. A cheap code check would catch these: every identifier, number and version in the claim must appear in the cited span or its sentence.
-5. **Cross pairs:** 27 kept by large + local, but about 9 of them are true entailments. The Security and Bugfixes sections describe the same HTTPS-proxy fix, e.g. "destination client certificates no longer apply to forwarding proxy connections" vs "HTTPSConnection no longer applies … client credentials to forwarding proxy handshakes". The others are plausible topic claims judged against the wrong section, e.g. "specifying an integer for retries changes the number of retries" against the backoff prose, p 0.99 for all 5 extractors.
+5. **Cross pairs:** 27 kept by large + local, but about 9 of them are true entailments. (Later: the human labels show only 1 of these 27 is supported by the other section; the rest are real errors. See "Human labels".) The Security and Bugfixes sections describe the same HTTPS-proxy fix, e.g. "destination client certificates no longer apply to forwarding proxy connections" vs "HTTPSConnection no longer applies … client credentials to forwarding proxy handshakes". The others are plausible topic claims judged against the wrong section, e.g. "specifying an integer for retries changes the number of retries" against the backoff prose, p 0.99 for all 5 extractors.
 6. **MiniCheck** is the most conservative model:
    - Best on cross (5/259) and outside (1/23).
    - But it drops 10% of correct claims. It refuses claims that carry the version ("In urllib3 2.8.0, … was fixed") when the version is only in the breadcrumb, and it refuses many paraphrases on the backoff section.
@@ -259,3 +259,72 @@ Open:
 2. Re-label the ~9 cross pairs that are true entailments, so cross counts only real errors.
 3. Prototype the identifier/number check (a) and measure it on these 85 should-drop claims and 261 correct ones.
 4. Breadcrumb into `local` for MiniCheck: the version is in the breadcrumb, but MiniCheck seems to ignore it.
+
+## 007-block-premise-new-models: block-aware premise and newer models
+
+Two questions: does a premise that respects block boundaries beat `local`, and is there a newer NLI model better than large (wanli)?
+
+- New premise `local-block`: the cited sentence(s) ±1, but only within the cited block(s). If the citation is in a list item, the paragraph that introduces the list (its last sentence ends with ":") is put in front. Breadcrumb prefix as before.
+- New models: `MoritzLaurer/deberta-v3-large-zeroshot-v2.0`, `MoritzLaurer/ModernBERT-large-zeroshot-v2.0` (both two-way: entailment / not entailment) and `tasksource/ModernBERT-large-nli`. Run 006's large and base-mnli-fever-anli are re-run for a paired comparison.
+- Exact model commits are now in `config.json` (`hub_sha`).
+- This ran on a different PC than runs 001–006 (6 threads). Large: ~0.34 s per pair with `local`.
+
+Labels: claude-draft, 261 should-keep, 89 should-drop, 259 cross pairs.
+
+| model + premise | keep recall | false keeps | cross kept |
+|---|---|---|---|
+| **large (wanli) + local-block** | 98% | **11** | 24 |
+| large + local (= run 006) | 98% | 13 | 27 |
+| deberta-v3-large-zeroshot-v2.0 + local-block | 97% | **11** | **8** |
+| ModernBERT-large-zeroshot-v2.0 + local-block | 98% | 13 | 15 |
+| ModernBERT-large-nli + local-block | 98% | 18 | 12 |
+| base-mnli-fever-anli + local-block | 95% | 14 | 28 |
+
+- `local-block` is at least as good as `local` for all 5 models, but no single model's difference is significant. By design it targets list-heavy sections: the ±1 window no longer pulls in a neighbouring list item (the "(High severity)" case from run 006), and a list item gets its lead-in sentence.
+- No newer model beats large on the same-section claims (all McNemar p ≥ 0.24).
+- **deberta-v3-large-zeroshot-v2.0 keeps far fewer cross pairs** (8 vs 24) at about the same recall and false keeps. That matters if grounding is also used to check that a claim belongs to *this* section.
+- base-mnli-fever-anli is about 3× faster but worse than large (McNemar p = 0.041 on the draft labels). Not worth it as a fallback.
+
+## Human labels (2026-11-09)
+
+One person labelled a blind sample in a local page (`labeling/build.py`, seed `20261108`). The page showed only the section and the claim, with no extractor, source or model output. Code blocks were shown greyed out and did not count. Rule: "should grounding keep this claim?", judged against the prose of the whole section.
+
+- **Sample (180):** all 91 hand-made / outside / beyond claims, the 7 real claims where large + local or the draft disagreed, and 82 random real claims.
+- Afterwards, the 9 claims where the human and the draft disagreed on keep/drop were re-read by the same person, without seeing the draft's label. 6 changed.
+- **Round 2 (43):** every cross pair kept by at least one of the compared setups (`labeling/build_cross.py`).
+- Files: `labels-human.csv`, `labels-human-cross.csv`. Numbers: `runs/007-block-premise-new-models/posthoc/human_labels.py` → `human_labels.txt`.
+
+**Human vs claude-draft:** keep/drop agreement 98.3% (kappa 0.97). With all three labels the agreement is 92.8% (kappa 0.88); most differences are neutral vs contradiction. 3 keep/drop differences remain: bugfixes n3, bugfixes sonnet-outside b1 and security sonnet-outside o1. The draft-based conclusions above therefore hold.
+
+**Setups on the human labels** (92 should-keep, 88 should-drop; the cross column counts only pairs the human judged *not* supported by the other section):
+
+| model + premise | keep recall | false keeps | wrong cross keeps (of 259) |
+|---|---|---|---|
+| **large + local-block** | 86/92 | **12** | 23 |
+| large + local | 84/92 | 14 | 26 |
+| large + window 400 | **90/92** | 22 | **38** |
+| large + window 128 | 86/92 | 16 | 26 |
+| deberta-v3-large-zeroshot-v2.0 + local-block | 83/92 | **12** | **7** |
+| ModernBERT-large-zeroshot-v2.0 + local-block | 87/92 | 14 | 14 |
+| ModernBERT-large-nli + local-block | 88/92 | 19 | 11 |
+| base-mnli-fever-anli + local-block | 82/92 | 15 | n/a (11 not labelled) |
+
+1. **Same ranking as with the draft labels.** On 180 claims no same-section difference is significant (large + local-block vs window 400: p = 0.24; vs local: p = 0.39).
+2. **Cross pairs are real errors.** 41 of 43 are not supported by the other section, so "cross kept" counts mistakes, not label noise. On cross pairs both differences are significant:
+   - window 400 makes more mistakes than local-block (16 vs 2 pairs only one of them gets right, p = 0.0013);
+   - deberta-v3-large-zeroshot-v2.0 + local-block makes fewer (16 vs 0, p < 0.001).
+3. **The 400-token window is the worst premise for precision.** Compared with local-block it keeps 10 more should-drop claims and 15 more wrong cross pairs, for 4 more good claims.
+4. **Thresholds** (large + local-block): a "human review" zone doesn't catch the worst errors. 9 of the 12 false keeps have p ≥ 0.9.
+   - Keep if p ≥ 0.9, drop below 0.05, review in between: 14/180 claims go to review (6 good, 8 bad). 5 good claims are auto-dropped and 9 bad ones auto-kept.
+   - With the lower bound at 0.01: 25 claims go to review, 3 good claims are auto-dropped.
+
+## Status after run 007 and the human labels
+
+- **Recommendation for SPEC §6.4 (updates "Status after run 006"):** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` with the breadcrumb prefix and the **`local-block` premise**, argmax. Not the 400-token window.
+- Drop base-mnli-fever-anli as the fallback.
+- **Worth a decision:** deberta-v3-large-zeroshot-v2.0 + local-block. It is about equal on same-section claims and clearly better at rejecting claims from another section. Options: replace large with it, or use it as a second "belongs to this section" check.
+- Rejected claims are not reliably wrong either: 5 good claims fall below p = 0.05. They should not become L2/L0 material automatically.
+
+Open:
+1. Prototype the identifier / number / version check from run 006 (a) and measure it on the human labels.
+2. A larger human sample if the large vs zeroshot choice must be settled on same-section claims. Currently 3 vs 6 claims differ, p = 0.51.

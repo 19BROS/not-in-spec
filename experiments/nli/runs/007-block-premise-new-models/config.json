@@ -1,0 +1,110 @@
+{
+  "started": "2026-11-08T16:04:59",
+  "models": [
+    "tasksource/ModernBERT-large-nli",
+    "MoritzLaurer/ModernBERT-large-zeroshot-v2.0",
+    "MoritzLaurer/deberta-v3-large-zeroshot-v2.0",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"
+  ],
+  "contexts": [
+    "breadcrumb"
+  ],
+  "premises": [
+    "local",
+    "local-block"
+  ],
+  "radius": 1,
+  "sections": "all",
+  "batch": 8,
+  "git": {
+    "commit": "9efe448da3e514550a516cd3ba5b8353ef9e249d",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_windows_sha256": "a13612126a3f",
+    "labels_sha256": "44ded39573b9"
+  },
+  "versions": {
+    "python": "3.12.6",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "threads": 6,
+  "seconds": {
+    "tasksource/ModernBERT-large-nli": {
+      "revision": "",
+      "breadcrumb/local": {
+        "seconds": 290.7,
+        "scored": 571,
+        "unique": 571
+      },
+      "breadcrumb/local-block": {
+        "seconds": 88.4,
+        "scored": 422,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/ModernBERT-large-zeroshot-v2.0": {
+      "revision": "",
+      "breadcrumb/local": {
+        "seconds": 184.3,
+        "scored": 571,
+        "unique": 571
+      },
+      "breadcrumb/local-block": {
+        "seconds": 108.2,
+        "scored": 422,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/deberta-v3-large-zeroshot-v2.0": {
+      "revision": "",
+      "breadcrumb/local": {
+        "seconds": 234.4,
+        "scored": 571,
+        "unique": 571
+      },
+      "breadcrumb/local-block": {
+        "seconds": 103.1,
+        "scored": 422,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli": {
+      "revision": "",
+      "breadcrumb/local": {
+        "seconds": 192.2,
+        "scored": 571,
+        "unique": 571
+      },
+      "breadcrumb/local-block": {
+        "seconds": 85.8,
+        "scored": 422,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli": {
+      "revision": "",
+      "breadcrumb/local": {
+        "seconds": 60.7,
+        "scored": 571,
+        "unique": 571
+      },
+      "breadcrumb/local-block": {
+        "seconds": 30.5,
+        "scored": 422,
+        "unique": 571
+      }
+    }
+  },
+  "hub_sha": {
+    "tasksource/ModernBERT-large-nli": "ca476cb923a8637073d4ceb0f19f7fc236e260d4",
+    "MoritzLaurer/ModernBERT-large-zeroshot-v2.0": "a51e07b524299e309dd2b88d48b0cfa2bd9ec598",
+    "MoritzLaurer/deberta-v3-large-zeroshot-v2.0": "cf44676c28ba7312e5c5f8f8d2c22b3e0c9cdae2",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli": "6f5cf0a2b59cabb106aca4c287eed12e357e90eb"
+  },
+  "finished": "2026-11-08T16:28:03"
+}
