@@ -1,0 +1,5 @@
+# Relative to this file. Model settings will be used by a later evaluation stage.
+docs:
+  paths: ["docs/**/*.md"]
+  openapi: "openapi.yaml"
+formats: [curl]
