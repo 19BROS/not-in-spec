@@ -10,11 +10,8 @@ from notinspec.chunking import (
     chunk_document,
     chunk_documents,
     find_citation,
-    grounding_premise,
     load_documents,
     nli_windows,
-    premise_text,
-    premise_windows,
     prose_sentences,
 )
 from notinspec.chunking.windows import clean_markdown
@@ -185,7 +182,7 @@ def test_overlap_must_be_smaller_than_the_window() -> None:
         nli_windows(_chunk("# A\n\ntext\n"), max_tokens=50, overlap_tokens=50)
 
 
-# --- citations and premises --------------------------------------------------------------
+# --- citations --------------------------------------------------------------------------
 
 
 def test_citation_found_across_a_line_wrap(guide: dict[str, Chunk]) -> None:
@@ -198,38 +195,3 @@ def test_citation_found_across_a_line_wrap(guide: dict[str, Chunk]) -> None:
 def test_citation_not_in_the_chunk_is_none(guide: dict[str, Chunk]) -> None:
     assert find_citation(guide["Timeouts"].text, "waits 15 seconds") is None
     assert find_citation(guide["Timeouts"].text, "   ") is None
-
-
-def test_premise_is_the_one_window_that_contains_the_citation(guide: dict[str, Chunk]) -> None:
-    chunk = guide["Migrating from 1.x"]
-    windows = _small(chunk)
-    span = find_citation(chunk.text, "It could send a payment twice.")
-    assert span is not None
-    chosen = premise_windows(windows, *span)
-    assert len(chosen) == 1
-    assert "It could send a payment twice." in chosen[0].text
-
-
-def test_citation_across_a_window_boundary_takes_both_windows(guide: dict[str, Chunk]) -> None:
-    chunk = guide["Migrating from 1.x"]
-    windows = _small(chunk)
-    first, second = windows[0], windows[1]
-    last_only_in_first = next(s for s in first.sentences if s.start < second.start)
-    first_only_in_second = next(s for s in second.sentences if s.end > first.end)
-    chosen = premise_windows(windows, last_only_in_first.start, first_only_in_second.end)
-    assert chosen == (first, second)
-    text = premise_text(chosen)
-    assert text.count(second.sentences[0].text) == 1  # overlapping sentences only once
-
-
-def test_citation_in_code_has_no_premise(guide: dict[str, Chunk]) -> None:
-    chunk = guide["Timeouts"]
-    assert grounding_premise(chunk, "strand.Client(timeout=strand.Timeout(connect=2.5") is None
-
-
-def test_grounding_premise_end_to_end(guide: dict[str, Chunk]) -> None:
-    chunk = guide["Backoff"]
-    premise = grounding_premise(chunk, "Values over\n`max_backoff` are capped.")
-    assert premise is not None
-    assert "Values over max_backoff are capped." in premise
-    assert grounding_premise(chunk, "Values are never capped.") is None

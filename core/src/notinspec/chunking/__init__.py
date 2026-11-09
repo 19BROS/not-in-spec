@@ -1,7 +1,7 @@
 """Reading and chunking: Markdown documentation → `Chunk`s and NLI windows (SPEC §6.1).
 
 A chunk is one whole documentation section. NLI windows are short prose-only excerpts of a
-chunk, the premise for NLI grounding. Input here is Markdown (also llms.txt and most MDX);
+chunk, input for NLI grounding. Input here is Markdown (also llms.txt and most MDX);
 other readers (Sphinx) produce the same `Chunk`s.
 """
 
@@ -22,10 +22,7 @@ from notinspec.chunking.windows import (
     NliWindow,
     Sentence,
     find_citation,
-    grounding_premise,
     nli_windows,
-    premise_text,
-    premise_windows,
     prose_sentences,
 )
 
@@ -45,11 +42,8 @@ __all__ = [
     "chunk_document",
     "chunk_documents",
     "find_citation",
-    "grounding_premise",
     "load_documents",
     "nli_windows",
     "normalize_text",
-    "premise_text",
-    "premise_windows",
     "prose_sentences",
 ]

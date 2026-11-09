@@ -1,4 +1,8 @@
-"""NLI windows: short prose-only excerpts of a chunk, the premise for grounding (SPEC §6.1, §6.4).
+"""NLI windows: short prose-only excerpts of a chunk (SPEC §6.1).
+
+Provisional: #10 proposes a shorter NLI premise (the cited sentence ±1 within its prose block)
+instead of windows. The prose sentences and the citation check below are needed either way.
+Picking the premise for a claim is grounding (role 4), so it is not in this module.
 
 The NLI model accepts only a few hundred tokens, so it never sees a whole section. A window is:
 
@@ -92,57 +96,6 @@ def find_citation(chunk_text: str, citation: str) -> tuple[int, int] | None:
         return None
     match = re.search(r"\s+".join(map(re.escape, words)), chunk_text)
     return (match.start(), match.end()) if match else None
-
-
-def premise_windows(windows: Sequence[NliWindow], start: int, end: int) -> tuple[NliWindow, ...]:
-    """The window(s) for a citation at `start`..`end` of `chunk.text` (SPEC §6.4).
-
-    `windows` is the chunk's full window list, in order. Returns the first window that holds
-    every sentence the citation touches; if it crosses a window boundary, the window where it
-    starts plus the following ones until its last sentence is covered. Empty when the citation
-    touches no prose sentence (it is in code, a table or a heading): there is no premise.
-    """
-    touched = {s.start for w in windows for s in w.sentences if s.start < end and start < s.end}
-    if not touched:
-        return ()
-
-    def has(window: NliWindow, sentence_start: int) -> bool:
-        return any(s.start == sentence_start for s in window.sentences)
-
-    for window in windows:
-        if all(has(window, s) for s in touched):
-            return (window,)
-    first, last = min(touched), max(touched)
-    chosen = [[w for w in windows if has(w, first)][-1]]
-    for window in windows[chosen[0].index + 1 :]:
-        if has(chosen[-1], last):
-            break
-        chosen.append(window)
-    return tuple(chosen)
-
-
-def premise_text(windows: Sequence[NliWindow]) -> str:
-    """Text of one or more neighbouring windows, each sentence once."""
-    seen: dict[int, str] = {}
-    for window in windows:
-        for sentence in window.sentences:
-            seen.setdefault(sentence.start, sentence.text)
-    return " ".join(seen[start] for start in sorted(seen))
-
-
-def grounding_premise(
-    chunk: Chunk, citation: str, windows: Sequence[NliWindow] | None = None
-) -> str | None:
-    """NLI premise for a claim's citation, or None when the claim must be dropped or skipped.
-
-    None means: the citation isn't in the chunk (drop the claim), or it is, but not in prose.
-    Pass `windows` when you have them, to avoid computing them again.
-    """
-    span = find_citation(chunk.text, citation)
-    if span is None:
-        return None
-    chosen = premise_windows(nli_windows(chunk) if windows is None else windows, *span)
-    return premise_text(chosen) if chosen else None
 
 
 # --- sentences -------------------------------------------------------------------------
