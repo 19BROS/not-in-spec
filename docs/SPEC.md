@@ -277,7 +277,7 @@ Source  – attached to every object above
 
 NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
 
-- **Model:** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (~0.3–0.6 s per claim on a laptop CPU). It was chosen in `experiments/nli`. The earlier candidate `cross-encoder/nli-deberta-v3-base` with 400-token windows kept only 60 % of correct claims, failing on list-heavy sections. A multilingual XNLI model for non-English docs remains a *candidate*.
+- **Model:** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (~0.3–0.6 s per claim on CPU, measured on two PCs). It was chosen in `experiments/nli`. The earlier candidate `cross-encoder/nli-deberta-v3-base` with 400-token windows kept only 60 % of correct claims, failing on list-heavy sections. A multilingual XNLI model for non-English docs remains a *candidate*.
 - **Premise:** for grounding it is the NLI premise; for K5 it is a claim. It is never a whole chunk.
 - **Recorded with every decision:** the NLI model and its revision, the premise rule and the decision rule, so a decision can be reproduced.
 - **Watch:** NLI does not reliably check exact identifiers, numbers, versions or tense.
