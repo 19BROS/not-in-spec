@@ -1,0 +1,41 @@
+{
+ "_comment": "Hand-written WRONG or UNSUPPORTED claims (not from an LLM). Citations point at the real span the claim twists, so they get the same premise as real claims. Gold labels in labels.csv.",
+ "claims": [
+  {
+   "id": "n1",
+   "claim": "The Chunked Deflate streaming infinite loop fixed in urllib3 2.8.0 was a high severity issue.",
+   "citation": "Chunked Deflate streaming could enter an infinite loop. (Medium severity",
+   "type": "fact"
+  },
+  {
+   "id": "n2",
+   "claim": "In urllib3 2.8.0, destination client certificates still apply to HTTPS forwarding proxy connections.",
+   "citation": "Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.",
+   "type": "fact"
+  },
+  {
+   "id": "n3",
+   "claim": "In urllib3 2.8.0, proxy CA certificates are configured in ssl_context.",
+   "citation": "Configure proxy CA certificates and client certificates in `proxy_ssl_context`",
+   "type": "fact"
+  },
+  {
+   "id": "n4",
+   "claim": "Upgrading to urllib3 2.8.0 requires no configuration changes for HTTPS proxy setups.",
+   "citation": "Configurations relying on that behavior may require changes.",
+   "type": "fact"
+  },
+  {
+   "id": "n5",
+   "claim": "The HTTPResponse.stream() issue fixed in urllib3 2.8.0 could crash the process.",
+   "citation": "could buffer a chunk-size line of unbounded length in memory",
+   "type": "fact"
+  },
+  {
+   "id": "n6",
+   "claim": "urllib3 2.7.0 fixed the ignored TLS configuration for HTTPS proxies.",
+   "citation": "The TLS configuration for HTTPS proxies could be ignored or overridden.",
+   "type": "fact"
+  }
+ ]
+}

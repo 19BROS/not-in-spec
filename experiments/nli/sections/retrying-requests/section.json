@@ -1,0 +1,83 @@
+{
+  "_comment": "Hand-simulated output of the Sphinx reader (SPEC 6.1) for one section, as it would come out of the docutils doctree. Text copied from the real urllib3 docs; inline literals and cross-references are rendered as Sphinx displays them and wrapped in backticks.",
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "docs/user-guide.rst",
+    "lines": [544, 641]
+  },
+  "breadcrumb": ["User Guide", "Retrying Requests"],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "urllib3 can automatically retry idempotent requests. This same mechanism also handles redirects. You can control the retries using the `retries` parameter to `request()`. By default, urllib3 will retry requests 3 times and follow up to 3 redirects.",
+      "refs": [{"role": "py:meth", "target": "urllib3.PoolManager.request", "display": "request()"}]
+    },
+    {
+      "type": "paragraph",
+      "text": "To change the number of retries just specify an integer:"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nurllib3.request(\"GET\", \"https://httpbin.org/ip\", retries=10)"
+    },
+    {
+      "type": "paragraph",
+      "text": "To disable all retry and redirect logic specify `retries=False`:"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nurllib3.request(\n    \"GET\",\n    \"https://nxdomain.example.com\",\n    retries=False\n)\n# NewConnectionError\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/1\",\n    retries=False\n)\n\nprint(resp.status)\n# 302"
+    },
+    {
+      "type": "paragraph",
+      "text": "To disable redirects but keep the retrying logic, specify `redirect=False`:"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "resp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/1\",\n    redirect=False\n)\n\nprint(resp.status)\n# 302"
+    },
+    {
+      "type": "paragraph",
+      "text": "For more granular control you can use a `Retry` instance. This class allows you far greater control of how requests are retried.",
+      "refs": [{"role": "py:class", "target": "urllib3.util.retry.Retry", "display": "Retry"}]
+    },
+    {
+      "type": "paragraph",
+      "text": "For example, to do a total of 3 retries, but limit to only 2 redirects:"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/3\",\n    retries=urllib3.Retry(3, redirect=2)\n)\n# MaxRetryError"
+    },
+    {
+      "type": "paragraph",
+      "text": "You can also disable exceptions for too many redirects and just return the `302` response:"
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "resp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/3\",\n    retries=urllib3.Retry(\n        redirect=2,\n        raise_on_redirect=False\n    )\n)\n\nprint(resp.status)\n# 302"
+    },
+    {
+      "type": "paragraph",
+      "text": "If you want all requests to be subject to the same retry policy, you can specify the retry at the `PoolManager` level:",
+      "refs": [{"role": "py:class", "target": "urllib3.poolmanager.PoolManager", "display": "PoolManager"}]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "import urllib3\n\nhttp = urllib3.PoolManager(retries=False)\n\nhttp = urllib3.PoolManager(\n    retries=urllib3.Retry(5, redirect=2)\n)"
+    },
+    {
+      "type": "paragraph",
+      "text": "You can still override this pool-level retry policy by specifying `retries` to `request()`.",
+      "refs": [{"role": "py:meth", "target": "urllib3.PoolManager.request", "display": "request()"}]
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "_comment": "Hand-simulated Sphinx reader output. Long section (> 400 tokens of prose) on purpose: several NLI windows. Each bullet is a list_item; the trailing issue links '(#NNNN)' are kept in refs, not in the text. Item 13 has two paragraphs.",
+  "source": {
+    "project": "urllib3",
+    "repo": "https://github.com/urllib3/urllib3",
+    "commit": "d07367de9244fe44109aa2f04ae88240bece22b9",
+    "file": "CHANGES.rst",
+    "lines": [
+      49,
+      132
+    ]
+  },
+  "breadcrumb": [
+    "Changelog",
+    "2.8.0 (2026-09-15)",
+    "Bugfixes"
+  ],
+  "blocks": [
+    {
+      "type": "list_item",
+      "text": "Fixed response header handling to replace obsolete folded header lines (`obs-fold`) with spaces in accordance with RFC 9112, preventing raw CRLF sequences from appearing in header values such as `Set-Cookie`.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/1362",
+          "display": "#1362"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed usage of `proxy_ssl_context` with `ProxyManager` when `use_forwarding_for_https=True`. Passing `ssl_context` instead of `proxy_ssl_context` for HTTPS proxies in this configuration now emits a `FutureWarning` and will raise an error in v3.0.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/2577",
+          "display": "#2577"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Changed behavior of the default `ConnectionPool.pool` initialization. `LifoQueue` is now resolved from the `queue` module after the `ConnectionPool` is instantiated instead of using the default cached `QueueCls` class property. This is done because sometimes the `queue.LifoQueue` is monkey-patched late in the program, such as by gevent.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/3289",
+          "display": "#3289"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Raised `UnrewindableBodyError` instead of `ValueError` when retrying a request whose body had `tell()` but not `seek()`.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/3779",
+          "display": "#3779"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Decoded percent-encoded SOCKS proxy credentials before authenticating with the proxy server.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/3785",
+          "display": "#3785"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `HTTPResponse.drain_conn()` to discard unread response data in 64 KiB chunks (same as the default `amt` when doing `HTTPResponse.stream(...)`).",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5019",
+          "display": "#5019"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `is_ipaddress()` to detect non-standard IPv4 forms accepted by `socket.connect`, such as hex (`0x7f000001`), octal (`0177.0.0.1`), and decimal integers (`2130706433`), ensuring SSL certificate verification uses the correct mode for these addresses.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5029",
+          "display": "#5029"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `HTTPConnectionPool.urlopen` raising a misleading `FullPoolError` instead of `ValueError` when called with an invalid `timeout` argument on a pool created with `block=True`.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5059",
+          "display": "#5059"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed port-zero handling to preserve explicit `:0` values instead of substituting the default ports 80 or 443 in URL parsing, pool selection, proxy configuration, `connection_from_url()`, and HTTP/2 request authority.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5071",
+          "display": "#5071"
+        },
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5101",
+          "display": "#5101"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed a bug where `PoolManager` passed the `assert_hostname` and `assert_fingerprint` parameters to HTTP connection pools.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5077",
+          "display": "#5077"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `HTTPConnectionPool.urlopen()` and HTTP proxy forwarding to strip URL fragments from absolute request targets before sending requests.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5079",
+          "display": "#5079"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Added safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers. This change affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix; those on newer Python versions should upgrade to 3.13.14+ or 3.14.5+ to get the same security fixes.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5091",
+          "display": "#5091"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `HTTPSConnection.connect()` overriding `ProxyConfig.ssl_context`'s certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy.\n\n`HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its `ssl_context` as a fallback when an HTTPS proxy forwards an HTTP target.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5093",
+          "display": "#5093"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed URL parsing to more strictly enforce RFC 3986 host syntax, rejecting invalid host input such as raw spaces and control characters, malformed percent-encodings, and percent-encoded control characters in HTTP(S) hosts and IPv6 zone identifiers, including proxy CONNECT tunnel targets. Host normalization now also follows RFC 3986 normalization rules for percent-encoded octets by decoding percent-encoded unreserved characters and uppercasing the hexadecimal digits of retained percent-encoded octets.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5095",
+          "display": "#5095"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed an `AttributeError` on Python built with OpenSSL 4+, where `ssl.PROTOCOL_TLSv1` no longer exists.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5097",
+          "display": "#5097"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `urllib3.contrib.pyopenssl` to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding `DeprecationWarning` raised by pyOpenSSL 26.3.0+.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5103",
+          "display": "#5103"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed handling of HTTP 303 redirects for requests with chunked or file-like bodies.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5161",
+          "display": "#5161"
+        }
+      ]
+    },
+    {
+      "type": "list_item",
+      "text": "Fixed `assert_fingerprint()` to raise `SSLError` instead of `binascii.Error` when a fingerprint has a supported length but contains non-hexadecimal characters.",
+      "refs": [
+        {
+          "role": "issue",
+          "target": "https://github.com/urllib3/urllib3/issues/5211",
+          "display": "#5211"
+        }
+      ]
+    }
+  ]
+}

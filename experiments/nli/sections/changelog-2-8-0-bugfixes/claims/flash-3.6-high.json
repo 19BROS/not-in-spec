@@ -1,0 +1,202 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "urllib3 fixed response header handling to replace obsolete folded header lines (`obs-fold`) with spaces in accordance with RFC 9112.",
+      "citation": "Fixed response header handling to replace obsolete folded header lines (`obs-fold`) with spaces in accordance with RFC 9112",
+      "type": "change"
+    },
+    {
+      "id": "c2",
+      "claim": "Replacing obsolete folded header lines (`obs-fold`) with spaces in urllib3 response header handling prevents raw CRLF sequences from appearing in header values such as `Set-Cookie`.",
+      "citation": "preventing raw CRLF sequences from appearing in header values such as `Set-Cookie`",
+      "type": "fact"
+    },
+    {
+      "id": "c3",
+      "claim": "urllib3 fixed usage of `proxy_ssl_context` with `ProxyManager` when `use_forwarding_for_https=True`.",
+      "citation": "Fixed usage of `proxy_ssl_context` with `ProxyManager` when `use_forwarding_for_https=True`",
+      "type": "change"
+    },
+    {
+      "id": "c4",
+      "claim": "Passing `ssl_context` instead of `proxy_ssl_context` for HTTPS proxies when `use_forwarding_for_https=True` in urllib3 now emits a `FutureWarning`.",
+      "citation": "Passing `ssl_context` instead of `proxy_ssl_context` for HTTPS proxies in this configuration now emits a `FutureWarning`",
+      "type": "change"
+    },
+    {
+      "id": "c5",
+      "claim": "Passing `ssl_context` instead of `proxy_ssl_context` for HTTPS proxies when `use_forwarding_for_https=True` in urllib3 will raise an error in v3.0.",
+      "citation": "will raise an error in v3.0",
+      "type": "change"
+    },
+    {
+      "id": "c6",
+      "claim": "urllib3 changed the behavior of the default `ConnectionPool.pool` initialization.",
+      "citation": "Changed behavior of the default `ConnectionPool.pool` initialization",
+      "type": "change"
+    },
+    {
+      "id": "c7",
+      "claim": "In urllib3, `LifoQueue` is now resolved from the `queue` module after the `ConnectionPool` is instantiated instead of using the default cached `QueueCls` class property.",
+      "citation": "`LifoQueue` is now resolved from the `queue` module after the `ConnectionPool` is instantiated instead of using the default cached `QueueCls` class property",
+      "type": "change"
+    },
+    {
+      "id": "c8",
+      "claim": "The `queue.LifoQueue` is sometimes monkey-patched late in a program, such as by gevent.",
+      "citation": "sometimes the `queue.LifoQueue` is monkey-patched late in the program, such as by gevent",
+      "type": "fact"
+    },
+    {
+      "id": "c9",
+      "claim": "urllib3 raised `UnrewindableBodyError` instead of `ValueError` when retrying a request whose body had `tell()` but not `seek()`.",
+      "citation": "Raised `UnrewindableBodyError` instead of `ValueError` when retrying a request whose body had `tell()` but not `seek()`",
+      "type": "change"
+    },
+    {
+      "id": "c10",
+      "claim": "urllib3 decoded percent-encoded SOCKS proxy credentials before authenticating with the proxy server.",
+      "citation": "Decoded percent-encoded SOCKS proxy credentials before authenticating with the proxy server",
+      "type": "change"
+    },
+    {
+      "id": "c11",
+      "claim": "urllib3 fixed `HTTPResponse.drain_conn()` to discard unread response data in 64 KiB chunks.",
+      "citation": "Fixed `HTTPResponse.drain_conn()` to discard unread response data in 64 KiB chunks",
+      "type": "change"
+    },
+    {
+      "id": "c12",
+      "claim": "The default `amt` when calling `HTTPResponse.stream(...)` in urllib3 is 64 KiB.",
+      "citation": "default `amt` when doing `HTTPResponse.stream(...)`",
+      "type": "fact"
+    },
+    {
+      "id": "c13",
+      "claim": "urllib3 fixed `is_ipaddress()` to detect non-standard IPv4 forms accepted by `socket.connect`, such as hex (`0x7f000001`), octal (`0177.0.0.1`), and decimal integers (`2130706433`).",
+      "citation": "Fixed `is_ipaddress()` to detect non-standard IPv4 forms accepted by `socket.connect`, such as hex (`0x7f000001`), octal (`0177.0.0.1`), and decimal integers (`2130706433`)",
+      "type": "change"
+    },
+    {
+      "id": "c14",
+      "claim": "Detecting non-standard IPv4 forms in `is_ipaddress()` ensures SSL certificate verification uses the correct mode for these addresses.",
+      "citation": "ensuring SSL certificate verification uses the correct mode for these addresses",
+      "type": "fact"
+    },
+    {
+      "id": "c15",
+      "claim": "urllib3 fixed `HTTPConnectionPool.urlopen` raising a misleading `FullPoolError` instead of `ValueError` when called with an invalid `timeout` argument on a pool created with `block=True`.",
+      "citation": "Fixed `HTTPConnectionPool.urlopen` raising a misleading `FullPoolError` instead of `ValueError` when called with an invalid `timeout` argument on a pool created with `block=True`",
+      "type": "change"
+    },
+    {
+      "id": "c16",
+      "claim": "urllib3 fixed port-zero handling to preserve explicit `:0` values instead of substituting default ports 80 or 443 in URL parsing, pool selection, proxy configuration, `connection_from_url()`, and HTTP/2 request authority.",
+      "citation": "Fixed port-zero handling to preserve explicit `:0` values instead of substituting the default ports 80 or 443 in URL parsing, pool selection, proxy configuration, `connection_from_url()`, and HTTP/2 request authority",
+      "type": "change"
+    },
+    {
+      "id": "c17",
+      "claim": "urllib3 fixed a bug where `PoolManager` passed the `assert_hostname` and `assert_fingerprint` parameters to HTTP connection pools.",
+      "citation": "Fixed a bug where `PoolManager` passed the `assert_hostname` and `assert_fingerprint` parameters to HTTP connection pools",
+      "type": "change"
+    },
+    {
+      "id": "c18",
+      "claim": "urllib3 fixed `HTTPConnectionPool.urlopen()` and HTTP proxy forwarding to strip URL fragments from absolute request targets before sending requests.",
+      "citation": "Fixed `HTTPConnectionPool.urlopen()` and HTTP proxy forwarding to strip URL fragments from absolute request targets before sending requests",
+      "type": "change"
+    },
+    {
+      "id": "c19",
+      "claim": "urllib3 added safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers.",
+      "citation": "Added safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers",
+      "type": "change"
+    },
+    {
+      "id": "c20",
+      "claim": "The proxy tunneling safeguards change in urllib3 affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix.",
+      "citation": "This change affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix",
+      "type": "fact"
+    },
+    {
+      "id": "c21",
+      "claim": "Users on newer Python versions should upgrade to Python 3.13.14+ or 3.14.5+ to get the standard library security fixes.",
+      "citation": "those on newer Python versions should upgrade to 3.13.14+ or 3.14.5+ to get the same security fixes",
+      "type": "fact"
+    },
+    {
+      "id": "c22",
+      "claim": "urllib3 fixed `HTTPSConnection.connect()` overriding `ProxyConfig.ssl_context`'s certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy.",
+      "citation": "Fixed `HTTPSConnection.connect()` overriding `ProxyConfig.ssl_context`'s certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy",
+      "type": "change"
+    },
+    {
+      "id": "c23",
+      "claim": "`HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes.",
+      "citation": "`HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes",
+      "type": "change"
+    },
+    {
+      "id": "c24",
+      "claim": "`HTTPSConnection` continues to use its `ssl_context` as a fallback when an HTTPS proxy forwards an HTTP target.",
+      "citation": "continues to use its `ssl_context` as a fallback when an HTTPS proxy forwards an HTTP target",
+      "type": "fact"
+    },
+    {
+      "id": "c25",
+      "claim": "urllib3 fixed URL parsing to more strictly enforce RFC 3986 host syntax, rejecting invalid host input such as raw spaces and control characters, malformed percent-encodings, and percent-encoded control characters in HTTP(S) hosts and IPv6 zone identifiers, including proxy CONNECT tunnel targets.",
+      "citation": "Fixed URL parsing to more strictly enforce RFC 3986 host syntax, rejecting invalid host input such as raw spaces and control characters, malformed percent-encodings, and percent-encoded control characters in HTTP(S) hosts and IPv6 zone identifiers, including proxy CONNECT tunnel targets",
+      "type": "change"
+    },
+    {
+      "id": "c26",
+      "claim": "Host normalization in urllib3 now follows RFC 3986 normalization rules for percent-encoded octets by decoding percent-encoded unreserved characters.",
+      "citation": "Host normalization now also follows RFC 3986 normalization rules for percent-encoded octets by decoding percent-encoded unreserved characters",
+      "type": "change"
+    },
+    {
+      "id": "c27",
+      "claim": "Host normalization in urllib3 now follows RFC 3986 normalization rules for percent-encoded octets by uppercasing the hexadecimal digits of retained percent-encoded octets.",
+      "citation": "uppercasing the hexadecimal digits of retained percent-encoded octets",
+      "type": "change"
+    },
+    {
+      "id": "c28",
+      "claim": "urllib3 fixed an `AttributeError` on Python built with OpenSSL 4+, where `ssl.PROTOCOL_TLSv1` no longer exists.",
+      "citation": "Fixed an `AttributeError` on Python built with OpenSSL 4+, where `ssl.PROTOCOL_TLSv1` no longer exists",
+      "type": "change"
+    },
+    {
+      "id": "c29",
+      "claim": "In Python built with OpenSSL 4+, `ssl.PROTOCOL_TLSv1` no longer exists.",
+      "citation": "Python built with OpenSSL 4+, where `ssl.PROTOCOL_TLSv1` no longer exists",
+      "type": "fact"
+    },
+    {
+      "id": "c30",
+      "claim": "urllib3 fixed `urllib3.contrib.pyopenssl` to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding `DeprecationWarning` raised by pyOpenSSL 26.3.0+.",
+      "citation": "Fixed `urllib3.contrib.pyopenssl` to use cryptography APIs when reading a certificate subject and loading encrypted private keys, avoiding `DeprecationWarning` raised by pyOpenSSL 26.3.0+",
+      "type": "change"
+    },
+    {
+      "id": "c31",
+      "claim": "pyOpenSSL 26.3.0+ raises a `DeprecationWarning` when reading a certificate subject and loading encrypted private keys.",
+      "citation": "`DeprecationWarning` raised by pyOpenSSL 26.3.0+",
+      "type": "fact"
+    },
+    {
+      "id": "c32",
+      "claim": "urllib3 fixed handling of HTTP 303 redirects for requests with chunked or file-like bodies.",
+      "citation": "Fixed handling of HTTP 303 redirects for requests with chunked or file-like bodies",
+      "type": "change"
+    },
+    {
+      "id": "c33",
+      "claim": "urllib3 fixed `assert_fingerprint()` to raise `SSLError` instead of `binascii.Error` when a fingerprint has a supported length but contains non-hexadecimal characters.",
+      "citation": "Fixed `assert_fingerprint()` to raise `SSLError` instead of `binascii.Error` when a fingerprint has a supported length but contains non-hexadecimal characters",
+      "type": "change"
+    }
+  ]
+}

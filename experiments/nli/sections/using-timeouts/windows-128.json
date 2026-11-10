@@ -1,0 +1,46 @@
+{
+  "chunk_id": "99fee79f17805785",
+  "slug": "using-timeouts",
+  "tokenizer": "cross-encoder/nli-deberta-v3-base",
+  "max_tokens": 128,
+  "overlap_sentences": 1,
+  "pair_limit": 512,
+  "sentences": [
+    {
+      "i": 0,
+      "block": 0,
+      "text": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted."
+    },
+    {
+      "i": 1,
+      "block": 0,
+      "text": "In simple cases, you can specify a timeout as a float to request():"
+    },
+    {
+      "i": 2,
+      "block": 2,
+      "text": "For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:"
+    },
+    {
+      "i": 3,
+      "block": 4,
+      "text": "If you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:"
+    },
+    {
+      "i": 4,
+      "block": 6,
+      "text": "You still override this pool-level timeout by specifying timeout to request()."
+    }
+  ],
+  "windows": [
+    {
+      "id": "99fee79f17805785:s0-s4",
+      "sentences": [
+        0,
+        4
+      ],
+      "tokens": 100,
+      "text": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():\n\nFor more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:\n\nIf you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:\n\nYou still override this pool-level timeout by specifying timeout to request()."
+    }
+  ]
+}

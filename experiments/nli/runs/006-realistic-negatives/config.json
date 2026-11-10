@@ -1,0 +1,103 @@
+{
+  "started": "2026-11-07T18:37:51",
+  "models": [
+    "cross-encoder/nli-deberta-v3-base",
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+    "vectara/hallucination_evaluation_model",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "lytang/MiniCheck-DeBERTa-v3-Large"
+  ],
+  "contexts": [
+    "breadcrumb"
+  ],
+  "premises": [
+    "window",
+    "local"
+  ],
+  "radius": 1,
+  "sections": "all",
+  "batch": 8,
+  "git": {
+    "commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_windows_sha256": "a04e136ff451",
+    "labels_sha256": "44ded39573b9"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "threads": 10,
+  "seconds": {
+    "cross-encoder/nli-deberta-v3-base": {
+      "revision": "",
+      "breadcrumb/window": {
+        "seconds": 270.8,
+        "scored": 828,
+        "unique": 1080
+      },
+      "breadcrumb/local": {
+        "seconds": 65.9,
+        "scored": 427,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli": {
+      "revision": "",
+      "breadcrumb/window": {
+        "seconds": 273.2,
+        "scored": 828,
+        "unique": 1080
+      },
+      "breadcrumb/local": {
+        "seconds": 67.8,
+        "scored": 427,
+        "unique": 571
+      }
+    },
+    "vectara/hallucination_evaluation_model": {
+      "revision": "de9a5e6ba9ba49531a022dba17e35ffeb2a6fad8",
+      "breadcrumb/window": {
+        "seconds": 354.9,
+        "scored": 1080,
+        "unique": 1080
+      },
+      "breadcrumb/local": {
+        "seconds": 87.7,
+        "scored": 553,
+        "unique": 571
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli": {
+      "revision": "",
+      "breadcrumb/window": {
+        "seconds": 862.9,
+        "scored": 828,
+        "unique": 1080
+      },
+      "breadcrumb/local": {
+        "seconds": 218.8,
+        "scored": 427,
+        "unique": 571
+      }
+    },
+    "lytang/MiniCheck-DeBERTa-v3-Large": {
+      "revision": "",
+      "breadcrumb/window": {
+        "seconds": 1173.8,
+        "scored": 1080,
+        "unique": 1080
+      },
+      "breadcrumb/local": {
+        "seconds": 282.7,
+        "scored": 553,
+        "unique": 571
+      }
+    }
+  },
+  "finished": "2026-11-07T19:38:53"
+}

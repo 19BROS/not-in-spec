@@ -1,0 +1,60 @@
+Human sample: 180 claims, 19 borderline; {'entailment': 92, 'neutral': 61, 'contradiction': 27}
+Human vs claude-draft: 3-way 92.8% (kappa 0.88), keep/drop 98.3% (kappa 0.97)
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'negatives-handmade', 'n3') human=entailment draft=contradiction
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b1') human=entailment draft=neutral
+  keep/drop disagreement: ('changelog-2-8-0-security', 'sonnet-medium-outside', 'o1') human=neutral draft=entailment
+Cross sample: 43 pairs kept by at least one compared setup; {'neutral': 41, 'entailment': 2}
+
+setup                                                recall/92  false keeps/88  cross kept (wrong / supported)
+  006 hallucination_evaluation_model window-128         90         40            16/259 (3 not human-labelled)
+  006 hallucination_evaluation_model local              89         38            26/259 (8 not human-labelled)
+  006 hallucination_evaluation_model window-400         91         38            26/259 (9 not human-labelled)
+  006 hallucination_evaluation_model both               89         35            15/259 (2 not human-labelled)
+  006 MiniCheck-DeBERTa-v3-Large window-400             90         29            17/259 (2 not human-labelled)
+  006 MiniCheck-DeBERTa-v3-Large window-128             78         21            4/259 (1 not human-labelled)
+  006 nli-deberta-v3-base window-400                    55          9            4/259 (3 / 1)
+  006 nli-deberta-v3-base both                          68         15            3/259 (2 / 1)
+  006 nli-deberta-v3-base local                         77         19            9/259 (2 not human-labelled)
+  006 nli-deberta-v3-base window-128                    75         17            7/259 (6 / 1)
+  006 MiniCheck-DeBERTa-v3-Large local                  71         15            5/259 (5 / 0)
+  006 MiniCheck-DeBERTa-v3-Large both                   71         14            3/259 (3 / 0)
+  006 DeBERTa-v3-base-mnli-fever-anli window-400        82         19            48/259 (18 not human-labelled)
+  007 ModernBERT-large-nli local                        88         22            13/259 (12 / 1)
+  006 wanli-large window-400                            90         22            40/259 (38 / 2)
+  006 DeBERTa-v3-base-mnli-fever-anli both              79         16            36/259 (18 not human-labelled)
+  006 DeBERTa-v3-base-mnli-fever-anli local             81         17            42/259 (21 not human-labelled)
+  007 DeBERTa-v3-base-mnli-fever-anli local             81         17            42/259 (21 not human-labelled)
+  007 deberta-v3-large-zeroshot-v2.0 local              84         17            11/259 (10 / 1)
+  007 ModernBERT-large-nli local-block                  88         19            12/259 (11 / 1)
+  006 DeBERTa-v3-base-mnli-fever-anli window-128        83         16            49/259 (23 not human-labelled)
+  007 DeBERTa-v3-base-mnli-fever-anli local-block       82         15            28/259 (11 not human-labelled)
+  006 wanli-large window-128                            86         16            27/259 (26 / 1)
+  006 wanli-large local                                 84         14            27/259 (26 / 1)
+  007 wanli-large local                                 84         14            27/259 (26 / 1)
+  007 ModernBERT-large-zeroshot-v2.0 local              86         15            15/259 (14 / 1)
+  006 wanli-large both                                  84         13            24/259 (23 / 1)
+  007 ModernBERT-large-zeroshot-v2.0 local-block        87         14            15/259 (14 / 1)
+  007 deberta-v3-large-zeroshot-v2.0 local-block        83         12            8/259 (7 / 1)
+  007 wanli-large local-block                           86         12            24/259 (23 / 1)
+
+McNemar vs 007 wanli-large local-block (only ref right / only other right / p)
+  same-section 007 wanli-large local                            (8, 4, 0.39)
+  same-section 006 wanli-large window-400                       (12, 6, 0.24)
+  same-section 006 wanli-large window-128                       (6, 2, 0.29)
+  same-section 007 deberta-v3-large-zeroshot-v2.0 local-block   (6, 3, 0.51)
+  same-section 007 ModernBERT-large-zeroshot-v2.0 local-block   (4, 3, 1.0)
+  same-section 007 ModernBERT-large-nli local-block             (8, 3, 0.23)
+  same-section 007 DeBERTa-v3-base-mnli-fever-anli local-block  (10, 3, 0.092)
+  cross pairs  007 wanli-large local                            (3, 0, 0.25)
+  cross pairs  006 wanli-large window-400                       (16, 2, 0.0013)
+  cross pairs  007 deberta-v3-large-zeroshot-v2.0 local-block   (0, 16, 3.1e-05)
+
+Threshold sweep, 007 wanli-large local-block (keep if p_entailment >= t; dropped by the citation check = 0)
+  t=0.9    good dropped 11/92  bad kept  9/88
+  t=0.5    good dropped  6/92  bad kept 12/88
+  t=0.1    good dropped  5/92  bad kept 16/88
+  t=0.05   good dropped  5/92  bad kept 17/88
+  t=0.01   good dropped  3/92  bad kept 26/88
+  t=0.001  good dropped  1/92  bad kept 46/88
+  zones keep>=0.9 / review [0.01,0.9) / drop<0.01: review 25/180 (good 8, bad 17); good auto-dropped 3, bad auto-kept 9
+  zones keep>=0.9 / review [0.05,0.9) / drop<0.05: review 14/180 (good 6, bad 8); good auto-dropped 5, bad auto-kept 9

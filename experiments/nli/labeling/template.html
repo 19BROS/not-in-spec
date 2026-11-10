@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blind Labeling</title>
+<style>
+:root{
+  --bg:#f7f7f5;--panel:#ffffff;--ink:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;
+  --mark:#ffe58a;--mark-ink:#1d1d1b;--code-bg:#f0efea;--accent:#2f5bd3;
+  --ok:#1f8a4c;--neu:#8a6d1f;--bad:#b4322b;--chip:#efeee9;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#161615;--panel:#1f1f1d;--ink:#ecebe6;--muted:#9c9b95;--line:#33332f;
+  --mark:#6b5512;--mark-ink:#fff6d6;--code-bg:#2a2a27;--accent:#86a8ff;
+  --ok:#5cc489;--neu:#d6b45a;--bad:#ef7d74;--chip:#2a2a27;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header h1{font-size:16px;margin:0;font-weight:650}
+.bar{flex:1;min-width:140px;height:8px;background:var(--chip);border-radius:4px;overflow:hidden}
+.bar>div{height:100%;background:var(--accent);width:0}
+.count{color:var(--muted);font-variant-numeric:tabular-nums}
+button{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;padding:16px;max-width:1500px;margin:0 auto}
+@media (max-width:900px){main{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+#doc{max-height:calc(100vh - 90px);overflow:auto;position:sticky;top:70px}
+@media (max-width:900px){#doc{max-height:none;position:static}}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:10px}
+.blk{margin:0 0 10px}
+.blk.list_item{padding-left:18px;position:relative}
+.blk.list_item::before{content:"•";position:absolute;left:4px;color:var(--muted)}
+.blk.admonition{border-left:3px solid var(--accent);padding:6px 10px;background:var(--chip);border-radius:4px}
+.blk.code{opacity:.6}
+.blk.code pre{background:var(--code-bg);padding:8px 10px;border-radius:6px;overflow:auto;font-size:12.5px;margin:2px 0 0;max-height:150px}
+.codetag{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+code{background:var(--code-bg);padding:0 3px;border-radius:3px;font-size:.92em}
+mark{background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 1px}
+mark code{background:transparent}
+.claim{font-size:18px;line-height:1.45;margin:6px 0 12px;font-weight:550}
+.cit{font-size:13px;color:var(--muted);margin-bottom:14px}
+.cit.miss::after{content:" (nenájdená v próze, napr. je v kóde)";color:var(--bad)}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choices button{padding:12px 6px;text-align:center;line-height:1.25}
+.choices button kbd{display:block;font-size:11px;color:var(--muted)}
+.choices button.sel[data-v=entailment]{background:var(--ok);color:#fff;border-color:var(--ok)}
+.choices button.sel[data-v=neutral]{background:var(--neu);color:#fff;border-color:var(--neu)}
+.choices button.sel[data-v=contradiction]{background:var(--bad);color:#fff;border-color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.toggle.on{background:var(--neu);color:#fff;border-color:var(--neu)}
+textarea{width:100%;font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:6px 8px;min-height:44px;margin-top:10px}
+.dots{display:flex;flex-wrap:wrap;gap:4px;margin-top:14px}
+.dot{width:22px;height:22px;border-radius:4px;border:1px solid var(--line);background:var(--chip);font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.dot.entailment{background:var(--ok);border-color:var(--ok);color:#fff}
+.dot.neutral{background:var(--neu);border-color:var(--neu);color:#fff}
+.dot.contradiction{background:var(--bad);border-color:var(--bad);color:#fff}
+.dot.cur{outline:2px solid var(--accent);outline-offset:1px}
+.dot.bl::after{content:"?";font-weight:700}
+.secnav{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.secnav button{font-size:12px;padding:4px 8px}
+.secnav button.cur{border-color:var(--accent);color:var(--accent)}
+details{margin-top:14px;color:var(--muted);font-size:13.5px}
+details summary{cursor:pointer;color:var(--ink)}
+details li{margin:3px 0}
+.warn{background:var(--bad);color:#fff;padding:6px 16px;display:none}
+.small{font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="warn" id="warn">Prehliadač neukladá postup. Exportuj CSV priebežne.</div>
+<header>
+  <h1>Blind labeling</h1>
+  <div class="bar"><div id="bar"></div></div>
+  <span class="count" id="count"></span>
+  <button id="next-open" title="U">Ďalší neolabelovaný (U)</button>
+  <button id="export">Export CSV</button>
+  <label class="small"><input type="file" id="import" accept=".csv" hidden><button id="import-btn" type="button">Import CSV</button></label>
+</header>
+<main>
+  <section class="panel" id="doc" aria-label="Sekcia dokumentácie"></section>
+  <section>
+    <div class="panel">
+      <div class="small" id="pos"></div>
+      <div class="claim" id="claim"></div>
+      <div class="cit" id="cit"></div>
+      <div class="choices">
+        <button data-v="entailment">Podporené<kbd>1</kbd></button>
+        <button data-v="neutral">Neuvedené<kbd>2</kbd></button>
+        <button data-v="contradiction">V rozpore<kbd>3</kbd></button>
+      </div>
+      <div class="row">
+        <button class="toggle" id="bl">Neistý / borderline (B)</button>
+        <button id="prev">← Späť</button>
+        <button id="next">Ďalej →</button>
+      </div>
+      <textarea id="note" placeholder="Poznámka (N), voliteľná. Esc = späť na klávesy."></textarea>
+      <div class="dots" id="dots"></div>
+      <div class="secnav" id="secnav"></div>
+      <details>
+        <summary>Pravidlá</summary>
+        <ul>
+          <li>Otázka: <b>má grounding tento claim ponechať?</b> Posudzuj voči <b>próze celej sekcie</b> vľavo, nie len voči zvýraznenej citácii.</li>
+          <li>Sekciu čítaj ako súčasť dokumentácie daného projektu. Claim „urllib3's Retry …“ je teda podporený, aj keď veta názov knižnice nespomína.</li>
+          <li><b>Podporené</b>: próza to tvrdí, alebo to z nej priamo vyplýva (verná parafráza je v poriadku).</li>
+          <li><b>Neuvedené</b>: próza to netvrdí. Patrí sem aj to, čo je možno pravda, ale nie je to napísané; fakt, ktorý je len v kóde alebo komentári v kóde; a claim, ktorý zovšeobecňuje, zosilňuje, oslabuje alebo vynechá „can“, „by default“, „only“, „up to“, číslo či jednotku.</li>
+          <li><b>V rozpore</b>: próza tvrdí opak alebo inú hodnotu.</li>
+          <li><b>Neistý</b>: zaškrtni, keď váhaš. Verdikt aj tak vyber.</li>
+          <li>Kód je sivý a nepočíta sa. Rozhoduje prvý dojem po prečítaní, netreba nad tým bádať.</li>
+        </ul>
+        <p>Klávesy: 1/2/3 verdikt (a ďalší claim), B neistý, N poznámka, ←/→ pohyb, U ďalší neolabelovaný. Postup sa ukladá v tomto prehliadači. Na konci daj Export CSV.</p>
+      </details>
+    </div>
+  </section>
+</main>
+<script>
+const DATA = /*__DATA__*/null;
+const KEY = DATA.storeKey || "nis-blind-labels-v1";
+const FILE = DATA.file || "labels-human.csv";
+if (DATA.title) { document.title = DATA.title; document.querySelector("header h1").textContent = DATA.title; }
+let store = {};
+let canStore = true;
+try { store = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; localStorage.setItem(KEY + "-probe", "1"); }
+catch (e) { canStore = false; }
+if (!canStore) document.getElementById("warn").style.display = "block";
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+
+const items = DATA.items;
+let cur = 0;
+const firstOpen = items.findIndex(i => !(store[i.id] && store[i.id].verdict));
+if (firstOpen >= 0) cur = firstOpen;
+
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const QUOTES = {"‘":"'","’":"'","“":'"',"”":'"'};
+function normMap(s) {
+  let out = "", map = [], sp = false;
+  for (let i = 0; i < s.length; i++) {
+    let c = s[i];
+    if (c === "`") continue;
+    c = QUOTES[c] || c;
+    if (/\s/.test(c)) { if (out.length && !sp) { out += " "; map.push(i); } sp = true; continue; }
+    sp = false; out += c; map.push(i);
+  }
+  return { out, map };
+}
+function findRange(text, cit) {
+  const n = normMap(cit).out.trim();
+  if (!n) return null;
+  const t = normMap(text), at = t.out.indexOf(n);
+  if (at < 0) return null;
+  return [t.map[at], t.map[at + n.length - 1] + 1];
+}
+// inline `code` + one highlighted range, without breaking either
+function renderInline(text, range) {
+  let html = "", inCode = false, open = null;
+  const flush = (buf, code, mk) => {
+    if (!buf) return "";
+    let h = esc(buf);
+    if (code) h = "<code>" + h + "</code>";
+    if (mk) h = "<mark>" + h + "</mark>";
+    return h;
+  };
+  let buf = "", bc = false, bm = false, first = true;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (c === "`") { html += flush(buf, bc, bm); buf = ""; inCode = !inCode; first = true; continue; }
+    const mk = !!range && i >= range[0] && i < range[1];
+    if (!first && (bc !== inCode || bm !== mk)) { html += flush(buf, bc, bm); buf = ""; }
+    bc = inCode; bm = mk; first = false; buf += c;
+  }
+  return html + flush(buf, bc, bm);
+}
+function renderDoc(item) {
+  const s = DATA.sections[item.section];
+  let found = false, html = '<div class="crumb">' + esc([s.project, ...s.breadcrumb].join(" › ")) + "</div>";
+  for (const b of s.blocks) {
+    if (b.type === "code") {
+      html += '<div class="blk code"><span class="codetag">kód – nepočíta sa</span><pre>' + esc(b.text) + "</pre></div>";
+      continue;
+    }
+    const r = found ? null : findRange(b.text, item.citation);
+    if (r) found = true;
+    html += '<p class="blk ' + b.type + '"' + (r ? ' id="hit"' : "") + ">" + renderInline(b.text, r) + "</p>";
+  }
+  const doc = document.getElementById("doc");
+  const changed = doc.dataset.section !== item.section;
+  doc.innerHTML = html; doc.dataset.section = item.section;
+  const hit = document.getElementById("hit");
+  if (hit) hit.scrollIntoView({ block: "center", behavior: changed ? "auto" : "smooth" });
+  else if (changed) doc.scrollTop = 0;
+  return found;
+}
+function render() {
+  const item = items[cur], st = store[item.id] || {};
+  const found = renderDoc(item);
+  const secItems = items.filter(i => i.section === item.section);
+  document.getElementById("pos").textContent =
+    "Claim " + (secItems.indexOf(item) + 1) + " / " + secItems.length + " v sekcii · " + (cur + 1) + " / " + items.length + " celkovo · " + item.id;
+  document.getElementById("claim").textContent = item.claim;
+  const cit = document.getElementById("cit");
+  cit.innerHTML = "Citácia: „" + renderInline(item.citation, null) + "“";
+  cit.classList.toggle("miss", !found);
+  document.querySelectorAll(".choices button").forEach(b => b.classList.toggle("sel", st.verdict === b.dataset.v));
+  document.getElementById("bl").classList.toggle("on", !!st.borderline);
+  document.getElementById("note").value = st.note || "";
+  document.getElementById("dots").innerHTML = secItems.map(i => {
+    const s = store[i.id] || {};
+    return '<div class="dot ' + (s.verdict || "") + (s.borderline ? " bl" : "") + (i === item ? " cur" : "") + '" data-i="' + items.indexOf(i) + '" title="' + i.id + '"></div>';
+  }).join("");
+  document.getElementById("secnav").innerHTML = DATA.order.map(sec => {
+    const its = items.filter(i => i.section === sec), done = its.filter(i => store[i.id] && store[i.id].verdict).length;
+    return '<button data-sec="' + sec + '"' + (sec === item.section ? ' class="cur"' : "") + ">" + esc(DATA.sections[sec].breadcrumb.slice(-1)[0]) + " " + done + "/" + its.length + "</button>";
+  }).join("");
+  const done = items.filter(i => store[i.id] && store[i.id].verdict).length;
+  document.getElementById("count").textContent = done + " / " + items.length;
+  document.getElementById("bar").style.width = (100 * done / items.length) + "%";
+}
+function set(field, value) {
+  const id = items[cur].id;
+  store[id] = Object.assign({}, store[id], { [field]: value, at: new Date().toISOString() });
+  save();
+}
+function go(i) { cur = Math.max(0, Math.min(items.length - 1, i)); render(); }
+function verdict(v) { set("verdict", v); if (cur < items.length - 1) go(cur + 1); else render(); }
+function nextOpen() {
+  for (let k = 1; k <= items.length; k++) {
+    const i = (cur + k) % items.length;
+    if (!(store[items[i].id] && store[items[i].id].verdict)) return go(i);
+  }
+  alert("Všetko je olabelované. Daj Export CSV.");
+}
+
+document.querySelectorAll(".choices button").forEach(b => b.onclick = () => verdict(b.dataset.v));
+document.getElementById("bl").onclick = () => { set("borderline", !(store[items[cur].id] || {}).borderline); render(); };
+document.getElementById("prev").onclick = () => go(cur - 1);
+document.getElementById("next").onclick = () => go(cur + 1);
+document.getElementById("next-open").onclick = nextOpen;
+document.getElementById("note").oninput = e => set("note", e.target.value);
+document.getElementById("dots").onclick = e => { const d = e.target.closest(".dot"); if (d) go(+d.dataset.i); };
+document.getElementById("secnav").onclick = e => { const b = e.target.closest("button"); if (b) go(items.findIndex(i => i.section === b.dataset.sec)); };
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA") { if (e.key === "Escape") e.target.blur(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === "1") verdict("entailment");
+  else if (k === "2") verdict("neutral");
+  else if (k === "3") verdict("contradiction");
+  else if (k === "b") document.getElementById("bl").click();
+  else if (k === "n") { e.preventDefault(); document.getElementById("note").focus(); }
+  else if (k === "arrowleft") go(cur - 1);
+  else if (k === "arrowright") go(cur + 1);
+  else if (k === "u") nextOpen();
+});
+
+const csvCell = v => /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+document.getElementById("export").onclick = () => {
+  const lines = ["id,verdict,borderline,note,labeled_at"];
+  for (const i of items) {
+    const s = store[i.id] || {};
+    lines.push([i.id, s.verdict || "", s.borderline ? "yes" : "", s.note || "", s.at || ""].map(csvCell).join(","));
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n") + "\n"], { type: "text/csv" }));
+  a.download = FILE; a.click();
+};
+function parseCsv(t) {
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { row.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && t[i + 1] === "\n") i++; row.push(f); rows.push(row); row = []; f = ""; }
+    else f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows;
+}
+document.getElementById("import-btn").onclick = () => document.getElementById("import").click();
+document.getElementById("import").onchange = async e => {
+  const file = e.target.files[0]; if (!file) return;
+  const rows = parseCsv(await file.text()), ids = new Set(items.map(i => i.id));
+  let n = 0;
+  for (const r of rows.slice(1)) if (ids.has(r[0]) && r[1]) { store[r[0]] = { verdict: r[1], borderline: r[2] === "yes", note: r[3] || "", at: r[4] || "" }; n++; }
+  save(); render(); alert("Načítané: " + n);
+};
+render();
+</script>
+</body>
+</html>

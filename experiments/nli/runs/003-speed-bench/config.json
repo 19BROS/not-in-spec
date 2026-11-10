@@ -1,0 +1,67 @@
+{
+  "started": "2026-11-07T15:49:14",
+  "models": [
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli@int8"
+  ],
+  "contexts": [
+    "breadcrumb"
+  ],
+  "premises": [
+    "window"
+  ],
+  "radius": 1,
+  "sections": "all",
+  "batch": 8,
+  "git": {
+    "commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_windows_sha256": "785dc17026be",
+    "labels_sha256": "0da00b1e7a82"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "bench": {
+    "pairs": 16,
+    "default_threads": 10,
+    "results": [
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+        "threads": 4,
+        "seconds": 22.8
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+        "threads": 6,
+        "seconds": 20.4
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+        "threads": 10,
+        "seconds": 17.9
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli@int8",
+        "threads": 4,
+        "seconds": 15.0
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli@int8",
+        "threads": 6,
+        "seconds": 12.8
+      },
+      {
+        "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli@int8",
+        "threads": 10,
+        "seconds": 11.1
+      }
+    ]
+  },
+  "finished": "2026-11-07T15:51:58"
+}

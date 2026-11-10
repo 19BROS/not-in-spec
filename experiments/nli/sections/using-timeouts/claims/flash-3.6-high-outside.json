@@ -1,0 +1,46 @@
+{
+  "claims": [
+    {
+      "id": "o1",
+      "claim": "Executing a request using urllib3.request() returns an instance of urllib3.response.HTTPResponse.",
+      "citation": "In simple cases, you can specify a timeout as a `float` to `request()`:",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o2",
+      "claim": "When an HTTP request times out, urllib3 raises a MaxRetryError caused by a ReadTimeoutError.",
+      "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o3",
+      "claim": "A urllib3 PoolManager instance accepts a Timeout object for its timeout parameter.",
+      "citation": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "b1",
+      "claim": "In simple cases, the timeout parameter passed to urllib3's request() function must be a float.",
+      "citation": "In simple cases, you can specify a timeout as a `float` to `request()`:",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b2",
+      "claim": "To configure separate connect and read timeouts in urllib3, you must instantiate a Timeout object.",
+      "citation": "For more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b3",
+      "claim": "Specifying a timeout at the PoolManager level sets a default timeout for all requests made by that pool.",
+      "citation": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:",
+      "type": "fact",
+      "kind": "beyond"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "There are four different types of timeouts that may occur in HTTPX.",
+      "citation": "There are four different types of timeouts that may occur.",
+      "type": "fact"
+    },
+    {
+      "id": "c2",
+      "claim": "The four types of timeouts in HTTPX are connect, read, write, and pool timeouts.",
+      "citation": "These are connect, read, write, and pool timeouts.",
+      "type": "fact"
+    },
+    {
+      "id": "c3",
+      "claim": "The HTTPX connect timeout specifies the maximum amount of time to wait until a socket connection to the requested host is established.",
+      "citation": "The connect timeout specifies the maximum amount of time to wait until a socket connection to the requested host is established.",
+      "type": "fact"
+    },
+    {
+      "id": "c4",
+      "claim": "If HTTPX is unable to connect within the connect timeout time frame, a ConnectTimeout exception is raised.",
+      "citation": "If HTTPX is unable to connect within this time frame, a `ConnectTimeout` exception is raised.",
+      "type": "fact"
+    },
+    {
+      "id": "c5",
+      "claim": "The HTTPX read timeout specifies the maximum duration to wait for a chunk of data to be received.",
+      "citation": "The read timeout specifies the maximum duration to wait for a chunk of data to be received",
+      "type": "fact"
+    },
+    {
+      "id": "c6",
+      "claim": "If HTTPX is unable to receive data within the read timeout time frame, a ReadTimeout exception is raised.",
+      "citation": "If HTTPX is unable to receive data within this time frame, a `ReadTimeout` exception is raised.",
+      "type": "fact"
+    },
+    {
+      "id": "c7",
+      "claim": "The HTTPX write timeout specifies the maximum duration to wait for a chunk of data to be sent.",
+      "citation": "The write timeout specifies the maximum duration to wait for a chunk of data to be sent",
+      "type": "fact"
+    },
+    {
+      "id": "c8",
+      "claim": "If HTTPX is unable to send data within the write timeout time frame, a WriteTimeout exception is raised.",
+      "citation": "If HTTPX is unable to send data within this time frame, a `WriteTimeout` exception is raised.",
+      "type": "fact"
+    },
+    {
+      "id": "c9",
+      "claim": "The HTTPX pool timeout specifies the maximum duration to wait for acquiring a connection from the connection pool.",
+      "citation": "The pool timeout specifies the maximum duration to wait for acquiring a connection from the connection pool.",
+      "type": "fact"
+    },
+    {
+      "id": "c10",
+      "claim": "If HTTPX is unable to acquire a connection within the pool timeout time frame, a PoolTimeout exception is raised.",
+      "citation": "If HTTPX is unable to acquire a connection within this time frame, a `PoolTimeout` exception is raised.",
+      "type": "fact"
+    },
+    {
+      "id": "c11",
+      "claim": "The maximum number of allowable connections in the HTTPX connection pool is configured by the limits argument.",
+      "citation": "the maximum number of allowable connections in the connection pool, which is configured by the `limits` argument.",
+      "type": "fact"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "started": "2026-11-07T13:51:02",
+  "models": [
+    "cross-encoder/nli-deberta-v3-xsmall",
+    "cross-encoder/nli-deberta-v3-base",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
+  ],
+  "contexts": [
+    "breadcrumb",
+    "sentence"
+  ],
+  "sections": "all",
+  "batch": 16,
+  "git": {
+    "commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_sha256": "670259280e9d",
+    "labels_sha256": "0da00b1e7a82"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "seconds": {
+    "cross-encoder/nli-deberta-v3-xsmall": {
+      "breadcrumb": 25.2,
+      "sentence": 25.9
+    },
+    "cross-encoder/nli-deberta-v3-base": {
+      "breadcrumb": 77.6,
+      "sentence": 79.6
+    },
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli": {
+      "breadcrumb": 2165.6,
+      "sentence": 2307.0
+    }
+  },
+  "finished": "2026-11-07T15:09:15"
+}

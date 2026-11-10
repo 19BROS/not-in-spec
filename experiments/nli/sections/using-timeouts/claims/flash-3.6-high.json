@@ -1,0 +1,40 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "Timeouts allow controlling how long requests are allowed to run before being aborted.",
+      "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+      "type": "fact"
+    },
+    {
+      "id": "c2",
+      "claim": "Timeouts are measured in seconds.",
+      "citation": "(in seconds)",
+      "type": "fact"
+    },
+    {
+      "id": "c3",
+      "claim": "A timeout can be specified as a float to request().",
+      "citation": "specify a timeout as a `float` to `request()`",
+      "type": "fact"
+    },
+    {
+      "id": "c4",
+      "claim": "A Timeout instance allows specifying separate connect and read timeouts.",
+      "citation": "a `Timeout` instance which lets you specify separate connect and read timeouts",
+      "type": "fact"
+    },
+    {
+      "id": "c5",
+      "claim": "A timeout can be specified at the PoolManager level to apply to all requests.",
+      "citation": "specify the timeout at the `PoolManager` level",
+      "type": "fact"
+    },
+    {
+      "id": "c6",
+      "claim": "A pool-level timeout can be overridden by specifying timeout to request().",
+      "citation": "override this pool-level timeout by specifying `timeout` to `request()`",
+      "type": "fact"
+    }
+  ]
+}

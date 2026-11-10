@@ -1,0 +1,130 @@
+{
+  "started": "2026-11-07T15:52:15",
+  "models": [
+    "cross-encoder/nli-deberta-v3-xsmall",
+    "cross-encoder/nli-deberta-v3-base",
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
+  ],
+  "contexts": [
+    "none",
+    "breadcrumb"
+  ],
+  "premises": [
+    "window",
+    "local"
+  ],
+  "radius": 1,
+  "sections": "all",
+  "batch": 8,
+  "git": {
+    "commit": "e8077b00a58fcaac2cbebef8f3f9dc7762970048",
+    "branch": "feat/nli-and-extractors-testing",
+    "dirty_experiment_files": true
+  },
+  "inputs": {
+    "pairs_windows_sha256": "785dc17026be",
+    "labels_sha256": "0da00b1e7a82"
+  },
+  "versions": {
+    "python": "3.12.10",
+    "torch": "2.15.0+cpu",
+    "transformers": "5.22.2"
+  },
+  "threads": 10,
+  "seconds": {
+    "cross-encoder/nli-deberta-v3-xsmall": {
+      "revision": "",
+      "none/window": {
+        "seconds": 0.0,
+        "scored": 0,
+        "unique": 252
+      },
+      "none/local": {
+        "seconds": 8.4,
+        "scored": 126,
+        "unique": 126
+      },
+      "breadcrumb/window": {
+        "seconds": 0.0,
+        "scored": 0,
+        "unique": 252
+      },
+      "breadcrumb/local": {
+        "seconds": 4.3,
+        "scored": 126,
+        "unique": 126
+      }
+    },
+    "cross-encoder/nli-deberta-v3-base": {
+      "revision": "",
+      "none/window": {
+        "seconds": 0.0,
+        "scored": 0,
+        "unique": 252
+      },
+      "none/local": {
+        "seconds": 15.8,
+        "scored": 126,
+        "unique": 126
+      },
+      "breadcrumb/window": {
+        "seconds": 0.0,
+        "scored": 0,
+        "unique": 252
+      },
+      "breadcrumb/local": {
+        "seconds": 16.2,
+        "scored": 126,
+        "unique": 126
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli": {
+      "revision": "",
+      "none/window": {
+        "seconds": 91.1,
+        "scored": 252,
+        "unique": 252
+      },
+      "none/local": {
+        "seconds": 14.0,
+        "scored": 126,
+        "unique": 126
+      },
+      "breadcrumb/window": {
+        "seconds": 64.7,
+        "scored": 252,
+        "unique": 252
+      },
+      "breadcrumb/local": {
+        "seconds": 16.3,
+        "scored": 126,
+        "unique": 126
+      }
+    },
+    "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli": {
+      "revision": "",
+      "none/window": {
+        "seconds": 198.6,
+        "scored": 252,
+        "unique": 252
+      },
+      "none/local": {
+        "seconds": 46.8,
+        "scored": 126,
+        "unique": 126
+      },
+      "breadcrumb/window": {
+        "seconds": 213.9,
+        "scored": 252,
+        "unique": 252
+      },
+      "breadcrumb/local": {
+        "seconds": 53.3,
+        "scored": 126,
+        "unique": 126
+      }
+    }
+  },
+  "finished": "2026-11-07T16:04:42"
+}

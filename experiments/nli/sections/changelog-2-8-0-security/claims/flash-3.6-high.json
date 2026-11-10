@@ -1,0 +1,70 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "claim": "In urllib3 2.8.0, an issue where the TLS configuration for HTTPS proxies could be ignored or overridden was fixed.",
+      "citation": "The TLS configuration for HTTPS proxies could be ignored or overridden.",
+      "type": "change"
+    },
+    {
+      "id": "c2",
+      "claim": "In urllib3 2.8.0, an issue where `HTTPResponse.stream()` could buffer a chunk-size line of unbounded length in memory was fixed.",
+      "citation": "`HTTPResponse.stream()` and `read_chunked()` could buffer a chunk-size line of unbounded length in memory.",
+      "type": "change"
+    },
+    {
+      "id": "c3",
+      "claim": "In urllib3 2.8.0, an issue where `read_chunked()` could buffer a chunk-size line of unbounded length in memory was fixed.",
+      "citation": "`HTTPResponse.stream()` and `read_chunked()` could buffer a chunk-size line of unbounded length in memory.",
+      "type": "change"
+    },
+    {
+      "id": "c4",
+      "claim": "In urllib3 2.8.0, an issue where Chunked Deflate streaming could enter an infinite loop was fixed.",
+      "citation": "Chunked Deflate streaming could enter an infinite loop.",
+      "type": "change"
+    },
+    {
+      "id": "c5",
+      "claim": "urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.",
+      "citation": "urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.",
+      "type": "change"
+    },
+    {
+      "id": "c6",
+      "claim": "Configurations relying on HTTPS proxy TLS configuration being ignored or overridden by destination settings may require changes.",
+      "citation": "Configurations relying on that behavior may require changes.",
+      "type": "fact"
+    },
+    {
+      "id": "c7",
+      "claim": "In urllib3, proxy CA certificates are configured in `proxy_ssl_context`.",
+      "citation": "Configure proxy CA certificates and client certificates in `proxy_ssl_context`",
+      "type": "fact"
+    },
+    {
+      "id": "c8",
+      "claim": "In urllib3, proxy client certificates are configured in `proxy_ssl_context`.",
+      "citation": "Configure proxy CA certificates and client certificates in `proxy_ssl_context`",
+      "type": "fact"
+    },
+    {
+      "id": "c9",
+      "claim": "In urllib3, proxy identity checks are configured with `proxy_assert_hostname` or `proxy_assert_fingerprint`.",
+      "citation": "proxy identity checks with `proxy_assert_hostname` or `proxy_assert_fingerprint`",
+      "type": "fact"
+    },
+    {
+      "id": "c10",
+      "claim": "In urllib3, destination client certificates no longer apply to HTTPS forwarding proxy connections.",
+      "citation": "Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.",
+      "type": "change"
+    },
+    {
+      "id": "c11",
+      "claim": "In urllib3, destination identity overrides no longer apply to HTTPS forwarding proxy connections.",
+      "citation": "Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.",
+      "type": "change"
+    }
+  ]
+}

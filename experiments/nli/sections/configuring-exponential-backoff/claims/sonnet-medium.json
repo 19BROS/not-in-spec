@@ -1,0 +1,17 @@
+{"claims": [
+  {"id": "c1", "claim": "By default, the urllib3 Retry class does not sleep between retry attempts.", "citation": "By default, `Retry` does not sleep between retry attempts", "type": "fact"},
+  {"id": "c2", "claim": "The default value of the backoff_factor parameter of urllib3's Retry is 0.", "citation": "(`backoff_factor=0`)", "type": "fact"},
+  {"id": "c3", "claim": "urllib3's Retry respects delays requested by the server when a response includes a Retry-After header, even when backoff_factor is 0.", "citation": "it will still respect delays requested by the server when a response includes a `Retry-After` header", "type": "fact"},
+  {"id": "c4", "claim": "The respect_retry_after_header parameter of urllib3's Retry relates to respecting server-requested delays given in a Retry-After header.", "citation": "(see `respect_retry_after_header`)", "type": "fact"},
+  {"id": "c5", "claim": "Retrying immediately without backoff in production systems can overwhelm a recovering server.", "citation": "retrying immediately without backoff can overwhelm a recovering server", "type": "fact"},
+  {"id": "c6", "claim": "Retrying immediately without backoff in production systems can quickly exhaust API rate limits.", "citation": "quickly exhaust API rate limits", "type": "fact"},
+  {"id": "c7", "claim": "Setting a non-zero backoff_factor on urllib3's Retry introduces exponential delays between retries when no server-requested delay is applied.", "citation": "you can set a non-zero `backoff_factor` to introduce exponential delays between retries", "type": "fact"},
+  {"id": "c8", "claim": "The sleep delay in urllib3's Retry is calculated as {backoff factor} * (2 ** ({number of previous retries})) seconds.", "citation": "{backoff factor} * (2 ** ({number of previous retries}))", "type": "fact"},
+  {"id": "c9", "claim": "The sleep delay in urllib3's Retry is calculated in seconds.", "citation": "seconds, with no delay before the second attempt", "type": "fact"},
+  {"id": "c10", "claim": "urllib3's Retry applies no delay before the second attempt (the first retry).", "citation": "with no delay before the second attempt (the first retry)", "type": "fact"},
+  {"id": "c11", "claim": "urllib3's Retry applies no delay before the first retry because most transient errors resolve immediately.", "citation": "because most transient errors resolve immediately", "type": "fact"},
+  {"id": "c12", "claim": "A backoff_factor of 0.5 in urllib3's Retry yields retry sleeps of 0.0s, 1.0s, 2.0s, etc.", "citation": "a `backoff_factor` of `0.5` yields retry sleeps of `0.0s`, `1.0s`, `2.0s`, etc.", "type": "fact"},
+  {"id": "c13", "claim": "The retry sleep delays in urllib3's Retry are capped at backoff_max.", "citation": "up to `backoff_max`", "type": "fact"},
+  {"id": "c14", "claim": "Adding backoff_jitter to urllib3's Retry introduces random variance to the retry delays.", "citation": "Adding `backoff_jitter` introduces random variance", "type": "fact"},
+  {"id": "c15", "claim": "The backoff_jitter parameter of urllib3's Retry helps avoid the thundering herd problem, where many clients retry in lockstep against a server.", "citation": "to avoid the \"thundering herd\" problem where many clients retry in lockstep against a server", "type": "fact"}
+]}

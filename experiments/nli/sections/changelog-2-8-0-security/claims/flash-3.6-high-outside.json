@@ -1,0 +1,46 @@
+{
+  "claims": [
+    {
+      "id": "o1",
+      "claim": "urllib3's ProxyManager class accepts the proxy_ssl_context parameter for configuring HTTPS proxy TLS settings.",
+      "citation": "`proxy_ssl_context`",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o2",
+      "claim": "urllib3's HTTPResponse.stream() method returns an iterator that yields response payload chunks.",
+      "citation": "`HTTPResponse.stream()`",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "o3",
+      "claim": "urllib3 relies on Python's standard zlib module to decode Deflate-compressed response streams.",
+      "citation": "Chunked Deflate streaming",
+      "type": "fact",
+      "kind": "outside"
+    },
+    {
+      "id": "b1",
+      "claim": "urllib3's HTTPResponse.stream() always buffers chunk-size lines of unbounded length in memory.",
+      "citation": "`HTTPResponse.stream()` and `read_chunked()` could buffer a chunk-size line of unbounded length in memory.",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b2",
+      "claim": "Destination client certificates no longer apply to HTTPS connections in urllib3.",
+      "citation": "Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.",
+      "type": "fact",
+      "kind": "beyond"
+    },
+    {
+      "id": "b3",
+      "claim": "urllib3 requires configuring both proxy_assert_hostname and proxy_assert_fingerprint for proxy identity checks.",
+      "citation": "proxy identity checks with `proxy_assert_hostname` or `proxy_assert_fingerprint`",
+      "type": "fact",
+      "kind": "beyond"
+    }
+  ]
+}

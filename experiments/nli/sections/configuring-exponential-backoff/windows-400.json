@@ -1,0 +1,56 @@
+{
+  "chunk_id": "fc9ca48aaaffb612",
+  "slug": "configuring-exponential-backoff",
+  "tokenizer": "cross-encoder/nli-deberta-v3-base",
+  "max_tokens": 400,
+  "overlap_sentences": 1,
+  "pair_limit": 512,
+  "sentences": [
+    {
+      "i": 0,
+      "block": 0,
+      "text": "By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header)."
+    },
+    {
+      "i": 1,
+      "block": 0,
+      "text": "In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits."
+    },
+    {
+      "i": 2,
+      "block": 1,
+      "text": "When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries."
+    },
+    {
+      "i": 3,
+      "block": 1,
+      "text": "The sleep delay is calculated using the formula:"
+    },
+    {
+      "i": 4,
+      "block": 3,
+      "text": "seconds, with no delay before the second attempt (the first retry) because most transient errors resolve immediately."
+    },
+    {
+      "i": 5,
+      "block": 3,
+      "text": "For example, a backoff_factor of 0.5 yields retry sleeps of 0.0s, 1.0s, 2.0s, etc., up to backoff_max:"
+    },
+    {
+      "i": 6,
+      "block": 5,
+      "text": "Adding backoff_jitter introduces random variance to avoid the \"thundering herd\" problem where many clients retry in lockstep against a server."
+    }
+  ],
+  "windows": [
+    {
+      "id": "fc9ca48aaaffb612:s0-s6",
+      "sentences": [
+        0,
+        6
+      ],
+      "tokens": 203,
+      "text": "By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.\n\nWhen no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries. The sleep delay is calculated using the formula:\n\nseconds, with no delay before the second attempt (the first retry) because most transient errors resolve immediately. For example, a backoff_factor of 0.5 yields retry sleeps of 0.0s, 1.0s, 2.0s, etc., up to backoff_max:\n\nAdding backoff_jitter introduces random variance to avoid the \"thundering herd\" problem where many clients retry in lockstep against a server."
+    }
+  ]
+}

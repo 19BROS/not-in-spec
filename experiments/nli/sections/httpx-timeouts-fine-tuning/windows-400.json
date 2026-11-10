@@ -1,0 +1,86 @@
+{
+  "chunk_id": "c27fa98e76d585a8",
+  "slug": "httpx-timeouts-fine-tuning",
+  "tokenizer": "cross-encoder/nli-deberta-v3-base",
+  "max_tokens": 400,
+  "overlap_sentences": 1,
+  "pair_limit": 512,
+  "sentences": [
+    {
+      "i": 0,
+      "block": 0,
+      "text": "HTTPX also allows you to specify the timeout behavior in more fine grained detail."
+    },
+    {
+      "i": 1,
+      "block": 1,
+      "text": "There are four different types of timeouts that may occur."
+    },
+    {
+      "i": 2,
+      "block": 1,
+      "text": "These are connect, read, write, and pool timeouts."
+    },
+    {
+      "i": 3,
+      "block": 2,
+      "text": "The connect timeout specifies the maximum amount of time to wait until a socket connection to the requested host is established."
+    },
+    {
+      "i": 4,
+      "block": 2,
+      "text": "If HTTPX is unable to connect within this time frame, a ConnectTimeout exception is raised."
+    },
+    {
+      "i": 5,
+      "block": 3,
+      "text": "The read timeout specifies the maximum duration to wait for a chunk of data to be received (for example, a chunk of the response body)."
+    },
+    {
+      "i": 6,
+      "block": 3,
+      "text": "If HTTPX is unable to receive data within this time frame, a ReadTimeout exception is raised."
+    },
+    {
+      "i": 7,
+      "block": 4,
+      "text": "The write timeout specifies the maximum duration to wait for a chunk of data to be sent (for example, a chunk of the request body)."
+    },
+    {
+      "i": 8,
+      "block": 4,
+      "text": "If HTTPX is unable to send data within this time frame, a WriteTimeout exception is raised."
+    },
+    {
+      "i": 9,
+      "block": 5,
+      "text": "The pool timeout specifies the maximum duration to wait for acquiring a connection from the connection pool."
+    },
+    {
+      "i": 10,
+      "block": 5,
+      "text": "If HTTPX is unable to acquire a connection within this time frame, a PoolTimeout exception is raised."
+    },
+    {
+      "i": 11,
+      "block": 5,
+      "text": "A related configuration here is the maximum number of allowable connections in the connection pool, which is configured by the limits argument."
+    },
+    {
+      "i": 12,
+      "block": 6,
+      "text": "You can configure the timeout behavior for any of these values..."
+    }
+  ],
+  "windows": [
+    {
+      "id": "c27fa98e76d585a8:s0-s12",
+      "sentences": [
+        0,
+        12
+      ],
+      "tokens": 261,
+      "text": "HTTPX also allows you to specify the timeout behavior in more fine grained detail.\n\nThere are four different types of timeouts that may occur. These are connect, read, write, and pool timeouts.\n\nThe connect timeout specifies the maximum amount of time to wait until a socket connection to the requested host is established. If HTTPX is unable to connect within this time frame, a ConnectTimeout exception is raised.\n\nThe read timeout specifies the maximum duration to wait for a chunk of data to be received (for example, a chunk of the response body). If HTTPX is unable to receive data within this time frame, a ReadTimeout exception is raised.\n\nThe write timeout specifies the maximum duration to wait for a chunk of data to be sent (for example, a chunk of the request body). If HTTPX is unable to send data within this time frame, a WriteTimeout exception is raised.\n\nThe pool timeout specifies the maximum duration to wait for acquiring a connection from the connection pool. If HTTPX is unable to acquire a connection within this time frame, a PoolTimeout exception is raised. A related configuration here is the maximum number of allowable connections in the connection pool, which is configured by the limits argument.\n\nYou can configure the timeout behavior for any of these values..."
+    }
+  ]
+}

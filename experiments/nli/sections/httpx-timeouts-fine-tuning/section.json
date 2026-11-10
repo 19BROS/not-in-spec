@@ -1,0 +1,53 @@
+{
+  "_comment": "Hand-simulated MkDocs/Markdown reader output (second library). Page title from mkdocs.yml nav (Advanced > Timeouts). Bold emphasis (**connect** ...) is rendered as plain text; inline code stays in backticks. The page intro (default 5 s timeout) is a different section and NOT in this chunk.",
+  "source": {
+    "project": "httpx",
+    "repo": "https://github.com/encode/httpx",
+    "commit": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+    "file": "docs/advanced/timeouts.md",
+    "lines": [
+      41,
+      70
+    ]
+  },
+  "breadcrumb": [
+    "Advanced",
+    "Timeouts",
+    "Fine tuning the configuration"
+  ],
+  "blocks": [
+    {
+      "type": "paragraph",
+      "text": "HTTPX also allows you to specify the timeout behavior in more fine grained detail."
+    },
+    {
+      "type": "paragraph",
+      "text": "There are four different types of timeouts that may occur. These are connect, read, write, and pool timeouts."
+    },
+    {
+      "type": "list_item",
+      "text": "The connect timeout specifies the maximum amount of time to wait until a socket connection to the requested host is established. If HTTPX is unable to connect within this time frame, a `ConnectTimeout` exception is raised."
+    },
+    {
+      "type": "list_item",
+      "text": "The read timeout specifies the maximum duration to wait for a chunk of data to be received (for example, a chunk of the response body). If HTTPX is unable to receive data within this time frame, a `ReadTimeout` exception is raised."
+    },
+    {
+      "type": "list_item",
+      "text": "The write timeout specifies the maximum duration to wait for a chunk of data to be sent (for example, a chunk of the request body). If HTTPX is unable to send data within this time frame, a `WriteTimeout` exception is raised."
+    },
+    {
+      "type": "list_item",
+      "text": "The pool timeout specifies the maximum duration to wait for acquiring a connection from the connection pool. If HTTPX is unable to acquire a connection within this time frame, a `PoolTimeout` exception is raised. A related configuration here is the maximum number of allowable connections in the connection pool, which is configured by the `limits` argument."
+    },
+    {
+      "type": "paragraph",
+      "text": "You can configure the timeout behavior for any of these values..."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "text": "# A client with a 60s timeout for connecting, and a 10s timeout elsewhere.\ntimeout = httpx.Timeout(10.0, connect=60.0)\nclient = httpx.Client(timeout=timeout)\n\nresponse = client.get('http://example.com/')"
+    }
+  ]
+}

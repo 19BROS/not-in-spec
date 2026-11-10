@@ -1,0 +1,47 @@
+{
+ "_comment": "Hand-written WRONG or UNSUPPORTED claims (not from an LLM). Citations point at the real span the claim twists, so they get the same premise as real claims. Gold labels in labels.csv.",
+ "claims": [
+  {
+   "id": "n1",
+   "claim": "urllib3 2.8.0 changed HTTPResponse.drain_conn() to discard unread response data in 32 KiB chunks.",
+   "citation": "to discard unread response data in 64 KiB chunks",
+   "type": "fact"
+  },
+  {
+   "id": "n2",
+   "claim": "In urllib3 2.8.0, passing ssl_context instead of proxy_ssl_context for HTTPS proxies with use_forwarding_for_https=True raises an error.",
+   "citation": "now emits a `FutureWarning` and will raise an error in v3.0",
+   "type": "fact"
+  },
+  {
+   "id": "n3",
+   "claim": "urllib3 2.8.0 substitutes the default ports 80 or 443 for an explicit :0 port in URL parsing.",
+   "citation": "to preserve explicit `:0` values instead of substituting the default ports 80 or 443",
+   "type": "fact"
+  },
+  {
+   "id": "n4",
+   "claim": "The proxy tunneling safeguards added in urllib3 2.8.0 affect users of Python 3.13.",
+   "citation": "This change affects users of Python 3.10, Python 3.11, and Python 3.12",
+   "type": "fact"
+  },
+  {
+   "id": "n5",
+   "claim": "urllib3 2.8.0 raises ValueError instead of UnrewindableBodyError when retrying a request whose body has tell() but not seek().",
+   "citation": "Raised `UnrewindableBodyError` instead of `ValueError` when retrying a request whose body had `tell()` but not `seek()`.",
+   "type": "fact"
+  },
+  {
+   "id": "n6",
+   "claim": "Since urllib3 2.8.0, HTTP 303 redirects are no longer followed for requests with chunked bodies.",
+   "citation": "Fixed handling of HTTP 303 redirects for requests with chunked or file-like bodies.",
+   "type": "fact"
+  },
+  {
+   "id": "n7",
+   "claim": "In urllib3 2.8.0, assert_fingerprint() raises binascii.Error when a fingerprint contains non-hexadecimal characters.",
+   "citation": "Fixed `assert_fingerprint()` to raise `SSLError` instead of `binascii.Error`",
+   "type": "fact"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{"claims": [
+{"id": "c1", "claim": "urllib3 can automatically retry idempotent requests.", "citation": "urllib3 can automatically retry idempotent requests", "type": "fact"},
+{"id": "c2", "claim": "The urllib3 mechanism that retries idempotent requests also handles redirects.", "citation": "This same mechanism also handles redirects", "type": "fact"},
+{"id": "c3", "claim": "urllib3 retries can be controlled using the retries parameter to request().", "citation": "You can control the retries using the retries parameter to request()", "type": "fact"},
+{"id": "c4", "claim": "By default, urllib3 will retry requests 3 times.", "citation": "By default, urllib3 will retry requests 3 times", "type": "fact"},
+{"id": "c5", "claim": "By default, urllib3 will follow up to 3 redirects.", "citation": "By default, urllib3 will retry requests 3 times and follow up to 3 redirects", "type": "fact"},
+{"id": "c6", "claim": "Specifying an integer for the retries parameter of urllib3's request() changes the number of retries.", "citation": "To change the number of retries just specify an integer", "type": "fact"},
+{"id": "c7", "claim": "Specifying retries=False in urllib3 disables all retry logic.", "citation": "To disable all retry and redirect logic specify retries=False", "type": "fact"},
+{"id": "c8", "claim": "Specifying retries=False in urllib3 disables all redirect logic.", "citation": "To disable all retry and redirect logic specify retries=False", "type": "fact"},
+{"id": "c9", "claim": "Specifying redirect=False in urllib3 disables redirects.", "citation": "To disable redirects but keep the retrying logic, specify redirect=False", "type": "fact"},
+{"id": "c10", "claim": "Specifying redirect=False in urllib3 keeps the retrying logic.", "citation": "To disable redirects but keep the retrying logic, specify redirect=False", "type": "fact"},
+{"id": "c11", "claim": "A urllib3 Retry instance can be used for more granular control of how requests are retried.", "citation": "For more granular control you can use a Retry instance", "type": "fact"},
+{"id": "c12", "claim": "A urllib3 Retry instance can be configured to do a total of 3 retries but limit to only 2 redirects.", "citation": "to do a total of 3 retries, but limit to only 2 redirects", "type": "fact"},
+{"id": "c13", "claim": "A urllib3 Retry instance can disable exceptions for too many redirects.", "citation": "You can also disable exceptions for too many redirects", "type": "fact"},
+{"id": "c14", "claim": "When a urllib3 Retry instance disables exceptions for too many redirects, urllib3 just returns the 302 response.", "citation": "disable exceptions for too many redirects and just return the 302 response", "type": "fact"},
+{"id": "c15", "claim": "In urllib3, the retry policy can be specified at the PoolManager level.", "citation": "you can specify the retry at the PoolManager level", "type": "fact"},
+{"id": "c16", "claim": "Specifying the retry policy at the urllib3 PoolManager level makes all requests subject to the same retry policy.", "citation": "If you want all requests to be subject to the same retry policy, you can specify the retry at the PoolManager level", "type": "fact"},
+{"id": "c17", "claim": "A urllib3 PoolManager-level retry policy can be overridden by specifying retries to request().", "citation": "You can still override this pool-level retry policy by specifying retries to request()", "type": "fact"}
+]}
