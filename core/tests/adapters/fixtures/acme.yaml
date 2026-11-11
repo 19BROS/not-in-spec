@@ -1,0 +1,93 @@
+# Acme Payments, the made-up API from the role guide (§6). Covers: path-level parameters,
+# operation-level override, parameter $ref, body $ref, enums, readOnly, nested object,
+# global + per-operation security, tags, untagged and deprecated operations.
+openapi: 3.1.0
+info: { title: Acme Payments, version: "2025-03" }
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: Bearer }
+    apiKey: { type: apiKey, in: header, name: X-Api-Key }
+  parameters:
+    Expand:
+      name: expand
+      in: query
+      description: Related objects to include.
+      schema: { type: string, enum: [customer, refunds] }
+  schemas:
+    Address:
+      type: object
+      required: [line1]
+      properties:
+        line1: { type: string }
+        city: { type: string }
+    ChargeCreate:
+      type: object
+      required: [amount, currency]
+      properties:
+        id: { type: string, readOnly: true }
+        amount: { type: integer, description: Amount in the smallest currency unit., example: 1000 }
+        currency: { type: string, example: eur }
+        customer: { type: string }
+        capture: { type: string, enum: [automatic, manual] }
+        shipping:
+          type: object
+          required: [address]
+          properties:
+            address: { $ref: "#/components/schemas/Address" }
+            name: { type: string }
+        metadata:
+          type: object
+          additionalProperties: { type: string }
+paths:
+  /v1/charges:
+    parameters:
+      - { name: Idempotency-Key, in: header, schema: { type: string } }
+    post:
+      tags: [Charges]
+      operationId: createCharge
+      summary: Create a charge.
+      parameters:
+        # same header, different case: overrides the path-level one
+        - { name: idempotency-key, in: header, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ChargeCreate" }
+      responses:
+        "200": { description: OK }
+    get:
+      tags: [Charges]
+      operationId: listCharges
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, example: 10 } }
+        - $ref: "#/components/parameters/Expand"
+      responses:
+        "200": { description: OK }
+  /v1/charges/{id}:
+    get:
+      tags: [Charges]
+      operationId: getCharge
+      security:
+        - apiKey: []
+        - bearerAuth: []
+      parameters:
+        # missing `required: true` on purpose: invalid, but common in real specs
+        - { name: id, in: path, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    delete:
+      tags: [Charges]
+      deprecated: true
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "204": { description: Deleted }
+  /health:
+    get:
+      summary: Health check, no tag and no auth.
+      security: []
+      responses:
+        "200": { description: OK }
