@@ -157,6 +157,41 @@ def test_all_of_merges_properties_and_required(composition: NormalizedSpec) -> N
     assert fields["body:method"].required  # from the inline part
 
 
+def _body(schema: dict[str, object], schemas: dict[str, object]) -> dict[str, NormalizedField]:
+    body = {"content": {"application/json": {"schema": schema}}}
+    doc = {
+        "components": {"schemas": schemas},
+        "paths": {"/a": {"post": {"requestBody": body}}},
+    }
+    return {f.name: f for f in normalize(doc).operations[0].body_fields}
+
+
+BASE = {"Base": {"properties": {"name": {"type": "string"}, "note": {"type": "string"}}}}
+
+
+def test_all_of_part_with_only_required_applies_to_other_parts() -> None:
+    fields = _body({"allOf": [{"$ref": "#/components/schemas/Base"}, {"required": ["name"]}]}, BASE)
+    assert fields["name"].required
+    assert not fields["note"].required
+
+
+def test_all_of_part_can_require_a_parent_property() -> None:
+    schema = {"properties": {"name": {"type": "string"}}, "allOf": [{"required": ["name"]}]}
+    assert _body(schema, {})["name"].required
+
+
+def test_required_from_a_ref_and_a_nested_all_of_part() -> None:
+    schemas = {**BASE, "NeedsNote": {"required": ["note"]}}
+    schema = {
+        "allOf": [
+            {"$ref": "#/components/schemas/Base"},
+            {"allOf": [{"$ref": "#/components/schemas/NeedsNote"}, {"required": ["name"]}]},
+        ]
+    }
+    fields = _body(schema, schemas)
+    assert fields["name"].required and fields["note"].required
+
+
 def test_one_of_required_only_if_required_in_every_branch(composition: NormalizedSpec) -> None:
     fields = _fields(_op(composition, "POST", "/payments"))
     assert fields["body:method.number"].required

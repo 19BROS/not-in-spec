@@ -351,10 +351,25 @@ class _Normalizer:
                 else:
                     first = present[0]
                     result[name] = _Prop(first.schema, first.pointer, required, first.stack)
-        for name in _list(node.get("required")):
-            if isinstance(name, str) and name in result:
+        # an allOf part's `required` may name properties defined elsewhere (Base + {required: [x]})
+        for name in self.required_names(node, ptr, stack):
+            if name in result:
                 result[name].required = True
         return result
+
+    def required_names(self, schema: Any, pointer: str, stack: tuple[str, ...]) -> set[str]:
+        """Names in `required` of a schema and of all its allOf parts, at any depth."""
+        resolved = self.resolve(schema, pointer)
+        if resolved is None or not isinstance(resolved.node, dict):
+            return set()
+        if any(ref in stack for ref in resolved.refs):
+            return set()  # recursive schema
+        node, ptr = resolved.node, resolved.pointer
+        names = {n for n in _list(node.get("required")) if isinstance(n, str)}
+        if len(stack) <= _MAX_UNION_DEPTH:
+            for i, part in enumerate(_list(node.get("allOf"))):
+                names |= self.required_names(part, join(ptr, "allOf", i), stack + resolved.refs)
+        return names
 
     def schema_info(self, schema: Any, pointer: str, stack: tuple[str, ...]) -> _SchemaInfo:
         """Type, enum and docs of one schema, looking through refs and oneOf / anyOf / allOf."""
