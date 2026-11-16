@@ -18,9 +18,9 @@ inputs:
     description: Token for the server (pass from secrets)
     default: ""
   image:
-    # exact version, so `@v0.1.0` and its image always match; release.yml checks it equals the tag
+    # exact version, so `@v0.1.1` and its image always match; release.yml checks it equals the tag
     description: notinspec-cli image to run
-    default: ghcr.io/19bros/notinspec-cli:0.1.0
+    default: ghcr.io/19bros/notinspec-cli:0.1.1
   github-token:
     description: Token for the PR comment; needs pull-requests write
     default: ${{ github.token }}
@@ -54,16 +54,31 @@ runs:
         NOTINSPEC_PR: ${{ github.event.pull_request.number }}
       run: |
         set +e
+        stderr="$RUNNER_TEMP/notinspec-stderr.txt"
         docker run --rm --user "$(id -u):$(id -g)" \
           -v "$GITHUB_WORKSPACE:/work" -w /work \
           -e GITHUB_REPOSITORY -e GITHUB_REF -e GITHUB_EVENT_NAME -e GITHUB_BASE_REF \
           -e NOTINSPEC_COMMIT -e NOTINSPEC_PR -e LLM_API_KEY -e LLM_BASE_URL \
-          "$IMAGE" ci --config "$CONFIG" --out notinspec-out
+          "$IMAGE" ci --config "$CONFIG" --out notinspec-out 2> "$stderr"
         code=$?
+        cat "$stderr" >&2
         echo "code=$code" >> "$GITHUB_OUTPUT"
-        [ "$code" -eq 0 ] && echo "verdict=pass" >> "$GITHUB_OUTPUT"
-        [ "$code" -eq 1 ] && echo "verdict=fail" >> "$GITHUB_OUTPUT"
-        [ -f notinspec-out/comment.md ] && cat notinspec-out/comment.md >> "$GITHUB_STEP_SUMMARY"
+        comment=notinspec-out/comment.md
+        case "$code" in
+          0) echo "verdict=pass" >> "$GITHUB_OUTPUT" ;;
+          1) echo "verdict=fail" >> "$GITHUB_OUTPUT" ;;
+          *)
+            # bad config or crash: still replace the PR comment, or it keeps an older run's verdict
+            err=$(tail -n 5 "$stderr")
+            comment="$RUNNER_TEMP/notinspec-comment.md"
+            printf '<!-- notinspec -->\n**NOT-IN-SPEC** ✗ error · exit %s: bad config or the CLI crashed, no results\n\n~~~text\n%s\n~~~\n' \
+              "$code" "$err" > "$comment"
+            echo "::error::NOT-IN-SPEC exit $code: $(tail -n 1 "$stderr")" ;;
+        esac
+        if [ -f "$comment" ]; then
+          echo "comment=$comment" >> "$GITHUB_OUTPUT"
+          cat "$comment" >> "$GITHUB_STEP_SUMMARY"
+        fi
         exit 0
 
     - if: steps.run.outputs.verdict != ''
@@ -73,18 +88,19 @@ runs:
         path: notinspec-out/
 
     # one comment per PR, updated on every push instead of adding a new one
-    - if: steps.run.outputs.verdict != '' && github.event_name == 'pull_request'
+    - if: steps.run.outputs.comment != '' && github.event_name == 'pull_request'
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
         PR: ${{ github.event.pull_request.number }}
+        COMMENT: ${{ steps.run.outputs.comment }}
       run: |
         id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
           --jq '.[] | select(.body | startswith("<!-- notinspec -->")) | .id' | head -n1)
         if [ -n "$id" ]; then
-          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@notinspec-out/comment.md > /dev/null
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@"$COMMENT" > /dev/null
         else
-          gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@notinspec-out/comment.md > /dev/null
+          gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@"$COMMENT" > /dev/null
         fi
 
     # our server being down must never fail the caller's PR

@@ -39,7 +39,7 @@ jobs:
 1. Skips pull requests from forks (they get no secrets) with a warning.
 2. Runs the `notinspec-cli` image: `notinspec ci --config <config> --out notinspec-out`.
 3. Uploads `notinspec-out/` as the artifact `notinspec-results`: `results.json`, `report.html`, `comment.md`.
-4. On a PR, creates or updates **one** comment (found by `<!-- notinspec -->`).
+4. On a PR, creates or updates **one** comment (found by `<!-- notinspec -->`). On exit 2 the comment shows the CLI's error instead, so an older verdict never stays up.
 5. If `server-url` is set, POSTs `results.json` to `<server-url>/api/runs` with the token. Only `https://` (or localhost). A failure is a warning, never a red PR.
 6. Fails the job when the CLI exits non-zero, which is the PR's status check.
 
