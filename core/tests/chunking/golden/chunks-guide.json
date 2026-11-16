@@ -1,0 +1,349 @@
+[
+  {
+    "id": "17e5ed42c9f59c9d",
+    "location_id": "7b49655b614c6453",
+    "section_id": "385f08d3cc2db068",
+    "content_hash": "b0af9062bd5d38bd",
+    "source": "timeouts.md",
+    "heading_path": [],
+    "breadcrumb": "timeouts.md",
+    "heading_level": 0,
+    "occurrence": 0,
+    "part": 1,
+    "parts": 1,
+    "start_line": 5,
+    "end_line": 5,
+    "tokens": 21,
+    "oversized": false,
+    "text": "Strand is a small HTTP client for Python. This page explains how it waits and when it tries again.",
+    "blocks": [
+      {
+        "kind": "text",
+        "start_line": 5,
+        "end_line": 5,
+        "tokens": 21,
+        "lang": null,
+        "code": null,
+        "nested": false
+      }
+    ]
+  },
+  {
+    "id": "28cdc1d58dcbfa9e",
+    "location_id": "2ed9d78e5f35d20c",
+    "section_id": "42d4a833ba1ddad1",
+    "content_hash": "94a721d66005608e",
+    "source": "timeouts.md",
+    "heading_path": [
+      "Timeouts and retries",
+      "Timeouts"
+    ],
+    "breadcrumb": "timeouts.md > Timeouts and retries > Timeouts",
+    "heading_level": 2,
+    "occurrence": 0,
+    "part": 1,
+    "parts": 1,
+    "start_line": 9,
+    "end_line": 34,
+    "tokens": 303,
+    "oversized": false,
+    "text": "## Timeouts\n\nEvery request has a timeout. By default Strand waits 10 seconds for the connection and\n30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.\nPass a `strand.Timeout` object to change that, e.g. `Timeout(connect=2.5, read=60)`.\n\nWhat happens when the timeout is reached? Strand raises `strand.TimeoutError` and closes\nthe connection. The error is never retried unless you enable retries (see [Retries](#retries)).\n\n| Parameter | Type | Default | Description |\n|---|---|---|---|\n| `connect` | `float` | `10.0` | seconds to wait for the TCP and TLS handshake |\n| `read` | `float` | `30.0` | seconds to wait between two bytes of the response |\n| `total` | `float \\| None` | `None` | upper bound for the whole request; `None` means no bound |\n\nExample:\n\n```python\nimport strand\n\n# wait at most 2.5 s for the connection. A slow server is fine.\nclient = strand.Client(timeout=strand.Timeout(connect=2.5, read=60))\n```\n\nA timeout of `0` is not allowed and raises `ValueError`. Use `None` to wait forever, which\nis almost never what you want in production.",
+    "blocks": [
+      {
+        "kind": "heading",
+        "start_line": 9,
+        "end_line": 9,
+        "tokens": 3,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 11,
+        "end_line": 13,
+        "tokens": 69,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 15,
+        "end_line": 16,
+        "tokens": 40,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "table",
+        "start_line": 18,
+        "end_line": 22,
+        "tokens": 106,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 24,
+        "end_line": 24,
+        "tokens": 2,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "code",
+        "start_line": 26,
+        "end_line": 31,
+        "tokens": 50,
+        "lang": "python",
+        "code": "import strand\n\n# wait at most 2.5 s for the connection. A slow server is fine.\nclient = strand.Client(timeout=strand.Timeout(connect=2.5, read=60))\n",
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 33,
+        "end_line": 34,
+        "tokens": 33,
+        "lang": null,
+        "code": null,
+        "nested": false
+      }
+    ]
+  },
+  {
+    "id": "0c96c9cac95cdcfb",
+    "location_id": "080c57b7fa11850e",
+    "section_id": "3025a3e5adb34589",
+    "content_hash": "a7e131b03bd04ad1",
+    "source": "timeouts.md",
+    "heading_path": [
+      "Timeouts and retries",
+      "Retries"
+    ],
+    "breadcrumb": "timeouts.md > Timeouts and retries > Retries",
+    "heading_level": 2,
+    "occurrence": 0,
+    "part": 1,
+    "parts": 1,
+    "start_line": 36,
+    "end_line": 53,
+    "tokens": 182,
+    "oversized": false,
+    "text": "## Retries\n\nStrand retries a request only when all of these hold:\n\n- the method is idempotent (`GET`, `HEAD`, `PUT`, `DELETE`, `OPTIONS`). `POST` is never\n  retried automatically.\n- the error is a connection error or one of the status codes 502, 503 and 504.\n- fewer than `retries` attempts have been made. The default is 3.\n- for a status code, the response arrived within the read timeout:\n\n  ```python\n  client = strand.Client(retries=strand.Retry(total=5, status=[429, 503]))\n  ```\n\n> **Note:** a retried request is sent again from scratch. Request bodies passed as a\n> generator can't be replayed, so Strand raises `strand.StreamConsumedError` instead.\n>\n> Use bytes or a file object when you need retries.",
+    "blocks": [
+      {
+        "kind": "heading",
+        "start_line": 36,
+        "end_line": 36,
+        "tokens": 3,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 38,
+        "end_line": 38,
+        "tokens": 11,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "list",
+        "start_line": 40,
+        "end_line": 48,
+        "tokens": 116,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "code",
+        "start_line": 46,
+        "end_line": 48,
+        "tokens": 32,
+        "lang": "python",
+        "code": "client = strand.Client(retries=strand.Retry(total=5, status=[429, 503]))\n",
+        "nested": true
+      },
+      {
+        "kind": "quote",
+        "start_line": 50,
+        "end_line": 53,
+        "tokens": 52,
+        "lang": null,
+        "code": null,
+        "nested": false
+      }
+    ]
+  },
+  {
+    "id": "18e5004b0fafa3e5",
+    "location_id": "94d08065a18f7b24",
+    "section_id": "3e03966f8ae9a39e",
+    "content_hash": "e5ed602070ab6a11",
+    "source": "timeouts.md",
+    "heading_path": [
+      "Timeouts and retries",
+      "Retries",
+      "Backoff"
+    ],
+    "breadcrumb": "timeouts.md > Timeouts and retries > Retries > Backoff",
+    "heading_level": 3,
+    "occurrence": 0,
+    "part": 1,
+    "parts": 1,
+    "start_line": 55,
+    "end_line": 62,
+    "tokens": 100,
+    "oversized": false,
+    "text": "### Backoff\n\nBetween two attempts Strand sleeps `backoff_factor * 2 ** (attempt - 1)` seconds. With the\ndefault factor of 0.5 that is approx. 0.5 s, 1 s and 2 s. The sleep never exceeds\n`Retry.max_backoff`, which is 120 seconds by default.\n\nIf the server sends a `Retry-After` header, Strand waits that long instead. Values over\n`max_backoff` are capped. Set `respect_retry_after=False` to ignore the header.",
+    "blocks": [
+      {
+        "kind": "heading",
+        "start_line": 55,
+        "end_line": 55,
+        "tokens": 4,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 57,
+        "end_line": 59,
+        "tokens": 59,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 61,
+        "end_line": 62,
+        "tokens": 37,
+        "lang": null,
+        "code": null,
+        "nested": false
+      }
+    ]
+  },
+  {
+    "id": "1343f02fe892f184",
+    "location_id": "767801c96fdac434",
+    "section_id": "df926a6aa248266f",
+    "content_hash": "3f9d6669800d5117",
+    "source": "timeouts.md",
+    "heading_path": [
+      "Timeouts and retries",
+      "Migrating from 1.x"
+    ],
+    "breadcrumb": "timeouts.md > Timeouts and retries > Migrating from 1.x",
+    "heading_level": 2,
+    "occurrence": 0,
+    "part": 1,
+    "parts": 1,
+    "start_line": 64,
+    "end_line": 92,
+    "tokens": 307,
+    "oversized": false,
+    "text": "## Migrating from 1.x\n\nVersion 2.0 changed several names. The old names were deprecated in 1.8 and removed in 2.0.\n\n1. `max_retries` was renamed to `retries`. It now accepts an `int` or a `strand.Retry`.\n2. `Retry(method_whitelist=...)` was renamed to `Retry(allowed_methods=...)`.\n3. `Timeout.total` used to default to 60 seconds. It now defaults to `None`.\n4. `strand.ConnectTimeout` and `strand.ReadTimeout` were merged into `strand.TimeoutError`.\n\nIf you catch the old exceptions, catch `strand.TimeoutError` instead. Code that set\n`max_retries=0` to turn retries off should now pass `retries=False`. Passing `0` still\nworks but logs a warning.\n\nThe 1.x behaviour of retrying `POST` on connection errors was removed. It could send a\npayment twice. If you really need it, add `POST` to `allowed_methods` yourself.\n\nBefore:\n\n```python\nclient = strand.Client(max_retries=strand.Retry(method_whitelist={\"GET\", \"POST\"}))\n```\n\nAfter:\n\n```python\nclient = strand.Client(retries=strand.Retry(allowed_methods={\"GET\", \"POST\"}))\n```\n\nSee the [changelog](https://example.org/strand/changelog) for the full list of changes.",
+    "blocks": [
+      {
+        "kind": "heading",
+        "start_line": 64,
+        "end_line": 64,
+        "tokens": 7,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 66,
+        "end_line": 66,
+        "tokens": 24,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "list",
+        "start_line": 68,
+        "end_line": 71,
+        "tokens": 97,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 73,
+        "end_line": 75,
+        "tokens": 47,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 77,
+        "end_line": 78,
+        "tokens": 39,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 80,
+        "end_line": 80,
+        "tokens": 2,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "code",
+        "start_line": 82,
+        "end_line": 84,
+        "tokens": 32,
+        "lang": "python",
+        "code": "client = strand.Client(max_retries=strand.Retry(method_whitelist={\"GET\", \"POST\"}))\n",
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 86,
+        "end_line": 86,
+        "tokens": 2,
+        "lang": null,
+        "code": null,
+        "nested": false
+      },
+      {
+        "kind": "code",
+        "start_line": 88,
+        "end_line": 90,
+        "tokens": 32,
+        "lang": "python",
+        "code": "client = strand.Client(retries=strand.Retry(allowed_methods={\"GET\", \"POST\"}))\n",
+        "nested": false
+      },
+      {
+        "kind": "text",
+        "start_line": 92,
+        "end_line": 92,
+        "tokens": 25,
+        "lang": null,
+        "code": null,
+        "nested": false
+      }
+    ]
+  }
+]

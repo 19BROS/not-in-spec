@@ -1,0 +1,284 @@
+{
+  "openapi_version": "3.1.0",
+  "title": "Composition",
+  "api_version": "1.0.0",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/broken",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [],
+      "deprecated": false,
+      "parameters": [
+        {
+          "location": "query",
+          "name": "loop",
+          "type": null,
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1broken/get/parameters/2"
+        }
+      ],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [
+        [
+          "missingScheme"
+        ]
+      ],
+      "source": "#/paths/~1broken/get"
+    },
+    {
+      "method": "POST",
+      "path": "/form",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [
+        "Form"
+      ],
+      "deprecated": false,
+      "parameters": [],
+      "body_media_type": "application/x-www-form-urlencoded",
+      "body_required": false,
+      "body_fields": [
+        {
+          "location": "body",
+          "name": "amount",
+          "type": "integer",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1form/post/requestBody/content/application~1x-www-form-urlencoded/schema/properties/amount"
+        },
+        {
+          "location": "body",
+          "name": "expand",
+          "type": "array",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1form/post/requestBody/content/application~1x-www-form-urlencoded/schema/properties/expand"
+        }
+      ],
+      "security": [],
+      "source": "#/paths/~1form/post"
+    },
+    {
+      "method": "POST",
+      "path": "/payments",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [
+        "Payments"
+      ],
+      "deprecated": false,
+      "parameters": [],
+      "body_media_type": "application/json; charset=utf-8",
+      "body_required": false,
+      "body_fields": [
+        {
+          "location": "body",
+          "name": "created",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": "2024-01-01",
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/created"
+        },
+        {
+          "location": "body",
+          "name": "flag",
+          "type": null,
+          "required": false,
+          "enum": [
+            true
+          ],
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/flag"
+        },
+        {
+          "location": "body",
+          "name": "kind",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Base/properties/kind"
+        },
+        {
+          "location": "body",
+          "name": "method",
+          "type": "object",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/method"
+        },
+        {
+          "location": "body",
+          "name": "method.exp",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Card/properties/exp"
+        },
+        {
+          "location": "body",
+          "name": "method.iban",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Bank/properties/iban"
+        },
+        {
+          "location": "body",
+          "name": "method.number",
+          "type": "string",
+          "required": true,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Card/properties/number"
+        },
+        {
+          "location": "body",
+          "name": "mode",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/mode"
+        },
+        {
+          "location": "body",
+          "name": "nullable_note",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/nullable_note"
+        },
+        {
+          "location": "body",
+          "name": "status",
+          "type": "integer|string",
+          "required": false,
+          "enum": [
+            "on",
+            "off",
+            1,
+            2
+          ],
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/paths/~1payments/post/requestBody/content/application~1json; charset=utf-8/schema/allOf/1/properties/status"
+        }
+      ],
+      "security": [],
+      "source": "#/paths/~1payments/post"
+    },
+    {
+      "method": "POST",
+      "path": "/tree",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [],
+      "deprecated": false,
+      "parameters": [],
+      "body_media_type": "application/json",
+      "body_required": false,
+      "body_fields": [
+        {
+          "location": "body",
+          "name": "children",
+          "type": "array",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Node/properties/children"
+        },
+        {
+          "location": "body",
+          "name": "label",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Node/properties/label"
+        },
+        {
+          "location": "body",
+          "name": "parent",
+          "type": "object",
+          "required": false,
+          "enum": null,
+          "deprecated": false,
+          "description": null,
+          "example": null,
+          "source": "#/components/schemas/Node/properties/parent"
+        }
+      ],
+      "security": [],
+      "source": "#/paths/~1tree/post"
+    },
+    {
+      "method": "PUT",
+      "path": "/upload",
+      "operation_id": null,
+      "summary": null,
+      "description": null,
+      "tags": [],
+      "deprecated": false,
+      "parameters": [],
+      "body_media_type": null,
+      "body_required": false,
+      "body_fields": [],
+      "security": [],
+      "source": "#/paths/~1upload/put"
+    }
+  ],
+  "security_schemes": [],
+  "problems": [
+    "#/paths/~1broken/get/parameters/0: parameter without a valid name / in",
+    "#/paths/~1broken/get/parameters/1: $ref target not found: #/components/parameters/DoesNotExist",
+    "#/paths/~1broken/get/parameters/2/schema: $ref cycle: #/components/schemas/LoopA -> #/components/schemas/LoopB -> #/components/schemas/LoopA",
+    "#/paths/~1broken/get: unknown security scheme 'missingScheme'"
+  ]
+}

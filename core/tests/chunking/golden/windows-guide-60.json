@@ -1,0 +1,456 @@
+{
+  "0c96c9cac95cdcfb": [
+    {
+      "id": "0c96c9cac95cdcfb@12",
+      "chunk_id": "0c96c9cac95cdcfb",
+      "index": 0,
+      "start": 12,
+      "end": 306,
+      "tokens": 59,
+      "oversized": false,
+      "text": "Strand retries a request only when all of these hold: the method is idempotent (GET, HEAD, PUT, DELETE, OPTIONS). POST is never retried automatically. the error is a connection error or one of the status codes 502, 503 and 504. fewer than retries attempts have been made.",
+      "sentences": [
+        {
+          "start": 12,
+          "end": 65,
+          "text": "Strand retries a request only when all of these hold:",
+          "tokens": 11
+        },
+        {
+          "start": 67,
+          "end": 138,
+          "text": "the method is idempotent (GET, HEAD, PUT, DELETE, OPTIONS).",
+          "tokens": 16
+        },
+        {
+          "start": 139,
+          "end": 179,
+          "text": "POST is never retried automatically.",
+          "tokens": 6
+        },
+        {
+          "start": 180,
+          "end": 258,
+          "text": "the error is a connection error or one of the status codes 502, 503 and 504.",
+          "tokens": 18
+        },
+        {
+          "start": 259,
+          "end": 306,
+          "text": "fewer than retries attempts have been made.",
+          "tokens": 8
+        }
+      ]
+    },
+    {
+      "id": "0c96c9cac95cdcfb@259",
+      "chunk_id": "0c96c9cac95cdcfb",
+      "index": 1,
+      "start": 259,
+      "end": 657,
+      "tokens": 57,
+      "oversized": false,
+      "text": "fewer than retries attempts have been made. The default is 3. for a status code, the response arrived within the read timeout: Note: a retried request is sent again from scratch. Request bodies passed as a generator can't be replayed, so Strand raises strand.StreamConsumedError instead.",
+      "sentences": [
+        {
+          "start": 259,
+          "end": 306,
+          "text": "fewer than retries attempts have been made.",
+          "tokens": 8
+        },
+        {
+          "start": 307,
+          "end": 324,
+          "text": "The default is 3.",
+          "tokens": 5
+        },
+        {
+          "start": 325,
+          "end": 391,
+          "text": "for a status code, the response arrived within the read timeout:",
+          "tokens": 13
+        },
+        {
+          "start": 487,
+          "end": 544,
+          "text": "Note: a retried request is sent again from scratch.",
+          "tokens": 11
+        },
+        {
+          "start": 545,
+          "end": 657,
+          "text": "Request bodies passed as a generator can't be replayed, so Strand raises strand.StreamConsumedError instead.",
+          "tokens": 20
+        }
+      ]
+    },
+    {
+      "id": "0c96c9cac95cdcfb@660",
+      "chunk_id": "0c96c9cac95cdcfb",
+      "index": 2,
+      "start": 660,
+      "end": 711,
+      "tokens": 11,
+      "oversized": false,
+      "text": "Use bytes or a file object when you need retries.",
+      "sentences": [
+        {
+          "start": 660,
+          "end": 711,
+          "text": "Use bytes or a file object when you need retries.",
+          "tokens": 11
+        }
+      ]
+    }
+  ],
+  "1343f02fe892f184": [
+    {
+      "id": "1343f02fe892f184@23",
+      "chunk_id": "1343f02fe892f184",
+      "index": 0,
+      "start": 23,
+      "end": 203,
+      "tokens": 41,
+      "oversized": false,
+      "text": "Version 2.0 changed several names. The old names were deprecated in 1.8 and removed in 2.0. max_retries was renamed to retries. It now accepts an int or a strand.Retry.",
+      "sentences": [
+        {
+          "start": 23,
+          "end": 57,
+          "text": "Version 2.0 changed several names.",
+          "tokens": 8
+        },
+        {
+          "start": 58,
+          "end": 114,
+          "text": "The old names were deprecated in 1.8 and removed in 2.0.",
+          "tokens": 16
+        },
+        {
+          "start": 119,
+          "end": 158,
+          "text": "max_retries was renamed to retries.",
+          "tokens": 6
+        },
+        {
+          "start": 159,
+          "end": 203,
+          "text": "It now accepts an int or a strand.Retry.",
+          "tokens": 11
+        }
+      ]
+    },
+    {
+      "id": "1343f02fe892f184@159",
+      "chunk_id": "1343f02fe892f184",
+      "index": 1,
+      "start": 159,
+      "end": 358,
+      "tokens": 47,
+      "oversized": false,
+      "text": "It now accepts an int or a strand.Retry. Retry(method_whitelist=...) was renamed to Retry(allowed_methods=...). Timeout.total used to default to 60 seconds. It now defaults to None.",
+      "sentences": [
+        {
+          "start": 159,
+          "end": 203,
+          "text": "It now accepts an int or a strand.Retry.",
+          "tokens": 11
+        },
+        {
+          "start": 207,
+          "end": 281,
+          "text": "Retry(method_whitelist=...) was renamed to Retry(allowed_methods=...).",
+          "tokens": 20
+        },
+        {
+          "start": 285,
+          "end": 331,
+          "text": "Timeout.total used to default to 60 seconds.",
+          "tokens": 10
+        },
+        {
+          "start": 332,
+          "end": 358,
+          "text": "It now defaults to None.",
+          "tokens": 6
+        }
+      ]
+    },
+    {
+      "id": "1343f02fe892f184@332",
+      "chunk_id": "1343f02fe892f184",
+      "index": 2,
+      "start": 332,
+      "end": 648,
+      "tokens": 59,
+      "oversized": false,
+      "text": "It now defaults to None. strand.ConnectTimeout and strand.ReadTimeout were merged into strand.TimeoutError. If you catch the old exceptions, catch strand.TimeoutError instead. Code that set max_retries=0 to turn retries off should now pass retries=False. Passing 0 still works but logs a warning.",
+      "sentences": [
+        {
+          "start": 332,
+          "end": 358,
+          "text": "It now defaults to None.",
+          "tokens": 6
+        },
+        {
+          "start": 362,
+          "end": 450,
+          "text": "strand.ConnectTimeout and strand.ReadTimeout were merged into strand.TimeoutError.",
+          "tokens": 14
+        },
+        {
+          "start": 452,
+          "end": 521,
+          "text": "If you catch the old exceptions, catch strand.TimeoutError instead.",
+          "tokens": 13
+        },
+        {
+          "start": 522,
+          "end": 604,
+          "text": "Code that set max_retries=0 to turn retries off should now pass retries=False.",
+          "tokens": 17
+        },
+        {
+          "start": 605,
+          "end": 648,
+          "text": "Passing 0 still works but logs a warning.",
+          "tokens": 9
+        }
+      ]
+    },
+    {
+      "id": "1343f02fe892f184@605",
+      "chunk_id": "1343f02fe892f184",
+      "index": 3,
+      "start": 605,
+      "end": 1113,
+      "tokens": 56,
+      "oversized": false,
+      "text": "Passing 0 still works but logs a warning. The 1.x behaviour of retrying POST on connection errors was removed. It could send a payment twice. If you really need it, add POST to allowed_methods yourself. Before: After: See the changelog for the full list of changes.",
+      "sentences": [
+        {
+          "start": 605,
+          "end": 648,
+          "text": "Passing 0 still works but logs a warning.",
+          "tokens": 9
+        },
+        {
+          "start": 650,
+          "end": 720,
+          "text": "The 1.x behaviour of retrying POST on connection errors was removed.",
+          "tokens": 14
+        },
+        {
+          "start": 721,
+          "end": 751,
+          "text": "It could send a payment twice.",
+          "tokens": 7
+        },
+        {
+          "start": 752,
+          "end": 816,
+          "text": "If you really need it, add POST to allowed_methods yourself.",
+          "tokens": 12
+        },
+        {
+          "start": 818,
+          "end": 825,
+          "text": "Before:",
+          "tokens": 2
+        },
+        {
+          "start": 925,
+          "end": 931,
+          "text": "After:",
+          "tokens": 2
+        },
+        {
+          "start": 1026,
+          "end": 1113,
+          "text": "See the changelog for the full list of changes.",
+          "tokens": 10
+        }
+      ]
+    }
+  ],
+  "17e5ed42c9f59c9d": [
+    {
+      "id": "17e5ed42c9f59c9d@0",
+      "chunk_id": "17e5ed42c9f59c9d",
+      "index": 0,
+      "start": 0,
+      "end": 98,
+      "tokens": 21,
+      "oversized": false,
+      "text": "Strand is a small HTTP client for Python. This page explains how it waits and when it tries again.",
+      "sentences": [
+        {
+          "start": 0,
+          "end": 41,
+          "text": "Strand is a small HTTP client for Python.",
+          "tokens": 9
+        },
+        {
+          "start": 42,
+          "end": 98,
+          "text": "This page explains how it waits and when it tries again.",
+          "tokens": 12
+        }
+      ]
+    }
+  ],
+  "18e5004b0fafa3e5": [
+    {
+      "id": "18e5004b0fafa3e5@13",
+      "chunk_id": "18e5004b0fafa3e5",
+      "index": 0,
+      "start": 13,
+      "end": 239,
+      "tokens": 55,
+      "oversized": false,
+      "text": "Between two attempts Strand sleeps backoff_factor * 2 ** (attempt - 1) seconds. With the default factor of 0.5 that is approx. 0.5 s, 1 s and 2 s. The sleep never exceeds Retry.max_backoff, which is 120 seconds by default.",
+      "sentences": [
+        {
+          "start": 13,
+          "end": 94,
+          "text": "Between two attempts Strand sleeps backoff_factor * 2 ** (attempt - 1) seconds.",
+          "tokens": 17
+        },
+        {
+          "start": 95,
+          "end": 161,
+          "text": "With the default factor of 0.5 that is approx. 0.5 s, 1 s and 2 s.",
+          "tokens": 23
+        },
+        {
+          "start": 162,
+          "end": 239,
+          "text": "The sleep never exceeds Retry.max_backoff, which is 120 seconds by default.",
+          "tokens": 15
+        }
+      ]
+    },
+    {
+      "id": "18e5004b0fafa3e5@241",
+      "chunk_id": "18e5004b0fafa3e5",
+      "index": 1,
+      "start": 241,
+      "end": 408,
+      "tokens": 31,
+      "oversized": false,
+      "text": "If the server sends a Retry-After header, Strand waits that long instead. Values over max_backoff are capped. Set respect_retry_after=False to ignore the header.",
+      "sentences": [
+        {
+          "start": 241,
+          "end": 316,
+          "text": "If the server sends a Retry-After header, Strand waits that long instead.",
+          "tokens": 16
+        },
+        {
+          "start": 317,
+          "end": 354,
+          "text": "Values over max_backoff are capped.",
+          "tokens": 6
+        },
+        {
+          "start": 355,
+          "end": 408,
+          "text": "Set respect_retry_after=False to ignore the header.",
+          "tokens": 9
+        }
+      ]
+    }
+  ],
+  "28cdc1d58dcbfa9e": [
+    {
+      "id": "28cdc1d58dcbfa9e@13",
+      "chunk_id": "28cdc1d58dcbfa9e",
+      "index": 0,
+      "start": 13,
+      "end": 188,
+      "tokens": 38,
+      "oversized": false,
+      "text": "Every request has a timeout. By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
+      "sentences": [
+        {
+          "start": 13,
+          "end": 41,
+          "text": "Every request has a timeout.",
+          "tokens": 6
+        },
+        {
+          "start": 42,
+          "end": 188,
+          "text": "By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
+          "tokens": 32
+        }
+      ]
+    },
+    {
+      "id": "28cdc1d58dcbfa9e@189",
+      "chunk_id": "28cdc1d58dcbfa9e",
+      "index": 1,
+      "start": 189,
+      "end": 459,
+      "tokens": 59,
+      "oversized": false,
+      "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60). What happens when the timeout is reached? Strand raises strand.TimeoutError and closes the connection. The error is never retried unless you enable retries (see Retries).",
+      "sentences": [
+        {
+          "start": 189,
+          "end": 273,
+          "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60).",
+          "tokens": 27
+        },
+        {
+          "start": 275,
+          "end": 316,
+          "text": "What happens when the timeout is reached?",
+          "tokens": 8
+        },
+        {
+          "start": 317,
+          "end": 379,
+          "text": "Strand raises strand.TimeoutError and closes the connection.",
+          "tokens": 10
+        },
+        {
+          "start": 380,
+          "end": 459,
+          "text": "The error is never retried unless you enable retries (see Retries).",
+          "tokens": 14
+        }
+      ]
+    },
+    {
+      "id": "28cdc1d58dcbfa9e@786",
+      "chunk_id": "28cdc1d58dcbfa9e",
+      "index": 2,
+      "start": 786,
+      "end": 1094,
+      "tokens": 29,
+      "oversized": false,
+      "text": "Example: A timeout of 0 is not allowed and raises ValueError. Use None to wait forever, which is almost never what you want in production.",
+      "sentences": [
+        {
+          "start": 786,
+          "end": 794,
+          "text": "Example:",
+          "tokens": 2
+        },
+        {
+          "start": 959,
+          "end": 1015,
+          "text": "A timeout of 0 is not allowed and raises ValueError.",
+          "tokens": 11
+        },
+        {
+          "start": 1016,
+          "end": 1094,
+          "text": "Use None to wait forever, which is almost never what you want in production.",
+          "tokens": 16
+        }
+      ]
+    }
+  ]
+}
