@@ -1,12 +1,13 @@
 """The supported ingestion subset of notinspec.yaml (SPEC section 2.3).
 
-Paths are relative to the config, not the terminal's working directory. Other top-level
-settings (models, budget, thresholds) are left for later pipeline stages.
+Paths are relative to the config, not the terminal's working directory. `claims:` sets the
+claim extractors and which chunks they read. Other top-level settings (models, budget,
+thresholds) are left for later pipeline stages.
 """
 
 import hashlib
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
@@ -38,6 +39,15 @@ class _ConfigLoader(yaml.SafeLoader):
 
 
 _DOC_FIELDS = frozenset({"paths", "openapi", "changelog", "sphinx_xml", "version"})
+_CLAIMS_FIELDS = frozenset({"extractors", "sources"})
+
+
+@dataclass(frozen=True)
+class ClaimsConfig:
+    """`claims:` in the config. Empty tuples mean the defaults."""
+
+    extractors: tuple[str, ...] = ()  # model IDs; () = the two default extractors (SPEC §6.4)
+    sources: tuple[str, ...] = ()  # glob patterns over a chunk's `source`; () = every chunk
 
 
 @dataclass(frozen=True)
@@ -49,6 +59,7 @@ class IngestConfig:
     openapi: str | None
     changelog: str | None
     sphinx_xml: str | None = None  # folder with `sphinx-build -b xml` output + build-env.txt
+    claims: ClaimsConfig = field(default_factory=ClaimsConfig)
 
 
 def load_config(path: Path) -> IngestConfig:
@@ -89,6 +100,7 @@ def load_config(path: Path) -> IngestConfig:
         openapi=openapi,
         changelog=changelog,
         sphinx_xml=sphinx_xml,
+        claims=_claims(config.get("claims")),
     )
 
 
@@ -115,6 +127,25 @@ def _project(value: object, root: Path) -> str:
     if ">" in value or "\n" in value:
         raise ConfigError("project must be one line without '>' (it starts every breadcrumb)")
     return value.strip()
+
+
+def _claims(value: object) -> ClaimsConfig:
+    if value is None:
+        return ClaimsConfig()
+    if not isinstance(value, dict):
+        raise ConfigError("claims must be a mapping")
+    if unknown := sorted(set(value) - _CLAIMS_FIELDS):
+        raise ConfigError(f"unknown claims field(s): {', '.join(unknown)}")
+    extractors = _strings(value.get("extractors", []), "claims.extractors")
+    if len(set(extractors)) != len(extractors):
+        raise ConfigError("claims.extractors must not repeat a model")
+    return ClaimsConfig(extractors, _strings(value.get("sources", []), "claims.sources"))
+
+
+def _strings(value: object, name: str) -> tuple[str, ...]:
+    if not isinstance(value, list) or not all(isinstance(v, str) and v.strip() for v in value):
+        raise ConfigError(f"{name} must be a list of non-empty strings")
+    return tuple(v.strip() for v in value)
 
 
 def _optional_path(value: object, field: str) -> str | None:
