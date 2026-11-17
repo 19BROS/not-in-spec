@@ -1,0 +1,1752 @@
+{
+  "chunks": [
+    {
+      "id": "bd529d0e35eb0d33",
+      "section_id": "4ee9ef14a0aa7b50",
+      "content_hash": "d83a085e50e1cef8",
+      "source": "api",
+      "heading_path": [
+        "API Reference"
+      ],
+      "breadcrumb": "fixturelib > API Reference",
+      "heading_level": 1,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 1,
+      "end_line": 3,
+      "tokens": 17,
+      "oversized": false,
+      "text": "# API Reference\n\nA tiny library documented three ways, for the Sphinx reader golden tests.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 1,
+          "end_line": 1,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 3,
+          "end_line": 3,
+          "tokens": 14,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "84cd8bb7f9d963fc",
+      "section_id": "565a3d52d5aae69c",
+      "content_hash": "ccb3935a41e64640",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "connect()"
+      ],
+      "breadcrumb": "fixturelib > API Reference > connect()",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 5,
+      "end_line": 31,
+      "tokens": 156,
+      "oversized": false,
+      "text": "## connect()\n\n`fixturelib.connect(host: str, timeout: float | None = None, retries: int = 3) -> Connection`\n\nOpen a connection (reST fields).\n\n**Parameters:**\n\n- `host` – Server name.\n\n- `timeout` (float or None) – Seconds to wait; `None` waits forever.\n\n- `retries` – How many times to retry. Each retry waits twice as long.\n\n  Set to `0` to fail on the first error.\n\n**Returns:**\n\n- An open connection.\n\nReturn type: `Connection`\n\n**Raises:**\n\n- `ValueError` – If `host` is empty.\n\n- `TimeoutError` – If the server does not answer within `timeout` seconds.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 5,
+          "end_line": 5,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 7,
+          "end_line": 7,
+          "tokens": 27,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 9,
+          "end_line": 9,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 11,
+          "end_line": 11,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 13,
+          "end_line": 13,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "host",
+          "field": "param",
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 15,
+          "end_line": 15,
+          "tokens": 20,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "timeout",
+          "field": "param",
+          "type": "float or None"
+        },
+        {
+          "kind": "field",
+          "start_line": 17,
+          "end_line": 19,
+          "tokens": 30,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "retries",
+          "field": "param",
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 21,
+          "end_line": 21,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 23,
+          "end_line": 23,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "returns",
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 25,
+          "end_line": 25,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "return-type",
+          "type": "Connection"
+        },
+        {
+          "kind": "text",
+          "start_line": 27,
+          "end_line": 27,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 29,
+          "end_line": 29,
+          "tokens": 12,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "ValueError",
+          "field": "raises",
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 31,
+          "end_line": 31,
+          "tokens": 17,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "TimeoutError",
+          "field": "raises",
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "897021cf67906b19",
+      "section_id": "5b56b31c9e645943",
+      "content_hash": "9736694d0d9ac8f1",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "send()"
+      ],
+      "breadcrumb": "fixturelib > API Reference > send()",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 33,
+      "end_line": 53,
+      "tokens": 94,
+      "oversized": false,
+      "text": "## send()\n\n`fixturelib.send(data: bytes, *, flush: bool = False) -> int`\n\nSend bytes (Google style).\n\n**Parameters:**\n\n- `data` – The payload.\n\n- `flush` (bool) – Flush after sending.\n\n**Returns:**\n\n- Number of bytes sent.\n\nReturn type: `int`\n\n**Raises:**\n\n- `ConnectionError` – If the connection is closed.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 33,
+          "end_line": 33,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 35,
+          "end_line": 35,
+          "tokens": 21,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 37,
+          "end_line": 37,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 39,
+          "end_line": 39,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 41,
+          "end_line": 41,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "data",
+          "field": "param",
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 43,
+          "end_line": 43,
+          "tokens": 12,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "flush",
+          "field": "param",
+          "type": "bool"
+        },
+        {
+          "kind": "text",
+          "start_line": 45,
+          "end_line": 45,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 47,
+          "end_line": 47,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "returns",
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 49,
+          "end_line": 49,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "return-type",
+          "type": "int"
+        },
+        {
+          "kind": "text",
+          "start_line": 51,
+          "end_line": 51,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 53,
+          "end_line": 53,
+          "tokens": 11,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "ConnectionError",
+          "field": "raises",
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "a9415cc265a76224",
+      "section_id": "7c943bb7e5e6dd2b",
+      "content_hash": "f1253cf9bf8aabc1",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "receive()"
+      ],
+      "breadcrumb": "fixturelib > API Reference > receive()",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 55,
+      "end_line": 84,
+      "tokens": 127,
+      "oversized": false,
+      "text": "## receive()\n\n`fixturelib.receive(size: int = 1024) -> bytes`\n\nReceive bytes (NumPy style).\n\n**Parameters:**\n\n- `size` (int, optional) – Maximum number of bytes, default 1024.\n\n  Must be positive.\n\n- `strict` (bool) – Raise instead of returning fewer bytes.\n\n**Returns:**\n\n- The received data.\n\nReturn type: `bytes`\n\n**Raises:**\n\n- `ConnectionError` – If the connection is closed.\n\n**Examples**\n\n```pycon\n>>> receive(4)\nb'ping'\n```",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 55,
+          "end_line": 55,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 57,
+          "end_line": 57,
+          "tokens": 15,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 59,
+          "end_line": 59,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 61,
+          "end_line": 61,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 63,
+          "end_line": 65,
+          "tokens": 22,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "size",
+          "field": "param",
+          "type": "int, optional"
+        },
+        {
+          "kind": "field",
+          "start_line": 67,
+          "end_line": 67,
+          "tokens": 15,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "strict",
+          "field": "param",
+          "type": "bool"
+        },
+        {
+          "kind": "text",
+          "start_line": 69,
+          "end_line": 69,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 71,
+          "end_line": 71,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "returns",
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 73,
+          "end_line": 73,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "return-type",
+          "type": "bytes"
+        },
+        {
+          "kind": "text",
+          "start_line": 75,
+          "end_line": 75,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 77,
+          "end_line": 77,
+          "tokens": 11,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "ConnectionError",
+          "field": "raises",
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 79,
+          "end_line": 79,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "code",
+          "start_line": 81,
+          "end_line": 84,
+          "tokens": 18,
+          "lang": "pycon",
+          "code": ">>> receive(4)\nb'ping'",
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "87bf7074a21d3db2",
+      "section_id": "e179f68a26cce8b3",
+      "content_hash": "e2e0a86580d565ab",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "Connection"
+      ],
+      "breadcrumb": "fixturelib > API Reference > Connection",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 86,
+      "end_line": 94,
+      "tokens": 32,
+      "oversized": false,
+      "text": "## Connection\n\n`class fixturelib.Connection(host: str)`\n\nAn open connection.\n\n**Parameters:**\n\n- `host` – Server name.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 86,
+          "end_line": 86,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 88,
+          "end_line": 88,
+          "tokens": 11,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 90,
+          "end_line": 90,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 92,
+          "end_line": 92,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 94,
+          "end_line": 94,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "host",
+          "field": "param",
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "8cd35c4f4e6b98ad",
+      "section_id": "1e11267a9adfc63c",
+      "content_hash": "a90c3a4db5be87f1",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "Connection",
+        "default_timeout"
+      ],
+      "breadcrumb": "fixturelib > API Reference > Connection > default_timeout",
+      "heading_level": 3,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 96,
+      "end_line": 100,
+      "tokens": 22,
+      "oversized": false,
+      "text": "### default_timeout\n\n`default_timeout: float = 30.0`\n\nSeconds to wait when no timeout is given.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 96,
+          "end_line": 96,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 98,
+          "end_line": 98,
+          "tokens": 9,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 100,
+          "end_line": 100,
+          "tokens": 9,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "7d935cc280ba273d",
+      "section_id": "b124d88843018445",
+      "content_hash": "02d1cac3e0a65d0e",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "Connection",
+        "close()"
+      ],
+      "breadcrumb": "fixturelib > API Reference > Connection > close()",
+      "heading_level": 3,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 102,
+      "end_line": 110,
+      "tokens": 34,
+      "oversized": false,
+      "text": "### close()\n\n`close() -> None`\n\nClose the connection.\n\nAdded in version 1.1.\n\nWarning: Closing twice raises `RuntimeError`.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 102,
+          "end_line": 102,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 104,
+          "end_line": 104,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 106,
+          "end_line": 106,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 108,
+          "end_line": 108,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "admonition",
+          "start_line": 110,
+          "end_line": 110,
+          "tokens": 9,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "2e1c1661e03c7de5",
+      "section_id": "b7b11b477a34fce0",
+      "content_hash": "2b0bdf4866b6cc9f",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "Connection",
+        "Stats"
+      ],
+      "breadcrumb": "fixturelib > API Reference > Connection > Stats",
+      "heading_level": 3,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 112,
+      "end_line": 116,
+      "tokens": 13,
+      "oversized": false,
+      "text": "### Stats\n\n`class Stats`\n\nCounters of one connection.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 112,
+          "end_line": 112,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 114,
+          "end_line": 114,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 116,
+          "end_line": 116,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "d0280c41e75fc313",
+      "section_id": "81cd703fd57ba1a5",
+      "content_hash": "11ca1600e1096f26",
+      "source": "api",
+      "heading_path": [
+        "API Reference",
+        "Connection",
+        "Stats",
+        "reset()"
+      ],
+      "breadcrumb": "fixturelib > API Reference > Connection > Stats > reset()",
+      "heading_level": 4,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 118,
+      "end_line": 122,
+      "tokens": 21,
+      "oversized": false,
+      "text": "#### reset()\n\n`reset() -> None`\n\nSet all counters to zero.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 118,
+          "end_line": 118,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 120,
+          "end_line": 120,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 122,
+          "end_line": 122,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "64c71479d077a700",
+      "section_id": "d09d9a661a6d63dc",
+      "content_hash": "e9cc46fd935afb21",
+      "source": "guide",
+      "heading_path": [
+        "User Guide"
+      ],
+      "breadcrumb": "fixturelib > User Guide",
+      "heading_level": 1,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 1,
+      "end_line": 14,
+      "tokens": 64,
+      "oversized": false,
+      "text": "# User Guide\n\nConnections are cheap. Call `fixturelib.connect()` with a `host`; see the footnote [1] for limits.\n\nNote: Notes are prose.\n\nWarning: Warnings too, even with a list and code:\n\n- one\n- two\n\n```python\nconn.close()\n```",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 1,
+          "end_line": 1,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 3,
+          "end_line": 3,
+          "tokens": 27,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "admonition",
+          "start_line": 5,
+          "end_line": 5,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "admonition",
+          "start_line": 7,
+          "end_line": 14,
+          "tokens": 28,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "code",
+          "start_line": 12,
+          "end_line": 14,
+          "tokens": 12,
+          "lang": "python",
+          "code": "conn.close()",
+          "nested": true,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "470c0b395d4a9a97",
+      "section_id": "f21f67749f3f32fc",
+      "content_hash": "4e96dfd8bb67c112",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Timeouts"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Timeouts",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 16,
+      "end_line": 46,
+      "tokens": 142,
+      "oversized": false,
+      "text": "## Timeouts\n\nAdded in version 1.1: The `timeout` parameter.\n\nA timeout is in seconds.\n\n**Example**\n\nConnecting with a timeout\n```python\nconn = connect(\"example.com\", timeout=2.5)\n```\n\n```default\n    def close(self) -> None:\n        \"\"\"Close the connection.\n\n        .. versionadded:: 1.1\n\n        .. warning:: Closing twice raises :exc:`RuntimeError`.\n        \"\"\"\n```\n\nLimits\n| Setting | Default |\n| --- | --- |\n| `timeout` | `None` (wait forever) |\n\nDefinitions:\n\n- term: A word with its definition.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 16,
+          "end_line": 16,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 18,
+          "end_line": 18,
+          "tokens": 13,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 20,
+          "end_line": 20,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 22,
+          "end_line": 22,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "code",
+          "start_line": 24,
+          "end_line": 27,
+          "tokens": 27,
+          "lang": "python",
+          "code": "conn = connect(\"example.com\", timeout=2.5)",
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "code",
+          "start_line": 29,
+          "end_line": 37,
+          "tokens": 49,
+          "lang": "default",
+          "code": "    def close(self) -> None:\n        \"\"\"Close the connection.\n\n        .. versionadded:: 1.1\n\n        .. warning:: Closing twice raises :exc:`RuntimeError`.\n        \"\"\"\n",
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "table",
+          "start_line": 39,
+          "end_line": 42,
+          "tokens": 28,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 44,
+          "end_line": 44,
+          "tokens": 2,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "list",
+          "start_line": 46,
+          "end_line": 46,
+          "tokens": 9,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "196a5819d6e9a0d0",
+      "section_id": "14104dceaa3c9598",
+      "content_hash": "4492f8cb9fffbb4f",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 48,
+      "end_line": 56,
+      "tokens": 41,
+      "oversized": false,
+      "text": "## Low-level API\n\nProse after the function stays in the section’s own chunk.\n\nSee also: The API Reference.\n\n**Footnotes**\n\n[1] At most `100` connections.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 48,
+          "end_line": 48,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 50,
+          "end_line": 50,
+          "tokens": 13,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "admonition",
+          "start_line": 52,
+          "end_line": 52,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 54,
+          "end_line": 54,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 56,
+          "end_line": 56,
+          "tokens": 10,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "3e7a3cf4312e0126",
+      "section_id": "71486691a5e44435",
+      "content_hash": "5b3a42efb9992801",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API",
+        "ping()"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API > ping()",
+      "heading_level": 3,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 58,
+      "end_line": 72,
+      "tokens": 61,
+      "oversized": false,
+      "text": "### ping()\n\n`ping(host, count=1)`\n\nSend pings.\n\n**Parameters:**\n\n- `host` (str) – Server name.\n\n- `count` (int) – How many.\n\n**Returns:**\n\n- Round-trip times in seconds.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 58,
+          "end_line": 58,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 60,
+          "end_line": 60,
+          "tokens": 10,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 62,
+          "end_line": 62,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 64,
+          "end_line": 64,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 66,
+          "end_line": 66,
+          "tokens": 11,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "host",
+          "field": "param",
+          "type": "str"
+        },
+        {
+          "kind": "field",
+          "start_line": 68,
+          "end_line": 68,
+          "tokens": 11,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": "count",
+          "field": "param",
+          "type": "int"
+        },
+        {
+          "kind": "text",
+          "start_line": 70,
+          "end_line": 70,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "field",
+          "start_line": 72,
+          "end_line": 72,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": "returns",
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "d6fb24f8270cd017",
+      "section_id": "ba6d62aa36115526",
+      "content_hash": "5f23dc2edea1e73c",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API",
+        "Pool"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API > Pool",
+      "heading_level": 3,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 74,
+      "end_line": 78,
+      "tokens": 16,
+      "oversized": false,
+      "text": "### Pool\n\n`class Pool(size)`\n\nA pool of connections.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 74,
+          "end_line": 74,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 76,
+          "end_line": 76,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 78,
+          "end_line": 78,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "ebbfa3b764da8008",
+      "section_id": "f875cc75b21654bc",
+      "content_hash": "7936945566ded8fc",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API",
+        "Pool",
+        "acquire()"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API > Pool > acquire()",
+      "heading_level": 4,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 80,
+      "end_line": 84,
+      "tokens": 16,
+      "oversized": false,
+      "text": "#### acquire()\n\n`acquire()`\n\nTake a connection.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 80,
+          "end_line": 80,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 82,
+          "end_line": 82,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 84,
+          "end_line": 84,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "c259accb041659d8",
+      "section_id": "cce53fd6c6a0e5f0",
+      "content_hash": "1637c114bd668a2f",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API",
+        "Pool",
+        "release()"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API > Pool > release()",
+      "heading_level": 4,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 86,
+      "end_line": 90,
+      "tokens": 17,
+      "oversized": false,
+      "text": "#### release()\n\n`release(conn)`\n\nGive it back.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 86,
+          "end_line": 86,
+          "tokens": 7,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 88,
+          "end_line": 88,
+          "tokens": 6,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 90,
+          "end_line": 90,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "810f7b94545aa420",
+      "section_id": "446259a4069591b5",
+      "content_hash": "93f37b667b4009d0",
+      "source": "guide",
+      "heading_path": [
+        "User Guide",
+        "Low-level API",
+        "Pool",
+        "size"
+      ],
+      "breadcrumb": "fixturelib > User Guide > Low-level API > Pool > size",
+      "heading_level": 4,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 92,
+      "end_line": 96,
+      "tokens": 12,
+      "oversized": false,
+      "text": "#### size\n\n`size`\n\nNumber of connections.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 92,
+          "end_line": 92,
+          "tokens": 5,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "signature",
+          "start_line": 94,
+          "end_line": 94,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 96,
+          "end_line": 96,
+          "tokens": 4,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "60e09a40ff51d87b",
+      "section_id": "cd1af4c7e373a7c7",
+      "content_hash": "1f96a6eb007a4b74",
+      "source": "index",
+      "heading_path": [
+        "fixturelib"
+      ],
+      "breadcrumb": "fixturelib > fixturelib",
+      "heading_level": 1,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 1,
+      "end_line": 3,
+      "tokens": 10,
+      "oversized": false,
+      "text": "# fixturelib\n\nA tiny library for the reader tests.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 1,
+          "end_line": 1,
+          "tokens": 2,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 3,
+          "end_line": 3,
+          "tokens": 8,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "956965d7f3b6cd3d",
+      "section_id": "15c10da3d923077b",
+      "content_hash": "f46b714b16d9ce83",
+      "source": "myst",
+      "heading_path": [
+        "MyST page"
+      ],
+      "breadcrumb": "fixturelib > MyST page",
+      "heading_level": 1,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 1,
+      "end_line": 5,
+      "tokens": 26,
+      "oversized": false,
+      "text": "# MyST page\n\nA Markdown page read by MyST: `inline code` and bold.\n\nNote: MyST admonitions are the same nodes.",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 1,
+          "end_line": 1,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "text",
+          "start_line": 3,
+          "end_line": 3,
+          "tokens": 14,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "admonition",
+          "start_line": 5,
+          "end_line": 5,
+          "tokens": 9,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    },
+    {
+      "id": "1b57fecee392727b",
+      "section_id": "09fbf80411bf9248",
+      "content_hash": "cfd4eae866dce717",
+      "source": "myst",
+      "heading_path": [
+        "MyST page",
+        "Steps"
+      ],
+      "breadcrumb": "fixturelib > MyST page > Steps",
+      "heading_level": 2,
+      "occurrence": 0,
+      "part": 1,
+      "parts": 1,
+      "start_line": 7,
+      "end_line": 18,
+      "tokens": 48,
+      "oversized": false,
+      "text": "## Steps\n\n1. Install.\n2. Connect:\n\n   ```python\n   connect(\"example.com\")\n   ```\n\n| Option | Meaning |\n| --- | --- |\n| `host` | Server name |",
+      "blocks": [
+        {
+          "kind": "heading",
+          "start_line": 7,
+          "end_line": 7,
+          "tokens": 3,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "list",
+          "start_line": 9,
+          "end_line": 14,
+          "tokens": 23,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "code",
+          "start_line": 12,
+          "end_line": 14,
+          "tokens": 15,
+          "lang": "python",
+          "code": "connect(\"example.com\")\n",
+          "nested": true,
+          "name": null,
+          "field": null,
+          "type": null
+        },
+        {
+          "kind": "table",
+          "start_line": 16,
+          "end_line": 18,
+          "tokens": 22,
+          "lang": null,
+          "code": null,
+          "nested": false,
+          "name": null,
+          "field": null,
+          "type": null
+        }
+      ]
+    }
+  ],
+  "files": [
+    [
+      "api.xml",
+      "aec5bc7731a119b3a82d99072a8d55eaa51396c68fbe14b2a2af7cbf0a1f20f0"
+    ],
+    [
+      "build-env.txt",
+      "accaa90e6308c5a297567a89eb5c63e7a80bc285e0594a0e971379caa3a552a2"
+    ],
+    [
+      "guide.xml",
+      "0460625a7c7bee83fa7c12ced4a022feada56c078351ab6bd7d4ad67b4531a3b"
+    ],
+    [
+      "index.xml",
+      "e2c452e0f261fec936afb353163900c8ca65b7fb3e5312c1b7f0e5c5e7450542"
+    ],
+    [
+      "myst.xml",
+      "8e15577b08be27c1b84c3ae7ea0d4ecfa185d20cf2dff124a311bc5645e4228a"
+    ]
+  ],
+  "reader_version": 1,
+  "sphinx_version": "9.1.1",
+  "warnings": [
+    "source path outside the Sphinx source folder in guide (1x)"
+  ]
+}
