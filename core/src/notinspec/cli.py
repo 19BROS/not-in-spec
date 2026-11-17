@@ -41,7 +41,8 @@ def main(argv: list[str] | None = None) -> int:
         "ci",
         aliases=["ingest"],
         help="process configured docs and write artifacts (ingestion only; no LLM evaluation)",
-        description="Ingestion prototype: Markdown chunking and OpenAPI normalization. "
+        description="Ingestion prototype: Sphinx XML and Markdown chunking, OpenAPI "
+        "normalization. "
         "Processes all inputs; does not call LLMs or evaluate L0-L4.",
     )
     ci.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
@@ -78,9 +79,12 @@ def _ingest(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     if args.dry_run:
         plan, warnings = plan_ingestion(config, output=args.out)
-        print(f"Dry run: {len(plan)} input files selected.")
+        print(f"Dry run: {len(plan)} inputs selected.")
         for item in plan:
-            print(f"  {item.kind}: {item.source}")
+            if item.kind == "sphinx":
+                print(f"  sphinx: {item.source}/ ({item.xml_files} XML files)")
+            else:
+                print(f"  {item.kind}: {item.source}")
         for warning in warnings:
             print(f"warning: {warning}", file=sys.stderr)
         print("No documents parsed, no files written, no LLM evaluation.")
