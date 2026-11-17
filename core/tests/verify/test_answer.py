@@ -59,7 +59,9 @@ def test_query_accepts_scalars_and_lists() -> None:
     assert answer.request is not None and answer.request.query == query
 
 
-@pytest.mark.parametrize("fence", ["```json\n{}\n```", "```\n{}\n```", "```JSON  \n{}```"])
+@pytest.mark.parametrize(
+    "fence", ["```json\n{}\n```", "```\n{}\n```", "```JSON  \n{}```", "```json\r\n{}\r\n```"]
+)
 def test_strips_one_surrounding_code_fence(fence: str) -> None:
     answer = parse_answer(fence.replace("{}", json.dumps(CHARGE)))
     assert answer.request is not None and answer.request.path == "/v1/charges"

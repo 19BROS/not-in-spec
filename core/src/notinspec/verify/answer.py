@@ -14,7 +14,7 @@ from typing import Any
 from notinspec.verify.causes import FailureCause
 
 # bump when the parsing rules change; recorded with every result, like the generator version
-PARSER_VERSION = 1
+PARSER_VERSION = 2
 
 METHODS = ("GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS")
 
@@ -46,7 +46,7 @@ ANSWER_SCHEMA: dict[str, Any] = {
 }
 
 _FIELDS = frozenset(ANSWER_SCHEMA["properties"])
-_FENCE = re.compile(r"\A```[A-Za-z]*[ \t]*\n(.*?)\n?```\Z", re.DOTALL)
+_FENCE = re.compile(r"\A```[A-Za-z]*[ \t]*\r?\n(.*?)(?:\r?\n)?```\Z", re.DOTALL)
 _REFUSAL = re.compile(
     r"\b(i can(?:not|[’']t)|i(?: am|[’']m) (?:unable|not able)|i do(?: not|n[’']t) know"
     r"|i(?: am|[’']m) sorry|i apologi[sz]e|unable to (?:help|assist|answer))\b",
