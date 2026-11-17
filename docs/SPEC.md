@@ -150,6 +150,7 @@ These exact terms are used in code, diagrams and text.
 |---|---|---|
 | **Chunk** | `Chunk` | one whole documentation section split by headings, or one API description (`desc` node) in API reference (no small token limit, code blocks and tables intact, oversized sections split at a soft limit). Identity = source + heading path; a content hash tells whether it changed. Has a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
 | **NLI premise** | – | the text a claim is checked against: the chunk's breadcrumb plus the cited sentence(s) ±1 sentence within the cited prose block (for a list item, plus the sentence that introduces the list). Computed from the chunk and the citation, not stored. |
+| **Recall window** | – | `<breadcrumb>:` + consecutive prose sentences of a chunk, up to a token limit, with overlap. Used only where a missed entailment is the worse error: the unsupported check of the perturbation operator ([§6.7](#67-tasks-and-operators)). Computed from the chunk, not stored. |
 | **Component** | – | kind of content in a chunk: **A** formal spec, **B** API reference, **C** examples, **D** prose and changelog. One chunk can contain several. |
 | **Symbol** | `Symbol` | anything callable: function, method, class, endpoint, CLI command |
 | **Signature** | `Signature` | header of a symbol: parameters and return type, no body. A symbol can have several (overloads, versions). |
@@ -373,7 +374,14 @@ Task text (written by an LLM): "Give up connecting after 2 minutes."
 - **Leave-one-out:** in gold-context mode, the example the task was derived from is removed, to test whether the rest of the docs is enough.
 - **Perturbation ("not in the documentation", L2):** tests whether a model admits that the docs don't say something, instead of inventing an answer.
   1. Code takes a grounded `Claim` and replaces **exactly one** slot: an identifier with another one of the same kind from the inventory (a parameter of the same signature, a method of the same class), or a number / unit with one that does not appear in the claim's chunk. Example: "`total` set to `0` fails on the first retry" → "`backoff_factor` set to `0` fails on the first retry".
-  2. **Unsupported check:** NLI of the changed claim against the NLI premises of the claim's chunk and of the top chunks from the K5b prefilter, and against all grounded claims. Any `entailment` or `contradiction` → the docs say something about it, discard. All `neutral` → keep. The cheap identifier check ([§18](#18-open-items)) also runs: the new identifier or number must not appear in the claim's citation.
+  2. **Unsupported check:** NLI with the changed claim as the hypothesis, decision by argmax. Any `entailment` or `contradiction` → the docs say something about it, discard. All `neutral` → keep. Premises:
+     - the **NLI premise of the original claim's citation** ([§6.1](#61-reading-and-chunking)): the changed claim keeps the original citation, so this premise is defined;
+     - **recall windows** over the whole claim's chunk and over the top *k* chunks most similar to the changed claim (embedding prefilter, as in K5b). A recall window is `<breadcrumb>:` + consecutive prose sentences of one chunk, cut at sentence boundaries, at most 400 tokens (*candidate*) with a 1/5 overlap, so every prose sentence of the chunk is in at least one window. Windows are computed deterministically from the chunk (chunk ID + offset);
+     - all grounded claims of the project.
+
+     Here the risk is the opposite of grounding: a missed entailment (false `neutral`) leaves an answerable question, while a false entailment only discards a candidate. So the premise favours **recall**: in `experiments/nli/FINDINGS.md` the 400-token window found support for 90 of 92 correct claims vs. 86 of 92 for the NLI premise. Every decision records the premise rule and window size, as for grounding ([§6.4](#64-prose-and-changelog--claim)).
+
+     The cheap identifier check ([§18](#18-open-items)) also runs: the new identifier or number must not appear in the claim's citation.
   3. The task-text writer (LLM) turns the changed claim into a question ("What happens when `backoff_factor` is set to `0`?"). The reference, "not in the documentation", comes from step 2, not from the LLM.
   4. **Always reviewed** ([§2.5](#25-keeping-golden-set-review-small)): NLI can miss support for a claim (a false `neutral`), and then the question would be answerable.
   - Evaluation: the answer must say that the documentation does not cover it. A concrete answer is an error (`invented`), even if it happens to be true for the real software, because the truth is what the documentation says ([§1.1](#11-what-we-are-not-building)).
@@ -611,7 +619,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample
 - [ ] **NLI thresholds:** argmax for now. A three-zone rule (keep at p ≥ 0.9, drop below 0.05, human review in between) sends ~8 % of claims to review, but it doesn't catch confident errors (9 of 12 wrong claims kept have p ≥ 0.9). Decide whether the review is worth it
 - [ ] A cheap code check that a claim's identifiers, numbers and versions appear in its cited sentence (NLI misses these; see `experiments/nli/FINDINGS.md`, run 006). Also used by the perturbation operator ([§6.7](#67-tasks-and-operators))
-- [ ] Perturbation: share of "not in the documentation" items in L2, how many prefilter chunks the unsupported check uses, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge)
+- [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: how much users will do, which items are auto-approved
