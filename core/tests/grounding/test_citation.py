@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import pytest
 
-from notinspec.chunking import Chunk, Document, chunk_document
+from notinspec.chunking import Chunk, Document, chunk_blocks, chunk_document
 from notinspec.grounding import check_citation, normalize
+from notinspec.sphinx import read_sphinx_xml
 
 
 def _chunk(text: str) -> Chunk:
@@ -87,3 +90,35 @@ def test_a_match_in_prose_wins_over_an_earlier_one_in_code() -> None:
 def test_a_citation_across_two_prose_blocks_is_found() -> None:
     chunk = _chunk("# A\n\nFirst paragraph ends here.\n\nSecond one starts here.\n")
     assert check_citation(chunk, "ends here. Second one").status == "found"
+
+
+SPHINX = Path(__file__).parents[1] / "fixtures" / "sphinx"
+
+
+def test_field_entry_en_dash_matches_a_plain_hyphen() -> None:
+    xml = read_sphinx_xml(SPHINX / "xml-plain")
+    chunks = [c for d in xml.documents for c in chunk_blocks(d, project="fixturelib")]
+    connect = next(c for c in chunks if c.breadcrumb.endswith("> connect()"))
+    result = check_citation(connect, "`timeout` (float or None) - Seconds to wait")
+    assert result.status == "found"
+    assert result.span is not None
+    assert connect.text[result.span[0] : result.span[1]] == (
+        "`timeout` (float or None) – Seconds to wait"
+    )
+
+
+@pytest.mark.parametrize(
+    ("text", "citation"),
+    [
+        ("Retries — unless disabled — are counted.", "Retries - unless disabled - are counted."),
+        ("Retries - unless disabled - are counted.", "Retries — unless disabled – are counted."),
+        ("Pages 1–3 — see below.", "Pages 1-3 – see below."),
+    ],
+)
+def test_en_and_em_dashes_are_plain_hyphens(text: str, citation: str) -> None:
+    chunk = _chunk(f"# A\n\n{text}\n")
+    result = check_citation(chunk, citation)
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == text
+    assert normalize("a – b — c") == "a - b - c"

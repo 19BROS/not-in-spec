@@ -5,7 +5,8 @@ Both sides are normalized the same way before matching:
 - whitespace runs collapse to one space (a quote of a wrapped paragraph);
 - Markdown markup is removed: backticks, `**`, link syntax (`[text](target)` keeps `text`),
   autolink brackets, and heading, quote and list markers at the start of a line;
-- typographic quotes become plain quotes.
+- typographic quotes become plain quotes, en and em dashes become "-" (Sphinx renders a
+  parameter entry as ``- `name` (type) – text``, an extractor may quote it with "-").
 
 A match is mapped back to offsets in the raw `chunk.text`, which is what NLI premises and
 `Source` point into. A citation found only outside prose (code, table, signature, heading) is
@@ -21,6 +22,7 @@ from notinspec.chunking import Chunk, prose_sentences
 type CitationStatus = Literal["found", "not_found", "not_checkable"]
 
 QUOTES = str.maketrans("“”‘’„‚", "\"\"''\"'")
+_PLAIN = str.maketrans("“”‘’„‚–—", "\"\"''\"'--")  # quotes and dashes, citation check only
 
 # markup removed before matching; each pattern's groups name the characters to drop
 _LINE_MARKERS = re.compile(
@@ -100,7 +102,7 @@ def _normalized(text: str) -> tuple[str, list[int]]:
                 chars.append(" ")
                 offsets.append(i)
             continue
-        chars.append(char.translate(QUOTES))
+        chars.append(char.translate(_PLAIN))
         offsets.append(i)
     if chars and chars[-1] == " ":
         chars.pop()
