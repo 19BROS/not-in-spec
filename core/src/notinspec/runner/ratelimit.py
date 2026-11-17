@@ -1,4 +1,4 @@
-"""Client-side request budget for OpenRouter free models (SPEC §3.1)."""
+"""Client-side request budget for free-tier models (SPEC §8)."""
 
 import time
 from collections import deque
@@ -11,7 +11,8 @@ from notinspec.runner.provider import QuotaExhausted
 class RateLimiter:
     """Paces requests to `per_minute` and stops at `per_day` (the day is UTC).
 
-    OpenRouter counts per account, not per key, so everything sharing a key must share one limiter.
+    Providers count per account, not per key, so everything sharing an account must share one
+    limiter. Groq also counts per model: one limiter per model there.
     Every attempt counts, retries included.
     """
 

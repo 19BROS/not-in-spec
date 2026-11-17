@@ -7,27 +7,41 @@ import httpx2
 import pytest
 
 from notinspec.runner import (
+    GROQ,
+    OPENROUTER,
     ChatRequest,
     ModelUnavailable,
-    OpenRouterProvider,
+    OpenAICompatProvider,
+    ProviderConfig,
     ProviderError,
     RateLimited,
     TransientError,
 )
-from notinspec.verify import ANSWER_SCHEMA
+from notinspec.runner.openai_compat import SCHEMA_FAILED
+from notinspec.verify import ANSWER_SCHEMA, parse_answer
 
 type Handler = Callable[[httpx2.Request], httpx2.Response]
 
 
-def provider(handler: Handler) -> OpenRouterProvider:
-    return OpenRouterProvider("sk-test", transport=httpx2.MockTransport(handler))
+def provider(handler: Handler, config: ProviderConfig = GROQ) -> OpenAICompatProvider:
+    return OpenAICompatProvider(config, "sk-test", transport=httpx2.MockTransport(handler))
 
 
 def reply(status: int, body: Any, headers: dict[str, str] | None = None) -> Handler:
     return lambda _: httpx2.Response(status, json=body, headers=headers)
 
 
-def test_sends_request_and_parses_answer(request_: ChatRequest, body: dict[str, Any]) -> None:
+@pytest.mark.parametrize(
+    ("config", "url"),
+    [
+        (GROQ, "https://api.groq.com/openai/v1/chat/completions"),
+        (OPENROUTER, "https://openrouter.ai/api/v1/chat/completions"),
+    ],
+    ids=["groq", "openrouter"],
+)
+def test_sends_request_and_parses_answer(
+    request_: ChatRequest, body: dict[str, Any], config: ProviderConfig, url: str
+) -> None:
     sent: list[httpx2.Request] = []
 
     def handler(request: httpx2.Request) -> httpx2.Response:
@@ -35,15 +49,17 @@ def test_sends_request_and_parses_answer(request_: ChatRequest, body: dict[str, 
         return httpx2.Response(200, json=body)
 
     schema_request = ChatRequest(request_.model, request_.messages, response_schema=ANSWER_SCHEMA)
-    completion = provider(handler).complete(schema_request)
+    completion = provider(handler, config).complete(schema_request)
 
-    assert str(sent[0].url) == "https://openrouter.ai/api/v1/chat/completions"
+    assert str(sent[0].url) == url
     assert sent[0].headers["Authorization"] == "Bearer sk-test"
+    assert ("X-Title" in sent[0].headers) == (config is OPENROUTER)
     payload = json.loads(sent[0].content)
     assert payload["model"] == "acme/model-a:free"
     assert payload["temperature"] == 0.0
     assert payload["messages"][1] == {"role": "user", "content": "Create a charge."}
     assert payload["response_format"]["json_schema"]["schema"] == ANSWER_SCHEMA
+    assert "strict" not in payload["response_format"]["json_schema"]  # best effort
     assert "max_tokens" not in payload
 
     assert completion.content == '{"method": "GET", "path": "/pets/1"}'
@@ -89,7 +105,7 @@ def test_429_with_reset_in_error_metadata(request_: ChatRequest) -> None:
         }
     }
     with pytest.raises(RateLimited) as exc:
-        provider(reply(429, error)).complete(request_)
+        provider(reply(429, error), OPENROUTER).complete(request_)
     assert exc.value.retry_after is not None and 3500 < exc.value.retry_after <= 3600
 
 
@@ -109,6 +125,8 @@ def test_429_without_hint(request_: ChatRequest) -> None:
         (401, "No auth credentials found", ProviderError),
         (402, "Insufficient credits", ProviderError),
         (400, "messages is required", ProviderError),
+        (413, "Request Entity Too Large", ProviderError),
+        (498, "Flex Tier Capacity Exceeded", TransientError),
     ],
 )
 def test_error_status(
@@ -132,7 +150,7 @@ def test_upstream_error_names_provider(request_: ChatRequest) -> None:
         }
     }
     with pytest.raises(RateLimited) as exc:
-        provider(reply(429, error)).complete(request_)
+        provider(reply(429, error), OPENROUTER).complete(request_)
     assert str(exc.value) == (
         "HTTP 429: Provider returned error "
         "(Google AI Studio: google/gemma:free is temporarily rate-limited upstream)"
@@ -141,7 +159,8 @@ def test_upstream_error_names_provider(request_: ChatRequest) -> None:
 
 def test_error_in_200_body(request_: ChatRequest) -> None:
     with pytest.raises(TransientError, match="HTTP 502: provider returned error"):
-        provider(reply(200, {"error": {"message": "provider returned error"}})).complete(request_)
+        error = reply(200, {"error": {"message": "provider returned error"}})
+        provider(error, OPENROUTER).complete(request_)
 
 
 def test_error_inside_choice(request_: ChatRequest, body: dict[str, Any]) -> None:
@@ -174,7 +193,7 @@ def test_network_errors_are_transient(request_: ChatRequest, error: Exception) -
         provider(handler).complete(request_)
 
 
-def test_list_models() -> None:
+def test_list_models_openrouter() -> None:
     models = {
         "data": [
             {"id": "b/model:free", "context_length": 32768, "supported_parameters": ["tools"]},
@@ -187,7 +206,7 @@ def test_list_models() -> None:
             {"name": "no id"},
         ]
     }
-    listed = provider(reply(200, models)).list_models()
+    listed = provider(reply(200, models), OPENROUTER).list_models()
     assert [(m.id, m.context_length, m.structured_output) for m in listed] == [
         ("a/model:free", 131072, True),
         ("b/model:free", 32768, False),
@@ -195,9 +214,103 @@ def test_list_models() -> None:
     ]
 
 
-def test_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-env")
-    assert isinstance(OpenRouterProvider.from_env(), OpenRouterProvider)
-    monkeypatch.setenv("OPENROUTER_API_KEY", " ")
-    with pytest.raises(ProviderError, match="OPENROUTER_API_KEY is not set"):
-        OpenRouterProvider.from_env()
+def test_list_models_groq() -> None:
+    """Groq's /models says nothing about structured output; the config's list does."""
+
+    def model(id_: str, active: bool = True) -> dict[str, Any]:
+        return {
+            "id": id_,
+            "object": "model",
+            "created": 1754000000,
+            "owned_by": "x",
+            "active": active,
+            "context_window": 131072,
+            "public_apps": None,
+        }
+
+    models = {
+        "object": "list",
+        "data": [
+            model("llama-3.3-70b-versatile"),
+            model("openai/gpt-oss-20b"),
+            model("old/decommissioned", active=False),
+        ],
+    }
+    listed = provider(reply(200, models)).list_models()
+    assert [(m.id, m.context_length, m.structured_output) for m in listed] == [
+        ("llama-3.3-70b-versatile", 131072, False),
+        ("openai/gpt-oss-20b", 131072, True),
+    ]
+
+
+@pytest.mark.parametrize("code", ["model_not_found", "model_decommissioned"])
+def test_groq_model_gone(request_: ChatRequest, code: str) -> None:
+    error = {
+        "error": {
+            "message": f"The model `{request_.model}` has been decommissioned",
+            "type": "invalid_request_error",
+            "code": code,
+        }
+    }
+    with pytest.raises(ModelUnavailable, match="HTTP 400"):
+        provider(reply(400, error)).complete(request_)
+
+
+def test_groq_429_with_retry_after(request_: ChatRequest) -> None:
+    error = {
+        "error": {
+            "message": "Rate limit reached for model `openai/gpt-oss-20b` on requests per day",
+            "type": "requests",
+            "code": "rate_limit_exceeded",
+        }
+    }
+    headers = {"retry-after": "2", "x-ratelimit-reset-requests": "2m59.56s"}
+    with pytest.raises(RateLimited) as exc:
+        provider(reply(429, error, headers)).complete(request_)
+    assert exc.value.retry_after == 2.0
+
+
+@pytest.mark.parametrize(
+    ("generation", "cause"), [('{"method": "GET"}', "malformed-output"), (None, "malformed-output")]
+)
+def test_schema_failure_is_an_answer(
+    request_: ChatRequest, generation: str | None, cause: str
+) -> None:
+    """Groq's 400 for an answer that fails a best-effort schema carries the model's output."""
+    error: dict[str, Any] = {
+        "message": "Generated JSON does not match the expected schema. Please adjust your prompt.",
+        "type": "invalid_request_error",
+        "code": SCHEMA_FAILED,
+    }
+    if generation is not None:
+        error["failed_generation"] = generation
+    body = {"error": error}
+
+    completion = provider(reply(400, body)).complete(request_)
+
+    assert completion.content == generation
+    assert completion.finish_reason == SCHEMA_FAILED
+    assert completion.model == request_.model
+    assert completion.raw == body
+    assert parse_answer(completion.content, refusal=completion.refusal).cause == cause
+
+
+@pytest.mark.parametrize(
+    ("config", "env"), [(GROQ, "GROQ_API_KEY"), (OPENROUTER, "OPENROUTER_API_KEY")]
+)
+def test_from_env(monkeypatch: pytest.MonkeyPatch, config: ProviderConfig, env: str) -> None:
+    monkeypatch.setenv(env, "sk-env")
+    assert OpenAICompatProvider.from_env(config).config is config
+    monkeypatch.setenv(env, " ")
+    with pytest.raises(ProviderError, match=f"{env} is not set"):
+        OpenAICompatProvider.from_env(config)
+
+
+def test_from_env_defaults_to_groq(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("GROQ_API_KEY", "gsk-env")
+    assert OpenAICompatProvider.from_env().config is GROQ
+
+
+def test_config_limiter() -> None:
+    limiter = GROQ.limiter()
+    assert (limiter.per_minute, limiter.per_day) == (GROQ.per_minute, GROQ.per_day)

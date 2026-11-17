@@ -1,8 +1,16 @@
-"""Asking models: providers (OpenRouter, recorded fake), rate limiting, caching, retries."""
+"""Asking models: providers (Groq or another OpenAI-compatible API, recorded fake), rate limiting,
+caching, retries."""
 
 from notinspec.runner.client import CacheKey, MemoryCache, ModelClient, ResponseCache
 from notinspec.runner.fake import FakeProvider, RecordingProvider
-from notinspec.runner.openrouter import ModelInfo, OpenRouterProvider
+from notinspec.runner.openai_compat import (
+    GROQ,
+    OPENROUTER,
+    PROVIDERS,
+    ModelInfo,
+    OpenAICompatProvider,
+    ProviderConfig,
+)
 from notinspec.runner.provider import (
     ChatRequest,
     Completion,
@@ -17,6 +25,9 @@ from notinspec.runner.provider import (
 from notinspec.runner.ratelimit import RateLimiter
 
 __all__ = [
+    "GROQ",
+    "OPENROUTER",
+    "PROVIDERS",
     "CacheKey",
     "ChatRequest",
     "Completion",
@@ -26,8 +37,9 @@ __all__ = [
     "ModelClient",
     "ModelInfo",
     "ModelUnavailable",
-    "OpenRouterProvider",
+    "OpenAICompatProvider",
     "Provider",
+    "ProviderConfig",
     "ProviderError",
     "QuotaExhausted",
     "RateLimited",

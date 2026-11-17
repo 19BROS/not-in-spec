@@ -18,10 +18,13 @@ from notinspec.config import load_config
 from notinspec.ingestion import ingest, plan_ingestion
 from notinspec.report import build_results, write_artifacts
 from notinspec.runner import (
+    GROQ,
+    PROVIDERS,
     ChatRequest,
     Message,
     ModelClient,
-    OpenRouterProvider,
+    OpenAICompatProvider,
+    ProviderError,
     RecordingProvider,
 )
 from notinspec.verify import ANSWER_SCHEMA, parse_answer
@@ -70,20 +73,25 @@ def main(argv: list[str] | None = None) -> int:
         help="check config and list inputs without parsing or writing",
     )
 
-    ask = commands.add_parser(
-        "ask", help="ask one model one question via OpenRouter (needs OPENROUTER_API_KEY)"
-    )
+    ask = commands.add_parser("ask", help="ask one model one question (Groq: needs GROQ_API_KEY)")
     ask.add_argument("prompt")
-    ask.add_argument(
-        "--model", required=True, help="OpenRouter model ID, e.g. <vendor>/<name>:free"
-    )
+    ask.add_argument("--model", required=True, help="provider's model ID, e.g. openai/gpt-oss-20b")
     ask.add_argument(
         "--no-schema", action="store_true", help="don't send the answer schema as response_format"
     )
     ask.add_argument("--record", type=Path, help="save the raw response as a fake-provider fixture")
+    _provider_option(ask)
 
-    models = commands.add_parser("models", help="list OpenRouter :free models")
-    models.add_argument("--all", action="store_true", help="include paid models")
+    models = commands.add_parser("models", help="list the provider's active models")
+    models.add_argument(
+        "--structured", action="store_true", help="only models known to take a JSON schema"
+    )
+    models.add_argument(
+        "--probe",
+        action="store_true",
+        help="ask each listed model one question with the answer schema (one request per model)",
+    )
+    _provider_option(models)
 
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
@@ -93,14 +101,24 @@ def main(argv: list[str] | None = None) -> int:
         if args.command in ("ci", "ingest"):
             return _ingest(args)
         if args.command == "ask":
-            return _ask(args.model, args.prompt, schema=not args.no_schema, record=args.record)
+            provider = OpenAICompatProvider.from_env(PROVIDERS[args.provider])
+            return _ask(
+                provider, args.model, args.prompt, schema=not args.no_schema, record=args.record
+            )
         if args.command == "models":
-            return _models(free_only=not args.all)
+            provider = OpenAICompatProvider.from_env(PROVIDERS[args.provider])
+            return _models(provider, structured_only=args.structured, probe=args.probe)
     except Exception as exc:
         print(f"error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     parser.print_help()
     return 0
+
+
+def _provider_option(command: argparse.ArgumentParser) -> None:
+    command.add_argument(
+        "--provider", choices=sorted(PROVIDERS), default=GROQ.name, help="default: %(default)s"
+    )
 
 
 def _positive_int(value: str) -> int:
@@ -184,9 +202,8 @@ def _chunk(args: argparse.Namespace) -> int:
     return 0
 
 
-def _ask(model: str, prompt: str, *, schema: bool, record: Path | None) -> int:
-    live = RecordingProvider(OpenRouterProvider.from_env())
-    request = ChatRequest(
+def _answer_request(model: str, prompt: str, *, schema: bool) -> ChatRequest:
+    return ChatRequest(
         model=model,
         messages=(
             Message("system", _ASK_SYSTEM + json.dumps(ANSWER_SCHEMA)),
@@ -194,8 +211,16 @@ def _ask(model: str, prompt: str, *, schema: bool, record: Path | None) -> int:
         ),
         response_schema=ANSWER_SCHEMA if schema else None,
     )
+
+
+def _ask(
+    provider: OpenAICompatProvider, model: str, prompt: str, *, schema: bool, record: Path | None
+) -> int:
+    live = RecordingProvider(provider)
     # one retry at most: trying by hand shouldn't burn the daily budget
-    completion = ModelClient(live, max_attempts=2).ask("cli", request)
+    completion = ModelClient(live, max_attempts=2).ask(
+        "cli", _answer_request(model, prompt, schema=schema)
+    )
     if record is not None:
         live.save(record)
 
@@ -210,13 +235,32 @@ def _ask(model: str, prompt: str, *, schema: bool, record: Path | None) -> int:
     return 0
 
 
-def _models(*, free_only: bool) -> int:
-    for m in OpenRouterProvider.from_env().list_models():
-        if free_only and not m.id.endswith(":free"):
+# a question every model can answer, so a failed probe means the schema, not the task
+_PROBE_PROMPT = "Fetch the pet with ID 1 from the Petstore API: GET /pets/1."
+
+
+def _models(provider: OpenAICompatProvider, *, structured_only: bool, probe: bool) -> int:
+    client = ModelClient(provider, limiter=provider.config.limiter(), max_attempts=1)
+    for m in provider.list_models():
+        if structured_only and not m.structured_output:
             continue
         structured = "structured-output" if m.structured_output else "-"
-        print(f"{m.id:<60} {m.context_length or '?':>8}  {structured}")
+        line = f"{m.id:<50} {m.context_length or '?':>8}  {structured:<17}"
+        if probe:
+            line += f"  probe: {_probe(client, m.id)}"
+        print(line, flush=True)
     return 0
+
+
+def _probe(client: ModelClient, model: str) -> str:
+    try:
+        completion = client.ask("probe", _answer_request(model, _PROBE_PROMPT, schema=True))
+    except ProviderError as e:
+        return f"rejected ({type(e).__name__}: {str(e)[:120]})"
+    answer = parse_answer(completion.content, refusal=completion.refusal)
+    if answer.request is not None:
+        return "ok"
+    return f"answered, {answer.cause} (finish: {completion.finish_reason})"
 
 
 if __name__ == "__main__":

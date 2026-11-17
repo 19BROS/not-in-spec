@@ -1,4 +1,4 @@
-"""Recorded responses, so tests and CI never call OpenRouter (SPEC §9).
+"""Recorded responses, so tests and CI never call a real LLM (SPEC §13).
 
 A recording file is a JSON list of {"model", "prompt_hash", "request", "response"}, where
 `response` is the provider's raw body. Replaying goes through the same parsing as a live call.
@@ -10,7 +10,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from notinspec.runner.openrouter import parse_completion
+from notinspec.runner.openai_compat import parse_completion
 from notinspec.runner.provider import ChatRequest, Completion, Provider
 
 

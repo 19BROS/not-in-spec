@@ -15,7 +15,7 @@ def request_() -> ChatRequest:
 
 @pytest.fixture
 def body() -> dict[str, Any]:
-    """A chat-completions response body as OpenRouter returns it."""
+    """A chat-completions response body as an OpenAI-compatible provider returns it."""
     return {
         "id": "gen-1",
         "model": "acme/model-a-2026-09:free",
