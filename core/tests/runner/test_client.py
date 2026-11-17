@@ -5,6 +5,7 @@ import pytest
 from notinspec.runner import (
     ChatRequest,
     Completion,
+    Limiters,
     MemoryCache,
     ModelClient,
     ModelUnavailable,
@@ -107,8 +108,31 @@ def test_failures_are_not_cached(request_: ChatRequest) -> None:
 
 
 def test_every_attempt_uses_the_budget(request_: ChatRequest) -> None:
-    limiter = RateLimiter(per_minute=100, per_day=2, clock=lambda: 0.0, sleep=lambda _: None)
     provider = Scripted(TransientError("502"), TransientError("502"), ANSWER)
     with pytest.raises(QuotaExhausted):
-        client(provider, [], limiter=limiter).ask("run-1", request_)
+        client(provider, [], limits=limits(per_day=2, per_model=True)).ask("run-1", request_)
     assert provider.calls == 2
+
+
+def limits(*, per_day: int, per_model: bool) -> Limiters:
+    def new() -> RateLimiter:
+        return RateLimiter(per_minute=100, per_day=per_day, clock=lambda: 0.0, sleep=lambda _: None)
+
+    return Limiters(new, per_model=per_model)
+
+
+def test_each_model_has_its_own_budget(request_: ChatRequest) -> None:
+    provider = Scripted(ANSWER, ANSWER)
+    models = client(provider, [], limits=limits(per_day=1, per_model=True))
+    models.ask("run-1", request_)
+    models.ask("run-1", replace(request_, model="acme/model-b:free"))
+    assert provider.calls == 2
+
+
+def test_shared_budget_across_models(request_: ChatRequest) -> None:
+    provider = Scripted(ANSWER, ANSWER)
+    models = client(provider, [], limits=limits(per_day=1, per_model=False))
+    models.ask("run-1", request_)
+    with pytest.raises(QuotaExhausted):
+        models.ask("run-1", replace(request_, model="acme/model-b:free"))
+    assert provider.calls == 1

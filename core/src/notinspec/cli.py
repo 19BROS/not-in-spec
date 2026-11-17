@@ -23,9 +23,12 @@ from notinspec.runner import (
     ChatRequest,
     Message,
     ModelClient,
+    ModelUnavailable,
     OpenAICompatProvider,
     ProviderError,
+    QuotaExhausted,
     RecordingProvider,
+    TransientError,
 )
 from notinspec.verify import ANSWER_SCHEMA, parse_answer
 
@@ -242,21 +245,31 @@ _PROBE_PROMPT = "Fetch the pet with ID 1 from the Petstore API: GET /pets/1."
 
 
 def _models(provider: OpenAICompatProvider, *, structured_only: bool, probe: bool) -> int:
-    client = ModelClient(provider, limiter=provider.config.limiter(), max_attempts=1)
-    for m in provider.list_models():
-        if structured_only and not m.structured_output:
-            continue
+    client = ModelClient(provider, limits=provider.config.limiters(), max_attempts=1)
+    listed = [m for m in provider.list_models() if m.structured_output or not structured_only]
+    for done, m in enumerate(listed):
         structured = "structured-output" if m.structured_output else "-"
         line = f"{m.id:<50} {m.context_length or '?':>8}  {structured:<17}"
         if probe:
-            line += f"  probe: {_probe(client, m.id)}"
+            try:
+                line += f"  probe: {_probe(client, m.id)}"
+            except QuotaExhausted as e:
+                print(f"stopped: {e} ({done} of {len(listed)} models probed)", file=sys.stderr)
+                return 2
         print(line, flush=True)
     return 0
 
 
 def _probe(client: ModelClient, model: str) -> str:
+    """`rejected` only when the provider refused the request itself, e.g. the schema."""
     try:
         completion = client.ask("probe", _answer_request(model, _PROBE_PROMPT, schema=True))
+    except QuotaExhausted:
+        raise
+    except ModelUnavailable as e:
+        return f"unavailable ({str(e)[:120]})"
+    except TransientError as e:  # rate limits included: says nothing about the schema
+        return f"unknown ({type(e).__name__}: {str(e)[:120]})"
     except ProviderError as e:
         return f"rejected ({type(e).__name__}: {str(e)[:120]})"
     answer = parse_answer(completion.content, refusal=completion.refusal)

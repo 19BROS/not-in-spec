@@ -1,6 +1,7 @@
 import json
 import time
 from collections.abc import Callable
+from email.utils import formatdate
 from typing import Any
 
 import httpx2
@@ -124,6 +125,7 @@ def test_429_without_hint(request_: ChatRequest) -> None:
         (503, "overloaded", TransientError),
         (401, "No auth credentials found", ProviderError),
         (402, "Insufficient credits", ProviderError),
+        (404, "Unknown request URL: POST /openai/v1/chat", ProviderError),
         (400, "messages is required", ProviderError),
         (413, "Request Entity Too Large", ProviderError),
         (498, "Flex Tier Capacity Exceeded", TransientError),
@@ -311,6 +313,43 @@ def test_from_env_defaults_to_groq(monkeypatch: pytest.MonkeyPatch) -> None:
     assert OpenAICompatProvider.from_env().config is GROQ
 
 
-def test_config_limiter() -> None:
-    limiter = GROQ.limiter()
+def test_config_limiters() -> None:
+    groq, openrouter = GROQ.limiters(), OPENROUTER.limiters()
+    assert groq.for_model("a") is not groq.for_model("b")  # Groq counts per model
+    assert openrouter.for_model("a") is openrouter.for_model("b")  # OpenRouter per account
+    limiter = groq.for_model("a")
     assert (limiter.per_minute, limiter.per_day) == (GROQ.per_minute, GROQ.per_day)
+
+
+def test_non_json_429_keeps_retry_after(request_: ChatRequest) -> None:
+    def handler(_: httpx2.Request) -> httpx2.Response:
+        return httpx2.Response(
+            429, text="<html>Too Many Requests</html>", headers={"Retry-After": "30"}
+        )
+
+    with pytest.raises(RateLimited) as exc:
+        provider(handler).complete(request_)
+    assert exc.value.retry_after == 30.0
+
+
+def test_retry_after_as_http_date(request_: ChatRequest) -> None:
+    when = formatdate(time.time() + 120, usegmt=True)
+    with pytest.raises(RateLimited) as exc:
+        provider(reply(429, {"error": {"message": "slow down"}}, {"Retry-After": when})).complete(
+            request_
+        )
+    assert exc.value.retry_after is not None and 100 < exc.value.retry_after <= 120
+
+
+def test_bad_retry_after_falls_back_to_reset(request_: ChatRequest) -> None:
+    reset_ms = str(int((time.time() + 60) * 1000))
+    headers = {"Retry-After": "soon", "X-RateLimit-Reset": reset_ms}
+    with pytest.raises(RateLimited) as exc:
+        provider(reply(429, {"error": {"message": "slow down"}}, headers)).complete(request_)
+    assert exc.value.retry_after is not None and 50 < exc.value.retry_after <= 60
+
+
+@pytest.mark.parametrize("code", [{"type": "x"}, ["model_not_found"]], ids=["dict", "list"])
+def test_odd_error_code_is_a_provider_error(request_: ChatRequest, code: object) -> None:
+    with pytest.raises(ProviderError, match="HTTP 400: bad"):
+        provider(reply(400, {"error": {"message": "bad", "code": code}})).complete(request_)

@@ -4,6 +4,8 @@ import os
 import time
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from datetime import UTC
+from email.utils import parsedate_to_datetime
 from typing import Any, NoReturn
 
 import httpx2
@@ -16,11 +18,13 @@ from notinspec.runner.provider import (
     RateLimited,
     TransientError,
 )
-from notinspec.runner.ratelimit import RateLimiter
+from notinspec.runner.ratelimit import Limiters, RateLimiter
 
 # 498: Groq flex tier over capacity
 _TRANSIENT_STATUS = frozenset({408, 498, 500, 502, 503, 504, 520, 522, 524, 529})
 _GONE_CODES = frozenset({"model_not_found", "model_decommissioned"})
+# OpenRouter says it only in the message; a bare 404 (wrong base URL) is a config error instead
+_GONE_MESSAGES = ("not a valid model", "no endpoints found")
 # Groq rejects a best-effort json_schema answer that fails the schema with HTTP 400 and this code
 SCHEMA_FAILED = "json_validate_failed"
 
@@ -30,16 +34,20 @@ class ProviderConfig:
     name: str
     base_url: str
     api_key_env: str
-    # client-side budget per limiter; Groq counts per organization and model (SPEC §8)
+    # client-side budget; per model (Groq, SPEC §8) or one for the whole account (OpenRouter)
     per_minute: int
     per_day: int
+    per_model_limits: bool
     # models known to accept response_format json_schema, for providers whose /models doesn't say
     structured_output_models: frozenset[str] = frozenset()
     default_model: str | None = None  # model under test when none is named
     headers: Mapping[str, str] = field(default_factory=dict)
 
-    def limiter(self) -> RateLimiter:
-        return RateLimiter(self.per_minute, self.per_day)
+    def limiters(self) -> Limiters:
+        """Fresh limiters, keyed the way this provider counts. Share one per API account."""
+        return Limiters(
+            lambda: RateLimiter(self.per_minute, self.per_day), per_model=self.per_model_limits
+        )
 
 
 GROQ = ProviderConfig(
@@ -50,6 +58,7 @@ GROQ = ProviderConfig(
     # Groq also allows only 8000 tokens/min per model, which this limiter doesn't count.
     per_minute=30,
     per_day=1000,
+    per_model_limits=True,
     # console.groq.com/docs/structured-outputs, read 2026-11-17; qwen confirmed live the same day,
     # `models --probe` checks the rest
     structured_output_models=frozenset(
@@ -70,6 +79,7 @@ OPENROUTER = ProviderConfig(
     api_key_env="OPENROUTER_API_KEY",
     per_minute=20,
     per_day=50,
+    per_model_limits=False,
     headers={"X-Title": "notinspec"},
 )
 
@@ -146,7 +156,9 @@ class OpenAICompatProvider:
         except ValueError:
             body = None
         if not isinstance(body, dict):
-            _raise_for(status if status >= 400 else 502, "response is not a JSON object", {})
+            # e.g. an HTML 429 from a proxy in front of the API: its Retry-After still counts
+            headers = {k.lower(): v for k, v in response.headers.items()}
+            _raise_for(status if status >= 400 else 502, "response is not a JSON object", headers)
         error = body.get("error")
         if _schema_failed(error):
             return body  # the model answered, just not in the schema: a result, not a failure
@@ -221,7 +233,7 @@ def _raise_error(status: int, error: object, headers: Mapping[str, str]) -> NoRe
     elif status < 400:
         status = 502
     message = str(info.get("message") or error or "unknown error")
-    if code in _GONE_CODES:
+    if isinstance(code, str) and code in _GONE_CODES:
         raise ModelUnavailable(f"HTTP {status}: {message}")
     merged = {k.lower(): v for k, v in headers.items()}
     metadata = info.get("metadata")
@@ -238,7 +250,7 @@ def _raise_for(status: int, message: str, headers: Mapping[str, str]) -> NoRetur
     detail = f"HTTP {status}: {message}"
     if status == 429:
         raise RateLimited(detail, retry_after=_retry_after(headers))
-    if status == 404 or "not a valid model" in message.lower():
+    if any(m in message.lower() for m in _GONE_MESSAGES):
         raise ModelUnavailable(detail)
     if status in _TRANSIENT_STATUS:
         raise TransientError(detail)
@@ -246,13 +258,23 @@ def _raise_for(status: int, message: str, headers: Mapping[str, str]) -> NoRetur
 
 
 def _retry_after(headers: Mapping[str, str]) -> float | None:
-    """Seconds to wait: `Retry-After` (Groq sends it with every 429), else OpenRouter's
-    `X-RateLimit-Reset` (epoch ms)."""
-    try:
-        if value := headers.get("retry-after"):
+    """Seconds to wait: `Retry-After` (seconds or an HTTP date; Groq sends it with every 429),
+    else OpenRouter's `X-RateLimit-Reset` (epoch ms)."""
+    if value := headers.get("retry-after"):
+        try:
             return max(0.0, float(value))
-        if reset := headers.get("x-ratelimit-reset"):
+        except ValueError:
+            pass
+        try:
+            when = parsedate_to_datetime(value)
+        except (TypeError, ValueError):
+            pass
+        else:
+            when = when if when.tzinfo else when.replace(tzinfo=UTC)
+            return max(0.0, when.timestamp() - time.time())
+    if reset := headers.get("x-ratelimit-reset"):
+        try:
             return max(0.0, float(reset) / 1000 - time.time())
-    except ValueError:
-        pass
+        except ValueError:
+            pass
     return None

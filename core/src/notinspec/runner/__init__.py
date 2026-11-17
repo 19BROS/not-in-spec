@@ -22,7 +22,7 @@ from notinspec.runner.provider import (
     RateLimited,
     TransientError,
 )
-from notinspec.runner.ratelimit import RateLimiter
+from notinspec.runner.ratelimit import Limiters, RateLimiter
 
 __all__ = [
     "GROQ",
@@ -32,6 +32,7 @@ __all__ = [
     "ChatRequest",
     "Completion",
     "FakeProvider",
+    "Limiters",
     "MemoryCache",
     "Message",
     "ModelClient",

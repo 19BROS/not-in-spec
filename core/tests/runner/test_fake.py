@@ -29,9 +29,11 @@ def test_record_then_replay(tmp_path: Path, request_: ChatRequest, body: dict[st
 
 
 def test_replays_real_groq_recording() -> None:
-    """Real qwen answers on Groq (2026-11-17): one plain task, one told to ignore the schema.
+    """Real qwen answers on Groq (2026-11-17): a plain task, one told to ignore the schema, and
+    one without response_format.
 
-    Qwen kept to the schema both times, so Groq's json_validate_failed never came back.
+    Qwen kept to the schema, so Groq's json_validate_failed never came back. Without a schema it
+    fenced the JSON but sent no <think> block.
     """
     fixture = Path(__file__).parent / "fixtures" / "groq-qwen.json"
     entries = json.loads(fixture.read_text(encoding="utf-8"))
@@ -50,7 +52,9 @@ def test_replays_real_groq_recording() -> None:
         completion = fake.complete(request)
         assert completion.model == "qwen/qwen3.8-27b"
         assert completion.finish_reason == "stop"
-        assert json.loads(completion.content or "") == {"method": "GET", "path": "/pets/1"}
+        content = (completion.content or "").removeprefix("```json").removesuffix("```")
+        assert "<think>" not in content
+        assert json.loads(content) == {"method": "GET", "path": "/pets/1"}
 
 
 def test_replays_groq_schema_failure(tmp_path: Path, request_: ChatRequest) -> None:

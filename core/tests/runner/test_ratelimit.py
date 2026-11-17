@@ -50,3 +50,16 @@ def test_budget_resets_at_utc_midnight() -> None:
         limit.acquire()
     clock.now += 1
     limit.acquire()
+
+
+def test_wait_across_midnight_counts_on_the_new_day() -> None:
+    clock = Clock(now=11 * DAY - 30)  # 23:59:30 UTC
+    limit = limiter(clock, per_minute=1, per_day=2)
+    limit.acquire()  # day 1
+    sent_on_day_2 = 0
+    with pytest.raises(QuotaExhausted):
+        while True:
+            limit.acquire()  # each waits a minute; the first wait crosses midnight
+            assert clock.now >= 11 * DAY
+            sent_on_day_2 += 1
+    assert sent_on_day_2 == 2

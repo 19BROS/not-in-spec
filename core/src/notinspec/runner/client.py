@@ -13,7 +13,7 @@ from notinspec.runner.provider import (
     RateLimited,
     TransientError,
 )
-from notinspec.runner.ratelimit import RateLimiter
+from notinspec.runner.ratelimit import Limiters
 
 
 @dataclass(frozen=True)
@@ -51,7 +51,7 @@ class ModelClient:
         self,
         provider: Provider,
         *,
-        limiter: RateLimiter | None = None,
+        limits: Limiters | None = None,
         cache: ResponseCache | None = None,
         max_attempts: int = 5,
         backoff: float = 2.0,
@@ -59,7 +59,7 @@ class ModelClient:
         sleep: Callable[[float], None] = time.sleep,
     ) -> None:
         self._provider = provider
-        self._limiter = limiter
+        self._limits = limits
         self._cache = cache if cache is not None else MemoryCache()
         self._max_attempts = max_attempts
         self._backoff = backoff
@@ -71,8 +71,8 @@ class ModelClient:
         if (cached := self._cache.get(key)) is not None:
             return cached
         for attempt in range(1, self._max_attempts + 1):
-            if self._limiter is not None:
-                self._limiter.acquire()
+            if self._limits is not None:
+                self._limits.for_model(request.model).acquire()
             try:
                 completion = self._provider.complete(request)
             except RateLimited as e:

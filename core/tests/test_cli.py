@@ -12,9 +12,12 @@ from notinspec.runner import (
     ChatRequest,
     Completion,
     ModelInfo,
+    ModelUnavailable,
     OpenAICompatProvider,
     ProviderConfig,
     ProviderError,
+    QuotaExhausted,
+    RateLimited,
 )
 from notinspec.runner.openai_compat import parse_completion
 
@@ -191,3 +194,34 @@ def test_missing_key_is_an_error(
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
     assert main(["models"]) == 2
     assert "GROQ_API_KEY is not set" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    ("error", "status"),
+    [
+        (ModelUnavailable("HTTP 404: model gone"), "probe: unavailable (HTTP 404: model gone)"),
+        (RateLimited("HTTP 429: slow down", 5.0), "probe: unknown (RateLimited: HTTP 429"),
+        (ProviderError("HTTP 400: bad schema"), "probe: rejected (ProviderError: HTTP 400"),
+    ],
+    ids=["unavailable", "rate-limited", "rejected"],
+)
+def test_models_probe_statuses(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    error: ProviderError,
+    status: str,
+) -> None:
+    use(monkeypatch, Stub("{}", {"openai/gpt-oss-20b": error}))
+    assert main(["models", "--structured", "--probe"]) == 0
+    assert status in capsys.readouterr().out
+
+
+def test_models_probe_stops_at_quota(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    stub = Stub("{}", {"llama-3.3-70b-versatile": QuotaExhausted("daily budget used")})
+    use(monkeypatch, stub)
+    assert main(["models", "--probe"]) == 2
+    captured = capsys.readouterr()
+    assert "stopped: daily budget used (0 of 2 models probed)" in captured.err
+    assert "openai/gpt-oss-20b" not in captured.out and len(stub.requests) == 1

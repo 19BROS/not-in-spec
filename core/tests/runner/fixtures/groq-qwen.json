@@ -220,5 +220,58 @@
         "seed": 1215165934
       }
     }
+  },
+  {
+    "model": "qwen/qwen3.8-27b",
+    "prompt_hash": "5331ebb83a312c49cd2ca2a2f57e65ec47e935072e66807256e592821f5d71a9",
+    "request": {
+      "max_tokens": null,
+      "messages": [
+        {
+          "content": "Answer with only a JSON object describing the HTTP request to send, matching this JSON Schema:\n{\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"title\": \"ProposedRequest\", \"type\": \"object\", \"properties\": {\"method\": {\"type\": \"string\", \"enum\": [\"GET\", \"POST\", \"PUT\", \"PATCH\", \"DELETE\", \"HEAD\", \"OPTIONS\"]}, \"path\": {\"type\": \"string\", \"pattern\": \"^/\"}, \"query\": {\"type\": \"object\", \"additionalProperties\": {\"anyOf\": [{\"type\": [\"string\", \"number\", \"boolean\"]}, {\"type\": \"array\", \"items\": {\"type\": [\"string\", \"number\", \"boolean\"]}}]}}, \"headers\": {\"type\": \"object\", \"additionalProperties\": {\"type\": \"string\"}}, \"body\": {}}, \"required\": [\"method\", \"path\"], \"additionalProperties\": false}",
+          "role": "system"
+        },
+        {
+          "content": "Fetch the pet with ID 1 from the Petstore API: GET /pets/1.",
+          "role": "user"
+        }
+      ],
+      "model": "qwen/qwen3.8-27b",
+      "response_schema": null,
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "```json\n{\n  \"method\": \"GET\",\n  \"path\": \"/pets/1\"\n}\n```",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794931065,
+      "id": "chatcmpl-bfeaa78a-546d-4e2e-b6e8-40f2b5dbe167",
+      "model": "qwen/qwen3.8-27b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_8999620a6e",
+      "usage": {
+        "completion_time": 0.05946873,
+        "completion_tokens": 27,
+        "prompt_time": 0.019901739,
+        "prompt_tokens": 237,
+        "queue_time": 0.323433398,
+        "total_time": 0.079370469,
+        "total_tokens": 264
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7n3n05qe66ay2wbt2y5rf5d",
+        "seed": 303283643
+      }
+    }
   }
 ]
