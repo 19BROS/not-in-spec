@@ -80,7 +80,7 @@ Explicit relative `--config` and `--out` arguments are resolved from the termina
 
 | File | Content |
 |---|---|
-| `ingestion.json` | deterministic input hashes, source paths, full chunks, normalized OpenAPI operations and warnings; ingestion schema v2 |
+| `ingestion.json` | deterministic input hashes, source paths, full chunks (blocks with `field` / `name` / `type` for API reference entries), normalized OpenAPI operations, the Sphinx and reader version (`sphinx`, `null` without Sphinx input) and warnings; ingestion schema v3 |
 | `results.json` | Action/server envelope v0, ingestion counts, `stage: ingestion`, `verdict: not-evaluated`, empty `results` and `findings` |
 | `comment.md` | summary beginning with the Action's `<!-- notinspec -->` marker |
 | `report.html` | plain HTML (no scripts, no external files) for reviewing chunks by eye: counts, warnings with counts, every chunk per document |
