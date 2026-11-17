@@ -1,0 +1,1590 @@
+[
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>(num_pools=50)"
+    ],
+    "chunk": "b60c7de1d935e626 urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "content_hash": "cbefae89ff2fbca5",
+    "error": null,
+    "id": "956a49ef830b1e6a",
+    "lang": "python",
+    "lines": "7-11",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>(maxsize=10)",
+      "#1 L5 urllib3.HTTPConnectionPool = <urllib3.HTTPConnectionPool>(\"google.com\", maxsize=10)"
+    ],
+    "chunk": "b60c7de1d935e626 urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "content_hash": "3eade06e325b0919",
+    "error": null,
+    "id": "c319c8f6d9232152",
+    "lang": "python",
+    "lines": "17-23",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 urllib3.PoolManager = ?urllib3.PoolManager(maxsize=10, block=true)",
+      "#1 L4 urllib3.HTTPConnectionPool = ?urllib3.HTTPConnectionPool(\"google.com\", maxsize=10, block=true)"
+    ],
+    "chunk": "b60c7de1d935e626 urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "content_hash": "86eb27407c5e12c1",
+    "error": null,
+    "id": "7efbe95b6acf2bde",
+    "lang": "python",
+    "lines": "27-32",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#1 L9 resp.stream = #0.stream(32)",
+      "#2 L10 print = ?print(`chunk`)",
+      "#3 L13 resp.release_conn = #0.release_conn()"
+    ],
+    "chunk": "3359a716d988e98d urllib3 > Advanced Usage > Streaming and I/O",
+    "content_hash": "267fea7f654a7630",
+    "error": null,
+    "id": "41c73dff97a70beb",
+    "lang": "python",
+    "lines": "52-66",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#1 L9 resp.read = #0.read(4)",
+      "#2 L9 print = ?print(#1)"
+    ],
+    "chunk": "3359a716d988e98d urllib3 > Advanced Usage > Streaming and I/O",
+    "content_hash": "5651a35f52f4991b",
+    "error": null,
+    "id": "64516ad718757428",
+    "lang": "python",
+    "lines": "70-81",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4-8 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#1 L10 io.BufferedReader = <io.BufferedReader>(#0, 8)",
+      "#2 L11 reader.read = #1.read(4)",
+      "#3 L11 print = ?print(#2)",
+      "#4 L14 resp.release_conn = #0.release_conn()"
+    ],
+    "chunk": "3359a716d988e98d urllib3 > Advanced Usage > Streaming and I/O",
+    "content_hash": "01d40e03b2669f6a",
+    "error": null,
+    "id": "162085b30c5c6a24",
+    "lang": "python",
+    "lines": "85-100",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L5 codecs.getreader = <codecs.getreader>(\"utf-8\")",
+      "#1 L7-11 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/ip\", preload_content=false)",
+      "#2 L13 reader = #0(#1)",
+      "#3 L13 json.load = <json.load>(#2)",
+      "#4 L13 print = ?print(#3)",
+      "#5 L16 resp.release_conn = #1.release_conn()"
+    ],
+    "chunk": "3359a716d988e98d urllib3 > Advanced Usage > Streaming and I/O",
+    "content_hash": "fff4d9105deb3582",
+    "error": null,
+    "id": "8766d0e462d6c370",
+    "lang": "python",
+    "lines": "104-121",
+    "nested": false,
+    "position": 3,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.ProxyManager = <urllib3.ProxyManager>(\"https://localhost:3128/\")",
+      "#1 L4 proxy.request = #0.request(\"GET\", \"https://google.com/\")"
+    ],
+    "chunk": "c46995b2a905490b urllib3 > Advanced Usage > Proxies",
+    "content_hash": "56419182dec70a63",
+    "error": null,
+    "id": "c0af946af33f6011",
+    "lang": "python",
+    "lines": "127-132",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L2 urllib3.ProxyManager = ?urllib3.ProxyManager(\"http://...\")",
+      "#1 L5 urllib3.ProxyManager = ?urllib3.ProxyManager(\"https://...\")"
+    ],
+    "chunk": "8efc0cb71e606f24 urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "content_hash": "756190dac1c2e326",
+    "error": null,
+    "id": "0e6537348b399846",
+    "lang": "python",
+    "lines": "157-163",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "8efc0cb71e606f24 urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "content_hash": "00b4abbdec9c085b",
+    "error": null,
+    "id": "951a26fd219062db",
+    "lang": "bash",
+    "lines": "169-182",
+    "nested": false,
+    "position": 1,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "8efc0cb71e606f24 urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "content_hash": "6006c20de969d6ef",
+    "error": null,
+    "id": "755ea231eb7ff095",
+    "lang": "bash",
+    "lines": "186-188",
+    "nested": false,
+    "position": 2,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "8efc0cb71e606f24 urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "content_hash": "73bdce2f4c2fd943",
+    "error": null,
+    "id": "5b56e1a9e1a5f446",
+    "lang": "python",
+    "lines": "192-197",
+    "nested": false,
+    "position": 3,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "8efc0cb71e606f24 urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "content_hash": "f100bca12632344c",
+    "error": null,
+    "id": "b70702bf67f41065",
+    "lang": "python",
+    "lines": "201-206",
+    "nested": false,
+    "position": 4,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "60b4c0b7360185d5 urllib3 > Advanced Usage > Proxies > SOCKS Proxies",
+    "content_hash": "112e87d3b861121c",
+    "error": null,
+    "id": "754c4d978685dd8b",
+    "lang": "bash",
+    "lines": "214-216",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L3 SOCKSProxyManager = <urllib3.contrib.socks.SOCKSProxyManager>(\"socks5h://localhost:8889/\")",
+      "#1 L4 proxy.request = #0.request(\"GET\", \"https://google.com/\")"
+    ],
+    "chunk": "60b4c0b7360185d5 urllib3 > Advanced Usage > Proxies > SOCKS Proxies",
+    "content_hash": "2bd22e2fbbb48070",
+    "error": null,
+    "id": "3c1c42c0868d193a",
+    "lang": "python",
+    "lines": "220-225",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-6 urllib3.PoolManager = <urllib3.PoolManager>(cert_reqs=\"CERT_REQUIRED\", ca_certs=\"/path/to/your/certificate_bundle\")",
+      "#1 L7 http.request = #0.request(\"GET\", \"https://example.com\")"
+    ],
+    "chunk": "0c477772b89338ed urllib3 > Advanced Usage > Custom TLS Certificates",
+    "content_hash": "46348ff7379e28c2",
+    "error": null,
+    "id": "5b769eb90b03cff5",
+    "lang": "python",
+    "lines": "233-241",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-6 urllib3.HTTPSConnectionPool = <urllib3.HTTPSConnectionPool>(\"104.154.89.105\", server_hostname=\"badssl.com\")",
+      "#1 L7-12 pool.request = #0.request(\"GET\", \"/\", headers={\"Host\":\"badssl.com\"}, assert_same_host=false)"
+    ],
+    "chunk": "0c7e4197330399d2 urllib3 > Advanced Usage > Custom SNI Hostname",
+    "content_hash": "8c1472e805396c21",
+    "error": null,
+    "id": "0d04efa2e52ff556",
+    "lang": "python",
+    "lines": "251-264",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-6 urllib3.HTTPSConnectionPool = <urllib3.HTTPSConnectionPool>(\"wrong.host.badssl.com\", assert_hostname=\"badssl.com\")",
+      "#1 L7 pool.request = #0.request(\"GET\", \"/\")"
+    ],
+    "chunk": "4d760b63f2e69741 urllib3 > Advanced Usage > Verifying TLS against a different host",
+    "content_hash": "a92a7349732873ba",
+    "error": null,
+    "id": "dbcceb302c17d17a",
+    "lang": "python",
+    "lines": "274-282",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1-5 urllib3.PoolManager = ?urllib3.PoolManager(cert_file=\"/path/to/your/client_cert.pem\", cert_reqs=\"CERT_REQUIRED\", ca_certs=\"/path/to/your/certificate_bundle\")"
+    ],
+    "chunk": "4d0da13f85e52a1f urllib3 > Advanced Usage > Client Certificates",
+    "content_hash": "1dc77990139dbbed",
+    "error": null,
+    "id": "e7e76cb0edf3ce1d",
+    "lang": "python",
+    "lines": "288-294",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1-6 urllib3.PoolManager = ?urllib3.PoolManager(cert_file=\"/path/to/your/client_cert.pem\", cert_reqs=\"CERT_REQUIRED\", key_file=\"/path/to/your/client.key\", key_password=\"keyfile_password\")"
+    ],
+    "chunk": "4d0da13f85e52a1f urllib3 > Advanced Usage > Client Certificates",
+    "content_hash": "911e4822d5c10c5d",
+    "error": null,
+    "id": "697854fa97452a72",
+    "lang": "python",
+    "lines": "298-305",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 SSLError = ?SSLError(1, \"[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1124)\")"
+    ],
+    "chunk": "cd03d7574e56c44f urllib3 > Advanced Usage > TLS minimum and maximum versions",
+    "content_hash": "9dccffb0789e21d4",
+    "error": null,
+    "id": "34e4993174537413",
+    "lang": "default",
+    "lines": "313-315",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4-6 urllib3.PoolManager = <urllib3.PoolManager>(ssl_minimum_version=<ssl.TLSVersion.TLSv1>)",
+      "#1 L8 http.request = #0.request(\"GET\", \"https://tls-v1-0.badssl.com:1010\")"
+    ],
+    "chunk": "cd03d7574e56c44f urllib3 > Advanced Usage > TLS minimum and maximum versions",
+    "content_hash": "45d523c1d864542b",
+    "error": null,
+    "id": "0e2abf8e0afbf1a9",
+    "lang": "python",
+    "lines": "323-332",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.disable_warnings = <urllib3.disable_warnings>()"
+    ],
+    "chunk": "c382f2496dd29a92 urllib3 > Advanced Usage > TLS Warnings",
+    "content_hash": "8f7685011b8bfd4f",
+    "error": null,
+    "id": "1d1b15ad694eb72c",
+    "lang": "python",
+    "lines": "348-352",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 logging.captureWarnings = ?logging.captureWarnings(true)"
+    ],
+    "chunk": "c382f2496dd29a92 urllib3 > Advanced Usage > TLS Warnings",
+    "content_hash": "65e84405d76a6b18",
+    "error": null,
+    "id": "6278ee1b09ec3dbd",
+    "lang": "python",
+    "lines": "356-358",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b340b8b13fd48595 urllib3 > Advanced Usage > Brotli Encoding",
+    "content_hash": "26067fc5de7b4c46",
+    "error": null,
+    "id": "aa4f53e1330856e2",
+    "lang": "bash",
+    "lines": "366-368",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://www.google.com/\", headers={\"Accept-Encoding\":\"br\"})"
+    ],
+    "chunk": "b340b8b13fd48595 urllib3 > Advanced Usage > Brotli Encoding",
+    "content_hash": "c409d45207019258",
+    "error": null,
+    "id": "fa14bed9967ba116",
+    "lang": "python",
+    "lines": "372-380",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "eca0a04ea57232b0 urllib3 > Advanced Usage > Zstandard Encoding",
+    "content_hash": "b46fb0956247324e",
+    "error": null,
+    "id": "0228124bf6add722",
+    "lang": "bash",
+    "lines": "386-390",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://www.facebook.com/\", headers={\"Accept-Encoding\":\"zstd\"})"
+    ],
+    "chunk": "eca0a04ea57232b0 urllib3 > Advanced Usage > Zstandard Encoding",
+    "content_hash": "7cfeeb8a42e76f6b",
+    "error": null,
+    "id": "1704d33aa1ae83fb",
+    "lang": "python",
+    "lines": "396-404",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "85cd60a73a3e2cb6 urllib3 > Advanced Usage > Decrypting Captured TLS Sessions with Wireshark",
+    "content_hash": "9e80e0b65f6b87f4",
+    "error": null,
+    "id": "1b4df77c4119a785",
+    "lang": "bash",
+    "lines": "412-414",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L6 create_urllib3_context = <urllib3.util.create_urllib3_context>()",
+      "#1 L7 ctx.load_default_certs = #0.load_default_certs()",
+      "#2 L10 PoolManager = <urllib3.PoolManager>(ssl_context=#0)",
+      "#3 L11 pool.request = #2.request(\"GET\", \"https://www.google.com/\")"
+    ],
+    "chunk": "5bc37e1711323008 urllib3 > Advanced Usage > Custom SSL Contexts",
+    "content_hash": "f207d195b2422a41",
+    "error": null,
+    "id": "b5e857a3eb792e22",
+    "lang": "python",
+    "lines": "424-436",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b23b9318ea08772e urllib3 > Contributing > Setting up your development environment",
+    "content_hash": "70b72d35d3da87f1",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "2f5d477955fd03ed",
+    "lang": "default",
+    "lines": "19-21",
+    "nested": false,
+    "position": 0,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "225db5522a92adc8 urllib3 > Contributing > Running the tests",
+    "content_hash": "ce4fed45365665b3",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "ba2d004c86e992db",
+    "lang": "default",
+    "lines": "27-30",
+    "nested": false,
+    "position": 0,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "225db5522a92adc8 urllib3 > Contributing > Running the tests",
+    "content_hash": "4f2925eb00442243",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "05efbae5b6107154",
+    "lang": "default",
+    "lines": "34-40",
+    "nested": false,
+    "position": 1,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "225db5522a92adc8 urllib3 > Contributing > Running the tests",
+    "content_hash": "ebd137c80cfc7e9a",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "acccf0a2fb720b82",
+    "lang": "default",
+    "lines": "44-46",
+    "nested": false,
+    "position": 2,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "225db5522a92adc8 urllib3 > Contributing > Running the tests",
+    "content_hash": "217ef1f99eefb23e",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "18cf7f4280f553d7",
+    "lang": "default",
+    "lines": "50-62",
+    "nested": false,
+    "position": 3,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "225db5522a92adc8 urllib3 > Contributing > Running the tests",
+    "content_hash": "817a67a211f2b8a1",
+    "error": "SyntaxError: invalid syntax (line 1)",
+    "id": "c42fd82f8de0df81",
+    "lang": "default",
+    "lines": "68-76",
+    "nested": false,
+    "position": 4,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "2b72c95ae945a1d3 urllib3 > Contributing > Running local proxies",
+    "content_hash": "b7fc3103f740a93f",
+    "error": null,
+    "id": "85dc4bb8ec7bf44c",
+    "lang": "bash",
+    "lines": "106-108",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "2b72c95ae945a1d3 urllib3 > Contributing > Running local proxies",
+    "content_hash": "2afa614845b8cb35",
+    "error": null,
+    "id": "70b0d33557660a41",
+    "lang": "bash",
+    "lines": "112-114",
+    "nested": false,
+    "position": 1,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "803f9c7346d51a8e urllib3 > Contributing > Contributing to documentation",
+    "content_hash": "c26b688b79aeed45",
+    "error": null,
+    "id": "82436dc924e5df6c",
+    "lang": "bash",
+    "lines": "120-122",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L2 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/robots.txt\")"
+    ],
+    "chunk": "a0e8c6ad257f2335 urllib3 > urllib3",
+    "content_hash": "9781902ec20c4025",
+    "error": null,
+    "id": "e4143a48ec5fb223",
+    "lang": "pycon",
+    "lines": "18-25",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b76d1a20b969a679 urllib3 > urllib3 > Installing",
+    "content_hash": "06fbba8a2096b587",
+    "error": null,
+    "id": "dc37731152978d85",
+    "lang": "bash",
+    "lines": "36-38",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "b76d1a20b969a679 urllib3 > urllib3 > Installing",
+    "content_hash": "24342e53d0edf1b6",
+    "error": null,
+    "id": "a59d1b2cf6db6073",
+    "lang": "bash",
+    "lines": "42-46",
+    "nested": false,
+    "position": 1,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L2 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/anything\")",
+      "#1 L4 print = ?print(#0.status)",
+      "#2 L5 print = ?print(#0.headers)",
+      "#3 L6 resp.json = #0.json()",
+      "#4 L6 print = ?print(#3)"
+    ],
+    "chunk": "fe02915ed3a790c4 urllib3 > Pyodide, Emscripten, and PyScript > Getting started",
+    "content_hash": "9a6dd93f9f60a5fc",
+    "error": null,
+    "id": "98f32bb683c1ce55",
+    "lang": "python",
+    "lines": "23-30",
+    "nested": true,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L2 requests.request = <requests.request>(\"GET\", \"https://httpbin.org/anything\")",
+      "#1 L4 print = ?print(#0.status_code)",
+      "#2 L5 print = ?print(#0.headers)"
+    ],
+    "chunk": "fe02915ed3a790c4 urllib3 > Pyodide, Emscripten, and PyScript > Getting started",
+    "content_hash": "ab360ac42e7e75d3",
+    "error": null,
+    "id": "9fb36b191d74f8b1",
+    "lang": "python",
+    "lines": "34-40",
+    "nested": true,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "d03bfbb4aec84e18 urllib3 > PyOpenSSL",
+    "content_hash": "f1be82923da7986c",
+    "error": null,
+    "id": "fa4347bba8f34f41",
+    "lang": "bash",
+    "lines": "15-17",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.contrib.pyopenssl.inject_into_urllib3 = <urllib3.contrib.pyopenssl.inject_into_urllib3>()"
+    ],
+    "chunk": "d03bfbb4aec84e18 urllib3 > PyOpenSSL",
+    "content_hash": "4aaecb4deda22240",
+    "error": null,
+    "id": "9dea20dbb1a5a538",
+    "lang": "python",
+    "lines": "21-27",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "c66010b33483a94a urllib3 > SOCKS Proxies",
+    "content_hash": "6c9b8de21a61e69c",
+    "error": null,
+    "id": "79e195e0fd8b273e",
+    "lang": "python",
+    "lines": "19-21",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "c66010b33483a94a urllib3 > SOCKS Proxies",
+    "content_hash": "df93642f33a91b90",
+    "error": null,
+    "id": "d993d5b15042ea30",
+    "lang": "python",
+    "lines": "25-27",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "a7941f4a76204904 urllib3 > Connections > HTTPConnection",
+    "content_hash": "61020436b15b6bfc",
+    "error": null,
+    "id": "6d3c62006c8ac5f7",
+    "lang": "python",
+    "lines": "18-22",
+    "nested": true,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 connection_from_url = ?connection_from_url(\"http://google.com/\")",
+      "#1 L2 conn.request = #0.request(\"GET\", \"/\")"
+    ],
+    "chunk": "6ca7eea62f95eec6 urllib3 > Connection Pools > connection_from_url()",
+    "content_hash": "571eb4c47de96ec6",
+    "error": null,
+    "id": "e4cc0ecfdd57f433",
+    "lang": "default",
+    "lines": "233-236",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "35fd37201846f14c urllib3 > Fields and Multipart Forms > Fields > RequestField > from_tuples()",
+    "content_hash": "329684dc20f54fa8",
+    "error": "SyntaxError: illegal target for annotation (line 1)",
+    "id": "def838c587f9f0d9",
+    "lang": "default",
+    "lines": "49-55",
+    "nested": false,
+    "position": 0,
+    "status": "not-python"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>(num_pools=2)",
+      "#1 L5 http.request = #0.request(\"GET\", \"https://google.com/\")",
+      "#2 L6 http.request = #0.request(\"GET\", \"https://google.com/mail\")",
+      "#3 L7 http.request = #0.request(\"GET\", \"https://yahoo.com/\")",
+      "#4 L9 len = ?len(#0.pools)",
+      "#5 L9 print = ?print(#4)"
+    ],
+    "chunk": "cd7c7424dd928d4d urllib3 > Pool Manager > PoolManager",
+    "content_hash": "ab31c9879fc8c7ed",
+    "error": null,
+    "id": "a1e70195109b4cf0",
+    "lang": "python",
+    "lines": "21-32",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 open = ?open(\"realfile\")",
+      "#1 L4 open('realfile').read = #0.read()",
+      "#2 L5 open = ?open(\"bazfile\")",
+      "#3 L5 open('bazfile').read = #2.read()"
+    ],
+    "chunk": "4256a3f33157d829 urllib3 > Pool Manager > PoolManager > request_encode_body()",
+    "content_hash": "f15a8b046179a57c",
+    "error": null,
+    "id": "6d325c48e8ed7dad",
+    "lang": "default",
+    "lines": "160-169",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.ProxyManager = <urllib3.ProxyManager>(\"https://localhost:3128/\")",
+      "#1 L5 proxy.request = #0.request(\"GET\", \"http://google.com/\")",
+      "#2 L6 proxy.request = #0.request(\"GET\", \"http://httpbin.org/\")",
+      "#3 L9 len = ?len(#0.pools)",
+      "#4 L9 print = ?print(#3)",
+      "#5 L12 proxy.request = #0.request(\"GET\", \"https://httpbin.org/\")",
+      "#6 L13 proxy.request = #0.request(\"GET\", \"https://twitter.com/\")",
+      "#7 L16 len = ?len(#0.pools)",
+      "#8 L16 print = ?print(#7)"
+    ],
+    "chunk": "e5a977b5c700698d urllib3 > Pool Manager > ProxyManager",
+    "content_hash": "d4e6f4b4aa81be18",
+    "error": null,
+    "id": "077b75a27c4fda7b",
+    "lang": "python",
+    "lines": "263-281",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 Retry = ?Retry(connect=5, read=2, redirect=5)",
+      "#1 L2 PoolManager = ?PoolManager(retries=#0)",
+      "#2 L3 http.request = #1.request(\"GET\", \"https://example.com/\")"
+    ],
+    "chunk": "dab80b5788c33002 urllib3 > Utilities > Retry",
+    "content_hash": "fceafc760c96bd28",
+    "error": null,
+    "id": "a0eddda878663e8e",
+    "lang": "python",
+    "lines": "21-25",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 Retry = ?Retry(10)",
+      "#1 L1 http.request = ?http.request(\"GET\", \"https://example.com/\", retries=#0)"
+    ],
+    "chunk": "dab80b5788c33002 urllib3 > Utilities > Retry",
+    "content_hash": "4aeaea19c16d1253",
+    "error": null,
+    "id": "260d1539ecd02fe9",
+    "lang": "python",
+    "lines": "29-31",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 http.request = ?http.request(\"GET\", \"https://example.com/\", retries=false)"
+    ],
+    "chunk": "dab80b5788c33002 urllib3 > Utilities > Retry",
+    "content_hash": "8575b3edb2ee32a6",
+    "error": null,
+    "id": "831b5b749146780f",
+    "lang": "python",
+    "lines": "35-37",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "dab80b5788c33002 urllib3 > Utilities > Retry",
+    "content_hash": "a4985244f86cbc9c",
+    "error": "SyntaxError: invalid syntax. Perhaps you forgot a comma? (line 1)",
+    "id": "4bc254836498b67d",
+    "lang": "default",
+    "lines": "97-99",
+    "nested": true,
+    "position": 3,
+    "status": "not-python"
+  },
+  {
+    "calls": [],
+    "chunk": "dab80b5788c33002 urllib3 > Utilities > Retry",
+    "content_hash": "25b468edc0bbb541",
+    "error": "SyntaxError: invalid syntax. Perhaps you forgot a comma? (line 1)",
+    "id": "9c878f32b16a4dde",
+    "lang": "default",
+    "lines": "103-105",
+    "nested": true,
+    "position": 4,
+    "status": "not-python"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.util.Timeout = <urllib3.util.Timeout>(connect=2.0, read=7.0)",
+      "#1 L5 urllib3.PoolManager = <urllib3.PoolManager>(timeout=#0)",
+      "#2 L7 http.request = #1.request(\"GET\", \"https://example.com/\")",
+      "#3 L9 print = ?print(#2.status)"
+    ],
+    "chunk": "315936be29621cc3 urllib3 > Utilities > Timeout",
+    "content_hash": "40655f0c76f0c35e",
+    "error": null,
+    "id": "92c517c84073c0d2",
+    "lang": "python",
+    "lines": "287-297",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 Timeout = ?Timeout(10)",
+      "#1 L1 http.request = ?http.request(\"GET\", \"https://example.com/\", timeout=#0)"
+    ],
+    "chunk": "315936be29621cc3 urllib3 > Utilities > Timeout",
+    "content_hash": "7df1f93442747da2",
+    "error": null,
+    "id": "8115f6685fbb6725",
+    "lang": "python",
+    "lines": "301-303",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 Timeout = ?Timeout(connect=null, read=null)",
+      "#1 L2 http.request = ?http.request(\"GET\", \"https://example.com/\", timeout=#0)"
+    ],
+    "chunk": "315936be29621cc3 urllib3 > Utilities > Timeout",
+    "content_hash": "7cf5ee48cd48c39a",
+    "error": null,
+    "id": "028162654bdb0bd7",
+    "lang": "python",
+    "lines": "307-310",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.util.parse_url = <urllib3.util.parse_url>(\"https://google.com/mail/\")",
+      "#1 L5 print = ?print(#0.url)",
+      "#2 L8-10 urllib3.util.Url = <urllib3.util.Url>(\"https\", \"username:password\", \"host.com\", 80, \"/path\", \"query\", \"fragment\")",
+      "#3 L8-11 print = ?print(#2.url)"
+    ],
+    "chunk": "3b06f87565f579fc urllib3 > Utilities > Url > url",
+    "content_hash": "d9fb39c700b0980a",
+    "error": null,
+    "id": "4368295367b66ea3",
+    "lang": "python",
+    "lines": "508-521",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.util.make_headers = <urllib3.util.make_headers>(keep_alive=true, user_agent=\"Batman/1.0\")",
+      "#1 L3 print = ?print(#0)",
+      "#2 L5 urllib3.util.make_headers = <urllib3.util.make_headers>(accept_encoding=true)",
+      "#3 L5 print = ?print(#2)"
+    ],
+    "chunk": "7249241293885a9b urllib3 > Utilities > make_headers()",
+    "content_hash": "322539a073adac12",
+    "error": null,
+    "id": "3faeca162ab4abb6",
+    "lang": "python",
+    "lines": "627-634",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.util.parse_url = <urllib3.util.parse_url>(\"http://google.com/mail/\")",
+      "#1 L3 print = ?print(#0)",
+      "#2 L6 urllib3.util.parse_url = <urllib3.util.parse_url>(\"google.com:80\")",
+      "#3 L6 print = ?print(#2)",
+      "#4 L9 urllib3.util.parse_url = <urllib3.util.parse_url>(\"/foo?bar\")",
+      "#5 L9 print = ?print(#4)"
+    ],
+    "chunk": "8b3528352f8e48e1 urllib3 > Utilities > parse_url()",
+    "content_hash": "9dd9fa404102c65c",
+    "error": null,
+    "id": "09a807d13a4ecc00",
+    "lang": "python",
+    "lines": "654-665",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b53260cd4aa15d4a urllib3 > User Guide > Installing",
+    "content_hash": "06fbba8a2096b587",
+    "error": null,
+    "id": "584ddee6ca8b845c",
+    "lang": "bash",
+    "lines": "7-9",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "4b106715a267e6e4 urllib3 > User Guide > Making Requests",
+    "content_hash": "cbe1111821b29ca9",
+    "error": null,
+    "id": "9497367190e992e0",
+    "lang": "python",
+    "lines": "15-17",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 urllib3.PoolManager = ?urllib3.PoolManager()"
+    ],
+    "chunk": "4b106715a267e6e4 urllib3 > User Guide > Making Requests",
+    "content_hash": "c355733dfcbfb5b3",
+    "error": null,
+    "id": "da039f944550d135",
+    "lang": "python",
+    "lines": "21-23",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.PoolManager = <urllib3.PoolManager>()",
+      "#1 L7 http.request = #0.request(\"GET\", \"https://httpbin.org/robots.txt\")",
+      "#2 L10 print = ?print(#1.data)"
+    ],
+    "chunk": "4b106715a267e6e4 urllib3 > User Guide > Making Requests",
+    "content_hash": "df5eff07bf9d9512",
+    "error": null,
+    "id": "8277d842dd3c1e57",
+    "lang": "python",
+    "lines": "27-39",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>()",
+      "#1 L4-8 http.request = #0.request(\"POST\", \"https://httpbin.org/post\", fields={\"hello\":\"world\"})",
+      "#2 L10 print = ?print(#1.data)"
+    ],
+    "chunk": "4b106715a267e6e4 urllib3 > User Guide > Making Requests",
+    "content_hash": "1a959247dde1aa95",
+    "error": null,
+    "id": "0875ed8dc1da278b",
+    "lang": "python",
+    "lines": "45-57",
+    "nested": false,
+    "position": 3,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/ip\")",
+      "#1 L6 print = ?print(#0.status)",
+      "#2 L8 print = ?print(#0.data)",
+      "#3 L10 print = ?print(#0.headers)"
+    ],
+    "chunk": "8c185645bb6ab2db urllib3 > User Guide > Response Content",
+    "content_hash": "ba7eba343d27178b",
+    "error": null,
+    "id": "6061ec57674df704",
+    "lang": "python",
+    "lines": "67-79",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/ip\")",
+      "#1 L5 resp.json = #0.json()",
+      "#2 L5 print = ?print(#1)"
+    ],
+    "chunk": "8dcc1dd896188012 urllib3 > User Guide > Response Content > JSON Content",
+    "content_hash": "774a1979acea1b3f",
+    "error": null,
+    "id": "df1745de7c4c26cd",
+    "lang": "python",
+    "lines": "85-92",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 orjson.dumps = <orjson.dumps>({\"attribute\":\"value\"})",
+      "#1 L5 urllib3.request = <urllib3.request>(method=\"POST\", url=\"http://httpbin.org/post\", body=#0)",
+      "#2 L7 orjson.loads = <orjson.loads>(#1.data)",
+      "#3 L7 print = ?print(`orjson.loads(resp.data)['json']`)"
+    ],
+    "chunk": "8dcc1dd896188012 urllib3 > User Guide > Response Content > JSON Content",
+    "content_hash": "b49ccafed353c5b6",
+    "error": null,
+    "id": "7e61d8295a65980f",
+    "lang": "python",
+    "lines": "96-105",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/bytes/8\")",
+      "#1 L5 print = ?print(#0.data)"
+    ],
+    "chunk": "7d8928d6e3c2b074 urllib3 > User Guide > Response Content > Binary Content",
+    "content_hash": "0590f250209df4b6",
+    "error": null,
+    "id": "c7a799ccd34006e7",
+    "lang": "python",
+    "lines": "111-118",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.request = <urllib3.request>(\"GET\", \"https://example.com\", preload_content=false)",
+      "#1 L7 io.TextIOWrapper = <io.TextIOWrapper>(#0)",
+      "#2 L8 print = ?print(`line`)"
+    ],
+    "chunk": "e5974b8348cde80a urllib3 > User Guide > Response Content > Using io Wrappers with Response Content",
+    "content_hash": "82921ee0aa898539",
+    "error": null,
+    "id": "09f0c252c01f07f0",
+    "lang": "python",
+    "lines": "126-141",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-9 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/headers\", headers={\"X-Something\":\"value\"})",
+      "#1 L11 resp.json = #0.json()",
+      "#2 L11 print = ?print(`resp.json()['headers']`)"
+    ],
+    "chunk": "5a1eab098fcc666a urllib3 > User Guide > Request Data > Headers",
+    "content_hash": "6e3583a92852ebbf",
+    "error": null,
+    "id": "bd9de08b5e18156e",
+    "lang": "python",
+    "lines": "149-162",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.HTTPHeaderDict = <urllib3.HTTPHeaderDict>()",
+      "#1 L5 headers.add = #0.add(\"Accept\", \"application/json\")",
+      "#2 L6 headers.add = #0.add(\"Accept\", \"text/plain\")",
+      "#3 L9-13 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/headers\", headers=#0)",
+      "#4 L15 resp.json = #3.json()",
+      "#5 L15 print = ?print(`resp.json()['headers']`)"
+    ],
+    "chunk": "5a1eab098fcc666a urllib3 > User Guide > Request Data > Headers",
+    "content_hash": "46a3da8300549f7e",
+    "error": null,
+    "id": "8d29a55e8a55c515",
+    "lang": "python",
+    "lines": "166-183",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-9 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/cookies\", headers={\"Cookie\":\"session=f3efe9db; id=30\"})",
+      "#1 L11 resp.json = #0.json()",
+      "#2 L11 print = ?print(#1)"
+    ],
+    "chunk": "ce0261ef5a165d2f urllib3 > User Guide > Request Data > Cookies",
+    "content_hash": "307e8fdfed70c29a",
+    "error": null,
+    "id": "39e36072f533d041",
+    "lang": "python",
+    "lines": "189-202",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/cookies/set/session/f3efe9db\", redirect=false)",
+      "#1 L9 print = ?print(`resp.headers['Set-Cookie']`)"
+    ],
+    "chunk": "ce0261ef5a165d2f urllib3 > User Guide > Request Data > Cookies",
+    "content_hash": "060c385e41f94494",
+    "error": null,
+    "id": "6b22f8d3b60f1510",
+    "lang": "python",
+    "lines": "208-219",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/get\", fields={\"arg\":\"value\"})",
+      "#1 L9 resp.json = #0.json()",
+      "#2 L9 print = ?print(`resp.json()['args']`)"
+    ],
+    "chunk": "974bfceea7c3ef70 urllib3 > User Guide > Request Data > Query Parameters",
+    "content_hash": "c24497224243c5b1",
+    "error": null,
+    "id": "5b9624ade1311032",
+    "lang": "python",
+    "lines": "225-236",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L5 urlencode = <urllib.parse.urlencode>({\"arg\":\"value\"})",
+      "#1 L9 urllib3.request = <urllib3.request>(\"POST\", `url`)",
+      "#2 L11 resp.json = #1.json()",
+      "#3 L11 print = ?print(`resp.json()['args']`)"
+    ],
+    "chunk": "974bfceea7c3ef70 urllib3 > User Guide > Request Data > Query Parameters",
+    "content_hash": "ee210d63ae230acf",
+    "error": null,
+    "id": "b799d64084add276",
+    "lang": "python",
+    "lines": "240-253",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"POST\", \"https://httpbin.org/post\", fields={\"field\":\"value\"})",
+      "#1 L9 resp.json = #0.json()",
+      "#2 L9 print = ?print(`resp.json()['form']`)"
+    ],
+    "chunk": "8a7245545e6ff89d urllib3 > User Guide > Request Data > Form Data",
+    "content_hash": "69cb3d5a1e09337b",
+    "error": null,
+    "id": "eafef9ce291804d2",
+    "lang": "python",
+    "lines": "259-270",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-8 urllib3.request = <urllib3.request>(\"POST\", \"https://httpbin.org/post\", json={\"attribute\":\"value\"}, headers={\"Content-Type\":\"application/json\"})",
+      "#1 L10 resp.json = #0.json()",
+      "#2 L10 print = ?print(#1)"
+    ],
+    "chunk": "c3911b30278401ab urllib3 > User Guide > Request Data > JSON",
+    "content_hash": "aac86f1897db066d",
+    "error": null,
+    "id": "221b4a1c1d50e468",
+    "lang": "python",
+    "lines": "276-289",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 open = ?open(\"example.txt\")",
+      "#1 L5 fp.read = #0.read()",
+      "#2 L8-14 urllib3.request = <urllib3.request>(\"POST\", \"https://httpbin.org/post\", fields=`{'filefield': ('example.txt', file_data)}`)",
+      "#3 L16 resp.json = #2.json()",
+      "#4 L16 print = ?print(`resp.json()['files']`)"
+    ],
+    "chunk": "6607a0df96196cb0 urllib3 > User Guide > Request Data > Files & Binary Data",
+    "content_hash": "6aaaca434ec24e19",
+    "error": null,
+    "id": "58d5cfae4dd2bd43",
+    "lang": "python",
+    "lines": "295-313",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1-7 urllib3.request = ?urllib3.request(\"POST\", \"https://httpbin.org/post\", fields=`{'filefield': ('example.txt', file_data, 'text/plain')}`)"
+    ],
+    "chunk": "6607a0df96196cb0 urllib3 > User Guide > Request Data > Files & Binary Data",
+    "content_hash": "be5764982ab0a50a",
+    "error": null,
+    "id": "f6a468f6a7b2232d",
+    "lang": "python",
+    "lines": "317-325",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 open = ?open(\"/home/samad/example.jpg\", \"rb\")",
+      "#1 L4 fp.read = #0.read()",
+      "#2 L6-11 urllib3.request = <urllib3.request>(\"POST\", \"https://httpbin.org/post\", body=#1, headers={\"Content-Type\":\"image/jpeg\"})",
+      "#3 L13 resp.json = #2.json()",
+      "#4 L13 print = ?print(`resp.json()['data']`)"
+    ],
+    "chunk": "6607a0df96196cb0 urllib3 > User Guide > Request Data > Files & Binary Data",
+    "content_hash": "e666517c7b8c3bf2",
+    "error": null,
+    "id": "d37c379e530071f1",
+    "lang": "python",
+    "lines": "329-344",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b44acfa274aa1a44 urllib3 > User Guide > Certificate Verification",
+    "content_hash": "23ed9aab4ec189d4",
+    "error": null,
+    "id": "ec5c867e9ff28188",
+    "lang": "bash",
+    "lines": "356-358",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L6 certifi.where = <certifi.where>()",
+      "#1 L4-7 urllib3.PoolManager = <urllib3.PoolManager>(cert_reqs=\"CERT_REQUIRED\", ca_certs=#0)"
+    ],
+    "chunk": "b44acfa274aa1a44 urllib3 > User Guide > Certificate Verification",
+    "content_hash": "c9e4a2b5de5fd627",
+    "error": null,
+    "id": "2d6da2bdff102105",
+    "lang": "python",
+    "lines": "362-370",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L6 certifi.where = <certifi.where>()",
+      "#1 L4-7 urllib3.PoolManager = <urllib3.PoolManager>(cert_reqs=\"CERT_REQUIRED\", ca_certs=#0)",
+      "#2 L9 http.request = #1.request(\"GET\", \"https://httpbin.org/\")",
+      "#3 L12 http.request = #1.request(\"GET\", \"https://expired.badssl.com\")"
+    ],
+    "chunk": "b44acfa274aa1a44 urllib3 > User Guide > Certificate Verification",
+    "content_hash": "c14a17e761d4d57b",
+    "error": null,
+    "id": "769fbd5ed63acba5",
+    "lang": "python",
+    "lines": "374-388",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/delay/3\", timeout=4.0)",
+      "#1 L9 type = ?type(#0)",
+      "#2 L9 print = ?print(#1)",
+      "#3 L13-17 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/delay/3\", timeout=2.5)"
+    ],
+    "chunk": "00fb7285ec99b133 urllib3 > User Guide > Using Timeouts",
+    "content_hash": "8bb2c9fba9ff311b",
+    "error": null,
+    "id": "4dac62ee787b7564",
+    "lang": "python",
+    "lines": "396-415",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L6 urllib3.Timeout = <urllib3.Timeout>(connect=1.0)",
+      "#1 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/delay/3\", timeout=#0)",
+      "#2 L9 type = ?type(#1)",
+      "#3 L9 print = ?print(#2)",
+      "#4 L15 urllib3.Timeout = <urllib3.Timeout>(connect=1.0, read=2.0)",
+      "#5 L12-16 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/delay/3\", timeout=#4)"
+    ],
+    "chunk": "00fb7285ec99b133 urllib3 > User Guide > Using Timeouts",
+    "content_hash": "f821c41e7d05fa75",
+    "error": null,
+    "id": "43be52a2e4959ae0",
+    "lang": "python",
+    "lines": "419-437",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>(timeout=3.0)",
+      "#1 L6 urllib3.Timeout = <urllib3.Timeout>(connect=1.0, read=2.0)",
+      "#2 L5-7 urllib3.PoolManager = <urllib3.PoolManager>(timeout=#1)"
+    ],
+    "chunk": "00fb7285ec99b133 urllib3 > User Guide > Using Timeouts",
+    "content_hash": "f9a476a2c1c8f0c4",
+    "error": null,
+    "id": "a9f0534984e09b08",
+    "lang": "python",
+    "lines": "441-449",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/ip\", retries=10)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "04be9eada16f9b23",
+    "error": null,
+    "id": "5909759f3ca9eff2",
+    "lang": "python",
+    "lines": "459-463",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3-7 urllib3.request = <urllib3.request>(\"GET\", \"https://nxdomain.example.com\", retries=false)",
+      "#1 L10-14 urllib3.request = <urllib3.request>(\"GET\", \"https://httpbin.org/redirect/1\", retries=false)",
+      "#2 L16 print = ?print(#1.status)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "4f25515bef89650a",
+    "error": null,
+    "id": "dc7569ff71ca2ee1",
+    "lang": "python",
+    "lines": "467-485",
+    "nested": false,
+    "position": 1,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1-5 urllib3.request = ?urllib3.request(\"GET\", \"https://httpbin.org/redirect/1\", redirect=false)",
+      "#1 L7 print = ?print(#0.status)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "64c8f26364323b4a",
+    "error": null,
+    "id": "7dadae97c11e4da8",
+    "lang": "python",
+    "lines": "489-498",
+    "nested": false,
+    "position": 2,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.Retry = ?urllib3.Retry(3, redirect=2)",
+      "#1 L1-5 urllib3.request = ?urllib3.request(\"GET\", \"https://httpbin.org/redirect/3\", retries=#0)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "21975aad5e6a0552",
+    "error": null,
+    "id": "e7d6186dc215fb48",
+    "lang": "python",
+    "lines": "504-511",
+    "nested": false,
+    "position": 3,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4-7 urllib3.Retry = ?urllib3.Retry(redirect=2, raise_on_redirect=false)",
+      "#1 L1-8 urllib3.request = ?urllib3.request(\"GET\", \"https://httpbin.org/redirect/3\", retries=#0)",
+      "#2 L10 print = ?print(#1.status)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "42065397877eeef4",
+    "error": null,
+    "id": "06fe697d7ee3ff67",
+    "lang": "python",
+    "lines": "515-527",
+    "nested": false,
+    "position": 4,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L3 urllib3.PoolManager = <urllib3.PoolManager>(retries=false)",
+      "#1 L6 urllib3.Retry = <urllib3.Retry>(5, redirect=2)",
+      "#2 L5-7 urllib3.PoolManager = <urllib3.PoolManager>(retries=#1)"
+    ],
+    "chunk": "3df22caff4c85673 urllib3 > User Guide > Retrying Requests",
+    "content_hash": "16102008b268a83b",
+    "error": null,
+    "id": "a94cd3152b247c49",
+    "lang": "python",
+    "lines": "531-539",
+    "nested": false,
+    "position": 5,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L4 urllib3.request = <urllib3.request>(\"GET\", \"https://nx.example.com\", retries=false)",
+      "#1 L7 print = ?print(\"Connection failed.\")"
+    ],
+    "chunk": "e831f399b02913dd urllib3 > User Guide > Errors & Exceptions",
+    "content_hash": "5c0c38638513c984",
+    "error": null,
+    "id": "cd9be58cadbf9a80",
+    "lang": "python",
+    "lines": "547-556",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [
+      "#0 L1 logging.getLogger = ?logging.getLogger(\"urllib3\")",
+      "#1 L1 logging.getLogger('urllib3').setLevel = #0.setLevel(?logging.WARNING)"
+    ],
+    "chunk": "c34d2509e8bf7c39 urllib3 > User Guide > Logging",
+    "content_hash": "fd49744ec66b1bdd",
+    "error": null,
+    "id": "648d2636bb514cae",
+    "lang": "python",
+    "lines": "564-566",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "88cbf399a65a6f68 urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ssl module is compiled with OpenSSL 1.0.2.k-fips",
+    "content_hash": "a8d020d1ead0d55c",
+    "error": null,
+    "id": "3883af674c05b5d3",
+    "lang": "text",
+    "lines": "40-43",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "5127febd2f0a270c urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as an application developer?",
+    "content_hash": "67c4a9e92f8d1458",
+    "error": null,
+    "id": "1a22ba88d3ddddcd",
+    "lang": "bash",
+    "lines": "84-91",
+    "nested": false,
+    "position": 0,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "295262a8eff5f72e urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "content_hash": "1e18409a9e56c9de",
+    "error": "SyntaxError: invalid syntax. Perhaps you forgot a comma? (line 3)",
+    "id": "cdae36f4e225f67e",
+    "lang": "python",
+    "lines": "105-117",
+    "nested": false,
+    "position": 0,
+    "status": "invalid"
+  },
+  {
+    "calls": [],
+    "chunk": "295262a8eff5f72e urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "content_hash": "e437102b8fd0e7bc",
+    "error": null,
+    "id": "c2e70f3fc667059a",
+    "lang": "bash",
+    "lines": "121-123",
+    "nested": false,
+    "position": 1,
+    "status": null
+  },
+  {
+    "calls": [],
+    "chunk": "295262a8eff5f72e urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "content_hash": "281842150cc69d2d",
+    "error": null,
+    "id": "13bd6378f678c069",
+    "lang": "bash",
+    "lines": "127-134",
+    "nested": false,
+    "position": 2,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L4 warnings.filterwarnings = <warnings.filterwarnings>(\"default\", category=?FutureWarning)"
+    ],
+    "chunk": "295262a8eff5f72e urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "content_hash": "97d0bf45cfbe4d89",
+    "error": null,
+    "id": "671a06993c11cbcf",
+    "lang": "python",
+    "lines": "138-143",
+    "nested": false,
+    "position": 3,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "295262a8eff5f72e urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "content_hash": "6fa552498156e3d2",
+    "error": null,
+    "id": "2435ab49756f4071",
+    "lang": "bash",
+    "lines": "149-152",
+    "nested": false,
+    "position": 4,
+    "status": null
+  },
+  {
+    "calls": [
+      "#0 L2 urllib3.request = <urllib3.request>(\"GET\", \"https://example.com\")"
+    ],
+    "chunk": "dd115d2851eb4422 urllib3 > v2 Migration Guide > 💪 User-friendly features > urllib3.request()",
+    "content_hash": "7ed9841fa5f6a39d",
+    "error": null,
+    "id": "bc652ad5acd66eb1",
+    "lang": "python",
+    "lines": "166-171",
+    "nested": false,
+    "position": 0,
+    "status": "ok"
+  },
+  {
+    "calls": [],
+    "chunk": "b7de9228e41a1e41 urllib3 > v2 Migration Guide > 💪 User-friendly features > JSON support for requests and responses",
+    "content_hash": "0def1693d120605d",
+    "error": "SyntaxError: ':' expected after dictionary key (line 19)",
+    "id": "a1230f0f1fb67609",
+    "lang": "python",
+    "lines": "179-200",
+    "nested": false,
+    "position": 0,
+    "status": "invalid"
+  }
+]
