@@ -6,10 +6,18 @@ from pathlib import Path
 import pytest
 
 from notinspec.adapters.canonical import canonical_json
-from notinspec.adapters.python import ApiIndex, CallRecord, RawCallRecord, UnresolvedCall, Value
+from notinspec.adapters.python import (
+    ApiIndex,
+    CallRecord,
+    RawCallRecord,
+    UnresolvedCall,
+    Value,
+    merge_additions,
+)
 from notinspec.chunking import Chunk, Document, chunk_blocks, chunk_document
 from notinspec.examples import (
     Example,
+    ExampleCallRecords,
     ExampleCalls,
     chunk_examples,
     extract_examples,
@@ -242,3 +250,30 @@ def test_normalize_example_checks_the_pairing(urllib3_inventory: Inventory) -> N
     with pytest.raises(ValueError):
         normalize_example(second, raw, ApiIndex(urllib3_inventory))
     assert normalize_example(first, raw, ApiIndex(urllib3_inventory)).example_id == first.id
+
+
+def test_call_records_match_the_inventory_builder(urllib3_inventory: Inventory) -> None:
+    """The YAML fixture stands in for component B. Once B is on main, normalizing against the
+    built inventory must give the same records, and the example additions must merge into it
+    without conflicts or extra overloads. Skipped until then."""
+    import notinspec.inventory
+
+    build = getattr(notinspec.inventory, "build_inventory", None)
+    merge = getattr(notinspec.inventory, "merge", None)
+    if build is None or merge is None:
+        pytest.skip("component B (inventory builder) is not on this branch yet")
+    sphinx = read_sphinx_xml(EXAMPLES / "urllib3" / "xml")
+    chunks = [c for d in sphinx.documents for c in chunk_blocks(d, project="urllib3")]
+    built = build(chunks).inventory
+
+    def records(inventory: Inventory) -> list[ExampleCallRecords]:
+        api = ApiIndex(inventory)
+        return [normalize_example(example, raw, api) for _, example, raw in _urllib3_examples()]
+
+    with_fixture, with_built = records(urllib3_inventory), records(built)
+    assert with_built == with_fixture
+    additions = merge_additions(s for result in with_built for s in result.additions)
+    merged, conflicts = merge([built, additions])
+    assert conflicts == ()
+    added = {s.path for s in additions.symbols}
+    assert all(len(s.signatures) == 1 for s in merged.symbols if s.path in added)
