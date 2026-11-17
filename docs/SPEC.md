@@ -34,6 +34,11 @@ It ships as:
 ### 1.1 What we are *not* building
 
 - **No code execution** except L4 for OpenAPI operations via the Prism mock. SDK sandboxes, CLI execution and stateful mocks are [future development](#163-future-development).
+- **We never build the user's Sphinx docs next to secrets.** `sphinx-build` runs the project's code (`conf.py`, autodoc imports the library, `pip install` runs build hooks). So we only read the **built XML** ([§6.1](#61-reading-and-chunking)):
+  - **Action:** the user builds the XML in a separate job with no secrets and passes it on as an artifact. Our job, which has `LLM_API_KEY`, only reads it ([§11](#11-github-action)).
+  - **Our VM** (worker, API, self-hosted runner): no Sphinx builds at all. The pilot XML is built once in a pinned environment and stored. A web upload, if offered, accepts built inputs only (Sphinx XML, Markdown, OpenAPI), never a Sphinx project.
+  - If automatic builds of connected projects are ever needed, they run on GitHub-hosted runners, never on the VM.
+  - The XML is **untrusted input**: parsed with `defusedxml` (or lxml with `resolve_entities=False`, no network) against XXE and entity bombs.
 - **Docs vs. reality is out of scope.** The truth is what the documentation says. Prism validates against the spec, not against a real backend.
 - **No single overall score.** Levels L0–L4 are never averaged together.
 - **No LLM decides the correct answer.** References are computed deterministically from the inventory and examples.
@@ -66,8 +71,9 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
 
 1. A **config file in the repo** (`notinspec.yaml`, shape is a candidate):
    ```yaml
+   project: "urllib3"                 # root of every breadcrumb; default: the repo name
    docs:
-     sphinx: "docs/"                  # Sphinx project (folder with conf.py)
+     sphinx_xml: "build/xml/"         # output of `sphinx-build -b xml`, built by the user (§1.1)
      paths: ["README.md", "guides/**/*.md"]   # plain Markdown outside the Sphinx project, optional
      openapi: "api/openapi.yaml"      # optional
      changelog: "CHANGELOG.md"        # optional
@@ -82,8 +88,9 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
      fail_on_l3_drop: significant     # statistically significant drop
      fail_on_new_findings: [K1, K4, K7]
    ```
-2. **API key** for the models as a CI secret.
-3. **Review of the golden set** in a PR.
+2. For Sphinx docs: a **CI job that builds the XML** without secrets (`sphinx-build -b xml`) and records its build environment next to it (`pip freeze` and `sphinx-build --version` into `build-env.txt` in the XML folder; file name is a *candidate*). `action/README.md` has the example workflow.
+3. **API key** for the models as a CI secret.
+4. **Review of the golden set** in a PR.
 
 ### 2.4 What the tool returns
 
@@ -141,7 +148,7 @@ These exact terms are used in code, diagrams and text.
 
 | Term | DB model | Meaning |
 |---|---|---|
-| **Chunk** | `Chunk` | one whole documentation section split by headings (no small token limit, code blocks and tables intact, oversized sections split at a soft limit), with a stable ID (hash of heading path + content) and a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
+| **Chunk** | `Chunk` | one whole documentation section split by headings, or one API description (`desc` node) in API reference (no small token limit, code blocks and tables intact, oversized sections split at a soft limit). Identity = source + heading path; a content hash tells whether it changed. Has a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
 | **NLI premise** | – | the text a claim is checked against: the chunk's breadcrumb plus the cited sentence(s) ±1 sentence within the cited prose block (for a list item, plus the sentence that introduces the list). Computed from the chunk and the citation, not stored. |
 | **Component** | – | kind of content in a chunk: **A** formal spec, **B** API reference, **C** examples, **D** prose and changelog. One chunk can contain several. |
 | **Symbol** | `Symbol` | anything callable: function, method, class, endpoint, CLI command |
@@ -187,7 +194,7 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 
 | Phase | Input | How it is read |
 |---|---|---|
-| MVP | **Sphinx** project | from Sphinx's **structured output**, not from rendered HTML and not with our own reST/MyST parser (*candidate:* `sphinx-build -b xml`, i.e. the docutils doctree; `objects.inv` as the list of documented symbols). Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. |
+| MVP | **Sphinx** project | from Sphinx's **structured output** built by the user (`sphinx-build -b xml`, i.e. the docutils doctree; never built by us, [§1.1](#11-what-we-are-not-building)), not from rendered HTML and not with our own reST/MyST parser. Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. `objects.inv` as the list of documented symbols is a *candidate*. |
 | MVP | plain Markdown, llms.txt, changelog | Markdown parser |
 | MVP | formal spec (OpenAPI) | its own parser (component A); `description` texts become chunks for component D |
 | next iteration | other generators (*candidates:* MkDocs, Docusaurus, TypeDoc) | their structured output where they have one |
@@ -198,13 +205,46 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 - A `Chunk` is **one whole section**: split **by headings**, a section runs from its heading to the next heading. **No small token limit.**
 - Code blocks and tables are **never split**.
 - **Soft-limit fallback:** a section over a soft limit (*candidate:* ~2,000 tokens) is split at paragraph boundaries, never inside a code block or table. The parts keep the section's breadcrumb.
-- Breadcrumb, **stable ID** = hash of heading path + content.
+- **Breadcrumb** = `project` from the config + the heading path, e.g. `urllib3 > User Guide > Using Timeouts`. The file path is not part of it; it goes to `Source`. The breadcrumb helps NLI ([§6.4](#64-prose-and-changelog--claim)).
+- **Identity** = hash of source + heading path (+ part, + occurrence for repeated headings), so fixing a typo keeps the chunk and everything derived from it. A separate **content hash** tells that the chunk changed (CI diff, regenerating its test items).
+- A parent section's **intro** (text between its heading and the first sub-heading) is the parent's own chunk. It is not copied into the subsections; they get their context from the breadcrumb. A heading with no text of its own gives no chunk.
+- **Split sections:** the parts exist only for size. Gold context, retrieval results and `Source` always use the **whole section** (all its parts).
 - Sections are the unit for **component detection, the inventory `Source`, gold context, IDs and CI diffs**.
 - Output: `Chunk`.
 
+**API reference (Sphinx `desc` nodes).** A page like `automodule :members:` is one heading for a whole module, so heading-based chunks would be huge and the soft limit would cut them at random paragraphs. Instead:
+
+- **Each `desc` node** (function, class, method, attribute) is its own chunk, with the symbol in the breadcrumb: `urllib3 > API Reference > Retry > sleep()`. A nested `desc` (method in a class) is a chunk of its own; the class chunk keeps only the class's own text.
+- Node rules inside a `desc` (the same for reST `:param:`, Google and NumPy docstrings, because Sphinx produces the same node types; we never parse docstring styles ourselves):
+
+  | Node | Rule |
+  |---|---|
+  | `desc_signature` | not prose → component B |
+  | `desc_content` → `paragraph`, `note` / `warning`, `versionmodified` | prose, as in a normal section |
+  | `desc_content` → `literal_block`, `doctest_block` | code → component C |
+  | `field_list` → one parameter / `Raises` / `Returns` entry | **its own prose block**, the parameter name added to the breadcrumb (`urllib3 > API Reference > Retry > total`) |
+  | `field_list` → `Return type`, types in parentheses | not prose → component B |
+
+- The reader normalizes the three XML shapes of a field entry into one block (kind, name, type, text):
+
+  | Shape | From | XML |
+  |---|---|---|
+  | A | reST or napoleon, several params | `field_body > bullet_list > list_item > paragraph`: `literal_strong` name, `literal_emphasis` type, ` – `, text |
+  | B | reST or napoleon, one param | `field_body > paragraph`, no `bullet_list` |
+  | C | numpydoc | `field_body > definition_list > item`: `term` = name, `classifier` = type, `definition` = text |
+
+  All text after the dash (A, B) or in the `definition` (C) is one block; nested paragraphs are joined with a blank line.
+- **Google style without napoleon** stays a `definition_list` (`Args:` term, all parameters in one paragraph) and is read as plain prose: the text is kept, only the per-parameter split is lost. We do not inject napoleon into the user's `conf.py`: it changes the docs vs. what the project publishes.
+
+**Determinism of Sphinx input.** Autodoc output depends on the Sphinx version, its extensions and the installed library, so the same docs commit can build to different XML.
+
+- The reader's input is the **built XML**: its hash (all files, sorted by path) is the input snapshot hash ([§10](#10-data)). Same XML + reader version ⇒ same chunks and IDs.
+- The **build environment** (`build-env.txt`, [§2.3](#23-what-the-tool-needs-from-the-user)) is stored with every run, so a change in chunks can be traced to a change in the environment.
+- The reader takes the text of links, never their targets, so intersphinx (which fetches `objects.inv` from the network at build time) does not change the chunk text.
+
 **Prose and NLI premises.** NLI never sees a whole section: the model accepts only a few hundred tokens, and a long premise dilutes negations and numbers.
 
-- **Prose** = paragraphs, list items and admonitions (notes, warnings). Inline code inside them counts as prose text. Code blocks, tables and API descriptions (`desc` nodes, component B) are not prose.
+- **Prose** = paragraphs, list items and admonitions (notes, warnings), including those inside API descriptions (`desc_content`, parameter entries; see the table above). Inline code inside them counts as prose text. Code blocks, tables, signatures and types are not prose.
 - The **NLI premise** for a claim is `<breadcrumb>:` followed by the cited sentence(s) ±1 sentence, **within the cited prose block**. For a list item, the sentence that introduces the list (the last sentence of the paragraph before it, ending with ":") is put in front.
 - The premise is computed deterministically from the chunk and the citation, so it needs no storage of its own. Use in grounding: [§6.4](#64-prose-and-changelog--claim).
 - Evidence: `experiments/nli/FINDINGS.md` (runs 004–007, human-labelled sample). On a human-labelled sample, a 400-token window instead of this premise kept nearly twice as many wrong claims (22 vs 12 of 88) and claims from other sections (38 vs 23 of 259).
@@ -261,7 +301,7 @@ Source  – attached to every object above
 
 1. **Claim extractor** (LLM; 2 extractors with different models or prompts): reads the **whole chunk** (section) and returns atomic, self-contained claims, each with a **citation** (exact quoted span from the chunk). Type *fact* or *change*. Deterministic citation check on normalized text (whitespace collapsed, Markdown markup and backticks removed, typographic quotes → plain quotes):
    - citation not found in the chunk → drop the claim;
-   - citation found only outside prose (code block, table, API description) → `not_checkable`, dropped. Facts in code and signatures are covered by components B and C.
+   - citation found only outside prose (code block, table, signature or type) → `not_checkable`, dropped. Facts in code and signatures are covered by components B and C.
 2. **Grounding via NLI:** premise = the **NLI premise** around the citation ([§6.1](#61-reading-and-chunking)), hypothesis = claim, decision by argmax. `entailment` → keep. `neutral` / `contradiction` → drop. Dropped claims are recorded but **not reused as test material automatically**: NLI also drops some true claims.
 3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions. A whole section can yield many claims, so K5a uses the same prefilter as K5b.
 4. **K5b · claim vs. claim across chunks:** embedding prefilter so not all pairs are compared, then NLI in both directions.
@@ -357,7 +397,7 @@ If a well-grounded task fails even with gold context, the problem is probably in
 |---|---|
 | `none` | nothing (what the model knows from its weights) |
 | `retrieved` | chunks found by retrieval (*candidates:* BM25, embeddings, hybrid). Retrieval may embed smaller sub-parts of a section (paragraphs, code blocks), but always returns the **whole section**. |
-| `gold` | the chunks (whole sections) the test item was derived from (minus the source example for leave-one-out) |
+| `gold` | the chunks (whole sections) the test item was derived from. For leave-one-out only the source example's code block is removed; the rest of the section stays, including the sentence that introduces the example. |
 
 The three modes separate the effect of model weights, text quality and findability.
 
@@ -427,7 +467,7 @@ Every test item × model × mode. **All raw responses are stored.**
 | Language | Python 3.12+ (core, API, worker), TypeScript (web) |
 | Packaging / tooling | uv, ruff, mypy (core), pytest, pre-commit |
 | API | FastAPI; its generated OpenAPI is validated in CI |
-| Reading docs | Sphinx (`xml` builder / docutils doctree, `objects.inv`) in the MVP; `markitdown`, `trafilatura` later (*candidates*) |
+| Reading docs | Sphinx XML (`xml` builder / docutils doctree, built by the user) parsed with `defusedxml`, `objects.inv` (*candidate*) in the MVP; `markitdown`, `trafilatura` later (*candidates*) |
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
 | NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5); mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
@@ -452,6 +492,7 @@ Every test item × model × mode. **All raw responses are stored.**
 
 - Reusable action that runs the CLI + Prism inside the CI runner. **No dependency on our hosted service.**
 - Reads `notinspec.yaml` from the caller repo; the model API key comes from the caller's secrets.
+- **Never builds Sphinx.** The caller's separate job (no secrets) runs `sphinx-build -b xml` and uploads the XML as an artifact; our job downloads it and reads `docs.sphinx_xml` ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary. Example workflow in `action/README.md`.
 - UC2: evaluates only changed chunks and their test items, compares with the `main` baseline, posts a **PR comment** and a **status check**, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
 - Outputs JSON results and an HTML report as workflow artifacts.
 - Golden-set changes appear in the PR for review ([§2.5](#25-keeping-golden-set-review-small)).
@@ -470,6 +511,7 @@ Every test item × model × mode. **All raw responses are stored.**
   docs/     SPEC, assignment, DEPLOY
   ```
 - **Docker Compose** services: `postgres`, `api`, `worker` (starts Prism per spec when needed), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
+- The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM). If it starts Prism, it does so inside its own container.
 - **CI (GitHub Actions):** lint (ruff, mypy, oxlint), unit tests, Compose integration tests, build images, push to **GHCR** (including the CLI image used by the Action).
 - **CD:** the faculty VM is reachable only over VPN, so a **self-hosted GitHub runner on the VM** pulls images from GHCR and runs `docker compose up -d`. The repo is public, so the runner is used **only by the deploy job on pushes to `main`** (dedicated runner label + protected `production` environment). Fork PRs never run on the VM.
 - Public GitHub repository under a team organization, **MIT license**.
@@ -478,6 +520,7 @@ Every test item × model × mode. **All raw responses are stored.**
 
 - **Fake LLM provider** replaying recorded responses for every LLM role. **CI never calls a real LLM.**
 - **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI premises).
+- **Sphinx reader golden test:** a fixture project with reST `:param:`, Google and NumPy docstrings, built with and without napoleon / numpydoc → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus a test that XML with external entities is rejected.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - Our own API: OpenAPI validated in CI + Schemathesis.
@@ -554,7 +597,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Faculty API key: provider, endpoint, available models, rate limits, budget, whether it may be used from GitHub-hosted runners
 - [ ] Faculty checkpoint dates
 - [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
-- [ ] Sphinx build environment: autodoc imports the documented library, so the reader needs the project's dependencies and Sphinx extensions installed (in the Action and in the worker)
+- [ ] Sphinx build environment for the pilot: pin Sphinx, its extensions and the library version, build the XML once outside the VM and store it with its `build-env.txt`. The build runs third-party code, so never next to secrets ([§1.1](#11-what-we-are-not-building)). Final shape of `build-env.txt` (plain `pip freeze` vs. JSON)
 - [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), so grounding on the text around the citation can drop good claims. Measured in `experiments/nli`: with the breadcrumb, the NLI premise keeps 86 of 92 correct claims in a human-labelled sample. A 400-token window keeps 90, but nearly twice as many wrong ones. Check again on the pilot docs
 - [ ] Soft limit for oversized sections
 - [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample
