@@ -544,7 +544,11 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 ## 8. Models
 
-- **LLM access via an API key provided by the faculty.** Provider, endpoint, available models and limits: TBD ([§18](#18-open-items)). The key lives only in env / secrets.
+- **LLM access via [Groq](https://console.groq.com/docs/openai)** (free tier), not a faculty key. Its OpenAI-compatible chat completions API is at `https://api.groq.com/openai/v1`, and the key is `GROQ_API_KEY`, only in env / secrets. The client in `core` (`notinspec.runner`) speaks any OpenAI-compatible API: a provider is a config entry (base URL, key variable, limits), and OpenRouter is kept as a second one.
+- **Model under test for now: `qwen/qwen3.8-27b`** (a Groq preview model), the client's default. At least a second model comes later ([§18](#18-open-items)).
+- **Limits** count per Groq organization and **per model**. Measured on our free-tier organization from the `x-ratelimit-*` headers (2026-11-17): **1 000 requests/day and 8 000 tokens/min**, the same for `qwen/qwen3.8-27b` and `openai/gpt-oss-20b`. Groq's docs add 30 requests/min and 200 000 tokens/day. With task prompts of a few thousand tokens, tokens per minute are the real limit, not requests. Each model gets its own client-side limiter, and a `429` whose `retry-after` is long pauses the run instead of waiting.
+- **Structured output:** the answer schema is sent as `response_format` `json_schema` in best-effort mode, not `strict` (strict needs every property required, and the answer has optional ones). Groq's docs list it for `openai/gpt-oss-20b`, `openai/gpt-oss-120b`, `openai/gpt-oss-safeguard-20b`, and the previews `qwen/qwen3.8-27b` and `meta-models/muse-spark-open` (Enterprise only, not offered to our organization). **Checked live on `qwen/qwen3.8-27b`:** it accepts our answer schema as it is and kept to it even when the prompt told it not to. Without `response_format` it put the JSON in a Markdown fence and sent no `<think>` block, although qwen3 is a reasoning model. All three answers are recorded in `core/tests/runner/fixtures/groq-qwen.json`. Other chat models (e.g. `allam-2-7b`) get the schema in the prompt only. If a best-effort answer fails the schema, Groq returns HTTP 400 `json_validate_failed`. The client treats that as the model's `malformed-output` (parsed from `failed_generation`), not a provider error. `notinspec models --probe` checks the other models live.
+- Groq runs temperature 0 as `1e-8`; we record the 0 we sent.
 - In the MVP the key exists **only on our VM**: users do not bring a key, and every LLM call of every project runs in our worker within the project's limits ([§11](#11-github-action)). Users bringing their own key belongs to the self-contained Action ([§16.3](#163-future-development)).
 - Roles of LLM calls: models under test (small for PRs, large for nightly), 2 claim extractors, task-text writer, 2 strong round-trip solvers, LLM judge for borderline L2 answers.
 - **Local CPU models:** NLI cross-encoder and embeddings run locally (no GPU on the VM). Models under test are not run locally.
@@ -563,7 +567,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
 | NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5); mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
-| LLM access | faculty-provided API (TBD) |
+| LLM access | Groq free tier through its OpenAI-compatible API, our own client on `httpx2` (no vendor SDK); recorded fake provider in tests and CI |
 | Evaluation / statistics | scikit-learn, bootstrap, McNemar test |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
 | Scheduler | APScheduler in a dedicated `worker` container, job state and the run queue in Postgres (no Redis/Celery) |
@@ -742,7 +746,10 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 
 ## 18. Open items
 
-- [ ] Faculty API key: provider, endpoint, available models, rate limits, budget (in the MVP it is used only on our VM)
+- [x] LLM provider: **Groq** free tier instead of a faculty key ([§8](#8-models)). The key is in `GROQ_API_KEY`, only on our VM. The client is OpenAI-compatible, so changing provider is a config entry
+- [x] Groq limits of our organization: 1 000 requests/day and 8 000 tokens/min per model, from the response headers ([§8](#8-models))
+- [ ] Is 8 000 tokens/min and 200 000 tokens/day per model enough for a nightly run of the pilot? The client-side limiter counts requests only. A token budget per model (from `usage` or the `x-ratelimit-remaining-tokens` header) would avoid running into 429s
+- [ ] Groq structured output: confirmed live on `qwen/qwen3.8-27b` only. Before adding a second model, run `notinspec models --probe`. The `json_validate_failed` error with `failed_generation` is not in Groq's docs, and qwen never produced it, so its handling is tested on a hand-written body only. Record a real one once some model triggers it
 - [ ] Faculty checkpoint dates
 - [x] Pilot Python library: **urllib3 v2**, first; trio and hydra-zen after it if that is not time-consuming ([§16.1](#161-mvp)). Reasons: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Its docs are built with Sphinx 9.1 and stored in `core/examples/sphinx/urllib3/`
 - [ ] Pilot OpenAPI spec (after the Sphinx part, [§16.1](#161-mvp))
@@ -754,7 +761,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] A cheap code check that a claim's identifiers, numbers and versions appear in the prose of its section, breadcrumb included; a dotted name may also match without a leading project name (`urllib3.Timeout` → `Timeout`). NLI misses these; see `experiments/nli/FINDINGS.md`, run 006. Prototype `experiments/nli/id_check.py`: on the human labels it drops 3/12 false keeps (2 of them hand-made negatives; 1/9 on model-written claims) and 6/23 wrong cross keeps of NLI, and no correct claim. Checking only the cited sentence drops 5/92 correct claims. The rules were tuned on the same sample, so check again on new docs. Also used by the perturbation operator ([§6.7](#67-tasks-and-operators)), but there the reference stays the claim's **citation**: a sibling identifier from the same section is exactly the distractor we want. Port to `core/`: #26.
 - [ ] Grounding on docstring prose is not measured yet: `experiments/nli` covered only guide and changelog sections, and parameter blocks are short and lean on the breadcrumb. Check once the Sphinx reader exists
 - [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
-- [ ] Models under test (small vs. large) and per-run budget
+- [ ] Models under test: `qwen/qwen3.8-27b` alone for now; at least one more later (small vs. large), and the per-run budget. Qwen is a preview model, which Groq may withdraw at short notice
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: which items are auto-approved, how much our team can review for the pilot in UC1, and whether and how docs owners review later (GitHub accounts, [§2.5](#25-golden-set-review))
 - [ ] Project limits: allowed models, budget per run / per month, upload size

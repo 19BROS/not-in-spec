@@ -1,0 +1,84 @@
+import json
+from dataclasses import replace
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from notinspec.runner import ChatRequest, Completion, FakeProvider, Message, RecordingProvider
+from notinspec.runner.openai_compat import parse_completion
+
+
+class Live:
+    def __init__(self, body: dict[str, Any]) -> None:
+        self.body = body
+
+    def complete(self, request: ChatRequest) -> Completion:
+        return parse_completion(self.body, request.model)
+
+
+def test_record_then_replay(tmp_path: Path, request_: ChatRequest, body: dict[str, Any]) -> None:
+    recorder = RecordingProvider(Live(body))
+    live = recorder.complete(request_)
+    fixture = tmp_path / "recorded.json"
+    recorder.save(fixture)
+
+    fake = FakeProvider.load(fixture)
+    assert fake.complete(request_) == live
+    assert fake.calls == [request_]
+
+
+def test_replays_real_groq_recording() -> None:
+    """Real qwen answers on Groq (2026-11-17): a plain task, one told to ignore the schema, and
+    one without response_format.
+
+    Qwen kept to the schema, so Groq's json_validate_failed never came back. Without a schema it
+    fenced the JSON but sent no <think> block.
+    """
+    fixture = Path(__file__).parent / "fixtures" / "groq-qwen.json"
+    entries = json.loads(fixture.read_text(encoding="utf-8"))
+    fake = FakeProvider.load(fixture)
+    for entry in entries:
+        sent = entry["request"]
+        request = ChatRequest(
+            model=sent["model"],
+            messages=tuple(Message(**m) for m in sent["messages"]),
+            temperature=sent["temperature"],
+            max_tokens=sent["max_tokens"],
+            response_schema=sent["response_schema"],
+        )
+        assert request.prompt_hash() == entry["prompt_hash"]  # hash is stable across machines
+
+        completion = fake.complete(request)
+        assert completion.model == "qwen/qwen3.8-27b"
+        assert completion.finish_reason == "stop"
+        content = (completion.content or "").removeprefix("```json").removesuffix("```")
+        assert "<think>" not in content
+        assert json.loads(content) == {"method": "GET", "path": "/pets/1"}
+
+
+def test_replays_groq_schema_failure(tmp_path: Path, request_: ChatRequest) -> None:
+    """A schema failure is recorded as the raw error body and replays as the same answer."""
+    failed = {
+        "error": {
+            "message": "Generated JSON does not match the expected schema.",
+            "type": "invalid_request_error",
+            "code": "json_validate_failed",
+            "failed_generation": '{"method": "FETCH"}',
+        }
+    }
+    recorder = RecordingProvider(Live(failed))
+    live = recorder.complete(request_)
+    fixture = tmp_path / "recorded.json"
+    recorder.save(fixture)
+
+    replayed = FakeProvider.load(fixture).complete(request_)
+    assert replayed == live
+    assert replayed.content == '{"method": "FETCH"}'
+    assert replayed.finish_reason == "json_validate_failed"
+
+
+def test_missing_recording(request_: ChatRequest, body: dict[str, Any]) -> None:
+    fake = FakeProvider({(request_.model, request_.prompt_hash()): body})
+    with pytest.raises(LookupError, match="no recording for acme/model-b:free"):
+        fake.complete(replace(request_, model="acme/model-b:free"))

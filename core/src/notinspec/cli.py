@@ -1,6 +1,8 @@
 import argparse
+import json
 import statistics
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 from notinspec import __version__
@@ -15,6 +17,26 @@ from notinspec.chunking import (
 from notinspec.config import load_config
 from notinspec.ingestion import ingest, plan_ingestion
 from notinspec.report import build_results, write_artifacts
+from notinspec.runner import (
+    GROQ,
+    PROVIDERS,
+    ChatRequest,
+    Message,
+    ModelClient,
+    ModelUnavailable,
+    OpenAICompatProvider,
+    ProviderError,
+    QuotaExhausted,
+    RecordingProvider,
+    TransientError,
+)
+from notinspec.verify import ANSWER_SCHEMA, parse_answer
+
+# ad-hoc instruction for trying a model by hand; real prompts come from the generator's templates
+_ASK_SYSTEM = (
+    "Answer with only a JSON object describing the HTTP request to send, "
+    "matching this JSON Schema:\n"
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,6 +76,26 @@ def main(argv: list[str] | None = None) -> int:
         help="check config and list inputs without parsing or writing",
     )
 
+    ask = commands.add_parser("ask", help="ask one model one question (Groq: needs GROQ_API_KEY)")
+    ask.add_argument("prompt")
+    ask.add_argument("--model", help=f"provider's model ID (default on Groq: {GROQ.default_model})")
+    ask.add_argument(
+        "--no-schema", action="store_true", help="don't send the answer schema as response_format"
+    )
+    ask.add_argument("--record", type=Path, help="save the raw response as a fake-provider fixture")
+    _provider_option(ask)
+
+    models = commands.add_parser("models", help="list the provider's active models")
+    models.add_argument(
+        "--structured", action="store_true", help="only models known to take a JSON schema"
+    )
+    models.add_argument(
+        "--probe",
+        action="store_true",
+        help="ask each listed model one question with the answer schema (one request per model)",
+    )
+    _provider_option(models)
+
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
     try:
@@ -61,11 +103,27 @@ def main(argv: list[str] | None = None) -> int:
             return _chunk(args)
         if args.command in ("ci", "ingest"):
             return _ingest(args)
+        if args.command == "ask":
+            config = PROVIDERS[args.provider]
+            model = args.model or config.default_model
+            if model is None:
+                raise ValueError(f"--model is required for {config.name}")
+            provider = OpenAICompatProvider.from_env(config)
+            return _ask(provider, model, args.prompt, schema=not args.no_schema, record=args.record)
+        if args.command == "models":
+            provider = OpenAICompatProvider.from_env(PROVIDERS[args.provider])
+            return _models(provider, structured_only=args.structured, probe=args.probe)
     except Exception as exc:
         print(f"error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     parser.print_help()
     return 0
+
+
+def _provider_option(command: argparse.ArgumentParser) -> None:
+    command.add_argument(
+        "--provider", choices=sorted(PROVIDERS), default=GROQ.name, help="default: %(default)s"
+    )
 
 
 def _positive_int(value: str) -> int:
@@ -151,6 +209,77 @@ def _chunk(args: argparse.Namespace) -> int:
         f"{sum(w.oversized for w in all_windows)} oversized sentences"
     )
     return 0
+
+
+def _answer_request(model: str, prompt: str, *, schema: bool) -> ChatRequest:
+    return ChatRequest(
+        model=model,
+        messages=(
+            Message("system", _ASK_SYSTEM + json.dumps(ANSWER_SCHEMA)),
+            Message("user", prompt),
+        ),
+        response_schema=ANSWER_SCHEMA if schema else None,
+    )
+
+
+def _ask(
+    provider: OpenAICompatProvider, model: str, prompt: str, *, schema: bool, record: Path | None
+) -> int:
+    live = RecordingProvider(provider)
+    # one retry at most: trying by hand shouldn't burn the daily budget
+    completion = ModelClient(live, max_attempts=2).ask(
+        "cli", _answer_request(model, prompt, schema=schema)
+    )
+    if record is not None:
+        live.save(record)
+
+    answer = parse_answer(completion.content, refusal=completion.refusal)
+    print(f"model:   {completion.model}")
+    print(f"finish:  {completion.finish_reason}")
+    print(f"content: {completion.content}")
+    if answer.request is not None:
+        print(f"parsed:  {json.dumps(asdict(answer.request), ensure_ascii=False)}")
+    else:
+        print(f"parsed:  {answer.cause} ({answer.detail})")
+    return 0
+
+
+# a question every model can answer, so a failed probe means the schema, not the task
+_PROBE_PROMPT = "Fetch the pet with ID 1 from the Petstore API: GET /pets/1."
+
+
+def _models(provider: OpenAICompatProvider, *, structured_only: bool, probe: bool) -> int:
+    client = ModelClient(provider, limits=provider.config.limiters(), max_attempts=1)
+    listed = [m for m in provider.list_models() if m.structured_output or not structured_only]
+    for done, m in enumerate(listed):
+        structured = "structured-output" if m.structured_output else "-"
+        line = f"{m.id:<50} {m.context_length or '?':>8}  {structured:<17}"
+        if probe:
+            try:
+                line += f"  probe: {_probe(client, m.id)}"
+            except QuotaExhausted as e:
+                print(f"stopped: {e} ({done} of {len(listed)} models probed)", file=sys.stderr)
+                return 2
+        print(line, flush=True)
+    return 0
+
+
+def _probe(client: ModelClient, model: str) -> str:
+    """`rejected` only when the provider refused the request itself, e.g. the schema."""
+    try:
+        completion = client.ask("probe", _answer_request(model, _PROBE_PROMPT, schema=True))
+    except QuotaExhausted:
+        raise
+    except ModelUnavailable as e:
+        return f"unavailable ({str(e)[:120]})"
+    except TransientError as e:  # rate limits included: says nothing about the schema
+        return f"unknown ({type(e).__name__}: {str(e)[:120]})"
+    except ProviderError as e:
+        return f"rejected ({type(e).__name__}: {str(e)[:120]})"
+    answer = parse_answer(completion.content, refusal=completion.refusal)
+    if answer.request is not None:
+        return "ok"
+    return f"answered, {answer.cause} (finish: {completion.finish_reason})"
 
 
 if __name__ == "__main__":
