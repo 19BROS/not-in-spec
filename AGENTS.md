@@ -40,7 +40,7 @@ Add a dependency to a package: `uv add --package notinspec-api <dep>` (never pip
 ## Rules that must not be broken
 
 - **All logic in `core/`.** API, worker, CLI and Action only call into it.
-- **CI never calls a real LLM.** Every LLM role (models under test, claim extractors, task-text writer, judge) uses the fake provider with recorded responses.
+- **Our tests and our CI never call a real LLM** (SPEC §13). They replay recorded real responses through the fake provider, for every LLM role in SPEC §8 (models under test, claim extractors, task-text writer, round-trip solvers, judge). NLI uses a fake classifier in unit tests, and the real model runs only in marked slow tests. The product itself calls the real models: the CLI and the worker use Groq and the local NLI model on real docs.
 - **Raw LLM responses are append-only**, for every LLM call. Never UPDATE or DELETE them.
 - **References are computed by code.** Same input + generator version ⇒ same references. An LLM only writes task text and extracts claims; both are frozen in the golden set.
 - **Never average levels** (L0–L4) and never produce a single overall score.
