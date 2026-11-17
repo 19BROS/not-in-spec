@@ -298,7 +298,7 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 
 **Human vs claude-draft:** keep/drop agreement 98.3% (kappa 0.97). With all three labels the agreement is 92.8% (kappa 0.88); most differences are neutral vs contradiction. 3 keep/drop differences remain: bugfixes n3, bugfixes sonnet-outside b1 and security sonnet-outside o1. The draft-based conclusions above therefore hold.
 
-**ChatGPT as a third annotator (2026-11-17):** Codex (reported as GPT-6; exact model ID and reasoning setting unknown) labelled the same 180 claims from the six prompts.
+**ChatGPT as a third annotator (2026-11-17):** Codex (reported as GPT-6; exact model ID and reasoning setting unknown) labelled the same 180 claims from the six prompts. Numbers come from the same `human_labels.py`.
 
 | pair | keep/drop | kappa | 3 classes | kappa |
 |---|---|---|---|---|
