@@ -1,10 +1,11 @@
+import json
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 import pytest
 
-from notinspec.runner import ChatRequest, Completion, FakeProvider, RecordingProvider
+from notinspec.runner import ChatRequest, Completion, FakeProvider, Message, RecordingProvider
 from notinspec.runner.openai_compat import parse_completion
 
 
@@ -25,6 +26,31 @@ def test_record_then_replay(tmp_path: Path, request_: ChatRequest, body: dict[st
     fake = FakeProvider.load(fixture)
     assert fake.complete(request_) == live
     assert fake.calls == [request_]
+
+
+def test_replays_real_groq_recording() -> None:
+    """Real qwen answers on Groq (2026-11-17): one plain task, one told to ignore the schema.
+
+    Qwen kept to the schema both times, so Groq's json_validate_failed never came back.
+    """
+    fixture = Path(__file__).parent / "fixtures" / "groq-qwen.json"
+    entries = json.loads(fixture.read_text(encoding="utf-8"))
+    fake = FakeProvider.load(fixture)
+    for entry in entries:
+        sent = entry["request"]
+        request = ChatRequest(
+            model=sent["model"],
+            messages=tuple(Message(**m) for m in sent["messages"]),
+            temperature=sent["temperature"],
+            max_tokens=sent["max_tokens"],
+            response_schema=sent["response_schema"],
+        )
+        assert request.prompt_hash() == entry["prompt_hash"]  # hash is stable across machines
+
+        completion = fake.complete(request)
+        assert completion.model == "qwen/qwen3.8-27b"
+        assert completion.finish_reason == "stop"
+        assert json.loads(completion.content or "") == {"method": "GET", "path": "/pets/1"}
 
 
 def test_replays_groq_schema_failure(tmp_path: Path, request_: ChatRequest) -> None:

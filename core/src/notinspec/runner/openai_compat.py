@@ -35,6 +35,7 @@ class ProviderConfig:
     per_day: int
     # models known to accept response_format json_schema, for providers whose /models doesn't say
     structured_output_models: frozenset[str] = frozenset()
+    default_model: str | None = None  # model under test when none is named
     headers: Mapping[str, str] = field(default_factory=dict)
 
     def limiter(self) -> RateLimiter:
@@ -45,9 +46,12 @@ GROQ = ProviderConfig(
     name="groq",
     base_url="https://api.groq.com/openai/v1",
     api_key_env="GROQ_API_KEY",
+    # 1000/day measured from x-ratelimit-* headers (2026-11-17); 30/min from Groq's docs.
+    # Groq also allows only 8000 tokens/min per model, which this limiter doesn't count.
     per_minute=30,
     per_day=1000,
-    # console.groq.com/docs/structured-outputs, read 2026-11-17; `models --probe` checks it live
+    # console.groq.com/docs/structured-outputs, read 2026-11-17; qwen confirmed live the same day,
+    # `models --probe` checks the rest
     structured_output_models=frozenset(
         {
             "openai/gpt-oss-20b",
@@ -57,6 +61,7 @@ GROQ = ProviderConfig(
             "meta-models/muse-spark-open",
         }
     ),
+    default_model="qwen/qwen3.8-27b",  # the only model under test for now (SPEC §8)
 )
 
 OPENROUTER = ProviderConfig(

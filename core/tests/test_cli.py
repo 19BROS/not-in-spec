@@ -121,6 +121,25 @@ def test_ask_prints_parsed_request(
     assert recorded[0]["model"] == "openai/gpt-oss-20b"
 
 
+def test_ask_defaults_to_qwen(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    stub = Stub('{"method": "GET", "path": "/pets/1"}')
+    use(monkeypatch, stub)
+    assert main(["ask", "Pet 1"]) == 0
+    assert stub.requests[0].model == GROQ.default_model == "qwen/qwen3.8-27b"
+
+
+def test_ask_needs_model_without_default(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    stub = Stub("")
+    use(monkeypatch, stub)
+    assert main(["ask", "--provider", "openrouter", "Pet 1"]) == 2
+    assert "--model is required for openrouter" in capsys.readouterr().err
+    assert stub.requests == []
+
+
 def test_ask_reports_malformed(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:

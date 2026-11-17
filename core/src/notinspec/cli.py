@@ -75,7 +75,7 @@ def main(argv: list[str] | None = None) -> int:
 
     ask = commands.add_parser("ask", help="ask one model one question (Groq: needs GROQ_API_KEY)")
     ask.add_argument("prompt")
-    ask.add_argument("--model", required=True, help="provider's model ID, e.g. openai/gpt-oss-20b")
+    ask.add_argument("--model", help=f"provider's model ID (default on Groq: {GROQ.default_model})")
     ask.add_argument(
         "--no-schema", action="store_true", help="don't send the answer schema as response_format"
     )
@@ -101,10 +101,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.command in ("ci", "ingest"):
             return _ingest(args)
         if args.command == "ask":
-            provider = OpenAICompatProvider.from_env(PROVIDERS[args.provider])
-            return _ask(
-                provider, args.model, args.prompt, schema=not args.no_schema, record=args.record
-            )
+            config = PROVIDERS[args.provider]
+            model = args.model or config.default_model
+            if model is None:
+                raise ValueError(f"--model is required for {config.name}")
+            provider = OpenAICompatProvider.from_env(config)
+            return _ask(provider, model, args.prompt, schema=not args.no_schema, record=args.record)
         if args.command == "models":
             provider = OpenAICompatProvider.from_env(PROVIDERS[args.provider])
             return _models(provider, structured_only=args.structured, probe=args.probe)
