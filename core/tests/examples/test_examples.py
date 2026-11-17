@@ -1,4 +1,4 @@
-"""Component C: `Example`s from chunks and their raw call records (SPEC §4, §6.2)."""
+"""Component C: `Example`s from chunks, raw call records, call records (SPEC §4, §6.2)."""
 
 from collections.abc import Callable
 from pathlib import Path
@@ -6,9 +6,17 @@ from pathlib import Path
 import pytest
 
 from notinspec.adapters.canonical import canonical_json
-from notinspec.adapters.python import RawCallRecord, Value
+from notinspec.adapters.python import ApiIndex, CallRecord, RawCallRecord, UnresolvedCall, Value
 from notinspec.chunking import Chunk, Document, chunk_blocks, chunk_document
-from notinspec.examples import chunk_examples, extract_examples, read_calls
+from notinspec.examples import (
+    Example,
+    ExampleCalls,
+    chunk_examples,
+    extract_examples,
+    normalize_example,
+    read_calls,
+)
+from notinspec.inventory import Inventory, Symbol
 from notinspec.sphinx import read_sphinx_xml
 
 EXAMPLES = Path(__file__).parents[2] / "examples" / "sphinx"
@@ -170,3 +178,67 @@ def test_examples_are_deterministic_and_never_crash(library: str) -> None:
         for call in result.calls if result else ():
             refs = [call.callee, *call.args, *(k.value for k in call.kwargs)]
             assert all(r.call is None or r.call < call.index for r in refs)
+
+
+def _record(c: CallRecord) -> str:
+    """`#index Lline symbol [how] (param=value, keyword→**param=value) ! issue ? unmapped`."""
+    args = [
+        f"{a.name}={'|'.join(_value(v) for v in a.values)}"
+        if a.parameter == a.name
+        else f"{a.name}→{a.parameter or '?'}={'|'.join(_value(v) for v in a.values)}"
+        for a in c.args
+    ]
+    text = f"#{c.index} L{c.line} {c.symbol} [{c.resolved_by}] ({', '.join(args)})"
+    text += "".join(f" ! {i.kind}:{i.detail}" for i in c.issues)
+    return text + "".join(f" ? {_value(v)}" for v in c.unmapped)
+
+
+def _unresolved(u: UnresolvedCall) -> str:
+    wanted = f" {u.path}" if u.path else ""
+    candidates = f" {list(u.candidates)}" if u.candidates else ""
+    return f"#{u.index} L{u.line} {u.symbol}: {u.reason}{wanted}{candidates}"
+
+
+def _addition(s: Symbol) -> str:
+    params = ", ".join(p.name for sig in s.signatures for p in sig.parameters)
+    return f"{s.path} {s.kind} ({params})"
+
+
+def _urllib3_examples() -> list[tuple[str, Example, ExampleCalls]]:
+    sphinx = read_sphinx_xml(EXAMPLES / "urllib3" / "xml")
+    chunks = [c for d in sphinx.documents for c in chunk_blocks(d, project="urllib3")]
+    breadcrumbs = {c.id: c.breadcrumb for c in chunks}
+    rows = []
+    for example in extract_examples(chunks):
+        raw = read_calls(example)
+        if raw is not None and raw.calls:
+            rows.append((breadcrumbs[example.chunk_id], example, raw))
+    return rows
+
+
+def test_urllib3_call_records_golden(
+    golden: Callable[[str, object], None], urllib3_inventory: Inventory
+) -> None:
+    """Every Python example of urllib3, normalized against its documented API."""
+    api = ApiIndex(urllib3_inventory)
+    rows = []
+    for breadcrumb, example, raw in _urllib3_examples():
+        result = normalize_example(example, raw, api)
+        rows.append(
+            {
+                "id": result.example_id,
+                "chunk": breadcrumb,
+                "position": example.position,
+                "calls": [_record(c) for c in result.calls],
+                "unresolved": [_unresolved(u) for u in result.unresolved],
+                "additions": [_addition(s) for s in result.additions],
+            }
+        )
+    golden("urllib3-calls", rows)
+
+
+def test_normalize_example_checks_the_pairing(urllib3_inventory: Inventory) -> None:
+    (_, first, raw), (_, second, _) = _urllib3_examples()[:2]
+    with pytest.raises(ValueError):
+        normalize_example(second, raw, ApiIndex(urllib3_inventory))
+    assert normalize_example(first, raw, ApiIndex(urllib3_inventory)).example_id == first.id

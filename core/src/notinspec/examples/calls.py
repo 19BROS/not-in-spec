@@ -1,19 +1,29 @@
-"""`Example` → raw call records: pick the language adapter (SPEC §6.2, component C).
+"""`Example` → call records: pick the language adapter, then normalize (SPEC §6.2, component C).
 
 MVP adapters are Python (`ast`) and curl; only Python exists so far. A block in a language
 no adapter reads (`bash`, `text`, `json`, ...) gives no record at all, not an error.
+
+Two steps, so the inventory is needed only for the second: `read_calls` gives raw call
+records (the call as written), `normalize_example` maps them onto the inventory and lists the
+symbols the inventory lacks (`Source` example, SPEC §6.3).
 """
 
 from dataclasses import dataclass
 
 from notinspec.adapters.python import (
     PYTHON_ADAPTER_VERSION,
+    ApiIndex,
+    CallRecord,
     PythonCode,
     RawCallRecord,
+    UnresolvedCall,
     accepts,
+    example_additions,
+    normalize_calls,
     parse_python,
 )
 from notinspec.examples.extract import Example
+from notinspec.inventory import Symbol
 
 
 @dataclass(frozen=True)
@@ -38,4 +48,25 @@ def read_calls(example: Example) -> ExampleCalls | None:
         status=result.status,
         calls=result.calls,
         error=result.error,
+    )
+
+
+@dataclass(frozen=True)
+class ExampleCallRecords:
+    example_id: str
+    calls: tuple[CallRecord, ...]
+    unresolved: tuple[UnresolvedCall, ...]  # not the documented API, or not known which
+    additions: tuple[Symbol, ...]  # called, in the project's packages, missing in the inventory
+
+
+def normalize_example(example: Example, raw: ExampleCalls, api: ApiIndex) -> ExampleCallRecords:
+    """Call records of one example, mapped onto the inventory. Pure."""
+    if raw.example_id != example.id:
+        raise ValueError(f"raw calls of {raw.example_id} given for example {example.id}")
+    normalized = normalize_calls(raw.calls, api)
+    return ExampleCallRecords(
+        example_id=example.id,
+        calls=normalized.calls,
+        unresolved=normalized.unresolved,
+        additions=example_additions(raw.calls, normalized, api, example.section_id),
     )
