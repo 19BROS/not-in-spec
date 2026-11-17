@@ -134,6 +134,10 @@ def test_backticked_expression_is_split_into_names_and_numbers() -> None:
     assert _missing("Use `Retry(connect=3)`.", ref) == ("connect",)
 
 
+def test_backticked_phrase_with_spaces_adds_no_tokens() -> None:
+    assert _missing("Run `pip install urllib3` first.", "Install it first.") == ()
+
+
 def test_inner_capital_names_are_still_identifiers() -> None:
     assert _missing("Raises `SSLError`.", "Raises an error.") == ("SSLError",)
     assert _missing("Uses HTTPSConnection.", "Uses a connection.") == ("HTTPSConnection",)

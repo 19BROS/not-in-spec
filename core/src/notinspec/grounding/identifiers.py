@@ -12,8 +12,9 @@ What the claim is checked for (both sides normalized like the citation check):
 - **identifier**: a backticked span, or a word with `_`, a dot between names (`Retry.total`),
   a trailing `()`, an inner capital (`ProxyManager`, `SSLError`) or letters + digits
   (`urllib3`). A single capitalized word (`Retry`) counts when it is a name in the inventory.
-  A backticked span that is not one name (`Retry(total=3)`) is split into its names and
-  numbers, each checked on its own. Plain words, lowercase inventory names that are also
+  A backticked expression that is not one name (`Retry(total=3)`) is split into its names
+  and numbers, each checked on its own; a backticked phrase with spaces
+  (`pip install urllib3`) adds no names. Plain words, lowercase inventory names that are also
   words (`read`, `total`, unless backticked), acronyms (HTTPS) and their plurals (`URLs`,
   `CAs`) are not checked.
   Matching is case-sensitive on name boundaries: `ssl_context` does not match inside
@@ -133,7 +134,9 @@ def _identifiers(claim: str, known_names: frozenset[str]) -> dict[str, bool]:
     text = _ACRONYM_VERSION.sub(r"\1 \2", claim.translate(QUOTES))
     found: dict[str, bool] = {}
     for span in _BACKTICKED.findall(text):
-        name = " ".join(span.split()).removesuffix("()").lstrip(".")
+        if any(c.isspace() for c in span.strip()):
+            continue  # a phrase or command (`pip install urllib3`): its words are not names
+        name = span.strip().removesuffix("()").lstrip(".")
         names = [name] if _SINGLE_NAME.fullmatch(name) else _WORD.findall(span)
         for n in names:
             found[n.removesuffix("()")] = False
