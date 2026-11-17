@@ -70,17 +70,33 @@ def test_different_attributes_under_one_key_are_conflicts() -> None:
     )  # 3.0 == 3.0.0; a replacement only one side has is no conflict
 
 
-def test_equal_signatures_merge_and_different_ones_are_overloads() -> None:
+def test_equal_signatures_merge_and_overloads_of_one_source_stay() -> None:
     a = symbol(DIRECTIVE, signature(DIRECTIVE))
     b = symbol(SECOND, signature(SECOND), signature(SECOND, default="1"))
-    inventory, conflicts = merge([Inventory((a,)), Inventory((b,))])
+    inventory, conflicts = merge([Inventory((b,)), Inventory((a,))])
     (merged,) = inventory.symbols
     assert merged.sources == (DIRECTIVE, SECOND)
-    assert len(merged.signatures) == 2
+    assert len(merged.signatures) == 2  # b's two overloads share a source: never one
     plain = next(s for s in merged.signatures if s.parameters[0].default is None)
     assert plain.sources == plain.parameters[0].sources == (DIRECTIVE, SECOND)
     assert plain.returns is not None and plain.returns.sources == (DIRECTIVE, SECOND)
-    assert conflicts == ()
+    assert conflicts == ()  # the identical one merged, not the one with a default
+
+
+def test_differences_between_sources_are_conflicts_not_overloads() -> None:
+    """`pkg.f` documented in two sections, one with a default, a type and another return."""
+    a = symbol(DIRECTIVE, signature(DIRECTIVE))
+    b_timeout = Parameter("timeout", "positional_or_keyword", False, (SECOND,), "float", "1")
+    b = symbol(SECOND, Signature((b_timeout,), (SECOND,), returns=ReturnType("bytes", (SECOND,))))
+    inventory, conflicts = merge([Inventory((b,)), Inventory((a,))])
+    (merged,) = inventory.symbols[0].signatures
+    (timeout,) = merged.parameters
+    assert (timeout.required, timeout.default, timeout.type) == (True, None, "float")
+    assert merged.returns == ReturnType("str", (DIRECTIVE,))
+    assert {(c.subject, c.attribute, c.kept, c.other) for c in conflicts} == {
+        ("pkg.f(timeout)", "required", "True", "False"),
+        ("pkg.f", "returns", "str", "bytes"),
+    }  # a type only one side documents fills the gap; `default` only one side has
 
 
 def test_the_best_source_wins_a_symbol_kind() -> None:

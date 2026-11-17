@@ -65,7 +65,8 @@ class InventoryBuild:
 def build_inventory(chunks: Iterable[Chunk]) -> InventoryBuild:
     """The inventory of all API descriptions in `chunks`. Pure: same chunks ⇒ equal result."""
     sections: dict[str, list[Block]] = {}
-    for chunk in chunks:
+    # parts in their own order, so "the first `Return type`" never depends on input order
+    for chunk in sorted(chunks, key=lambda c: (c.section_id, c.part)):
         sections.setdefault(chunk.section_id, []).extend(chunk.blocks)
     warnings: list[str] = []
     parts = [_section(section_id, blocks, warnings) for section_id, blocks in sections.items()]
@@ -130,7 +131,7 @@ def _signature(
             Parameter(
                 name,
                 kind,
-                required=not variadic and param.default is None,
+                required=not variadic and not param.optional and param.default is None,
                 sources=source,
                 type=param.annotation or field_types.get(name),
                 default=None if variadic else param.default,
@@ -154,6 +155,10 @@ def _changes(
         if not block.directives or (block.kind == "field" and block.field != "param"):
             continue
         parameter = _bare(block.name) if block.kind == "field" and block.name else None
+        if block.kind == "field" and parameter is None:
+            # a parameter's directive must not become one about the whole symbol
+            warnings.append(f"{', '.join(paths)}: version directive in an unnamed parameter entry")
+            continue
         for directive, version in block.directives:
             kind = _CHANGE_KINDS.get(directive)
             if kind is None:
@@ -177,29 +182,43 @@ def _section_returns(blocks: Sequence[Block]) -> str | None:
 
 
 def _constraints(annotation: str | None, source: tuple[Source, ...]) -> tuple[Constraint, ...]:
+    """`Literal['a', 'b']` → enum. Only when the whole annotation is one `Literal[...]`:
+    `Literal['a'] | Sequence[str]` also starts with `Literal[` and ends with `]`."""
     match = _LITERAL.fullmatch(annotation or "")
-    if match is None:
+    values = _split_top_level(match[1]) if match else None
+    if not values or not all(values):
         return ()
-    values = tuple(v for v in _split_top_level(match[1]) if v)
-    return (Constraint("enum", source, values=values),) if values else ()
+    return (Constraint("enum", source, values=tuple(values)),)
 
 
-def _split_top_level(value: str) -> list[str]:
-    """Split at commas outside brackets and quotes: `'a, b', 1` → [`'a, b'`, `1`]."""
+def _split_top_level(value: str) -> list[str] | None:
+    """Split at commas outside brackets and quotes: `'a, b', 1` → [`'a, b'`, `1`].
+
+    None when the brackets or quotes are not balanced inside `value`.
+    """
     parts: list[str] = []
-    depth, quote, start = 0, "", 0
+    depth, quote, start, escaped = 0, "", 0, False
     for i, char in enumerate(value):
         if quote:
-            quote = "" if char == quote and value[i - 1] != "\\" else quote
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True  # the next character is part of the string, also a quote
+            elif char == quote:
+                quote = ""
         elif char in "'\"":
             quote = char
         elif char in "([{":
             depth += 1
         elif char in ")]}":
             depth -= 1
+            if depth < 0:
+                return None
         elif char == "," and depth == 0:
             parts.append(value[start:i].strip())
             start = i + 1
+    if depth or quote:
+        return None
     parts.append(value[start:].strip())
     return parts
 
@@ -222,6 +241,8 @@ def _text(block: Block) -> str | None:
 
 
 def _parameter_text(param: SignatureParameter) -> str:
+    if param.optional:
+        return f"[{param.name}]"
     out = param.name
     if param.annotation:
         out += f": {param.annotation}"

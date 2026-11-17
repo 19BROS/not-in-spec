@@ -8,9 +8,11 @@ from notinspec.inventory import (
     INVENTORY_BUILDER_VERSION,
     Inventory,
     InventoryBuild,
+    Source,
     Symbol,
     build_inventory,
 )
+from notinspec.inventory.build import _constraints
 from notinspec.sphinx import read_sphinx_xml
 
 Golden = Callable[[str, object], None]
@@ -44,6 +46,7 @@ def test_signature_blocks_give_symbols_with_python_parameter_kinds(tmp_path: Pat
         ("pkg.Pool", "class"),
         ("pkg.Pool.close", "method"),
         ("pkg.Pool.size", "property"),  # no parameter list: no signature
+        ("pkg.compile", "function"),
         ("pkg.fetch", "function"),
     ]  # std:option is not Python: not in the MVP inventory
     (fetch,) = _symbol(inventory, "pkg.fetch").signatures
@@ -64,6 +67,13 @@ def test_signature_blocks_give_symbols_with_python_parameter_kinds(tmp_path: Pat
     assert close.parameters == ()
     assert close.returns is not None and close.returns.type == "None"  # from `Return type`
     assert _symbol(inventory, "pkg.Pool").signatures == ()  # documented without parameters
+    (compile_,) = _symbol(inventory, "pkg.compile").signatures  # optional brackets
+    assert [(p.name, p.required) for p in compile_.parameters] == [
+        ("source", True),
+        ("filename", False),
+        ("symbol", False),
+    ]
+    assert compile_.text == "pkg.compile(source, [filename], [symbol])"
     sources = {s.sources for s in inventory.symbols}
     assert all(src[0].type == "signature" and src[0].section_id for src in sources)
 
@@ -71,13 +81,17 @@ def test_signature_blocks_give_symbols_with_python_parameter_kinds(tmp_path: Pat
 def test_version_directives_give_changes(tmp_path: Path) -> None:
     built = _api(tmp_path)
     assert [(c.symbol, c.parameter, c.kind, c.version) for c in built.inventory.changes] == [
+        ("pkg.Pool", None, "deprecated", "3.0"),  # inside a note
         ("pkg.fetch", None, "deprecated", "2.0"),
         ("pkg.fetch", "timeout", "added", "1.1"),  # inside the parameter entry
     ]  # versionchanged gives no Change; "next" is not a PEP 440 version
-    assert built.warnings == ("pkg.fetch: versionremoved 'next' is not a PEP 440 version",)
+    assert built.warnings == (
+        "pkg.fetch: version directive in an unnamed parameter entry",  # not about all of fetch
+        "pkg.fetch: versionremoved 'next' is not a PEP 440 version",
+    )
     assert built.conflicts == ()
     fetch_section = _symbol(built.inventory, "pkg.fetch").sources
-    assert all(c.sources == fetch_section for c in built.inventory.changes)
+    assert all(c.sources == fetch_section for c in built.inventory.changes[1:])
 
 
 def test_directive_outside_an_api_description_gives_no_change(tmp_path: Path) -> None:
@@ -95,8 +109,52 @@ def test_same_symbol_documented_twice_is_one_symbol(tmp_path: Path) -> None:
     fetch = _symbol(built.inventory, "pkg.fetch")
     assert len(fetch.sources) == 2 and len(fetch.signatures) == 1
     assert len(fetch.signatures[0].sources) == 2
-    assert [len(c.sources) for c in built.inventory.changes] == [2, 2]
+    assert [len(c.sources) for c in built.inventory.changes] == [2, 2, 2]
     assert built.conflicts == ()
+
+
+def test_parts_of_a_section_are_read_in_order(tmp_path: Path) -> None:
+    """A long description is split into parts; the first `Return type` wins in any input order."""
+    filler = "<paragraph>" + "word " * 60 + "</paragraph>"
+    returns = (
+        "<field_list><field><field_name>Return type</field_name><field_body><paragraph>"
+        "<literal_emphasis>{}</literal_emphasis></paragraph></field_body></field></field_list>"
+    )
+    body = (
+        "<section ids='s'><title>S</title><desc domain='py' objtype='function'>"
+        "<desc_signature fullname='split' module='pkg'><desc_name>split</desc_name>"
+        f"<desc_parameterlist/></desc_signature><desc_content>{returns.format('A')}"
+        f"{filler * 3}{returns.format('B')}</desc_content></desc></section>"
+    )
+    (tmp_path / "build-env.txt").write_text("sphinx-build 9.1.1\n", encoding="utf-8")
+    document = f'<?xml version="1.0"?>\n<document source="/src/docs/api.rst">{body}</document>\n'
+    (tmp_path / "api.xml").write_text(document, encoding="utf-8")
+    xml = read_sphinx_xml(tmp_path)
+    chunks = [c for d in xml.documents for c in chunk_blocks(d, project="pkg", soft_limit=80)]
+    assert max(c.parts for c in chunks) > 1
+    built = build_inventory(chunks)
+    assert build_inventory(reversed(chunks)) == built
+    (split,) = _symbol(built.inventory, "pkg.split").signatures
+    assert split.returns is not None and split.returns.type == "A"
+
+
+@pytest.mark.parametrize(
+    ("annotation", "values"),
+    [
+        ("Literal['a, b', 'c']", ("'a, b'", "'c'")),
+        ("typing.Literal[1, (2, 3)]", ("1", "(2, 3)")),
+        (r"Literal['a\\', 'b']", (r"'a\\'", "'b'")),  # escaped backslash ends the string
+        (r"Literal['it\'s', 'b']", (r"'it\'s'", "'b'")),  # an escaped quote does not
+        ("Literal['a'] | Sequence[str]", None),  # not one Literal: no enum
+        ("Literal['a', ]", None),
+        ("Literal[]", None),
+        ("list[Literal['a']]", None),
+    ],
+)
+def test_literal_annotations_give_enums(annotation: str, values: tuple[str, ...] | None) -> None:
+    source = (Source("signature", section_id="s" * 16),)
+    constraints = _constraints(annotation, source)
+    assert (constraints[0].values if constraints else None) == values
 
 
 @pytest.mark.parametrize("style", ["napoleon", "numpydoc", "plain"])

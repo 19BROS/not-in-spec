@@ -7,6 +7,7 @@ children; code inside them is remembered as `Nested`, so NLI windows can leave i
 
 import dataclasses
 from dataclasses import dataclass
+from typing import NamedTuple
 
 from notinspec.chunking import BlockKind, SignatureParameter, normalize_text
 
@@ -51,15 +52,22 @@ def code_piece(code: str, lang: str | None, caption: str | None = None) -> Piece
     return Piece("code", lines, lang=lang, code=code)
 
 
-def compose(
-    pieces: list[Piece], first: str = "", indent: str = ""
-) -> tuple[list[str], list[Nested]]:
+class Composed(NamedTuple):
+    lines: list[str]
+    nested: list[Nested]
+    directives: list[tuple[str, str]]  # of every piece, so a composite block keeps them
+
+
+def compose(pieces: list[Piece], first: str = "", indent: str = "") -> Composed:
     """Lines of several pieces, a blank line between them.
 
     `first` prefixes the very first line (a list marker), `indent` every other non-blank line.
+    The version directives of the pieces are kept: a `deprecated` inside a note, a list item
+    or a parameter entry still gives a `Change`.
     """
     lines: list[str] = []
     nested: list[Nested] = []
+    directives = [d for piece in pieces for d in piece.directives]
     for i, piece in enumerate(pieces):
         if i:
             lines.append("")
@@ -74,7 +82,7 @@ def compose(
         )
     if not lines:
         lines = [first.rstrip()]
-    return lines, nested
+    return Composed(lines, nested, directives)
 
 
 def prefixed(label: str, pieces: list[Piece]) -> list[Piece]:

@@ -102,17 +102,20 @@
             {
               "name": "host",
               "annotation": "str",
-              "default": null
+              "default": null,
+              "optional": false
             },
             {
               "name": "timeout",
               "annotation": "float | None",
-              "default": "None"
+              "default": "None",
+              "optional": false
             },
             {
               "name": "retries",
               "annotation": "int",
-              "default": "3"
+              "default": "3",
+              "optional": false
             }
           ],
           "directives": []
@@ -335,17 +338,20 @@
             {
               "name": "data",
               "annotation": "bytes",
-              "default": null
+              "default": null,
+              "optional": false
             },
             {
               "name": "*",
               "annotation": null,
-              "default": null
+              "default": null,
+              "optional": false
             },
             {
               "name": "flush",
               "annotation": "bool",
-              "default": "False"
+              "default": "False",
+              "optional": false
             }
           ],
           "directives": []
@@ -433,7 +439,8 @@
             {
               "name": "size",
               "annotation": "int",
-              "default": "1024"
+              "default": "1024",
+              "optional": false
             }
           ],
           "directives": []
@@ -718,7 +725,8 @@
             {
               "name": "host",
               "annotation": "str",
-              "default": null
+              "default": null,
+              "optional": false
             }
           ],
           "directives": []
@@ -1485,12 +1493,14 @@
             {
               "name": "host",
               "annotation": null,
-              "default": null
+              "default": null,
+              "optional": false
             },
             {
               "name": "count",
               "annotation": null,
-              "default": "1"
+              "default": "1",
+              "optional": false
             }
           ],
           "directives": []
@@ -1639,7 +1649,8 @@
             {
               "name": "size",
               "annotation": null,
-              "default": null
+              "default": null,
+              "optional": false
             }
           ],
           "directives": []
@@ -1783,7 +1794,8 @@
             {
               "name": "conn",
               "annotation": null,
-              "default": null
+              "default": null,
+              "optional": false
             }
           ],
           "directives": []

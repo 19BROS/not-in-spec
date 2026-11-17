@@ -54,6 +54,7 @@ class SignatureParameter:
     name: str  # "url", "*args", "**kwargs"; the separators are "*" and "/" alone
     annotation: str | None = None  # "str | None"
     default: str | None = None  # as written: "None", "'GET'"; None = no default
+    optional: bool = False  # inside optional brackets: `compile(source[, filename])`
 
 
 @dataclass(frozen=True)

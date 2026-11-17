@@ -97,7 +97,7 @@ class Constraint:
     format: str | None = None  # format: "date-time", "uri"
 
     def __post_init__(self) -> None:
-        _sort_sources(self)
+        sort_sources(self)
 
 
 @dataclass(frozen=True)
@@ -119,7 +119,7 @@ class Parameter:
             raise ValueError(f"parameter {self.name}: required, but has default {self.default}")
         if self.kind in _VARIADIC and (self.required or self.default is not None):
             raise ValueError(f"parameter {self.name}: {self.kind} is never required or defaulted")
-        _sort_sources(self)
+        sort_sources(self)
         _sort(self, "constraints", canonical_json)
 
 
@@ -131,7 +131,7 @@ class ReturnType:
     sources: tuple[Source, ...]
 
     def __post_init__(self) -> None:
-        _sort_sources(self)
+        sort_sources(self)
 
 
 @dataclass(frozen=True)
@@ -144,7 +144,7 @@ class Signature:
     returns: ReturnType | None = None  # None = not documented
 
     def __post_init__(self) -> None:
-        _sort_sources(self)
+        sort_sources(self)
 
 
 @dataclass(frozen=True)
@@ -165,7 +165,7 @@ class Change:
     removal_planned: str | None = None  # version, as written
 
     def __post_init__(self) -> None:
-        _sort_sources(self)
+        sort_sources(self)
 
 
 @dataclass(frozen=True)
@@ -180,7 +180,7 @@ class Symbol:
     signatures: tuple[Signature, ...] = ()  # sorted
 
     def __post_init__(self) -> None:
-        _sort_sources(self)
+        sort_sources(self)
         _sort(self, "signatures", canonical_json)
 
 
@@ -215,13 +215,14 @@ def _change_order(change: Change) -> tuple[str, str, str, str, bytes]:
     )
 
 
-def _source_order(source: Source) -> tuple[int, str, str]:
+def source_order(source: Source) -> tuple[int, str, str]:
+    """Merge priority first, then location: the one order of sources (also used by `merge`)."""
     return (SOURCE_PRIORITY.index(source.type), source.section_id or "", source.pointer or "")
 
 
-def _sort_sources(obj: Any) -> None:
+def sort_sources(obj: Any) -> None:
     """Highest merge priority first, so `sources[0]` is the source that wins."""
-    _sort(obj, "sources", _source_order)
+    _sort(obj, "sources", source_order)
 
 
 def _sort(obj: Any, name: str, key: Callable[[Any], Any]) -> None:

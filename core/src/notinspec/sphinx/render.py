@@ -51,7 +51,7 @@ recorded as a nested `code` block, so NLI windows leave it out.
 import keyword
 import unicodedata
 from collections import Counter
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from xml.etree.ElementTree import Element
 
 from notinspec.chunking import Block, BlockDocument, BlockKind, ParsedBlock, SignatureParameter
@@ -70,7 +70,15 @@ from notinspec.sphinx.inline import (
     render,
     text,
 )
-from notinspec.sphinx.pieces import Nested, Piece, code_piece, compose, prefixed, text_piece
+from notinspec.sphinx.pieces import (
+    Composed,
+    Nested,
+    Piece,
+    code_piece,
+    compose,
+    prefixed,
+    text_piece,
+)
 
 _INLINE = (
     CODE_TAGS | TEXT_TAGS | SKIP_TAGS | {"footnote_reference", "citation_reference", "problematic"}
@@ -272,7 +280,7 @@ class _Renderer:
             number = int(el.get("start", "1"))
         except ValueError:
             number = 1
-        items: list[tuple[list[str], list[Nested]]] = []
+        items: list[Composed] = []
         for i, item in enumerate(el.findall("list_item")):
             marker = "- " if el.tag == "bullet_list" else f"{number + i}. "
             items.append(compose(self.children(item, level), marker, " " * len(marker)))
@@ -309,9 +317,9 @@ class _Renderer:
         return [_merge("admonition", prefixed(f"{label}:", pieces))]
 
     def quote(self, el: Element, level: int) -> list[Piece]:
-        lines, nested = compose(self.children(el, level))
+        lines, nested, directives = compose(self.children(el, level))
         quoted = [f"> {line}" if line else ">" for line in lines]
-        return [Piece("quote", quoted, nested=nested)]
+        return [Piece("quote", quoted, nested=nested, directives=directives)]
 
     def table(self, el: Element, level: int) -> list[Piece]:
         head: list[list[str]] = []
@@ -348,7 +356,7 @@ def _signature_piece(sig: Element, objtype: str | None) -> Piece:
         name=_path(sig),
         type=_signature_type(sig),
         objtype=objtype,
-        parameters=None if params is None else tuple(_parameter(p) for p in params),
+        parameters=None if params is None else tuple(_parameters(params, optional=False)),
     )
 
 
@@ -384,7 +392,17 @@ def _signature_type(sig: Element) -> str | None:
     return None
 
 
-def _parameter(param: Element) -> SignatureParameter:
+def _parameters(params: Element, *, optional: bool) -> Iterator[SignatureParameter]:
+    """Children of a parameter list. `desc_optional` (`compile(source[, filename])`, used for
+    signatures that are not valid Python) is walked into; what is inside it is optional."""
+    for child in params:
+        if child.tag == "desc_optional":
+            yield from _parameters(child, optional=True)
+        elif child.tag == "desc_parameter":
+            yield _parameter(child, optional=optional)
+
+
+def _parameter(param: Element, *, optional: bool = False) -> SignatureParameter:
     """`desc_parameter` → name (with `*` / `**`), annotation and default, from the node types."""
     prefix, name = "", None
     annotation: list[str] = []
@@ -405,8 +423,9 @@ def _parameter(param: Element) -> SignatureParameter:
         elif part == "annotation":
             annotation.append(value)
     if name is None:
-        return SignatureParameter(prefix or collapse("".join(param.itertext())))
-    return SignatureParameter(prefix + name, collapse("".join(annotation)) or None, default)
+        return SignatureParameter(prefix or collapse("".join(param.itertext())), optional=optional)
+    annotated = collapse("".join(annotation)) or None
+    return SignatureParameter(prefix + name, annotated, default, optional=optional)
 
 
 def _signature(sig: Element) -> str:
@@ -475,18 +494,20 @@ def _labelled(head: str, pieces: list[Piece]) -> list[Piece]:
 
 
 def _merge(kind: BlockKind, pieces: list[Piece]) -> Piece:
-    lines, nested = compose(pieces)
-    return Piece(kind, lines, nested=nested)
+    lines, nested, directives = compose(pieces)
+    return Piece(kind, lines, nested=nested, directives=directives)
 
 
-def _join(kind: BlockKind, items: list[tuple[list[str], list[Nested]]]) -> Piece:
+def _join(kind: BlockKind, items: list[Composed]) -> Piece:
     lines: list[str] = []
     nested: list[Nested] = []
-    for item_lines, item_nested in items:
+    directives: list[tuple[str, str]] = []
+    for item in items:
         offset = len(lines)
-        lines += item_lines
-        nested += [Nested(n.start + offset, n.end + offset, n.lang, n.code) for n in item_nested]
-    return Piece(kind, lines, nested=nested)
+        lines += item.lines
+        nested += [Nested(n.start + offset, n.end + offset, n.lang, n.code) for n in item.nested]
+        directives += item.directives
+    return Piece(kind, lines, nested=nested, directives=directives)
 
 
 def _row(cells: list[str]) -> str:
@@ -554,6 +575,8 @@ def _nfc_parameters(
     if parameters is None:
         return None
     return tuple(
-        SignatureParameter(_nfc(p.name), _nfc_or_none(p.annotation), _nfc_or_none(p.default))
+        SignatureParameter(
+            _nfc(p.name), _nfc_or_none(p.annotation), _nfc_or_none(p.default), p.optional
+        )
         for p in parameters
     )
