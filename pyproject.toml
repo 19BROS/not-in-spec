@@ -9,6 +9,12 @@ package = false
 [tool.uv.workspace]
 members = ["core", "api", "worker"]
 
+# torch for notinspec[nli]; explicit, so only packages pinned to it come from here
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
 [dependency-groups]
 dev = [
     "httpx2",  # FastAPI TestClient
@@ -34,6 +40,13 @@ known-first-party = ["notinspec", "notinspec_api", "notinspec_worker"]
 [tool.mypy]
 strict = true
 files = ["core/src"]
+
+# notinspec[nli] is optional and not installed in CI: treat it as untyped everywhere, so mypy
+# gives the same result with and without the extra
+[[tool.mypy.overrides]]
+module = ["torch", "torch.*", "transformers", "transformers.*", "huggingface_hub", "huggingface_hub.*"]
+follow_imports = "skip"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["core/tests", "api/tests", "worker/tests"]

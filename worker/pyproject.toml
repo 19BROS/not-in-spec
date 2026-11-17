@@ -7,6 +7,10 @@ dependencies = [
     "apscheduler>=3.10,<4",
 ]
 
+[project.optional-dependencies]
+# the worker image installs it (worker/Dockerfile); `uv sync --all-packages` in CI does not
+nli = ["notinspec[nli]"]
+
 [project.scripts]
 notinspec-worker = "notinspec_worker.main:main"
 
