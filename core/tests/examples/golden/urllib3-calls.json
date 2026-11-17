@@ -1,0 +1,927 @@
+[
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (num_pools=50)"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "id": "956a49ef830b1e6a",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (maxsize→connection_pool_kw=10)",
+      "#1 L5 urllib3.HTTPConnectionPool [exact] (host=\"google.com\", maxsize=10)"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "id": "c319c8f6d9232152",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.PoolManager [name] (block→connection_pool_kw=true, maxsize→connection_pool_kw=10)",
+      "#1 L4 urllib3.HTTPConnectionPool [name] (host=\"google.com\", maxsize=10, block=true)"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Customizing Pool Behavior",
+    "id": "7efbe95b6acf2bde",
+    "position": 2,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#1 L9 urllib3.response.BaseHTTPResponse.stream [variable] (amt=32)",
+      "#3 L13 urllib3.response.BaseHTTPResponse.release_conn [variable] ()"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Streaming and I/O",
+    "id": "41c73dff97a70beb",
+    "position": 0,
+    "unresolved": [
+      "#2 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#1 L9 urllib3.response.BaseHTTPResponse.read [variable] (amt=4)"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Streaming and I/O",
+    "id": "64516ad718757428",
+    "position": 1,
+    "unresolved": [
+      "#2 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/bytes/1024\", preload_content=false)",
+      "#4 L14 urllib3.response.BaseHTTPResponse.release_conn [variable] ()"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Streaming and I/O",
+    "id": "162085b30c5c6a24",
+    "position": 2,
+    "unresolved": [
+      "#1 L10 io.BufferedReader: not-in-inventory io.BufferedReader",
+      "#2 L11 reader.read: unknown-type",
+      "#3 L11 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#1 L7 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/ip\", preload_content=false)",
+      "#5 L16 urllib3.response.BaseHTTPResponse.release_conn [variable] ()"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Streaming and I/O",
+    "id": "8766d0e462d6c370",
+    "position": 3,
+    "unresolved": [
+      "#0 L5 codecs.getreader: not-in-inventory codecs.getreader",
+      "#2 L13 reader: unknown-type",
+      "#3 L13 json.load: not-in-inventory json.load",
+      "#4 L13 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [
+      "urllib3.ProxyManager.request method ()"
+    ],
+    "calls": [
+      "#0 L3 urllib3.ProxyManager [exact] (proxy_url=\"https://localhost:3128/\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Proxies",
+    "id": "c0af946af33f6011",
+    "position": 0,
+    "unresolved": [
+      "#1 L4 proxy.request: not-in-inventory urllib3.ProxyManager.request"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L2 urllib3.ProxyManager [name] (proxy_url=\"http://...\")",
+      "#1 L5 urllib3.ProxyManager [name] (proxy_url=\"https://...\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Proxies > Your proxy appears to only use HTTP and not HTTPS",
+    "id": "0e6537348b399846",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [
+      "urllib3.contrib.socks.SOCKSProxyManager.request method ()"
+    ],
+    "calls": [
+      "#0 L3 urllib3.contrib.socks.SOCKSProxyManager [exact] (proxy_url=\"socks5h://localhost:8889/\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Proxies > SOCKS Proxies",
+    "id": "3c1c42c0868d193a",
+    "position": 1,
+    "unresolved": [
+      "#1 L4 proxy.request: not-in-inventory urllib3.contrib.socks.SOCKSProxyManager.request"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (ca_certs→connection_pool_kw=\"/path/to/your/certificate_bundle\", cert_reqs→connection_pool_kw=\"CERT_REQUIRED\")",
+      "#1 L7 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://example.com\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Custom TLS Certificates",
+    "id": "5b769eb90b03cff5",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [
+      "urllib3.HTTPSConnectionPool.request method (assert_same_host, headers)"
+    ],
+    "calls": [
+      "#0 L3 urllib3.HTTPSConnectionPool [exact] (host=\"104.154.89.105\", server_hostname→conn_kw=\"badssl.com\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Custom SNI Hostname",
+    "id": "0d04efa2e52ff556",
+    "position": 0,
+    "unresolved": [
+      "#1 L7 pool.request: not-in-inventory urllib3.HTTPSConnectionPool.request"
+    ]
+  },
+  {
+    "additions": [
+      "urllib3.HTTPSConnectionPool.request method ()"
+    ],
+    "calls": [
+      "#0 L3 urllib3.HTTPSConnectionPool [exact] (host=\"wrong.host.badssl.com\", assert_hostname=\"badssl.com\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Verifying TLS against a different host",
+    "id": "dbcceb302c17d17a",
+    "position": 0,
+    "unresolved": [
+      "#1 L7 pool.request: not-in-inventory urllib3.HTTPSConnectionPool.request"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.PoolManager [name] (ca_certs→connection_pool_kw=\"/path/to/your/certificate_bundle\", cert_file→connection_pool_kw=\"/path/to/your/client_cert.pem\", cert_reqs→connection_pool_kw=\"CERT_REQUIRED\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Client Certificates",
+    "id": "e7e76cb0edf3ce1d",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.PoolManager [name] (cert_file→connection_pool_kw=\"/path/to/your/client_cert.pem\", cert_reqs→connection_pool_kw=\"CERT_REQUIRED\", key_file→connection_pool_kw=\"/path/to/your/client.key\", key_password→connection_pool_kw=\"keyfile_password\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Client Certificates",
+    "id": "697854fa97452a72",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.exceptions.SSLError [name] () ? 1 ? \"[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1124)\""
+    ],
+    "chunk": "urllib3 > Advanced Usage > TLS minimum and maximum versions",
+    "id": "34e4993174537413",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.PoolManager [exact] (ssl_minimum_version→connection_pool_kw=<ssl.TLSVersion.TLSv1>)",
+      "#1 L8 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://tls-v1-0.badssl.com:1010\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > TLS minimum and maximum versions",
+    "id": "0e2abf8e0afbf1a9",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.disable_warnings [exact] ()"
+    ],
+    "chunk": "urllib3 > Advanced Usage > TLS Warnings",
+    "id": "1d1b15ad694eb72c",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > Advanced Usage > TLS Warnings",
+    "id": "6278ee1b09ec3dbd",
+    "position": 1,
+    "unresolved": [
+      "#0 L1 logging.captureWarnings: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://www.google.com/\", headers={\"Accept-Encoding\":\"br\"})"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Brotli Encoding",
+    "id": "fa14bed9967ba116",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://www.facebook.com/\", headers={\"Accept-Encoding\":\"zstd\"})"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Zstandard Encoding",
+    "id": "1704d33aa1ae83fb",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [
+      "urllib3.util.SSLContext.load_default_certs method ()"
+    ],
+    "calls": [
+      "#0 L6 urllib3.util.create_urllib3_context [exact] ()",
+      "#2 L10 urllib3.PoolManager [exact] (ssl_context→connection_pool_kw=#0)",
+      "#3 L11 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://www.google.com/\")"
+    ],
+    "chunk": "urllib3 > Advanced Usage > Custom SSL Contexts",
+    "id": "b5e857a3eb792e22",
+    "position": 0,
+    "unresolved": [
+      "#1 L7 ctx.load_default_certs: not-in-inventory urllib3.util.SSLContext.load_default_certs"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L2 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/robots.txt\")"
+    ],
+    "chunk": "urllib3 > urllib3",
+    "id": "e4143a48ec5fb223",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L2 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/anything\")",
+      "#3 L6 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > Pyodide, Emscripten, and PyScript > Getting started",
+    "id": "98f32bb683c1ce55",
+    "position": 0,
+    "unresolved": [
+      "#1 L4 print: not-in-inventory",
+      "#2 L5 print: not-in-inventory",
+      "#4 L6 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > Pyodide, Emscripten, and PyScript > Getting started",
+    "id": "9fb36b191d74f8b1",
+    "position": 1,
+    "unresolved": [
+      "#0 L2 requests.request: not-in-inventory requests.request",
+      "#1 L4 print: not-in-inventory",
+      "#2 L5 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.contrib.pyopenssl.inject_into_urllib3 [exact] ()"
+    ],
+    "chunk": "urllib3 > PyOpenSSL",
+    "id": "9dea20dbb1a5a538",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [
+      "urllib3.HTTPConnectionPool.request method ()"
+    ],
+    "calls": [
+      "#0 L1 urllib3.connectionpool.connection_from_url [name] (url=\"http://google.com/\")"
+    ],
+    "chunk": "urllib3 > Connection Pools > connection_from_url()",
+    "id": "e4cc0ecfdd57f433",
+    "position": 0,
+    "unresolved": [
+      "#1 L2 conn.request: not-in-inventory urllib3.HTTPConnectionPool.request"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (num_pools=2)",
+      "#1 L5 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://google.com/\")",
+      "#2 L6 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://google.com/mail\")",
+      "#3 L7 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://yahoo.com/\")"
+    ],
+    "chunk": "urllib3 > Pool Manager > PoolManager",
+    "id": "a1e70195109b4cf0",
+    "position": 0,
+    "unresolved": [
+      "#4 L9 len: not-in-inventory",
+      "#5 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > Pool Manager > PoolManager > request_encode_body()",
+    "id": "6d325c48e8ed7dad",
+    "position": 0,
+    "unresolved": [
+      "#0 L4 open: not-in-inventory",
+      "#1 L4 open('realfile').read: unknown-type",
+      "#2 L5 open: not-in-inventory",
+      "#3 L5 open('bazfile').read: unknown-type"
+    ]
+  },
+  {
+    "additions": [
+      "urllib3.ProxyManager.request method ()"
+    ],
+    "calls": [
+      "#0 L3 urllib3.ProxyManager [exact] (proxy_url=\"https://localhost:3128/\")"
+    ],
+    "chunk": "urllib3 > Pool Manager > ProxyManager",
+    "id": "077b75a27c4fda7b",
+    "position": 0,
+    "unresolved": [
+      "#1 L5 proxy.request: not-in-inventory urllib3.ProxyManager.request",
+      "#2 L6 proxy.request: not-in-inventory urllib3.ProxyManager.request",
+      "#3 L9 len: not-in-inventory",
+      "#4 L9 print: not-in-inventory",
+      "#5 L12 proxy.request: not-in-inventory urllib3.ProxyManager.request",
+      "#6 L13 proxy.request: not-in-inventory urllib3.ProxyManager.request",
+      "#7 L16 len: not-in-inventory",
+      "#8 L16 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.util.Retry [name] (connect=5, read=2, redirect=5)",
+      "#1 L2 urllib3.PoolManager [name] (retries→connection_pool_kw=#0)",
+      "#2 L3 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://example.com/\")"
+    ],
+    "chunk": "urllib3 > Utilities > Retry",
+    "id": "a0eddda878663e8e",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.util.Retry [name] (total=10)"
+    ],
+    "chunk": "urllib3 > Utilities > Retry",
+    "id": "260d1539ecd02fe9",
+    "position": 1,
+    "unresolved": [
+      "#1 L1 http.request: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > Utilities > Retry",
+    "id": "831b5b749146780f",
+    "position": 2,
+    "unresolved": [
+      "#0 L1 http.request: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.util.Timeout [exact] (connect=2.0, read=7.0)",
+      "#1 L5 urllib3.PoolManager [exact] (timeout→connection_pool_kw=#0)",
+      "#2 L7 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://example.com/\")"
+    ],
+    "chunk": "urllib3 > Utilities > Timeout",
+    "id": "92c517c84073c0d2",
+    "position": 0,
+    "unresolved": [
+      "#3 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.util.Timeout [name] (total=10)"
+    ],
+    "chunk": "urllib3 > Utilities > Timeout",
+    "id": "8115f6685fbb6725",
+    "position": 1,
+    "unresolved": [
+      "#1 L1 http.request: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.util.Timeout [name] (connect=null, read=null)"
+    ],
+    "chunk": "urllib3 > Utilities > Timeout",
+    "id": "028162654bdb0bd7",
+    "position": 2,
+    "unresolved": [
+      "#1 L2 http.request: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.util.parse_url [exact] (url=\"https://google.com/mail/\")",
+      "#2 L8 urllib3.util.Url [exact] (scheme=\"https\", auth=\"username:password\", host=\"host.com\", port=80, path=\"/path\", query=\"query\", fragment=\"fragment\")"
+    ],
+    "chunk": "urllib3 > Utilities > Url > url",
+    "id": "4368295367b66ea3",
+    "position": 0,
+    "unresolved": [
+      "#1 L5 print: not-in-inventory",
+      "#3 L8 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.util.make_headers [exact] (keep_alive=true, user_agent=\"Batman/1.0\")",
+      "#2 L5 urllib3.util.make_headers [exact] (accept_encoding=true)"
+    ],
+    "chunk": "urllib3 > Utilities > make_headers()",
+    "id": "3faeca162ab4abb6",
+    "position": 0,
+    "unresolved": [
+      "#1 L3 print: not-in-inventory",
+      "#3 L5 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.util.parse_url [exact] (url=\"http://google.com/mail/\")",
+      "#2 L6 urllib3.util.parse_url [exact] (url=\"google.com:80\")",
+      "#4 L9 urllib3.util.parse_url [exact] (url=\"/foo?bar\")"
+    ],
+    "chunk": "urllib3 > Utilities > parse_url()",
+    "id": "09a807d13a4ecc00",
+    "position": 0,
+    "unresolved": [
+      "#1 L3 print: not-in-inventory",
+      "#3 L6 print: not-in-inventory",
+      "#5 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.PoolManager [name] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Making Requests",
+    "id": "da039f944550d135",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.PoolManager [exact] ()",
+      "#1 L7 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://httpbin.org/robots.txt\")"
+    ],
+    "chunk": "urllib3 > User Guide > Making Requests",
+    "id": "8277d842dd3c1e57",
+    "position": 2,
+    "unresolved": [
+      "#2 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] ()",
+      "#1 L4 urllib3.PoolManager.request [variable] (method=\"POST\", url=\"https://httpbin.org/post\", fields={\"hello\":\"world\"})"
+    ],
+    "chunk": "urllib3 > User Guide > Making Requests",
+    "id": "0875ed8dc1da278b",
+    "position": 3,
+    "unresolved": [
+      "#2 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/ip\")"
+    ],
+    "chunk": "urllib3 > User Guide > Response Content",
+    "id": "6061ec57674df704",
+    "position": 0,
+    "unresolved": [
+      "#1 L6 print: not-in-inventory",
+      "#2 L8 print: not-in-inventory",
+      "#3 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/ip\")",
+      "#1 L5 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Response Content > JSON Content",
+    "id": "df1745de7c4c26cd",
+    "position": 0,
+    "unresolved": [
+      "#2 L5 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#1 L5 urllib3.request [exact] (method=\"POST\", url=\"http://httpbin.org/post\", body=#0)"
+    ],
+    "chunk": "urllib3 > User Guide > Response Content > JSON Content",
+    "id": "7e61d8295a65980f",
+    "position": 1,
+    "unresolved": [
+      "#0 L4 orjson.dumps: not-in-inventory orjson.dumps",
+      "#2 L7 orjson.loads: not-in-inventory orjson.loads",
+      "#3 L7 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/bytes/8\")"
+    ],
+    "chunk": "urllib3 > User Guide > Response Content > Binary Content",
+    "id": "c7a799ccd34006e7",
+    "position": 0,
+    "unresolved": [
+      "#1 L5 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.request [exact] (method=\"GET\", url=\"https://example.com\", preload_content=false)"
+    ],
+    "chunk": "urllib3 > User Guide > Response Content > Using io Wrappers with Response Content",
+    "id": "09f0c252c01f07f0",
+    "position": 0,
+    "unresolved": [
+      "#1 L7 io.TextIOWrapper: not-in-inventory io.TextIOWrapper",
+      "#2 L8 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/headers\", headers={\"X-Something\":\"value\"})",
+      "#1 L11 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Headers",
+    "id": "bd9de08b5e18156e",
+    "position": 0,
+    "unresolved": [
+      "#2 L11 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [
+      "urllib3.HTTPHeaderDict class ()"
+    ],
+    "calls": [
+      "#3 L9 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/headers\", headers=#0)",
+      "#4 L15 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Headers",
+    "id": "8d29a55e8a55c515",
+    "position": 1,
+    "unresolved": [
+      "#0 L4 urllib3.HTTPHeaderDict: not-in-inventory urllib3.HTTPHeaderDict",
+      "#1 L5 headers.add: unknown-type",
+      "#2 L6 headers.add: unknown-type",
+      "#5 L15 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/cookies\", headers={\"Cookie\":\"session=f3efe9db; id=30\"})",
+      "#1 L11 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Cookies",
+    "id": "39e36072f533d041",
+    "position": 0,
+    "unresolved": [
+      "#2 L11 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/cookies/set/session/f3efe9db\", redirect=false)"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Cookies",
+    "id": "6b22f8d3b60f1510",
+    "position": 1,
+    "unresolved": [
+      "#1 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/get\", fields={\"arg\":\"value\"})",
+      "#1 L9 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Query Parameters",
+    "id": "5b9624ade1311032",
+    "position": 0,
+    "unresolved": [
+      "#2 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#1 L9 urllib3.request [exact] (method=\"POST\", url=`url`)",
+      "#2 L11 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Query Parameters",
+    "id": "b799d64084add276",
+    "position": 1,
+    "unresolved": [
+      "#0 L5 urlencode: not-in-inventory urllib.parse.urlencode",
+      "#3 L11 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"POST\", url=\"https://httpbin.org/post\", fields={\"field\":\"value\"})",
+      "#1 L9 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Form Data",
+    "id": "eafef9ce291804d2",
+    "position": 0,
+    "unresolved": [
+      "#2 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"POST\", url=\"https://httpbin.org/post\", headers={\"Content-Type\":\"application/json\"}, json={\"attribute\":\"value\"})",
+      "#1 L10 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > JSON",
+    "id": "221b4a1c1d50e468",
+    "position": 0,
+    "unresolved": [
+      "#2 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#2 L8 urllib3.request [exact] (method=\"POST\", url=\"https://httpbin.org/post\", fields=`{'filefield': ('example.txt', file_data)}`)",
+      "#3 L16 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "id": "58d5cfae4dd2bd43",
+    "position": 0,
+    "unresolved": [
+      "#0 L4 open: not-in-inventory",
+      "#1 L5 fp.read: unknown-type",
+      "#4 L16 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.request [name] (method=\"POST\", url=\"https://httpbin.org/post\", fields=`{'filefield': ('example.txt', file_data, 'text/plain')}`)"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "id": "f6a468f6a7b2232d",
+    "position": 1,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#2 L6 urllib3.request [exact] (method=\"POST\", url=\"https://httpbin.org/post\", body=#1, headers={\"Content-Type\":\"image/jpeg\"})",
+      "#3 L13 urllib3.response.BaseHTTPResponse.json [variable] ()"
+    ],
+    "chunk": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "id": "d37c379e530071f1",
+    "position": 2,
+    "unresolved": [
+      "#0 L3 open: not-in-inventory",
+      "#1 L4 fp.read: unknown-type",
+      "#4 L13 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#1 L4 urllib3.PoolManager [exact] (ca_certs→connection_pool_kw=#0, cert_reqs→connection_pool_kw=\"CERT_REQUIRED\")"
+    ],
+    "chunk": "urllib3 > User Guide > Certificate Verification",
+    "id": "2d6da2bdff102105",
+    "position": 1,
+    "unresolved": [
+      "#0 L6 certifi.where: not-in-inventory certifi.where"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#1 L4 urllib3.PoolManager [exact] (ca_certs→connection_pool_kw=#0, cert_reqs→connection_pool_kw=\"CERT_REQUIRED\")",
+      "#2 L9 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://httpbin.org/\")",
+      "#3 L12 urllib3.PoolManager.request [variable] (method=\"GET\", url=\"https://expired.badssl.com\")"
+    ],
+    "chunk": "urllib3 > User Guide > Certificate Verification",
+    "id": "769fbd5ed63acba5",
+    "position": 2,
+    "unresolved": [
+      "#0 L6 certifi.where: not-in-inventory certifi.where"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/delay/3\", timeout=4.0)",
+      "#3 L13 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/delay/3\", timeout=2.5)"
+    ],
+    "chunk": "urllib3 > User Guide > Using Timeouts",
+    "id": "4dac62ee787b7564",
+    "position": 0,
+    "unresolved": [
+      "#1 L9 type: not-in-inventory",
+      "#2 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L6 urllib3.util.Timeout [alias] (connect=1.0)",
+      "#1 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/delay/3\", timeout=#0)",
+      "#4 L15 urllib3.util.Timeout [alias] (connect=1.0, read=2.0)",
+      "#5 L12 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/delay/3\", timeout=#4)"
+    ],
+    "chunk": "urllib3 > User Guide > Using Timeouts",
+    "id": "43be52a2e4959ae0",
+    "position": 1,
+    "unresolved": [
+      "#2 L9 type: not-in-inventory",
+      "#3 L9 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (timeout→connection_pool_kw=3.0)",
+      "#1 L6 urllib3.util.Timeout [alias] (connect=1.0, read=2.0)",
+      "#2 L5 urllib3.PoolManager [exact] (timeout→connection_pool_kw=#1)"
+    ],
+    "chunk": "urllib3 > User Guide > Using Timeouts",
+    "id": "a9f0534984e09b08",
+    "position": 2,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/ip\", retries=10)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "5909759f3ca9eff2",
+    "position": 0,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.request [exact] (method=\"GET\", url=\"https://nxdomain.example.com\", retries=false)",
+      "#1 L10 urllib3.request [exact] (method=\"GET\", url=\"https://httpbin.org/redirect/1\", retries=false)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "dc7569ff71ca2ee1",
+    "position": 1,
+    "unresolved": [
+      "#2 L16 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L1 urllib3.request [name] (method=\"GET\", url=\"https://httpbin.org/redirect/1\", redirect=false)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "7dadae97c11e4da8",
+    "position": 2,
+    "unresolved": [
+      "#1 L7 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.util.Retry [name] (total=3, redirect=2)",
+      "#1 L1 urllib3.request [name] (method=\"GET\", url=\"https://httpbin.org/redirect/3\", retries=#0)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "e7d6186dc215fb48",
+    "position": 3,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.util.Retry [name] (redirect=2, raise_on_redirect=false)",
+      "#1 L1 urllib3.request [name] (method=\"GET\", url=\"https://httpbin.org/redirect/3\", retries=#0)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "06fe697d7ee3ff67",
+    "position": 4,
+    "unresolved": [
+      "#2 L10 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L3 urllib3.PoolManager [exact] (retries→connection_pool_kw=false)",
+      "#1 L6 urllib3.util.Retry [alias] (total=5, redirect=2)",
+      "#2 L5 urllib3.PoolManager [exact] (retries→connection_pool_kw=#1)"
+    ],
+    "chunk": "urllib3 > User Guide > Retrying Requests",
+    "id": "a94cd3152b247c49",
+    "position": 5,
+    "unresolved": []
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L4 urllib3.request [exact] (method=\"GET\", url=\"https://nx.example.com\", retries=false)"
+    ],
+    "chunk": "urllib3 > User Guide > Errors & Exceptions",
+    "id": "cd9be58cadbf9a80",
+    "position": 0,
+    "unresolved": [
+      "#1 L7 print: not-in-inventory"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > User Guide > Logging",
+    "id": "648d2636bb514cae",
+    "position": 0,
+    "unresolved": [
+      "#0 L1 logging.getLogger: unknown-type",
+      "#1 L1 logging.getLogger('urllib3').setLevel: unknown-type"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [],
+    "chunk": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "id": "671a06993c11cbcf",
+    "position": 3,
+    "unresolved": [
+      "#0 L4 warnings.filterwarnings: not-in-inventory warnings.filterwarnings"
+    ]
+  },
+  {
+    "additions": [],
+    "calls": [
+      "#0 L2 urllib3.request [exact] (method=\"GET\", url=\"https://example.com\")"
+    ],
+    "chunk": "urllib3 > v2 Migration Guide > 💪 User-friendly features > urllib3.request()",
+    "id": "bc652ad5acd66eb1",
+    "position": 0,
+    "unresolved": []
+  }
+]

@@ -33,7 +33,7 @@ part of them, so renaming the project keeps every ID:
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 
-from notinspec.adapters.canonical import content_hash
+from notinspec.adapters.canonical import short_id
 from notinspec.chunking.blocks import Block, ParsedBlock, parse_blocks
 from notinspec.chunking.documents import Document, normalize_text
 from notinspec.chunking.tokens import approx_tokens
@@ -242,9 +242,9 @@ def _chunk(
     tokens = _tokens(part)
     section = [source, list(path), occurrence]
     return Chunk(
-        id=_hash([*section, number]),
-        section_id=_hash(section),
-        content_hash=_hash(text),
+        id=short_id([*section, number]),
+        section_id=short_id(section),
+        content_hash=short_id(text),
         source=source,
         heading_path=path,
         breadcrumb=BREADCRUMB_SEPARATOR.join((project, *path)),
@@ -259,7 +259,3 @@ def _chunk(
         text=text,
         blocks=tuple(b for p in part for b in (p.block, *p.nested)),
     )
-
-
-def _hash(obj: object) -> str:
-    return content_hash(obj)[:16]

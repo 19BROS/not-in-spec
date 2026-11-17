@@ -1,0 +1,797 @@
+# urllib3 inventory for the component C tests: every py `desc` node of
+# core/examples/sphinx/urllib3/xml (path, Sphinx object type, signature parameters as written,
+# "Return type" field). Generated once from the XML; test data only, until component B builds
+# the inventory from `desc` nodes. Parameter syntax: `name`, `name=default`, `*args`,
+# `**kwargs`, and the markers `*` (keyword-only follows) and `/` (positional-only before).
+urllib3.HTTPConnectionPool:
+  kind: class
+  params: ["host", "port=None", "timeout=_TYPE_DEFAULT.token", "maxsize=1", "block=False", "headers=None", "retries=None", "_proxy=None", "_proxy_headers=None", "_proxy_config=None", "**conn_kw"]
+urllib3.HTTPConnectionPool.ConnectionCls:
+  kind: attribute
+urllib3.HTTPConnectionPool.close:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.HTTPConnectionPool.is_same_host:
+  kind: method
+  params: ["url"]
+  returns: "bool"
+urllib3.HTTPConnectionPool.scheme:
+  kind: attribute
+urllib3.HTTPConnectionPool.urlopen:
+  kind: method
+  params: ["method", "url", "body=None", "headers=None", "retries=None", "redirect=True", "assert_same_host=True", "timeout=_TYPE_DEFAULT.token", "pool_timeout=None", "release_conn=None", "chunked=False", "body_pos=None", "preload_content=True", "decode_content=True", "**response_kw"]
+  returns: "BaseHTTPResponse"
+urllib3.HTTPSConnectionPool:
+  kind: class
+  params: ["host", "port=None", "timeout=_TYPE_DEFAULT.token", "maxsize=1", "block=False", "headers=None", "retries=None", "_proxy=None", "_proxy_headers=None", "key_file=None", "cert_file=None", "cert_reqs=None", "key_password=None", "ca_certs=None", "ssl_version=None", "ssl_minimum_version=None", "ssl_maximum_version=None", "assert_hostname=None", "assert_fingerprint=None", "ca_cert_dir=None", "**conn_kw"]
+urllib3.HTTPSConnectionPool.ConnectionCls:
+  kind: attribute
+urllib3.HTTPSConnectionPool.scheme:
+  kind: attribute
+urllib3.PoolManager:
+  kind: class
+  params: ["num_pools=10", "headers=None", "**connection_pool_kw"]
+urllib3.PoolManager.clear:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.PoolManager.connection_from_context:
+  kind: method
+  params: ["request_context"]
+  returns: "HTTPConnectionPool"
+urllib3.PoolManager.connection_from_host:
+  kind: method
+  params: ["host", "port=None", "scheme='http'", "pool_kwargs=None"]
+  returns: "HTTPConnectionPool"
+urllib3.PoolManager.connection_from_pool_key:
+  kind: method
+  params: ["pool_key", "request_context"]
+  returns: "HTTPConnectionPool"
+urllib3.PoolManager.connection_from_url:
+  kind: method
+  params: ["url", "pool_kwargs=None"]
+  returns: "HTTPConnectionPool"
+urllib3.PoolManager.pools:
+  kind: attribute
+urllib3.PoolManager.proxy:
+  kind: attribute
+urllib3.PoolManager.proxy_config:
+  kind: attribute
+urllib3.PoolManager.request:
+  kind: method
+  params: ["method", "url", "body=None", "fields=None", "headers=None", "json=None", "**urlopen_kw"]
+  returns: "BaseHTTPResponse"
+urllib3.PoolManager.request_encode_body:
+  kind: method
+  params: ["method", "url", "fields=None", "headers=None", "encode_multipart=True", "multipart_boundary=None", "**urlopen_kw"]
+  returns: "BaseHTTPResponse"
+urllib3.PoolManager.request_encode_url:
+  kind: method
+  params: ["method", "url", "fields=None", "headers=None", "**urlopen_kw"]
+  returns: "BaseHTTPResponse"
+urllib3.PoolManager.urlopen:
+  kind: method
+  params: ["method", "url", "redirect=True", "**kw"]
+  returns: "BaseHTTPResponse"
+urllib3.ProxyManager:
+  kind: class
+  params: ["proxy_url", "num_pools=10", "headers=None", "proxy_headers=None", "proxy_ssl_context=None", "use_forwarding_for_https=False", "proxy_assert_hostname=None", "proxy_assert_fingerprint=None", "**connection_pool_kw"]
+urllib3.ProxyManager.connection_from_host:
+  kind: method
+  params: ["host", "port=None", "scheme='http'", "pool_kwargs=None"]
+  returns: "HTTPConnectionPool"
+urllib3.ProxyManager.urlopen:
+  kind: method
+  params: ["method", "url", "redirect=True", "**kw"]
+  returns: "BaseHTTPResponse"
+urllib3.connection.HTTPConnection:
+  kind: class
+  params: ["host", "port=None", "*", "timeout=_TYPE_DEFAULT.token", "source_address=None", "blocksize=16384", "socket_options=[(6, 1, 1)]", "proxy=None", "proxy_config=None"]
+urllib3.connection.HTTPConnection.close:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.connection.HTTPConnection.connect:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.connection.HTTPConnection.default_socket_options:
+  kind: attribute
+urllib3.connection.HTTPConnection.getresponse:
+  kind: method
+  params: []
+  returns: "HTTPResponse"
+urllib3.connection.HTTPConnection.host:
+  kind: property
+urllib3.connection.HTTPConnection.is_verified:
+  kind: attribute
+urllib3.connection.HTTPConnection.proxy_is_forwarding:
+  kind: property
+urllib3.connection.HTTPConnection.proxy_is_tunneling:
+  kind: property
+urllib3.connection.HTTPConnection.request:
+  kind: method
+  params: ["method", "url", "body=None", "headers=None", "*", "chunked=False", "preload_content=True", "decode_content=True", "enforce_content_length=True"]
+  returns: "None"
+urllib3.connection.HTTPConnection.request_chunked:
+  kind: method
+  params: ["method", "url", "body=None", "headers=None"]
+  returns: "None"
+urllib3.connection.HTTPConnection.set_tunnel:
+  kind: method
+  params: ["host", "port=None", "headers=None", "scheme='http'"]
+  returns: "None"
+urllib3.connection.HTTPSConnection:
+  kind: class
+  params: ["host", "port=None", "*", "timeout=_TYPE_DEFAULT.token", "source_address=None", "blocksize=16384", "socket_options=[(6, 1, 1)]", "proxy=None", "proxy_config=None", "cert_reqs=None", "assert_hostname=None", "assert_fingerprint=None", "server_hostname=None", "ssl_context=None", "ca_certs=None", "ca_cert_dir=None", "ca_cert_data=None", "ssl_minimum_version=None", "ssl_maximum_version=None", "ssl_version=None", "cert_file=None", "key_file=None", "key_password=None"]
+urllib3.connection.HTTPSConnection.connect:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.connection.HTTPSConnection.set_cert:
+  kind: method
+  params: ["key_file=None", "cert_file=None", "cert_reqs=None", "key_password=None", "ca_certs=None", "assert_hostname=None", "assert_fingerprint=None", "ca_cert_dir=None", "ca_cert_data=None"]
+  returns: "None"
+urllib3.connection.ProxyConfig:
+  kind: class
+  params: ["ssl_context", "use_forwarding_for_https", "assert_hostname", "assert_fingerprint"]
+urllib3.connection.ProxyConfig.assert_fingerprint:
+  kind: attribute
+urllib3.connection.ProxyConfig.assert_hostname:
+  kind: attribute
+urllib3.connection.ProxyConfig.ssl_context:
+  kind: attribute
+urllib3.connection.ProxyConfig.use_forwarding_for_https:
+  kind: attribute
+urllib3.connectionpool.ConnectionPool:
+  kind: class
+  params: ["host", "port=None"]
+urllib3.connectionpool.ConnectionPool.QueueCls:
+  kind: attribute
+urllib3.connectionpool.ConnectionPool.close:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.connectionpool.ConnectionPool.scheme:
+  kind: attribute
+urllib3.connectionpool.connection_from_url:
+  kind: function
+  params: ["url", "**kw"]
+  returns: "HTTPConnectionPool"
+urllib3.contrib.pyopenssl.extract_from_urllib3:
+  kind: function
+  params: []
+  returns: "None"
+urllib3.contrib.pyopenssl.inject_into_urllib3:
+  kind: function
+  params: []
+  returns: "None"
+urllib3.contrib.socks.SOCKSConnection:
+  kind: class
+  params: ["_socks_options", "*args", "**kwargs"]
+urllib3.contrib.socks.SOCKSHTTPConnectionPool:
+  kind: class
+  params: ["host", "port=None", "timeout=_TYPE_DEFAULT.token", "maxsize=1", "block=False", "headers=None", "retries=None", "_proxy=None", "_proxy_headers=None", "_proxy_config=None", "**conn_kw"]
+urllib3.contrib.socks.SOCKSHTTPConnectionPool.ConnectionCls:
+  kind: attribute
+urllib3.contrib.socks.SOCKSHTTPSConnection:
+  kind: class
+  params: ["_socks_options", "*args", "**kwargs"]
+urllib3.contrib.socks.SOCKSHTTPSConnectionPool:
+  kind: class
+  params: ["host", "port=None", "timeout=_TYPE_DEFAULT.token", "maxsize=1", "block=False", "headers=None", "retries=None", "_proxy=None", "_proxy_headers=None", "key_file=None", "cert_file=None", "cert_reqs=None", "key_password=None", "ca_certs=None", "ssl_version=None", "ssl_minimum_version=None", "ssl_maximum_version=None", "assert_hostname=None", "assert_fingerprint=None", "ca_cert_dir=None", "**conn_kw"]
+urllib3.contrib.socks.SOCKSHTTPSConnectionPool.ConnectionCls:
+  kind: attribute
+urllib3.contrib.socks.SOCKSProxyManager:
+  kind: class
+  params: ["proxy_url", "username=None", "password=None", "num_pools=10", "headers=None", "**connection_pool_kw"]
+urllib3.contrib.socks.SOCKSProxyManager.pool_classes_by_scheme:
+  kind: attribute
+urllib3.disable_warnings:
+  kind: function
+  params: ["category=<class 'urllib3.exceptions.HTTPWarning'>"]
+  returns: "None"
+urllib3.encode_multipart_formdata:
+  kind: function
+  params: ["fields", "boundary=None"]
+  returns: "tuple[bytes, str]"
+urllib3.exceptions.BodyNotHttplibCompatible:
+  kind: exception
+urllib3.exceptions.ClosedPoolError:
+  kind: exception
+  params: ["pool", "message"]
+  returns: "None"
+urllib3.exceptions.ConnectTimeoutError:
+  kind: exception
+urllib3.exceptions.ConnectionError:
+  kind: attribute
+urllib3.exceptions.DecodeError:
+  kind: exception
+urllib3.exceptions.DependencyWarning:
+  kind: exception
+urllib3.exceptions.EmptyPoolError:
+  kind: exception
+  params: ["pool", "message"]
+  returns: "None"
+urllib3.exceptions.FullPoolError:
+  kind: exception
+  params: ["pool", "message"]
+  returns: "None"
+urllib3.exceptions.HTTPError:
+  kind: exception
+urllib3.exceptions.HTTPWarning:
+  kind: exception
+urllib3.exceptions.HeaderParsingError:
+  kind: exception
+  params: ["defects", "unparsed_data"]
+  returns: "None"
+urllib3.exceptions.HostChangedError:
+  kind: exception
+  params: ["pool", "url", "retries=3"]
+  returns: "None"
+urllib3.exceptions.IncompleteRead:
+  kind: exception
+  params: ["partial", "expected"]
+  returns: "None"
+urllib3.exceptions.IncompleteRead.expected:
+  kind: attribute
+urllib3.exceptions.IncompleteRead.partial:
+  kind: attribute
+urllib3.exceptions.InsecurePlatformWarning:
+  kind: exception
+urllib3.exceptions.InsecureRequestWarning:
+  kind: exception
+urllib3.exceptions.InvalidChunkLength:
+  kind: exception
+  params: ["response", "length"]
+  returns: "None"
+urllib3.exceptions.InvalidChunkLength.expected:
+  kind: attribute
+urllib3.exceptions.InvalidChunkLength.partial:
+  kind: attribute
+urllib3.exceptions.InvalidHeader:
+  kind: exception
+urllib3.exceptions.LocationParseError:
+  kind: exception
+  params: ["location"]
+  returns: "None"
+urllib3.exceptions.LocationValueError:
+  kind: exception
+urllib3.exceptions.MaxRetryError:
+  kind: exception
+  params: ["pool", "url", "reason=None"]
+  returns: "None"
+urllib3.exceptions.NameResolutionError:
+  kind: exception
+  params: ["host", "conn", "reason"]
+urllib3.exceptions.NewConnectionError:
+  kind: exception
+  params: ["conn", "message"]
+  returns: "None"
+urllib3.exceptions.NewConnectionError.pool:
+  kind: property
+urllib3.exceptions.NotOpenSSLWarning:
+  kind: exception
+urllib3.exceptions.PoolError:
+  kind: exception
+  params: ["pool", "message"]
+  returns: "None"
+urllib3.exceptions.ProtocolError:
+  kind: exception
+urllib3.exceptions.ProxyError:
+  kind: exception
+  params: ["message", "error"]
+  returns: "None"
+urllib3.exceptions.ProxyError.original_error:
+  kind: attribute
+urllib3.exceptions.ProxySchemeUnknown:
+  kind: exception
+  params: ["scheme"]
+  returns: "None"
+urllib3.exceptions.ProxySchemeUnsupported:
+  kind: exception
+urllib3.exceptions.ReadTimeoutError:
+  kind: exception
+  params: ["pool", "url", "message"]
+  returns: "None"
+urllib3.exceptions.RequestError:
+  kind: exception
+  params: ["pool", "url", "message"]
+  returns: "None"
+urllib3.exceptions.ResponseError:
+  kind: exception
+urllib3.exceptions.ResponseError.GENERIC_ERROR:
+  kind: attribute
+urllib3.exceptions.ResponseError.SPECIFIC_ERROR:
+  kind: attribute
+urllib3.exceptions.ResponseNotChunked:
+  kind: exception
+urllib3.exceptions.SSLError:
+  kind: exception
+urllib3.exceptions.SecurityWarning:
+  kind: exception
+urllib3.exceptions.SystemTimeWarning:
+  kind: exception
+urllib3.exceptions.TimeoutError:
+  kind: exception
+urllib3.exceptions.TimeoutStateError:
+  kind: exception
+urllib3.exceptions.URLSchemeUnknown:
+  kind: exception
+  params: ["scheme"]
+urllib3.exceptions.UnrewindableBodyError:
+  kind: exception
+urllib3.fields.RequestField:
+  kind: class
+  params: ["name", "data", "filename=None", "headers=None", "header_formatter=None"]
+urllib3.fields.RequestField._render_part:
+  kind: method
+  params: ["name", "value"]
+  returns: "str"
+urllib3.fields.RequestField.from_tuples:
+  kind: method
+  params: ["fieldname", "value", "header_formatter=None"]
+  returns: "RequestField"
+urllib3.fields.RequestField.make_multipart:
+  kind: method
+  params: ["content_disposition=None", "content_type=None", "content_location=None"]
+  returns: "None"
+urllib3.fields.RequestField.render_headers:
+  kind: method
+  params: []
+  returns: "str"
+urllib3.fields.format_header_param:
+  kind: function
+  params: ["name", "value"]
+  returns: "str"
+urllib3.fields.format_header_param_html5:
+  kind: function
+  params: ["name", "value"]
+  returns: "str"
+urllib3.fields.format_header_param_rfc2231:
+  kind: function
+  params: ["name", "value"]
+  returns: "str"
+urllib3.fields.format_multipart_header_param:
+  kind: function
+  params: ["name", "value"]
+  returns: "str"
+urllib3.fields.guess_content_type:
+  kind: function
+  params: ["filename", "default='application/octet-stream'"]
+  returns: "str"
+urllib3.filepost.choose_boundary:
+  kind: function
+  params: []
+  returns: "str"
+urllib3.filepost.iter_field_objects:
+  kind: function
+  params: ["fields"]
+  returns: "Iterable[RequestField]"
+urllib3.poolmanager.PoolKey:
+  kind: class
+  params: ["key_scheme", "key_host", "key_port", "key_timeout", "key_retries", "key_block", "key_source_address", "key_key_file", "key_key_password", "key_cert_file", "key_cert_reqs", "key_ca_certs", "key_ca_cert_data", "key_ssl_version", "key_ssl_minimum_version", "key_ssl_maximum_version", "key_ca_cert_dir", "key_ssl_context", "key_maxsize", "key_headers", "key__proxy", "key__proxy_headers", "key__proxy_config", "key_socket_options", "key__socks_options", "key_assert_hostname", "key_assert_fingerprint", "key_server_hostname", "key_blocksize"]
+urllib3.poolmanager.PoolKey.key__proxy:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key__proxy_config:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key__proxy_headers:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key__socks_options:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_assert_fingerprint:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_assert_hostname:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_block:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_blocksize:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ca_cert_data:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ca_cert_dir:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ca_certs:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_cert_file:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_cert_reqs:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_headers:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_host:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_key_file:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_key_password:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_maxsize:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_port:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_retries:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_scheme:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_server_hostname:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_socket_options:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_source_address:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ssl_context:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ssl_maximum_version:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ssl_minimum_version:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_ssl_version:
+  kind: attribute
+urllib3.poolmanager.PoolKey.key_timeout:
+  kind: attribute
+urllib3.request:
+  kind: function
+  params: ["method", "url", "*", "body=None", "fields=None", "headers=None", "preload_content=True", "decode_content=True", "redirect=True", "retries=None", "timeout=3", "json=None"]
+  returns: "BaseHTTPResponse"
+urllib3.response.BaseHTTPResponse:
+  kind: class
+  params: ["*", "headers=None", "status", "version", "version_string", "reason", "decode_content", "request_url", "retries=None"]
+urllib3.response.BaseHTTPResponse.CONTENT_DECODERS:
+  kind: attribute
+urllib3.response.BaseHTTPResponse.DECODER_ERROR_CLASSES:
+  kind: attribute
+urllib3.response.BaseHTTPResponse.REDIRECT_STATUSES:
+  kind: attribute
+urllib3.response.BaseHTTPResponse.close:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.BaseHTTPResponse.connection:
+  kind: property
+urllib3.response.BaseHTTPResponse.data:
+  kind: property
+urllib3.response.BaseHTTPResponse.drain_conn:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.BaseHTTPResponse.get_redirect_location:
+  kind: method
+  params: []
+  returns: "None | str | Literal[False]"
+urllib3.response.BaseHTTPResponse.getheader:
+  kind: method
+  params: ["name", "default=None"]
+  returns: "str | None"
+urllib3.response.BaseHTTPResponse.getheaders:
+  kind: method
+  params: []
+  returns: "HTTPHeaderDict"
+urllib3.response.BaseHTTPResponse.geturl:
+  kind: method
+  params: []
+  returns: "str | None"
+urllib3.response.BaseHTTPResponse.info:
+  kind: method
+  params: []
+  returns: "HTTPHeaderDict"
+urllib3.response.BaseHTTPResponse.json:
+  kind: method
+  params: []
+  returns: "Any"
+urllib3.response.BaseHTTPResponse.read:
+  kind: method
+  params: ["amt=None", "decode_content=None", "cache_content=False"]
+  returns: "bytes"
+urllib3.response.BaseHTTPResponse.read1:
+  kind: method
+  params: ["amt=None", "decode_content=None"]
+  returns: "bytes"
+urllib3.response.BaseHTTPResponse.read_chunked:
+  kind: method
+  params: ["amt=None", "decode_content=None"]
+  returns: "Iterator[bytes]"
+urllib3.response.BaseHTTPResponse.readinto:
+  kind: method
+  params: ["b"]
+  returns: "int"
+urllib3.response.BaseHTTPResponse.release_conn:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.BaseHTTPResponse.retries:
+  kind: property
+urllib3.response.BaseHTTPResponse.shutdown:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.BaseHTTPResponse.stream:
+  kind: method
+  params: ["amt=65536", "decode_content=None"]
+  returns: "Iterator[bytes]"
+urllib3.response.BaseHTTPResponse.url:
+  kind: property
+urllib3.response.BrotliDecoder:
+  kind: class
+urllib3.response.DeflateDecoder:
+  kind: class
+urllib3.response.GzipDecoder:
+  kind: class
+urllib3.response.HTTPResponse:
+  kind: class
+  params: ["body=''", "headers=None", "status=0", "version=0", "version_string='HTTP/?'", "reason=None", "preload_content=True", "decode_content=True", "original_response=None", "pool=None", "connection=None", "msg=None", "retries=None", "enforce_content_length=True", "request_method=None", "request_url=None", "auto_close=True", "sock_shutdown=None"]
+urllib3.response.HTTPResponse.CONTENT_DECODERS:
+  kind: attribute
+urllib3.response.HTTPResponse.DECODER_ERROR_CLASSES:
+  kind: attribute
+urllib3.response.HTTPResponse.REDIRECT_STATUSES:
+  kind: attribute
+urllib3.response.HTTPResponse.auto_close:
+  kind: attribute
+urllib3.response.HTTPResponse.chunk_left:
+  kind: attribute
+urllib3.response.HTTPResponse.close:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.HTTPResponse.closed:
+  kind: property
+urllib3.response.HTTPResponse.connection:
+  kind: property
+urllib3.response.HTTPResponse.data:
+  kind: property
+urllib3.response.HTTPResponse.drain_conn:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.HTTPResponse.fileno:
+  kind: method
+  params: []
+  returns: "int"
+urllib3.response.HTTPResponse.flush:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.HTTPResponse.get_redirect_location:
+  kind: method
+  params: []
+  returns: "None | str | Literal[False]"
+urllib3.response.HTTPResponse.getheader:
+  kind: method
+  params: ["name", "default=None"]
+  returns: "str | None"
+urllib3.response.HTTPResponse.getheaders:
+  kind: method
+  params: []
+  returns: "HTTPHeaderDict"
+urllib3.response.HTTPResponse.geturl:
+  kind: method
+  params: []
+  returns: "str | None"
+urllib3.response.HTTPResponse.headers:
+  kind: attribute
+urllib3.response.HTTPResponse.info:
+  kind: method
+  params: []
+  returns: "HTTPHeaderDict"
+urllib3.response.HTTPResponse.isatty:
+  kind: method
+  params: []
+urllib3.response.HTTPResponse.isclosed:
+  kind: method
+  params: []
+  returns: "bool"
+urllib3.response.HTTPResponse.json:
+  kind: method
+  params: []
+  returns: "Any"
+urllib3.response.HTTPResponse.length_remaining:
+  kind: attribute
+urllib3.response.HTTPResponse.read:
+  kind: method
+  params: ["amt=None", "decode_content=None", "cache_content=False"]
+  returns: "bytes"
+urllib3.response.HTTPResponse.read1:
+  kind: method
+  params: ["amt=None", "decode_content=None"]
+  returns: "bytes"
+urllib3.response.HTTPResponse.read_chunked:
+  kind: method
+  params: ["amt=None", "decode_content=None"]
+  returns: "Generator[bytes]"
+urllib3.response.HTTPResponse.readable:
+  kind: method
+  params: []
+  returns: "bool"
+urllib3.response.HTTPResponse.readinto:
+  kind: method
+  params: ["b"]
+  returns: "int"
+urllib3.response.HTTPResponse.readline:
+  kind: method
+  params: ["size=-1", "/"]
+urllib3.response.HTTPResponse.readlines:
+  kind: method
+  params: ["hint=-1", "/"]
+urllib3.response.HTTPResponse.release_conn:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.HTTPResponse.retries:
+  kind: property
+urllib3.response.HTTPResponse.seek:
+  kind: method
+  params: ["offset", "whence=0", "/"]
+urllib3.response.HTTPResponse.seekable:
+  kind: method
+  params: []
+urllib3.response.HTTPResponse.shutdown:
+  kind: method
+  params: []
+  returns: "None"
+urllib3.response.HTTPResponse.status:
+  kind: attribute
+urllib3.response.HTTPResponse.stream:
+  kind: method
+  params: ["amt=65536", "decode_content=None"]
+  returns: "Generator[bytes]"
+urllib3.response.HTTPResponse.supports_chunked_reads:
+  kind: method
+  params: []
+  returns: "bool"
+urllib3.response.HTTPResponse.tell:
+  kind: method
+  params: []
+  returns: "int"
+urllib3.response.HTTPResponse.truncate:
+  kind: method
+  params: ["size=None", "/"]
+urllib3.response.HTTPResponse.url:
+  kind: property
+urllib3.response.HTTPResponse.writable:
+  kind: method
+  params: []
+urllib3.response.HTTPResponse.writelines:
+  kind: method
+  params: ["lines", "/"]
+urllib3.response.MultiDecoder:
+  kind: class
+  params: ["modes"]
+urllib3.response.ZstdDecoder:
+  kind: class
+urllib3.util.Retry:
+  kind: class
+  params: ["total=10", "connect=None", "read=None", "redirect=None", "status=None", "other=None", "allowed_methods=frozenset({'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE'})", "status_forcelist=None", "backoff_factor=0", "backoff_max=120", "raise_on_redirect=True", "raise_on_status=True", "history=None", "respect_retry_after_header=True", "remove_headers_on_redirect=frozenset({'Authorization', 'Cookie', 'Proxy-Authorization'})", "backoff_jitter=0.0", "retry_after_max=21600"]
+urllib3.util.Retry.DEFAULT_ALLOWED_METHODS:
+  kind: attribute
+urllib3.util.Retry.DEFAULT_BACKOFF_MAX:
+  kind: attribute
+urllib3.util.Retry.DEFAULT_REMOVE_HEADERS_ON_REDIRECT:
+  kind: attribute
+urllib3.util.Retry.DEFAULT_RETRY_AFTER_MAX:
+  kind: attribute
+urllib3.util.Retry.RETRY_AFTER_STATUS_CODES:
+  kind: attribute
+urllib3.util.Retry.from_int:
+  kind: method
+  params: ["retries", "redirect=True", "default=None"]
+  returns: "Retry"
+urllib3.util.Retry.get_backoff_time:
+  kind: method
+  params: []
+  returns: "float"
+urllib3.util.Retry.get_retry_after:
+  kind: method
+  params: ["response"]
+  returns: "float | None"
+urllib3.util.Retry.increment:
+  kind: method
+  params: ["method=None", "url=None", "response=None", "error=None", "_pool=None", "_stacktrace=None"]
+  returns: "Self"
+urllib3.util.Retry.is_exhausted:
+  kind: method
+  params: []
+  returns: "bool"
+urllib3.util.Retry.is_retry:
+  kind: method
+  params: ["method", "status_code", "has_retry_after=False"]
+  returns: "bool"
+urllib3.util.Retry.sleep:
+  kind: method
+  params: ["response=None"]
+  returns: "None"
+urllib3.util.SSLContext:
+  kind: class
+  params: ["protocol=None", "*args", "**kwargs"]
+urllib3.util.SSLContext.sslobject_class:
+  kind: attribute
+urllib3.util.SSLContext.sslsocket_class:
+  kind: attribute
+urllib3.util.Timeout:
+  kind: class
+  params: ["total=None", "connect=_TYPE_DEFAULT.token", "read=_TYPE_DEFAULT.token"]
+urllib3.util.Timeout.DEFAULT_TIMEOUT:
+  kind: attribute
+urllib3.util.Timeout.clone:
+  kind: method
+  params: []
+  returns: "Timeout"
+urllib3.util.Timeout.connect_timeout:
+  kind: property
+  returns: "int, float, Timeout.DEFAULT_TIMEOUT or None"
+urllib3.util.Timeout.from_float:
+  kind: method
+  params: ["timeout"]
+  returns: "Timeout"
+urllib3.util.Timeout.get_connect_duration:
+  kind: method
+  params: []
+  returns: "float"
+urllib3.util.Timeout.read_timeout:
+  kind: property
+  returns: "int, float or None"
+urllib3.util.Timeout.start_connect:
+  kind: method
+  params: []
+  returns: "float"
+urllib3.util.Url:
+  kind: class
+  params: ["scheme=None", "auth=None", "host=None", "port=None", "path=None", "query=None", "fragment=None"]
+urllib3.util.Url.auth_decoded:
+  kind: property
+urllib3.util.Url.auth_decoded_joined:
+  kind: property
+urllib3.util.Url.authority:
+  kind: property
+urllib3.util.Url.hostname:
+  kind: property
+urllib3.util.Url.netloc:
+  kind: property
+urllib3.util.Url.request_uri:
+  kind: property
+urllib3.util.Url.url:
+  kind: property
+urllib3.util.assert_fingerprint:
+  kind: function
+  params: ["cert", "fingerprint"]
+  returns: "None"
+urllib3.util.create_urllib3_context:
+  kind: function
+  params: ["ssl_version=None", "cert_reqs=None", "options=None", "ciphers=None", "ssl_minimum_version=None", "ssl_maximum_version=None", "verify_flags=None"]
+  returns: "SSLContext"
+urllib3.util.is_connection_dropped:
+  kind: function
+  params: ["conn"]
+  returns: "bool"
+urllib3.util.is_fp_closed:
+  kind: function
+  params: ["obj"]
+  returns: "bool"
+urllib3.util.make_headers:
+  kind: function
+  params: ["keep_alive=None", "accept_encoding=None", "user_agent=None", "basic_auth=None", "proxy_basic_auth=None", "disable_cache=None", "*", "basic_auth_encoding='latin-1'", "proxy_basic_auth_encoding='latin-1'"]
+  returns: "dict[str, str]"
+urllib3.util.parse_url:
+  kind: function
+  params: ["url"]
+  returns: "Url"
+urllib3.util.resolve_cert_reqs:
+  kind: function
+  params: ["candidate"]
+  returns: "VerifyMode"
+urllib3.util.resolve_ssl_version:
+  kind: function
+  params: ["candidate"]
+  returns: "int"
+urllib3.util.ssl_wrap_socket:
+  kind: function
+  params: ["sock: socket", "keyfile: str | None = None", "certfile: str | None = None", "cert_reqs: int | None = None", "ca_certs: str | None = None", "server_hostname: str | None = None", "ssl_version: int | None = None", "ciphers: str | None = None", "ssl_context: SSLContext | None = None", "ca_cert_dir: str | None = None", "key_password: str | None = None", "ca_cert_data: None | str | bytes = None", "tls_in_tls: Literal[False] = False"]
+  returns: "ssl.SSLSocket | SSLTransportType"
+urllib3.util.wait_for_read:
+  kind: function
+  params: ["sock", "timeout=None"]
+  returns: "bool"
+urllib3.util.wait_for_write:
+  kind: function
+  params: ["sock", "timeout=None"]
+  returns: "bool"

@@ -17,3 +17,8 @@ def canonical_json(obj: Any, *, pretty: bool = False) -> bytes:
 def content_hash(obj: Any) -> str:
     """sha256 of the canonical JSON, as a hex string."""
     return hashlib.sha256(canonical_json(obj)).hexdigest()
+
+
+def short_id(obj: Any) -> str:
+    """64-bit hex ID derived from the input: chunk, section and example IDs and their hashes."""
+    return content_hash(obj)[:16]
