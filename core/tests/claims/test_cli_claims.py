@@ -7,7 +7,6 @@ import pytest
 
 from notinspec import cli
 from notinspec.cli import main
-from notinspec.config import ConfigError, load_config
 from notinspec.runner import FakeProvider, Provider, ProviderError
 
 GUIDE_RECORDING = Path(__file__).parent / "fixtures" / "groq-fixturelib-guide.json"
@@ -83,44 +82,17 @@ def test_unknown_source(
     assert "no chunk source matches nothing*" in capsys.readouterr().err
 
 
-def test_sources_and_extractors_from_config(
+def test_extractor_flag_and_several_sources(
     fixture_project: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    text = fixture_project.read_text(encoding="utf-8")
-    fixture_project.write_text(
-        text + 'claims:\n  extractors: ["qwen/qwen3.8-27b"]\n  sources: ["gui*"]\n',
-        encoding="utf-8",
-    )
     monkeypatch.setattr(cli, "_live_provider", _fake)
     out = tmp_path / "out"
-    assert _extract(fixture_project, out) == 0
+    args = ("--extractor", "qwen/qwen3.8-27b", "--source", "gui*", "--source", "nothing")
+    assert _extract(fixture_project, out, *args) == 0
     data = json.loads((out / "claims.json").read_text(encoding="utf-8"))
     assert [e["name"] for e in data["extractors"]] == ["qwen/qwen3.8-27b"]
-    assert data["sources"] == ["gui*"] and data["chunks"] == 8
+    assert data["sources"] == ["gui*", "nothing"] and data["chunks"] == 8
 
 
 def test_claims_without_subcommand_prints_help() -> None:
     assert main(["claims"]) == 0
-
-
-@pytest.mark.parametrize(
-    ("claims", "message"),
-    [
-        ('"x"', "claims must be a mapping"),
-        ("{models: []}", "unknown claims field"),
-        ("{extractors: [a, a]}", "must not repeat"),
-        ("{sources: [1]}", "claims.sources must be a list"),
-        ("{extractors: a}", "claims.extractors must be a list"),
-    ],
-)
-def test_bad_claims_config(fixture_project: Path, claims: str, message: str) -> None:
-    fixture_project.write_text(
-        fixture_project.read_text(encoding="utf-8") + f"claims: {claims}\n", encoding="utf-8"
-    )
-    with pytest.raises(ConfigError, match=message):
-        load_config(fixture_project)
-
-
-def test_default_claims_config(fixture_project: Path) -> None:
-    claims = load_config(fixture_project).claims
-    assert claims.extractors == () and claims.sources == ()

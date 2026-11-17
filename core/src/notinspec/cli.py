@@ -127,13 +127,13 @@ def main(argv: list[str] | None = None) -> int:
         "--source",
         action="append",
         help="only chunks whose source (Sphinx docname or file path) matches this glob; "
-        "repeatable (default: claims.sources in the config, else every chunk)",
+        "repeatable (default: every chunk)",
     )
     extract.add_argument(
         "--extractor",
         action="append",
         metavar="MODEL",
-        help="extractor model ID; repeatable (default: claims.extractors in the config, else "
+        help="extractor model ID; repeatable (default: "
         + ", ".join(s.model for s in DEFAULT_EXTRACTORS)
         + ")",
     )
@@ -251,9 +251,10 @@ def _live_provider(name: str) -> Provider:
 
 def _extract_claims(args: argparse.Namespace) -> int:
     config = load_config(args.config)
-    models = args.extractor or list(config.claims.extractors)
-    specs = tuple(extractor_for(m) for m in models) if models else DEFAULT_EXTRACTORS
-    patterns = args.source or list(config.claims.sources)
+    specs = (
+        tuple(extractor_for(m) for m in args.extractor) if args.extractor else DEFAULT_EXTRACTORS
+    )
+    patterns: list[str] = args.source or []
     ingestion = ingest(config, output=args.out, soft_limit=args.soft_limit)
     chunks = [
         c
