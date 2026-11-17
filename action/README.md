@@ -2,6 +2,8 @@
 
 Tests how well LLMs can use your software from its documentation, on every PR that changes the docs ([SPEC §11](../docs/SPEC.md#11-github-action)).
 
+> **Old design.** This Action runs the pipeline in your CI with your own `LLM_API_KEY` and a shared server token. The MVP moves to a thin client that uploads inputs with a GitHub OIDC token ([SPEC §11](../docs/SPEC.md#11-github-action)); this README is rewritten together with the Action.
+
 > **Mock.** The image runs [`mock.py`](mock.py): real inputs, outputs and exit codes, fake numbers. It is replaced by the real CLI from `core` without changing this interface.
 
 ## Usage

@@ -36,13 +36,14 @@ It ships as:
 - **No code execution** except L4 for OpenAPI operations via the Prism mock. SDK sandboxes, CLI execution and stateful mocks are [future development](#163-future-development).
 - **We never build the user's Sphinx docs next to secrets.** `sphinx-build` runs the project's code (`conf.py`, autodoc imports the library, `pip install` runs build hooks). So we only read the **built XML** ([§6.1](#61-reading-and-chunking)):
   - **Action:** the user builds the XML in a separate job with no secrets and passes it on as an artifact. Our upload job, which can request the repo's OIDC token for our service, only sends it to us ([§11](#11-github-action)).
-  - **Our VM** (worker, API, self-hosted runner): no Sphinx builds at all. The pilot XML is built once in a pinned environment and stored. Uploads accept built inputs only (Sphinx XML, Markdown, OpenAPI), never a Sphinx project. The worker only parses them and never executes anything from them; Prism only serves an uploaded OpenAPI spec.
+  - **Our VM** (worker, API, self-hosted runner): no Sphinx builds at all. The pilot XML is built once in a pinned environment and stored. Uploads accept built inputs only (Sphinx XML, Markdown, OpenAPI), never a Sphinx project. The worker only parses them and never executes anything from them. Prism, which serves an uploaded OpenAPI spec, runs in its own container without secrets or network access ([§12](#12-devops)).
   - If automatic builds of connected projects are ever needed, they run on GitHub-hosted runners, never on the VM.
   - The XML is **untrusted input**: parsed with `defusedxml` (or lxml with `resolve_entities=False`, no network) against XXE and entity bombs.
 - **Docs vs. reality is out of scope.** The truth is what the documentation says. Prism validates against the spec, not against a real backend.
 - **No single overall score.** Levels L0–L4 are never averaged together.
 - **No LLM decides the correct answer.** References are computed deterministically from the inventory and examples.
 - **No user accounts** in the MVP. The web UI is read-only. Golden-set review in the MVP is done by our team with the CLI ([§2.5](#25-golden-set-review)), not in the web UI.
+- **Public repos only** in the MVP. The web UI is public and has no accounts, so the docs, answers and results of a private repo would be world-readable ([§11](#11-github-action)). Private repos are [future development](#163-future-development).
 
 ## 2. Users
 
@@ -87,10 +88,11 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
    thresholds:
      fail_on_l3_drop: significant     # statistically significant drop
      fail_on_new_findings: [K1, K4, K7]
+     candidates_min_success: 0.6      # absolute floor for PR candidates (§7); warn-only in the MVP
    ```
    The config is uploaded with the inputs. In the MVP our service caps `models` and `budget` by the project's limits ([§11](#11-github-action)).
 2. For Sphinx docs: a **CI job that builds the XML** without secrets (`sphinx-build -b xml`) with **Sphinx 9.x** (the only version the MVP reads), and records its build environment in **`build-env.txt`** in the XML folder. The file is **required**: its first line is the output of `sphinx-build --version` (`sphinx-build 9.1.0`), followed by `python --version` and `pip freeze`. A missing file or another Sphinx major version is an error (exit 2). `action/README.md` has the example workflow.
-3. The repo **registered as a project** on our service ([§11](#11-github-action)). No model API key: in the MVP every LLM call runs on our service ([§8](#8-models)).
+3. The repo is **public** and **registered as a project** on our service ([§11](#11-github-action)). No model API key: in the MVP every LLM call runs on our service ([§8](#8-models)).
 4. Nothing to review in the MVP: our team reviews the golden set ([§2.5](#25-golden-set-review)).
 
 ### 2.4 What the tool returns
@@ -169,7 +171,7 @@ These exact terms are used in code, diagrams and text.
 | **Source** | `Source` | where a fact comes from (chunk, source type) and with what confidence; attached to every inventory object |
 | **Inventory** | – | composition of `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change`, `Source` = what exists in the API |
 | **API reference** | – | the part of the docs describing signatures (parameter tables, docstrings, JSDoc); component B |
-| **Example** | `Example` | a code block from the docs |
+| **Example** | `Example` | a code block from the docs. Identity = chunk ID + its position among the chunk's code blocks, so an edit inside the code keeps the ID, as for chunks; a content hash tells that it changed. |
 | **Adapter** | – | parser + normalization for one language or format (Python, tree-sitter languages, curl, CLI) |
 | **Call record** | `CallRecord` | normalized call: symbol + named arguments. Built from examples and from model answers, in the same shape. |
 | **Claim** | `Claim` | atomic fact from prose or changelog with a citation, verified by NLI grounding. Type *fact* or *change*. |
@@ -178,7 +180,7 @@ These exact terms are used in code, diagrams and text.
 | **Operator** | – | rule that turns a call record or signature into a new reference: copy, adaptation, variation, composition, migration |
 | **Reference** | `Reference` | the correct answer of a test item, computed by a program, not by an LLM |
 | **Task text** | – | natural-language wording of a task, written by an LLM for an existing reference |
-| **Test item** | `TestItem` | question or task at level L0–L4 + reference + metadata |
+| **Test item** | `TestItem` | question or task at level L0–L4 + reference + metadata. Identity key: [§10](#10-data). |
 | **Golden set** | – | approved and frozen set of test items, versioned in our database ([§10](#10-data)) |
 | **Symbol profile** | – | which levels L0–L4 can be tested for a symbol, and the results |
 | **Finding** | `Finding` | a problem in the documentation, reported to the author |
@@ -330,7 +332,7 @@ Source  – attached to every object above
 | A · spec parser | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` | spec, high confidence |
 | B · signature and table parser | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType` | signature, high confidence |
 | C · example normalization | `Symbol`, `Parameter`, only if not yet in the inventory | example, medium confidence |
-| D · *change* claim | `Change` | changelog, low confidence → PR review |
+| D · *change* claim | `Change` | changelog, low confidence → review by our team ([§2.5](#25-golden-set-review)) |
 
 - **Merge:** objects of the same symbol from several sources are merged with priority **spec > signature > example > changelog**. A disagreement between sources is a `Finding`.
 - **Outside the inventory:** `Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`. The composition graph is built from `ReturnType` and the data flow in call records.
@@ -351,7 +353,7 @@ Source  – attached to every object above
 | neutral | neutral | different claims | keep both |
 | contradiction | – | contradiction | `Finding`, no tasks from these claims |
 
-5. A *change* claim yields a `Change` (low confidence → PR review).
+5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)).
 
 NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
 
@@ -497,12 +499,21 @@ The report says what a result pattern means. It does not recommend a fix: findin
 ## 7. CI behaviour and repeated runs
 
 - Non-determinism is handled by paraphrases and repeated runs.
-- **Paired comparison with the `main` baseline** (the latest `main` run stored on our service; bootstrap or McNemar); the build fails only on a **statistically significant drop**.
-- Fail conditions (configurable): L3 (and L4) drop in changed sections; a new finding from selected cross-checks.
-- Pass / fail uses the items of the current golden set. **Candidates** generated in the PR ([§10](#10-data)) have no `main` baseline, so they are reported and never fail the build.
+- **Paired comparison with the `main` baseline** (bootstrap or McNemar); the build fails only on a **statistically significant drop**.
+- **Main runs:** the workflow also runs on every push to the default branch ([§11](#11-github-action)) with the PR (small) models. These *main runs* are the baseline for PRs and the source of truth for the golden set ([§10](#10-data)).
+- **Baseline of a PR** = the main run of the **first parent of the PR's merge commit**. The merge commit is what is tested (the OIDC `sha`), and its first parent is exactly what the PR was merged onto, so the difference between them is only the PR. `pull_request.base.sha` from the event does not guarantee this: GitHub recomputes the merge ref outside of events, so the two can drift apart. The client sends the first parent for lookup only, never as proof ([§11](#11-github-action)).
+  - Pairs need the same golden-set version, model and mode. The worker fills in missing (item, model) pairs from the stored inputs of that main run.
+  - No main run for that commit → the nearest main run with the same golden-set version, and the PR comment says so.
+  - No baseline at all → "no baseline", and only absolute floors apply. When a project is registered, its first main run is started with `workflow_dispatch`.
+  - Nightly runs with large models are a separate series and never a PR baseline.
+- **Items in changed chunks:** the worker recomputes the reference of every existing item against the PR's inventory (by code, no LLM):
+  - reference unchanged → **stable**: paired with the baseline, can fail the build;
+  - reference changed, or the symbol is gone → **superseded** in this PR: left out of the paired comparison, and its candidate replacement is evaluated instead. Example: a PR renames `retries` to `retry_policy` in code and docs; the old reference would turn correct answers into a false drop.
+- **Candidates** ([§10](#10-data)) have no paired baseline, so they are checked against an absolute floor (`thresholds.candidates_min_success`). In the MVP the floor only **warns** and never fails the build: low-confidence candidates are not reviewed yet and can be wrong.
+- Fail conditions (configurable): L3 (and L4) drop on stable items in changed sections; a new finding from selected cross-checks.
 - Thresholds live in the config file in the repo.
-- **Cost:** small models on every PR, large models nightly or before a release, only items affected by the diff, response cache.
-- **Repeated runs:** the worker runs the full golden set of every registered project **nightly**, on the latest inputs uploaded from its `main`, stores every raw response, diffs against the previous run and sends a **Slack alert** on a significant drop.
+- **Cost:** small models on every PR, large models nightly or before a release, only items affected by the diff, reuse of frozen items ([§10](#10-data)), response cache.
+- **Repeated runs:** the worker runs the full golden set of every registered project **nightly**, on the inputs of its latest main run, stores every raw response, diffs against the previous nightly run and sends a **Slack alert** on a significant drop.
 - Runs are **resumable**: if rate limits stop a run, the worker continues it later.
 
 ## 8. Models
@@ -512,7 +523,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 - Roles of LLM calls: models under test (small for PRs, large for nightly), 2 claim extractors, task-text writer, 2 strong round-trip solvers, LLM judge for borderline L2 answers.
 - **Local CPU models:** NLI cross-encoder and embeddings run locally (no GPU on the VM). Models under test are not run locally.
 - Every call is recorded with exact model ID, temperature (0) and all parameters, plus token usage and cost.
-- The client is rate-limit aware (queue, backoff on 429) and caches responses by (run ID, model, prompt hash) so a resumed run never re-asks. The cache never crosses runs, otherwise change over time could not be measured.
+- The client is rate-limit aware (queue, backoff on 429) and caches responses by (run ID, model, prompt hash) so a resumed run never re-asks. The cache never crosses runs, otherwise change over time could not be measured. This applies to **models under test**. Generation reuses frozen test items by their identity key ([§10](#10-data)); that is not a response cache.
 - A model that disappears is a normal, displayed state, not an error.
 
 ## 9. Stack
@@ -539,13 +550,22 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 - **Raw LLM responses are append-only** (models under test, extractors, task-text writer, judge): stored as JSONB, never updated or deleted. They cannot be reconstructed retroactively. The same holds for test items and review decisions; the application's DB role has no `UPDATE` / `DELETE` on these tables.
 - **Everything lives in PostgreSQL on our VM** ([§3](#3-architecture)): projects and their limits, runs (with the OIDC claims of the upload, [§11](#11-github-action)), uploaded inputs (hash and metadata; the files themselves on a volume, addressed by hash), the inventory and the out-of-inventory models (`Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`), the golden set and its reviews, raw LLM calls and results. Model attributes: TBD.
-- Every result row records: input snapshot hash, docs version, generator version, test item ID, golden-set version, mode, model ID + params, raw response, evaluation result, error category, cost, timestamps.
+- Every result row records: input snapshot hash, commit, docs version, generator version, test item ID, golden-set version, mode, model ID + params, raw response, evaluation result, error category, cost, timestamps.
 - The **golden set** lives in our database and is as frozen as files in git would be:
-  - a `TestItem` is **never updated or deleted**; a change is a new item. A content hash (task text, reference, level, chunk ID, …) dedupes regenerated items;
-  - a **golden-set version** = project + docs version + generator version + parent version + the set of its item IDs. Unchanged items are referenced, not copied. Chunk IDs are stable, so only the items of changed chunks are regenerated;
+  - a `TestItem` is **never updated or deleted**; a change is a new item.
+  - **Identity key** of an item, from deterministic parts only: project + chunk ID + level + operator + **operator version** + format + difficulty + source example ID + the reference in **canonical serialization**. The LLM-written task text is not part of it.
+    - Chunk ID and example ID are stable across text edits ([§6.1](#61-reading-and-chunking), [§4](#4-glossary)). Whether an item changed is decided by its reference: a typo fix keeps the reference, so the item is reused; a change in meaning changes the reference and yields a new item ([§7](#7-ci-behaviour-and-repeated-runs)).
+    - The operator version is bumped whenever the operator's behaviour changes, so an item is never silently reused under old logic when its reference happens to stay the same.
+    - The generator version is not in the key; it is stored with the item as metadata. A new generator therefore regenerates only the items whose reference it really changes.
+  - **Reuse:** if an item with the same identity key already exists (in the golden set or as a candidate), it is reused together with its review decisions: no task-text writer, no round-trip solvers, no new item.
+  - a **golden-set version** is identified by project + input snapshot hash + generator version, and has a parent version and the set of its item IDs. Unchanged items are referenced, not copied. The commits that produced it are stored with it as metadata, because a commit that changes only code yields the same inputs and must not create a new version (and runs we start with the CLI have no OIDC `sha`). `docs.version` is only a display label. Every run and every result keeps its own commit, so it can be traced.
   - **review decisions are append-only** (item, decision, reviewer, time); an item's state is its latest decision;
-  - every result references the item and the golden-set version it ran against;
-  - **UC2 candidates:** items generated in a PR are candidates. They are evaluated and listed in the PR comment, but they enter a new golden-set version only after the change reaches `main` and they are approved (automatically or by review). A candidate from a PR closed without merging is marked rejected, never deleted.
+  - every result references the item and the golden-set version it ran against.
+- **Candidates and main runs:**
+  - Items generated in a PR are **candidates**. They are evaluated and listed in the PR comment ([§7](#7-ci-behaviour-and-repeated-runs)), but they never enter the golden set directly.
+  - **Main runs are the source of truth.** On every push to the default branch the worker generates items for the changed chunks itself. A candidate with the same identity key is reused there, together with its review decisions. An item enters a golden-set version once it is approved (automatically or by review); items still waiting for review join a later version.
+  - A PR closed without merging sends a `closed` event ([§11](#11-github-action)), and its candidates are marked rejected (append-only, never deleted). For a merged PR the event changes nothing, because the main run picks the candidates up.
+  - A candidate that no main run picked up and that got no `closed` event shows as **stale** (derived, not stored).
 - **Export:** the golden set and the results can be exported as files (*candidate:* JSONL per golden-set version) for the published dataset, backups and determinism tests.
 - Database backed up daily from the VM (pg_dump, off-machine copy), see [DEPLOY.md](DEPLOY.md).
 - The dataset is intended to be published. **TBD:** check that the model terms allow publishing outputs.
@@ -554,13 +574,28 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 In the MVP the Action is a **thin client of our hosted service** ([§3](#3-architecture)): it computes nothing and holds no model key.
 
-- **Two jobs** in the caller's workflow (example in `action/README.md`):
-  1. **build** (no secrets, no `id-token`): `sphinx-build -b xml` (Sphinx 9.x), `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)), the folder uploaded as a workflow artifact. **Never built by us** ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary.
-  2. **upload** (`permissions: id-token: write`): downloads the artifact, packs the XML, the other inputs named in `notinspec.yaml` and the config itself, and sends them to our API with a GitHub OIDC token. It then waits for the run (polling), posts the **PR comment** and sets the **status check** with its own `GITHUB_TOKEN`. Our service never gets write access to the caller's repo.
-- **Authentication (GitHub OIDC):** the API checks the token's signature against GitHub's JWKS, `iss`, `exp` and `aud` (our URL), and that the numeric `repository_id` belongs to a registered project (an ID, not the name, which can be renamed and taken again). The token's `sha` must match the uploaded commit. `ref`, `event_name`, `run_id` and `workflow_ref` are stored with the run. There is no shared upload token. Fork PRs get no OIDC token, so they cannot start a run.
-- **Projects** are registered by our team (CLI on the VM). Each has its limits: allowed models and budget (*candidate:* per run and per month).
-- **Uploads are untrusted** ([§1.1](#11-what-we-are-not-building)): a compressed archive up to a size limit (*candidate:* 25 MB), extracted with limits on total size and file count; absolute paths, `..` and links are rejected.
-- UC2: evaluates only changed chunks and their test items, compares with the latest `main` run, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
+- **Triggers** of the caller's workflow (example in `action/README.md`): `pull_request` (including `closed`), `push` to the default branch (main runs, [§7](#7-ci-behaviour-and-repeated-runs)) and `workflow_dispatch` (the first main run of a new project).
+- **Two jobs:**
+  1. **build** (no secrets, no `id-token`): `sphinx-build -b xml` (Sphinx 9.x) with `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)). An OpenAPI spec is bundled into one file without external `$ref`s (e.g. `redocly bundle`). The output is uploaded as a workflow artifact. **Never built by us** ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary.
+  2. **upload** (`permissions: id-token: write`, checkout with `fetch-depth: 2`): downloads the artifact, packs the XML, the other inputs named in `notinspec.yaml` and the config itself, and sends them to our API with a GitHub OIDC token. On a PR it also sends `head.sha` (for display) and the merge commit's first parent (`git rev-parse HEAD^1`, for the baseline lookup, [§7](#7-ci-behaviour-and-repeated-runs)). It then polls the run, posts the **PR comment** and sets the **status check** with its own `GITHUB_TOKEN`. Our service never gets write access to the caller's repo. On `closed` the job sends only a small "closed" event, with no inputs and no build job.
+- **Authentication (GitHub OIDC)**, checked on every upload. There is no shared upload token.
+  - signature against GitHub's JWKS, `iss`, `exp` and `aud` (our URL);
+  - the numeric `repository_id` belongs to a registered project (an ID, not the name, which can be renamed and taken again);
+  - `repository_visibility` is `public` ([§1.1](#11-what-we-are-not-building)), so a repo that turns private later is rejected too;
+  - `event_name` is `pull_request`, `push` or `workflow_dispatch`. Everything else is rejected: `pull_request_target` and `workflow_run` can run for fork PRs with the base repo's identity. A fork PR with `pull_request` gets no OIDC token;
+  - the **path part** of `workflow_ref` (`owner/repo/.github/workflows/<file>`) matches the workflow registered with the project. The `@<ref>` part is ignored, because on a PR it is `refs/pull/N/merge`;
+  - for `push` and `workflow_dispatch`, `ref` is `refs/heads/<default branch>` (stored with the project).
+- **Trust boundary:**
+  - The run's commit is the token's `sha` claim (on a PR, the merge commit); the client does not send it.
+  - Values sent by the client (`head.sha`, the first parent) are used only for display and lookup, never as proof.
+  - The token proves that the registered workflow of that repo ran, not that the archive matches the commit. Without access to the repo we cannot prove more. That is enough for the MVP: forging inputs needs write access to the repo, and someone with write access can also edit the workflow.
+  - Replay protection: one run per (`run_id`, `run_attempt`), and the archive hash is stored with the run. `event_name`, `ref`, `run_id`, `run_attempt` and `workflow_ref` are stored too.
+- **Polling needs no token.** Results are public ([§1.1](#11-what-we-are-not-building)), so a run's status can be read without authentication, and a long run never outlives a short-lived OIDC token.
+- **Projects** are registered by our team (CLI on the VM), public repos only, with: repository ID, default branch, workflow path, and limits (allowed models, budget; *candidate:* per run and per month).
+- **Uploads are untrusted** ([§1.1](#11-what-we-are-not-building)):
+  - a compressed archive up to a size limit (*candidate:* 25 MB), extracted with limits on total size and file count; absolute paths, `..` and links are rejected;
+  - an OpenAPI spec with a non-local `$ref` (anything other than `#/…`) is rejected, so Prism never fetches a URL or a local file named in the spec. The `core` OpenAPI parser already rejects such refs.
+- UC2: evaluates only changed chunks and their test items, compares with the baseline, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
 - The PR comment links to the run in the web UI, where the full results and the report are. Golden-set candidates from the PR ([§10](#10-data)) are listed in the comment; our team reviews them ([§2.5](#25-golden-set-review)).
 - Dogfooded on a small demo repo we own.
 
@@ -576,9 +611,10 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
   deploy/   docker-compose, nginx, env templates, fixtures
   docs/     SPEC, assignment, DEPLOY
   ```
-- **Docker Compose** services: `postgres`, `api`, `worker` (starts Prism per spec when needed), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
-- The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM). If it starts Prism, it does so inside its own container.
-- The **worker** takes queued runs (uploads from the Action, UC1 audits) from Postgres and starts the nightly runs (UC3).
+- **Docker Compose** services: `postgres`, `api`, `worker`, `mock` (Prism), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
+- The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM).
+- **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec (*candidate:* a small control endpoint in `mock`).
+- The **worker** takes queued runs from Postgres (PR runs and main runs uploaded by the Action, UC1 audits) and starts the nightly runs (UC3).
 - **CI (GitHub Actions):** lint (ruff, mypy, oxlint), unit tests, Compose integration tests, build images, push to **GHCR**.
 - **CD:** SSH to the faculty VM is open only from the STU network / VPN (ports 80 and 443 are public, see [DEPLOY.md](DEPLOY.md)), so a **self-hosted GitHub runner on the VM** pulls images from GHCR and runs `docker compose up -d`. The repo is public, so the runner is used **only by the deploy job on pushes to `main`** (dedicated runner label + protected `production` environment). Fork PRs never run on the VM. PR checks of other repos never use the runner either: their inputs reach the worker only as uploads ([§11](#11-github-action)).
 - Public GitHub repository under a team organization, **MIT license**.
@@ -591,7 +627,9 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - **Real Sphinx examples:** the built XML of three libraries is committed in `core/examples/sphinx/` (urllib3: reST fields; trio: Google via napoleon; hydra-zen: numpydoc). An end-to-end test runs the CLI on each: exit 0, `ingestion.json` byte-identical across two runs, no `unknown node` warning, `report.html` written.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec uploaded through the API → worker → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
-- **Auth:** OIDC checks are tested with tokens signed by a test key and a fake JWKS (wrong `aud`, expired, unknown `repository_id`, `sha` mismatch); CI never talks to GitHub's OIDC.
+- **Auth:** OIDC checks are tested with tokens signed by a test key and a fake JWKS: wrong `aud`, expired, unknown `repository_id`, a private repo, a forbidden event (`pull_request_target`, `workflow_run`), a foreign `workflow_ref` path, a `push` from another branch, and a replayed (`run_id`, `run_attempt`). CI never talks to GitHub's OIDC.
+- **Uploads:** an archive with `..`, an absolute path, a link or over the limits is rejected; an OpenAPI spec with a non-local `$ref` is rejected.
+- **Reuse and baselines:** a typo fix in a chunk or an example reuses its items (no call to the fake provider); a changed reference yields a superseded item and a candidate; an operator version bump yields new items; a PR is paired with the main run of its merge commit's first parent.
 - **Append-only:** tests that the application's DB role cannot update or delete raw LLM responses, test items or review decisions.
 - Our own API: OpenAPI validated in CI + Schemathesis.
 - Web: Playwright smoke tests.
@@ -652,6 +690,7 @@ Faculty checkpoint dates: **TBD**.
 - Sphinx versions other than 9.x (the doctree's node types and attributes change between major versions), and migrating chunks and their IDs when a project moves to another Sphinx version.
 - **Self-contained Action:** runs `core` + Prism in the caller's CI with the caller's own model key and no dependency on our service; the golden set as files in the caller's repo, reviewed in PRs, and results as JSON + HTML artifacts.
 - **Golden-set review by the docs owners** in the web UI, with GitHub sign-in and the right to review taken from the repo's permissions ([§2.5](#25-golden-set-review)). Not decided yet.
+- **Private repos:** the same GitHub sign-in, with a project's results visible only to those who can read its repo.
 
 ## 17. Roles
 
@@ -688,6 +727,8 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Backup of the uploaded-inputs volume (today `pg_dump` only)
 - [ ] Action when our service is down or the run times out: fail the check or skip it
 - [ ] Export format of the golden set and results for the published dataset
+- [ ] Candidates' absolute floor: its default value, and whether it may fail the build after the MVP ([§7](#7-ci-behaviour-and-repeated-runs))
+- [ ] Canonical serialization of a reference for the identity key (key order, numbers, units)
 - [ ] Definition of "gold context" for multi-step tasks
 - [ ] NLI for non-English docs
 - [ ] Retrieval for the `retrieved` mode (BM25, embeddings, hybrid)
