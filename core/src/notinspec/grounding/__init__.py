@@ -1,0 +1,25 @@
+"""Deterministic grounding checks for claims (SPEC §6.4): no model, same input → same result.
+
+- `check_citation`: is the claim's quoted span in the chunk, and is it prose?
+- `nli_premise`: the text around the citation that NLI reads (SPEC §6.1).
+
+The NLI decision itself and the claim extractor live elsewhere (`notinspec.nli`,
+`notinspec.claims`); this package only takes chunks, strings and the inventory.
+"""
+
+from notinspec.grounding.citation import CitationCheck, CitationStatus, check_citation, normalize
+from notinspec.grounding.premise import PREMISE_RULE, Premise, nli_premise
+
+# bump when any result can change for the same input (normalization, premise, identifier rules)
+GROUNDING_VERSION = 1
+
+__all__ = [
+    "GROUNDING_VERSION",
+    "PREMISE_RULE",
+    "CitationCheck",
+    "CitationStatus",
+    "Premise",
+    "check_citation",
+    "nli_premise",
+    "normalize",
+]
