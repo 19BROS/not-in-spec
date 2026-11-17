@@ -19,30 +19,30 @@ Given software documentation (a Sphinx project, Markdown docs, a formal spec suc
 2. builds an **inventory** of what exists in the API (symbols, signatures, parameters, constraints, changes), each fact with its source and confidence;
 3. runs **cross-checks** between sources and reports contradictions as **findings**;
 4. derives **test items** whose correct answer (**reference**) is computed by a program, never by an LLM; an LLM only writes the natural-language task text;
-5. freezes the approved test items as a **golden set**, versioned in the repo;
+5. freezes the approved test items as a **golden set**, versioned in our database;
 6. runs the golden set against several models in **three modes** (no context, retrieved context, gold context);
 7. evaluates answers by code: parses the model's code/request into a normalized **call record** and compares it with the reference; for OpenAPI operations also **sends the request to a Prism mock** generated from the spec;
 8. reports results **per level, model and mode**, failing documentation sections, failure categories and findings, and how all of it changes over time. It does not recommend fixes: the docs author fixes the docs. **Never a single score.**
 
 It ships as:
 
-- a **CLI**;
-- a **GitHub Action** (the CI tool) that comments on PRs and fails the build when a documentation change significantly lowers usage success;
-- a **web service + web UI** with results, history and reports;
-- a **scheduled worker** for nightly / pre-release runs.
+- a **web service + web UI**: in the MVP **every run happens on our service** and all data is stored there ([§3](#3-architecture));
+- a **GitHub Action** (the CI tool), a thin client of the service: it uploads the inputs, comments on PRs and fails the build when a documentation change significantly lowers usage success ([§11](#11-github-action));
+- a **scheduled worker** that runs the queued and the nightly / pre-release runs;
+- a **CLI** for development and local runs.
 
 ### 1.1 What we are *not* building
 
 - **No code execution** except L4 for OpenAPI operations via the Prism mock. SDK sandboxes, CLI execution and stateful mocks are [future development](#163-future-development).
 - **We never build the user's Sphinx docs next to secrets.** `sphinx-build` runs the project's code (`conf.py`, autodoc imports the library, `pip install` runs build hooks). So we only read the **built XML** ([§6.1](#61-reading-and-chunking)):
-  - **Action:** the user builds the XML in a separate job with no secrets and passes it on as an artifact. Our job, which has `LLM_API_KEY`, only reads it ([§11](#11-github-action)).
-  - **Our VM** (worker, API, self-hosted runner): no Sphinx builds at all. The pilot XML is built once in a pinned environment and stored. A web upload, if offered, accepts built inputs only (Sphinx XML, Markdown, OpenAPI), never a Sphinx project.
+  - **Action:** the user builds the XML in a separate job with no secrets and passes it on as an artifact. Our upload job, which can request the repo's OIDC token for our service, only sends it to us ([§11](#11-github-action)).
+  - **Our VM** (worker, API, self-hosted runner): no Sphinx builds at all. The pilot XML is built once in a pinned environment and stored. Uploads accept built inputs only (Sphinx XML, Markdown, OpenAPI), never a Sphinx project. The worker only parses them and never executes anything from them; Prism only serves an uploaded OpenAPI spec.
   - If automatic builds of connected projects are ever needed, they run on GitHub-hosted runners, never on the VM.
   - The XML is **untrusted input**: parsed with `defusedxml` (or lxml with `resolve_entities=False`, no network) against XXE and entity bombs.
 - **Docs vs. reality is out of scope.** The truth is what the documentation says. Prism validates against the spec, not against a real backend.
 - **No single overall score.** Levels L0–L4 are never averaged together.
 - **No LLM decides the correct answer.** References are computed deterministically from the inventory and examples.
-- **No user accounts** in the MVP. The web UI is read-only.
+- **No user accounts** in the MVP. The web UI is read-only. Golden-set review in the MVP is done by our team with the CLI ([§2.5](#25-golden-set-review)), not in the web UI.
 
 ## 2. Users
 
@@ -53,7 +53,7 @@ The tool is for a team that **owns a software product's documentation** (library
 | Persona | Who | Wants | Meets the tool in | Gets |
 |---|---|---|---|---|
 | **P1 · Maintainer** | developer / maintainer, owns the repo and CI | a change must not make the software harder for LLMs to use; fast, cheap runs | CI status check, PR comment | pass / fail, L3 (L4) drop vs. `main`, new findings in changed sections |
-| **P2 · Docs author** | technical writer, DevRel, developer writing docs | to know **which section fails and why** | PR comment, HTML report / web UI, golden-set review | worst sections first, findings, sample wrong model answers, diagnosis |
+| **P2 · Docs author** | technical writer, DevRel, developer writing docs | to know **which section fails and why** | PR comment, HTML report / web UI, golden-set review ([future](#25-golden-set-review)) | worst sections first, findings, sample wrong model answers, diagnosis |
 | **P3 · Team lead / product** | tech lead, product owner, platform team | quality over time and before releases; which models the docs are good enough for | nightly / release report, web UI | results per level and model, trend across versions, model comparison |
 
 Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web UI** with results (P2, P3).
@@ -88,9 +88,10 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
      fail_on_l3_drop: significant     # statistically significant drop
      fail_on_new_findings: [K1, K4, K7]
    ```
+   The config is uploaded with the inputs. In the MVP our service caps `models` and `budget` by the project's limits ([§11](#11-github-action)).
 2. For Sphinx docs: a **CI job that builds the XML** without secrets (`sphinx-build -b xml`) with **Sphinx 9.x** (the only version the MVP reads), and records its build environment in **`build-env.txt`** in the XML folder. The file is **required**: its first line is the output of `sphinx-build --version` (`sphinx-build 9.1.0`), followed by `python --version` and `pip freeze`. A missing file or another Sphinx major version is an error (exit 2). `action/README.md` has the example workflow.
-3. **API key** for the models as a CI secret.
-4. **Review of the golden set** in a PR.
+3. The repo **registered as a project** on our service ([§11](#11-github-action)). No model API key: in the MVP every LLM call runs on our service ([§8](#8-models)).
+4. Nothing to review in the MVP: our team reviews the golden set ([§2.5](#25-golden-set-review)).
 
 ### 2.4 What the tool returns
 
@@ -99,8 +100,8 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
 | CI status check | P1 | pass / fail + reason |
 | PR comment | P1, P2 | short summary: score change, new findings, links to sections |
 | HTML report / web UI | P2, P3 | worst sections first, symbol profile, sample answers, diagnosis, trend |
-| JSON results | integrations | machine-readable results and findings |
-| golden set | P2 | files in the repo, reviewable in a PR |
+| JSON results | integrations | machine-readable results and findings, from our API |
+| golden set | P2 | in our database, shown in the web UI, exportable as files ([§10](#10-data)) |
 
 Example PR comment (UC2):
 ```text
@@ -111,14 +112,18 @@ NOT-IN-SPEC · 3 changed sections · 2 models · 0.18 €
 ✓ L3 docs/orders.md, L4 POST /orders unchanged
 ```
 
-### 2.5 Keeping golden-set review small
+### 2.5 Golden-set review
 
 Review is the biggest adoption risk. To keep it small:
 
 - auto-approve items whose reference comes deterministically from high-confidence objects (spec, signature);
 - send for review only low-confidence items (from claims, from changelog changes, variations without a signature) plus a random sample of the rest;
 - in UC2 show only items for changed sections;
-- in UC1 split the review into several PRs by section.
+- in UC1 split the review into batches by section.
+
+**Who reviews.** In the MVP **our team** reviews, to check that the pipeline produces correct items; nobody outside the team does. The review uses the CLI on our service (*candidate:* export the pending items to a file, import the decisions), so the web UI stays read-only and needs no accounts ([§1.1](#11-what-we-are-not-building)). Every decision is stored with the reviewer and the time ([§10](#10-data)).
+
+**Future (not decided):** the docs owners review their own project's items in the web UI, signed in with their GitHub account, with the right to review taken from the repo's permissions (e.g. push access). See [§16.3](#163-future-development).
 
 ## 3. Architecture
 
@@ -130,16 +135,20 @@ Review is the biggest adoption risk. To keep it small:
                │                               findings ◄────────────── test items (golden set)     │
                │                                                                  │                 │
                │                        runner (models × modes) ─► evaluation (+ Prism) ─► report    │
-               └────▲──────────────────▲─────────────────────▲──────────────────────▲─────────────┘
-                    │                  │                     │                      │
-                  CLI          FastAPI service             worker              GitHub Action
-                                  │      │              (APScheduler)        (CLI + Prism in
-                                  ▼      ▼                   │                 the CI runner)
-                            React web UI  PostgreSQL ◄───────┘
+               └────▲──────────────────▲─────────────────────▲─────────────────────────────────────┘
+                    │                  │                     │
+                  CLI          FastAPI service             worker
+              (dev, tests)     ▲    │       │          (APScheduler)
+                               │    ▼       ▼                │
+ GitHub Action ────────────────┘ web UI PostgreSQL ◄─────────┘
+ (uploads inputs with OIDC,     (read-only)  (everything)
+  waits for the result)
 ```
 
 - **All logic lives in `core`.** CLI, API, worker and Action are thin wrappers.
-- **Storage split:** `core` reads the docs and the golden set from files and writes results as JSON. The hosted service (API + worker) persists everything in **PostgreSQL** and serves it to the web UI. The **Action does not need the hosted service**: the golden set lives in the user's repo, results are JSON + HTML artifacts.
+- **Hosted-only MVP:** every run (UC1–UC4) happens on our service. The API accepts the inputs and queues a run, the worker runs `core` on it, and **PostgreSQL on our VM holds everything**: inputs, chunks, inventory, golden set, raw LLM responses, results ([§10](#10-data)). The GitHub Action computes nothing; it uploads the inputs and waits for the result ([§11](#11-github-action)).
+- The **CLI** runs the same pipeline locally with files in and JSON out, for development and tests. In the MVP it is not a supported way to run the CI check.
+- A self-contained Action that runs `core` in the caller's CI with the caller's own key and no dependency on our service is [future development](#163-future-development).
 
 ## 4. Glossary
 
@@ -170,7 +179,7 @@ These exact terms are used in code, diagrams and text.
 | **Reference** | `Reference` | the correct answer of a test item, computed by a program, not by an LLM |
 | **Task text** | – | natural-language wording of a task, written by an LLM for an existing reference |
 | **Test item** | `TestItem` | question or task at level L0–L4 + reference + metadata |
-| **Golden set** | – | approved and frozen set of test items, versioned in the repo |
+| **Golden set** | – | approved and frozen set of test items, versioned in our database ([§10](#10-data)) |
 | **Symbol profile** | – | which levels L0–L4 can be tested for a symbol, and the results |
 | **Finding** | `Finding` | a problem in the documentation, reported to the author |
 
@@ -411,7 +420,7 @@ Task text (written by an LLM): "Give up connecting after 2 minutes."
 
      The cheap identifier check ([§18](#18-open-items)) also runs: the new identifier or number must not appear in the claim's citation.
   3. The task-text writer (LLM) turns the changed claim into a question ("What happens when `backoff_factor` is set to `0`?"). The reference, "not in the documentation", comes from step 2, not from the LLM.
-  4. **Always reviewed** ([§2.5](#25-keeping-golden-set-review-small)): NLI can miss support for a claim (a false `neutral`), and then the question would be answerable.
+  4. **Always reviewed** ([§2.5](#25-golden-set-review)): NLI can miss support for a claim (a false `neutral`), and then the question would be answerable.
   - Evaluation: the answer must say that the documentation does not cover it. A concrete answer is an error (`invented`), even if it happens to be true for the real software, because the truth is what the documentation says ([§1.1](#11-what-we-are-not-building)).
 - **Difficulty:** explicit (task names the symbol) / semantic (goal only) × single-step / multi-step.
 - **Formats:** a task is asked in every format the docs cover (curl, Python SDK, JS SDK…). Comparing formats is K6.
@@ -430,7 +439,7 @@ Common to all tasks:
 6. **round-trip:** two strong models with gold context (for leave-one-out without the source example) must solve the task, evaluated by the same evaluator;
 7. triviality (closed-book success): do not remove, only flag `parametric_known`;
 8. deduplication and symbol coverage;
-9. PR review and manual check of a sample (pipeline precision, Cohen's kappa).
+9. review ([§2.5](#25-golden-set-review)) and manual check of a sample (pipeline precision, Cohen's kappa).
 
 If a well-grounded task fails even with gold context, the problem is probably in the documentation text (`Finding`), not in the task.
 
@@ -488,17 +497,18 @@ The report says what a result pattern means. It does not recommend a fix: findin
 ## 7. CI behaviour and repeated runs
 
 - Non-determinism is handled by paraphrases and repeated runs.
-- **Paired comparison with the `main` baseline** (bootstrap or McNemar); the build fails only on a **statistically significant drop**.
+- **Paired comparison with the `main` baseline** (the latest `main` run stored on our service; bootstrap or McNemar); the build fails only on a **statistically significant drop**.
 - Fail conditions (configurable): L3 (and L4) drop in changed sections; a new finding from selected cross-checks.
+- Pass / fail uses the items of the current golden set. **Candidates** generated in the PR ([§10](#10-data)) have no `main` baseline, so they are reported and never fail the build.
 - Thresholds live in the config file in the repo.
 - **Cost:** small models on every PR, large models nightly or before a release, only items affected by the diff, response cache.
-- **Repeated runs:** the worker runs the full golden set of every hosted target **nightly**, stores every raw response, diffs against the previous run and sends a **Slack alert** on a significant drop.
+- **Repeated runs:** the worker runs the full golden set of every registered project **nightly**, on the latest inputs uploaded from its `main`, stores every raw response, diffs against the previous run and sends a **Slack alert** on a significant drop.
 - Runs are **resumable**: if rate limits stop a run, the worker continues it later.
 
 ## 8. Models
 
 - **LLM access via an API key provided by the faculty.** Provider, endpoint, available models and limits: TBD ([§18](#18-open-items)). The key lives only in env / secrets.
-- Users of the GitHub Action bring **their own key** as a secret in their repo.
+- In the MVP the key exists **only on our VM**: users do not bring a key, and every LLM call of every project runs in our worker within the project's limits ([§11](#11-github-action)). Users bringing their own key belongs to the self-contained Action ([§16.3](#163-future-development)).
 - Roles of LLM calls: models under test (small for PRs, large for nightly), 2 claim extractors, task-text writer, 2 strong round-trip solvers, LLM judge for borderline L2 answers.
 - **Local CPU models:** NLI cross-encoder and embeddings run locally (no GPU on the VM). Models under test are not run locally.
 - Every call is recorded with exact model ID, temperature (0) and all parameters, plus token usage and cost.
@@ -519,28 +529,39 @@ The report says what a result pattern means. It does not recommend a fix: findin
 | LLM access | faculty-provided API (TBD) |
 | Evaluation / statistics | scikit-learn, bootstrap, McNemar test |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
-| Scheduler | APScheduler in a dedicated `worker` container, job state in Postgres (no Redis/Celery) |
+| Scheduler | APScheduler in a dedicated `worker` container, job state and the run queue in Postgres (no Redis/Celery) |
+| Auth | GitHub Actions OIDC tokens checked against GitHub's JWKS (PyJWT, *candidate*); no user accounts in the MVP |
 | Web UI | React + Vite + TypeScript SPA, ECharts or Recharts, served by nginx |
 | Alerts | Slack incoming webhook |
 | Agent formats | `AGENTS.md` in our repo, our own `llms.txt`; MCP server (stretch) |
 
 ## 10. Data
 
-- **Raw LLM responses are append-only** (models under test, extractors, task-text writer, judge): stored as JSONB, never updated or deleted. They cannot be reconstructed retroactively.
-- Postgres holds the inventory and the out-of-inventory models (`Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`). Model attributes: TBD.
-- Every result row records: input snapshot hash, docs version, generator version, test item ID, mode, model ID + params, raw response, evaluation result, error category, cost, timestamps.
-- The **golden set** is a set of files in the repo of the documented project; chunk IDs are stable, so only changed parts are regenerated.
+- **Raw LLM responses are append-only** (models under test, extractors, task-text writer, judge): stored as JSONB, never updated or deleted. They cannot be reconstructed retroactively. The same holds for test items and review decisions; the application's DB role has no `UPDATE` / `DELETE` on these tables.
+- **Everything lives in PostgreSQL on our VM** ([§3](#3-architecture)): projects and their limits, runs (with the OIDC claims of the upload, [§11](#11-github-action)), uploaded inputs (hash and metadata; the files themselves on a volume, addressed by hash), the inventory and the out-of-inventory models (`Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`), the golden set and its reviews, raw LLM calls and results. Model attributes: TBD.
+- Every result row records: input snapshot hash, docs version, generator version, test item ID, golden-set version, mode, model ID + params, raw response, evaluation result, error category, cost, timestamps.
+- The **golden set** lives in our database and is as frozen as files in git would be:
+  - a `TestItem` is **never updated or deleted**; a change is a new item. A content hash (task text, reference, level, chunk ID, …) dedupes regenerated items;
+  - a **golden-set version** = project + docs version + generator version + parent version + the set of its item IDs. Unchanged items are referenced, not copied. Chunk IDs are stable, so only the items of changed chunks are regenerated;
+  - **review decisions are append-only** (item, decision, reviewer, time); an item's state is its latest decision;
+  - every result references the item and the golden-set version it ran against;
+  - **UC2 candidates:** items generated in a PR are candidates. They are evaluated and listed in the PR comment, but they enter a new golden-set version only after the change reaches `main` and they are approved (automatically or by review). A candidate from a PR closed without merging is marked rejected, never deleted.
+- **Export:** the golden set and the results can be exported as files (*candidate:* JSONL per golden-set version) for the published dataset, backups and determinism tests.
 - Database backed up daily from the VM (pg_dump, off-machine copy), see [DEPLOY.md](DEPLOY.md).
 - The dataset is intended to be published. **TBD:** check that the model terms allow publishing outputs.
 
 ## 11. GitHub Action
 
-- Reusable action that runs the CLI + Prism inside the CI runner. **No dependency on our hosted service.**
-- Reads `notinspec.yaml` from the caller repo; the model API key comes from the caller's secrets.
-- **Never builds Sphinx.** The caller's separate job (no secrets) runs `sphinx-build -b xml` (Sphinx 9.x), writes `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)) and uploads the folder as an artifact; our job downloads it and reads `docs.sphinx_xml` ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary. Example workflow in `action/README.md`.
-- UC2: evaluates only changed chunks and their test items, compares with the `main` baseline, posts a **PR comment** and a **status check**, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
-- Outputs JSON results and an HTML report as workflow artifacts.
-- Golden-set changes appear in the PR for review ([§2.5](#25-keeping-golden-set-review-small)).
+In the MVP the Action is a **thin client of our hosted service** ([§3](#3-architecture)): it computes nothing and holds no model key.
+
+- **Two jobs** in the caller's workflow (example in `action/README.md`):
+  1. **build** (no secrets, no `id-token`): `sphinx-build -b xml` (Sphinx 9.x), `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)), the folder uploaded as a workflow artifact. **Never built by us** ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary.
+  2. **upload** (`permissions: id-token: write`): downloads the artifact, packs the XML, the other inputs named in `notinspec.yaml` and the config itself, and sends them to our API with a GitHub OIDC token. It then waits for the run (polling), posts the **PR comment** and sets the **status check** with its own `GITHUB_TOKEN`. Our service never gets write access to the caller's repo.
+- **Authentication (GitHub OIDC):** the API checks the token's signature against GitHub's JWKS, `iss`, `exp` and `aud` (our URL), and that the numeric `repository_id` belongs to a registered project (an ID, not the name, which can be renamed and taken again). The token's `sha` must match the uploaded commit. `ref`, `event_name`, `run_id` and `workflow_ref` are stored with the run. There is no shared upload token. Fork PRs get no OIDC token, so they cannot start a run.
+- **Projects** are registered by our team (CLI on the VM). Each has its limits: allowed models and budget (*candidate:* per run and per month).
+- **Uploads are untrusted** ([§1.1](#11-what-we-are-not-building)): a compressed archive up to a size limit (*candidate:* 25 MB), extracted with limits on total size and file count; absolute paths, `..` and links are rejected.
+- UC2: evaluates only changed chunks and their test items, compares with the latest `main` run, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
+- The PR comment links to the run in the web UI, where the full results and the report are. Golden-set candidates from the PR ([§10](#10-data)) are listed in the comment; our team reviews them ([§2.5](#25-golden-set-review)).
 - Dogfooded on a small demo repo we own.
 
 ## 12. DevOps
@@ -557,8 +578,9 @@ The report says what a result pattern means. It does not recommend a fix: findin
   ```
 - **Docker Compose** services: `postgres`, `api`, `worker` (starts Prism per spec when needed), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
 - The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM). If it starts Prism, it does so inside its own container.
-- **CI (GitHub Actions):** lint (ruff, mypy, oxlint), unit tests, Compose integration tests, build images, push to **GHCR** (including the CLI image used by the Action).
-- **CD:** the faculty VM is reachable only over VPN, so a **self-hosted GitHub runner on the VM** pulls images from GHCR and runs `docker compose up -d`. The repo is public, so the runner is used **only by the deploy job on pushes to `main`** (dedicated runner label + protected `production` environment). Fork PRs never run on the VM.
+- The **worker** takes queued runs (uploads from the Action, UC1 audits) from Postgres and starts the nightly runs (UC3).
+- **CI (GitHub Actions):** lint (ruff, mypy, oxlint), unit tests, Compose integration tests, build images, push to **GHCR**.
+- **CD:** SSH to the faculty VM is open only from the STU network / VPN (ports 80 and 443 are public, see [DEPLOY.md](DEPLOY.md)), so a **self-hosted GitHub runner on the VM** pulls images from GHCR and runs `docker compose up -d`. The repo is public, so the runner is used **only by the deploy job on pushes to `main`** (dedicated runner label + protected `production` environment). Fork PRs never run on the VM. PR checks of other repos never use the runner either: their inputs reach the worker only as uploads ([§11](#11-github-action)).
 - Public GitHub repository under a team organization, **MIT license**.
 
 ## 13. Testing
@@ -568,7 +590,9 @@ The report says what a result pattern means. It does not recommend a fix: findin
 - **Sphinx reader golden test:** a small fixture project of our own with reST `:param:`, Google and NumPy docstrings, built three ways (napoleon, numpydoc, neither) with Sphinx 9 → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus tests that XML with external entities and a missing or non-9.x `build-env.txt` are rejected, and that a copy built in another checkout folder hashes the same.
 - **Real Sphinx examples:** the built XML of three libraries is committed in `core/examples/sphinx/` (urllib3: reST fields; trio: Google via napoleon; hydra-zen: numpydoc). An end-to-end test runs the CLI on each: exit 0, `ingestion.json` byte-identical across two runs, no `unknown node` warning, `report.html` written.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
-- **Integration:** Compose up → fixture Sphinx docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
+- **Integration:** Compose up → fixture Sphinx docs + spec uploaded through the API → worker → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
+- **Auth:** OIDC checks are tested with tokens signed by a test key and a fake JWKS (wrong `aud`, expired, unknown `repository_id`, `sha` mismatch); CI never talks to GitHub's OIDC.
+- **Append-only:** tests that the application's DB role cannot update or delete raw LLM responses, test items or review decisions.
 - Our own API: OpenAPI validated in CI + Schemathesis.
 - Web: Playwright smoke tests.
 - Coverage gate on `core/` only.
@@ -608,9 +632,10 @@ Faculty checkpoint dates: **TBD**.
 3. Adapters Python `ast` and curl; cross-checks K1, K4, K7.
 4. L1 and L3 tasks (copy, adaptation, variation), L0 from `Change`, L4 via Prism for OpenAPI.
 5. 2 small models + 1 large model, 3 modes.
-6. Output: JSON results + PR comment (UC2) with findings and diagnosis; web UI with results.
+6. Output: PR comment and status check (UC2) with findings and diagnosis through the thin Action; web UI with results.
 7. Check hypothesis H1 on the OpenAPI part.
 8. CI/CD to the faculty VM, nightly runs of the pilot.
+9. Hosted-only: every run on our service, everything in Postgres, the golden set versioned there and reviewed by our team ([§2.5](#25-golden-set-review), [§10](#10-data)).
 
 ### 16.2 Next iteration
 
@@ -625,6 +650,8 @@ Faculty checkpoint dates: **TBD**.
 - Agentic tasks: the model searches the docs itself via a tool (e.g. MCP).
 - Docs websites without a supported generator (rendered HTML → Markdown).
 - Sphinx versions other than 9.x (the doctree's node types and attributes change between major versions), and migrating chunks and their IDs when a project moves to another Sphinx version.
+- **Self-contained Action:** runs `core` + Prism in the caller's CI with the caller's own model key and no dependency on our service; the golden set as files in the caller's repo, reviewed in PRs, and results as JSON + HTML artifacts.
+- **Golden-set review by the docs owners** in the web UI, with GitHub sign-in and the right to review taken from the repo's permissions ([§2.5](#25-golden-set-review)). Not decided yet.
 
 ## 17. Roles
 
@@ -636,13 +663,13 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 | 2 | Inputs & inventory | Sphinx and Markdown readers, chunking, prose blocks (input for NLI premises), component detector, spec / signature parsers, adapters, inventory |
 | 3 | Runner & evaluation | LLM client, rate limiting, Prism, L0–L4 evaluation, error categories |
 | 4 | ML / NLP | claim extraction, NLI grounding, cross-checks, retrieval, statistics, validation track |
-| 5 | Backend & data | FastAPI, Postgres schema, migrations, worker |
+| 5 | Backend & data | FastAPI, Postgres schema, migrations, worker, run queue, uploads and OIDC auth, golden-set storage |
 | 6 | Frontend & viz | web UI, reports, charts |
 | 7 | DevOps | CI, Compose, GHCR, self-hosted runner, GitHub Action packaging, monitoring |
 
 ## 18. Open items
 
-- [ ] Faculty API key: provider, endpoint, available models, rate limits, budget, whether it may be used from GitHub-hosted runners
+- [ ] Faculty API key: provider, endpoint, available models, rate limits, budget (in the MVP it is used only on our VM)
 - [ ] Faculty checkpoint dates
 - [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
 - [x] Sphinx build environment for the pilot: built for urllib3, trio and hydra-zen with each release's pinned docs dependencies (Sphinx 9.1), in a container without secrets, stored with `build-env.txt` in `core/examples/sphinx/` (see its README). `build-env.txt` stays plain text; its first line is `sphinx-build 9.x.y` ([§2.3](#23-what-the-tool-needs-from-the-user))
@@ -655,7 +682,12 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
-- [ ] Golden-set review: how much users will do, which items are auto-approved
+- [ ] Golden-set review: which items are auto-approved, how much our team can review for the pilot in UC1, and whether and how docs owners review later (GitHub accounts, [§2.5](#25-golden-set-review))
+- [ ] Project limits: allowed models, budget per run / per month, upload size
+- [ ] Where the DB models live in code: in `core` (all logic) with an optional extra so the CLI does not need SQLAlchemy, or a separate workspace package
+- [ ] Backup of the uploaded-inputs volume (today `pg_dump` only)
+- [ ] Action when our service is down or the run times out: fail the check or skip it
+- [ ] Export format of the golden set and results for the published dataset
 - [ ] Definition of "gold context" for multi-step tasks
 - [ ] NLI for non-English docs
 - [ ] Retrieval for the `retrieved` mode (BM25, embeddings, hybrid)
