@@ -23,7 +23,10 @@
         "tokens": 21,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -54,7 +57,10 @@
         "tokens": 3,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -63,7 +69,10 @@
         "tokens": 69,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -72,7 +81,10 @@
         "tokens": 40,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "table",
@@ -81,7 +93,10 @@
         "tokens": 106,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -90,7 +105,10 @@
         "tokens": 2,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -99,7 +117,10 @@
         "tokens": 50,
         "lang": "python",
         "code": "import strand\n\n# wait at most 2.5 s for the connection. A slow server is fine.\nclient = strand.Client(timeout=strand.Timeout(connect=2.5, read=60))\n",
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -108,7 +129,10 @@
         "tokens": 33,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -139,7 +163,10 @@
         "tokens": 3,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -148,7 +175,10 @@
         "tokens": 11,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "list",
@@ -157,7 +187,10 @@
         "tokens": 116,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -166,7 +199,10 @@
         "tokens": 32,
         "lang": "python",
         "code": "client = strand.Client(retries=strand.Retry(total=5, status=[429, 503]))\n",
-        "nested": true
+        "nested": true,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "quote",
@@ -175,7 +211,10 @@
         "tokens": 52,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -207,7 +246,10 @@
         "tokens": 4,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -216,7 +258,10 @@
         "tokens": 59,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -225,7 +270,10 @@
         "tokens": 37,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -256,7 +304,10 @@
         "tokens": 7,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -265,7 +316,10 @@
         "tokens": 24,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "list",
@@ -274,7 +328,10 @@
         "tokens": 97,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -283,7 +340,10 @@
         "tokens": 47,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -292,7 +352,10 @@
         "tokens": 39,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -301,7 +364,10 @@
         "tokens": 2,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -310,7 +376,10 @@
         "tokens": 32,
         "lang": "python",
         "code": "client = strand.Client(max_retries=strand.Retry(method_whitelist={\"GET\", \"POST\"}))\n",
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -319,7 +388,10 @@
         "tokens": 2,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -328,7 +400,10 @@
         "tokens": 32,
         "lang": "python",
         "code": "client = strand.Client(retries=strand.Retry(allowed_methods={\"GET\", \"POST\"}))\n",
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -337,7 +412,10 @@
         "tokens": 25,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   }

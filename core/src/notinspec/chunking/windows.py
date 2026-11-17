@@ -6,8 +6,9 @@ Picking the premise for a claim is grounding (role 4), so it is not in this modu
 
 The NLI model accepts only a few hundred tokens, so it never sees a whole section. A window is:
 
-- **prose only**: paragraphs, list items and quotes. Code blocks, tables, headings, HTML and
-  rules are left out (code inside a list item too).
+- **prose only**: paragraphs, list items, quotes, admonitions and API field entries. Code
+  blocks, tables, headings, signatures, HTML and rules are left out (code inside a list item
+  too).
 - **cut at sentence boundaries**: a sentence is never split. One sentence over the limit becomes
   its own window, marked `oversized`.
 - **sized** to `max_tokens`, and the next window repeats the last sentences of the previous one
@@ -36,7 +37,7 @@ WINDOWS_VERSION = 1
 DEFAULT_WINDOW_TOKENS = 400  # SPEC §6.1 candidate; leaves room for the hypothesis under 512
 DEFAULT_OVERLAP_TOKENS = 80
 
-_PROSE_KINDS = frozenset({"text", "list", "quote"})
+_PROSE_KINDS = frozenset({"text", "list", "quote", "admonition", "field"})
 
 
 @dataclass(frozen=True)

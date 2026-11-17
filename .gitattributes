@@ -1,2 +1,6 @@
 # LF everywhere: shell steps and Docker builds break on CRLF (team is on Windows + Linux)
 * text=auto eol=lf
+
+# Built Sphinx XML (sphinx-build -b xml): generated, collapsed in PR diffs. Text and LF stay.
+core/examples/sphinx/*/xml/** linguist-generated=true -diff
+core/tests/fixtures/sphinx/xml-*/** linguist-generated=true

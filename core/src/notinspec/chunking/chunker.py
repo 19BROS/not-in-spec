@@ -1,4 +1,9 @@
-"""Split Markdown documents into `Chunk`s: one chunk per documentation section (SPEC §6.1).
+"""Split documents into `Chunk`s: one chunk per documentation section (SPEC §6.1).
+
+Two steps: a reader turns a document into a `BlockDocument` (text + typed blocks with line
+ranges into that text), then `chunk_blocks` cuts it into sections. Markdown goes through
+`parse_blocks` (`chunk_document`); the Sphinx reader (`notinspec.sphinx`) builds the blocks
+straight from the doctree. The rules below are the same for both.
 
 Rules:
 
@@ -9,7 +14,8 @@ Rules:
 - soft-limit fallback: a section longer than `soft_limit` is split between blocks (paragraph
   boundaries) into parts of about equal size. A heading stays with the block after it, and a
   paragraph stays with the code block right after it ("Example:"). The parts keep the
-  section's breadcrumb and `section_id`.
+  section's breadcrumb and `section_id`. A field label ("**Parameters:**") stays with the
+  first field entry after it.
 - a single block longer than `soft_limit` becomes its own part, marked `oversized`
 - short sections are never merged, so one section's boundaries don't depend on its neighbours
 - a heading with no content of its own (directly followed by a sub-heading) gives no chunk
@@ -60,6 +66,15 @@ class Chunk:
     blocks: tuple[Block, ...]
 
 
+@dataclass(frozen=True)
+class BlockDocument:
+    """A document already split into blocks: the input of `chunk_blocks`."""
+
+    source: str  # Markdown: file path; Sphinx: docname ("reference-core"); in IDs, not breadcrumbs
+    text: str  # normalized text; block line ranges point into it
+    blocks: tuple[ParsedBlock, ...]
+
+
 def chunk_document(
     document: Document,
     *,
@@ -67,12 +82,25 @@ def chunk_document(
     soft_limit: int = DEFAULT_SOFT_LIMIT,
     count_tokens: Callable[[str], int] = approx_tokens,
 ) -> tuple[Chunk, ...]:
-    """Chunks of one document, in document order. Pure: same input → equal output."""
-    lines = normalize_text(document.text).split("\n")
-    parsed = parse_blocks("\n".join(lines), count_tokens)
+    """Chunks of one Markdown document, in document order. Pure: same input → equal output."""
+    text = normalize_text(document.text)
+    blocks = tuple(parse_blocks(text, count_tokens))
+    return chunk_blocks(
+        BlockDocument(document.source, text, blocks), project=project, soft_limit=soft_limit
+    )
+
+
+def chunk_blocks(
+    document: BlockDocument, *, project: str, soft_limit: int = DEFAULT_SOFT_LIMIT
+) -> tuple[Chunk, ...]:
+    """Chunks of one document from its blocks, in document order. Pure.
+
+    Block sizes come from the blocks (`Block.tokens`), so no token counter is needed here.
+    """
+    lines = document.text.split("\n")
     chunks: list[Chunk] = []
     seen: dict[tuple[str, ...], int] = {}
-    for path, level, section in _sections(parsed):
+    for path, level, section in _sections(document.blocks):
         if all(p.heading is not None for p in section):
             continue
         occurrence = seen.get(path, 0)
@@ -115,7 +143,7 @@ type _Section = list[ParsedBlock]
 type _Unit = list[ParsedBlock]
 
 
-def _sections(parsed: list[ParsedBlock]) -> Iterator[tuple[tuple[str, ...], int, _Section]]:
+def _sections(parsed: Sequence[ParsedBlock]) -> Iterator[tuple[tuple[str, ...], int, _Section]]:
     stack: list[tuple[int, str]] = []
     path: tuple[str, ...] = ()
     level = 0
@@ -154,7 +182,7 @@ def _glue(unit: _Unit, following: ParsedBlock, soft_limit: int) -> bool:
     last = unit[-1].block.kind
     if last == "heading":
         return True
-    if last == "text" and following.block.kind == "code":
+    if last == "text" and following.block.kind in ("code", "field"):  # "Example:", label
         return _tokens(unit) + following.block.tokens <= soft_limit
     return False
 

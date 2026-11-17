@@ -1,0 +1,3 @@
+<checkout>/docs/reference/urllib3.connection.rst:2: WARNING: py:class reference target not found: connection._TYPE_SOCKET_OPTIONS [ref.class]
+<unknown>:1: WARNING: py:class reference target not found: connection._TYPE_SOCKET_OPTIONS [ref.class]
+<checkout>/docs/reference/urllib3.connection.rst:2: WARNING: py:class reference target not found: connection._TYPE_SOCKET_OPTIONS [ref.class]
