@@ -363,4 +363,16 @@ With the section as reference, large + local-block + the check keeps 86/92 good 
 5. **Number words don't matter here.** 16 claims write numbers as words ("four types", "one second"); reading "zero" .. "twelve" as digits changes nothing. The option stays in `id_check.py` but is off.
 6. **Limits.** Small, urllib3-heavy sample (5 urllib3 sections, 1 httpx). The hand-made negatives were written to swap names, so this sample may favour the check. Code blocks are not part of the reference (SPEC §6.1), so a claim that names something only shown in code is dropped; that never happened here.
 
-Next: move it into grounding in `core/` (after the citation check, section prose as reference, built on `prose_sentences`), and reuse it in the perturbation operator (§6.7).
+7. **Tuned on the same data.** The section reference, the project prefix and the number-word option were chosen on these 180 (and the draft's 350) claims, so 0/92 is optimistic. Check again on new docs (e.g. the Sphinx reader output for urllib3).
+
+**Before / when moving it to `core/`** (tracked in #26; found in review of #24, none of them shows up in this sample):
+
+- Numbers are compared as strings: "1 second" fails against `Timeout(connect=1.0)`. Compare non-version numbers by value.
+- A number glued to a unit in the reference is skipped: "2.5 seconds" fails against "2.5s". Allow a unit right after the number.
+- A backticked name with a leading dot (`` `.request()` ``) fails against `PoolManager.request()`.
+- `TLSv1.2` fails against "TLS 1.2" (it is read as the name `TLSv1` + a number).
+- Keep the project prefix rule.
+- Docstrings: code and signatures are not in the reference, so a parameter named only in the signature would fail. Add the symbol's inventory names (`Parameter`, `Symbol`) to the reference for docstring sections only; guides keep "code doesn't count".
+- The perturbation operator (§6.7) uses the claim's citation as reference, not the section.
+
+Then: put it into grounding in `core/` (after the citation check, section prose as reference, built on `prose_sentences`).
