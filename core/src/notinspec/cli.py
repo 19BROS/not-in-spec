@@ -27,6 +27,7 @@ def main(argv: list[str] | None = None) -> int:
     chunk.add_argument(
         "-g", "--glob", action="append", help="file pattern under root (default: **/*.md)"
     )
+    chunk.add_argument("--project", help="root of every breadcrumb (default: name of root)")
     chunk.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
     chunk.add_argument("--window-tokens", type=_positive_int, default=DEFAULT_WINDOW_TOKENS)
     chunk.add_argument(
@@ -105,7 +106,8 @@ def _chunk(args: argparse.Namespace) -> int:
         print(f"not a directory: {args.root}", file=sys.stderr)
         return 2
     documents = load_documents(args.root, args.glob or ["**/*.md"])
-    chunks = chunk_documents(documents, soft_limit=args.soft_limit)
+    project = args.project or args.root.resolve().name
+    chunks = chunk_documents(documents, project=project, soft_limit=args.soft_limit)
     overlap = args.window_tokens // 5 if args.overlap_tokens is None else args.overlap_tokens
     windows = {
         c.id: nli_windows(c, max_tokens=args.window_tokens, overlap_tokens=overlap) for c in chunks

@@ -37,6 +37,7 @@ def build_results(ingestion: Ingestion, root: Path) -> dict[str, Any]:
         "created_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "stage": "ingestion",
         "docs": {
+            "project": ingestion.project,
             "files": [f.source for f in ingestion.files],
             "input_hash": ingestion.input_hash,
             "config_hash": ingestion.config_hash,

@@ -20,7 +20,7 @@ from notinspec.chunking import (
 )
 from notinspec.config import ConfigError, IngestConfig
 
-INGESTION_SCHEMA_VERSION = 1
+INGESTION_SCHEMA_VERSION = 2  # 2: chunk id is the location, project added
 _TEXT_SUFFIXES = frozenset({".md", ".markdown", ".txt"})
 
 
@@ -69,6 +69,7 @@ class Ingestion:
     schema_version: int
     config_hash: str
     input_hash: str
+    project: str
     chunker_version: int
     soft_limit: int
     files: tuple[InputFile, ...]
@@ -108,13 +109,14 @@ def ingest(
                 text = data.decode("utf-8-sig", errors="replace")
                 warnings.append(f"{source}: invalid UTF-8 characters were replaced")
             documents.append(Document(source, normalize_text(text)))
-    chunks = chunk_documents(documents, soft_limit=soft_limit)
+    chunks = chunk_documents(documents, project=config.project, soft_limit=soft_limit)
     if documents and not chunks:
         warnings.append("text inputs contain no documentation content")
     return Ingestion(
         schema_version=INGESTION_SCHEMA_VERSION,
         config_hash=config.content_hash,
         input_hash=content_hash({f.source: f.content_hash for f in files}),
+        project=config.project,
         chunker_version=CHUNKER_VERSION,
         soft_limit=soft_limit,
         files=tuple(files),

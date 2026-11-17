@@ -21,7 +21,7 @@ def _doc(text: str, source: str = "docs/guide.md") -> Document:
 
 
 def _chunks(text: str, **kwargs: int) -> tuple[Chunk, ...]:
-    return chunk_document(_doc(text), **kwargs)
+    return chunk_document(_doc(text), project="acme", **kwargs)
 
 
 def _by_path(chunks: tuple[Chunk, ...]) -> dict[tuple[str, ...], Chunk]:
@@ -30,7 +30,7 @@ def _by_path(chunks: tuple[Chunk, ...]) -> dict[tuple[str, ...], Chunk]:
 
 @pytest.fixture
 def client() -> tuple[Chunk, ...]:
-    return chunk_documents(load_documents(FIXTURES, ["*.md"]))
+    return chunk_documents(load_documents(FIXTURES, ["*.md"]), project="acme")
 
 
 # --- golden file and determinism -------------------------------------------------------
@@ -41,7 +41,7 @@ def test_client_golden(client: tuple[Chunk, ...], golden: Golden) -> None:
 
 
 def test_small_parts_golden(golden: Golden) -> None:
-    chunks = chunk_documents(load_documents(FIXTURES, ["*.md"]), soft_limit=40)
+    chunks = chunk_documents(load_documents(FIXTURES, ["*.md"]), project="acme", soft_limit=40)
     golden("chunks-client-soft40", chunks)
 
 
@@ -68,8 +68,18 @@ def test_heading_paths_and_breadcrumbs(client: tuple[Chunk, ...]) -> None:
         ("Client", "Charges", "Example"),
         ("Client", "Errors"),
     ]
-    assert client[1].breadcrumb == "client.md > Client > Connecting"
-    assert client[0].breadcrumb == "client.md"
+    assert client[1].breadcrumb == "acme > Client > Connecting"
+    assert client[0].breadcrumb == "acme"  # the file path is in `source`, not here
+    assert client[1].source == "client.md"
+
+
+def test_project_name_is_not_part_of_the_ids() -> None:
+    text = "# A\n\ntext\n"
+    first = chunk_document(_doc(text), project="acme")[0]
+    second = chunk_document(_doc(text), project="renamed")[0]
+    assert first.breadcrumb == "acme > A"
+    assert second.breadcrumb == "renamed > A"
+    assert (first.id, first.section_id) == (second.id, second.section_id)
 
 
 def test_text_before_first_heading_is_its_own_chunk(client: tuple[Chunk, ...]) -> None:
@@ -141,7 +151,7 @@ def test_code_inside_a_list_is_reported_as_nested(client: tuple[Chunk, ...]) -> 
 def test_duplicate_heading_paths_get_an_occurrence_number() -> None:
     chunks = _chunks("# A\n\n## Example\n\none\n\n## Example\n\ntwo\n")
     assert [c.occurrence for c in chunks] == [0, 1]
-    assert len({c.id for c in chunks}) == len({c.location_id for c in chunks}) == 2
+    assert len({c.id for c in chunks}) == len({c.section_id for c in chunks}) == 2
 
 
 # --- long sections ---------------------------------------------------------------------
@@ -180,15 +190,15 @@ def test_all_parts_of_a_section_share_the_section_id() -> None:
     long = [c for c in chunks if c.heading_path == ("Long",)]
     assert len(long) > 1
     assert len({c.section_id for c in long}) == 1
-    assert len({c.location_id for c in long}) == len(long)
+    assert len({c.id for c in long}) == len(long)
     assert chunks[-1].section_id != long[0].section_id
 
 
-def test_section_id_survives_text_edits() -> None:
+def test_ids_survive_text_edits() -> None:
     before = _chunks("# A\n\nold text\n")[0]
     after = _chunks("# A\n\nnew text\n")[0]
-    assert before.section_id == after.section_id
-    assert before.id != after.id
+    assert (before.id, before.section_id) == (after.id, after.section_id)
+    assert before.content_hash != after.content_hash
 
 
 def test_code_block_is_never_cut() -> None:
@@ -218,19 +228,25 @@ def test_table_is_never_cut() -> None:
 # --- IDs -------------------------------------------------------------------------------
 
 
-def test_editing_text_changes_id_but_not_location_id() -> None:
+def test_editing_text_keeps_the_id_and_changes_the_content_hash() -> None:
+    # SPEC §6.1: identity = source + heading path; the content hash tells what changed
     before = _by_path(_chunks("# A\n\nold text\n\n# B\n\nsame\n"))
     after = _by_path(_chunks("# A\n\nnew text\n\n# B\n\nsame\n"))
-    assert before[("A",)].id != after[("A",)].id
-    assert before[("A",)].location_id == after[("A",)].location_id
+    assert before[("A",)].id == after[("A",)].id
     assert before[("A",)].content_hash != after[("A",)].content_hash
-    assert before[("B",)].id == after[("B",)].id  # line numbers moved, nothing else did
+    assert before[("B",)] == after[("B",)]  # untouched section: identical chunk
+
+
+def test_renaming_a_heading_gives_a_new_chunk() -> None:
+    before = _chunks("# A\n\ntext\n")[0]
+    after = _chunks("# Renamed\n\ntext\n")[0]
+    assert before.id != after.id
 
 
 def test_source_is_part_of_the_id() -> None:
     text = "# A\n\ntext\n"
-    first = chunk_document(_doc(text, "a.md"))[0]
-    second = chunk_document(_doc(text, "b.md"))[0]
+    first = chunk_document(_doc(text, "a.md"), project="acme")[0]
+    second = chunk_document(_doc(text, "b.md"), project="acme")[0]
     assert first.id != second.id
     assert first.content_hash == second.content_hash
 

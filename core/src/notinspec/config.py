@@ -5,6 +5,7 @@ settings (models, budget, thresholds) are left for later pipeline stages.
 """
 
 import hashlib
+import os
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
@@ -36,13 +37,14 @@ class _ConfigLoader(yaml.SafeLoader):
         return result
 
 
-_DOC_FIELDS = frozenset({"paths", "openapi", "changelog", "sphinx", "version"})
+_DOC_FIELDS = frozenset({"paths", "openapi", "changelog", "sphinx_xml", "version"})
 
 
 @dataclass(frozen=True)
 class IngestConfig:
     root: Path
     content_hash: str
+    project: str  # root of every breadcrumb (SPEC section 6.1)
     paths: tuple[str, ...]
     openapi: str | None
     changelog: str | None
@@ -57,11 +59,17 @@ def load_config(path: Path) -> IngestConfig:
     if not isinstance(config, dict) or not isinstance(config.get("docs"), dict):
         raise ConfigError("config must contain a docs mapping")
     docs = config["docs"]
+    if "sphinx" in docs:
+        raise ConfigError(
+            "docs.sphinx was replaced by docs.sphinx_xml: build the XML with "
+            "`sphinx-build -b xml` in a separate job without secrets and point to its folder"
+        )
     if unknown := sorted(set(docs) - _DOC_FIELDS):
         raise ConfigError(f"unknown docs field(s): {', '.join(unknown)}")
-    if docs.get("sphinx") is not None:
+    if docs.get("sphinx_xml") is not None:
+        relative_path(docs["sphinx_xml"], "docs.sphinx_xml")
         raise ConfigError(
-            "docs.sphinx is not supported yet; use docs.paths for Markdown or docs.openapi"
+            "docs.sphinx_xml is not supported yet; use docs.paths for Markdown or docs.openapi"
         )
     paths = docs.get("paths", [])
     if not isinstance(paths, list):
@@ -71,9 +79,11 @@ def load_config(path: Path) -> IngestConfig:
     changelog = _optional_path(docs.get("changelog"), "docs.changelog")
     if not patterns and openapi is None and changelog is None:
         raise ConfigError("configure at least one of docs.paths, docs.openapi or docs.changelog")
+    root = path.resolve().parent
     return IngestConfig(
-        root=path.resolve().parent,
+        root=root,
         content_hash=hashlib.sha256(data).hexdigest(),
+        project=_project(config.get("project"), root),
         paths=patterns,
         openapi=openapi,
         changelog=changelog,
@@ -91,6 +101,18 @@ def relative_path(value: object, field: str) -> str:
     ):
         raise ConfigError(f"{field}: paths must stay inside the config directory: {value}")
     return PurePosixPath(value).as_posix()
+
+
+def _project(value: object, root: Path) -> str:
+    """`project:` from the config; default: the repo name (in CI) or the config's folder."""
+    if value is None:
+        repository = os.environ.get("GITHUB_REPOSITORY", "")
+        return repository.rpartition("/")[2] or root.name
+    if not isinstance(value, str) or not value.strip():
+        raise ConfigError("project must be a non-empty string")
+    if ">" in value or "\n" in value:
+        raise ConfigError("project must be one line without '>' (it starts every breadcrumb)")
+    return value.strip()
 
 
 def _optional_path(value: object, field: str) -> str | None:

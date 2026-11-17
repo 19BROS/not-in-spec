@@ -2,8 +2,9 @@
 
 Rules:
 
-- a section runs from its heading to the next heading; the heading path ("breadcrumb") says
-  where it is. There is no small token limit: the NLI size limit lives in `windows.py`.
+- a section runs from its heading to the next heading; the breadcrumb (project + heading
+  path) says where it is. The file path is not in the breadcrumb, it stays in `source`.
+  There is no small token limit: the NLI size limit lives in `windows.py`.
 - code blocks, tables, lists and quotes are never cut
 - soft-limit fallback: a section longer than `soft_limit` is split between blocks (paragraph
   boundaries) into parts of about equal size. A heading stays with the block after it, and a
@@ -13,14 +14,14 @@ Rules:
 - short sections are never merged, so one section's boundaries don't depend on its neighbours
 - a heading with no content of its own (directly followed by a sub-heading) gives no chunk
 
-IDs, all derived from content, never from run order (64-bit hex):
+IDs, derived from the input, never from run order (64-bit hex). The project name is not
+part of them, so renaming the project keeps every ID:
 
-- `id`: source + heading path + text (SPEC §6.1). Any edit gives a new `id`.
-- `location_id`: source + heading path + part. Survives edits of the text, so a PR diff can
-  tell "this section changed" from "this is a new section".
-- `section_id`: source + heading path, no part. Same for every part of one section: the key
-  for "the whole section" (gold context, retrieval results, `Source`).
-- `content_hash`: text only.
+- `id`: source + heading path + occurrence + part (SPEC §6.1). The chunk's identity: it
+  survives edits of the text, so a typo fix keeps the chunk and everything derived from it.
+- `section_id`: source + heading path + occurrence, no part. Same for every part of one
+  section: the key for "the whole section" (gold context, retrieval results, `Source`).
+- `content_hash`: text only. Tells that a chunk changed (CI diff, regenerating test items).
 """
 
 from collections.abc import Callable, Iterator, Sequence
@@ -32,7 +33,7 @@ from notinspec.chunking.documents import Document, normalize_text
 from notinspec.chunking.tokens import approx_tokens
 
 # bump when chunk boundaries or IDs change for the same input
-CHUNKER_VERSION = 2
+CHUNKER_VERSION = 3
 
 DEFAULT_SOFT_LIMIT = 2000  # SPEC §6.1 candidate; sections above it are split into parts
 
@@ -41,13 +42,12 @@ BREADCRUMB_SEPARATOR = " > "
 
 @dataclass(frozen=True)
 class Chunk:
-    id: str
-    location_id: str
+    id: str  # identity: survives text edits
     section_id: str  # equal for all parts of one section
     content_hash: str
     source: str  # document path
     heading_path: tuple[str, ...]  # () for text before the first heading
-    breadcrumb: str  # "docs/client.md > Connecting > connect()"
+    breadcrumb: str  # "acme > Client > Connecting"
     heading_level: int  # level of the section's own heading, 0 before the first heading
     occurrence: int  # 0, or 1, 2, ... for later sections with the same heading path
     part: int  # 1-based; > 1 only when a long section was split
@@ -63,6 +63,7 @@ class Chunk:
 def chunk_document(
     document: Document,
     *,
+    project: str,
     soft_limit: int = DEFAULT_SOFT_LIMIT,
     count_tokens: Callable[[str], int] = approx_tokens,
 ) -> tuple[Chunk, ...]:
@@ -79,7 +80,17 @@ def chunk_document(
         parts = _pack(_units(section, soft_limit), soft_limit)
         for number in range(1, len(parts) + 1):
             chunks.append(
-                _chunk(document.source, lines, path, level, occurrence, number, parts, soft_limit)
+                _chunk(
+                    document.source,
+                    project,
+                    lines,
+                    path,
+                    level,
+                    occurrence,
+                    number,
+                    parts,
+                    soft_limit,
+                )
             )
     return tuple(chunks)
 
@@ -87,13 +98,16 @@ def chunk_document(
 def chunk_documents(
     documents: Sequence[Document],
     *,
+    project: str,
     soft_limit: int = DEFAULT_SOFT_LIMIT,
     count_tokens: Callable[[str], int] = approx_tokens,
 ) -> tuple[Chunk, ...]:
     return tuple(
         chunk
         for document in documents
-        for chunk in chunk_document(document, soft_limit=soft_limit, count_tokens=count_tokens)
+        for chunk in chunk_document(
+            document, project=project, soft_limit=soft_limit, count_tokens=count_tokens
+        )
     )
 
 
@@ -185,6 +199,7 @@ def _tokens(blocks: _Unit) -> int:
 
 def _chunk(
     source: str,
+    project: str,
     lines: list[str],
     path: tuple[str, ...],
     level: int,
@@ -198,15 +213,13 @@ def _chunk(
     text = "\n".join(lines[start - 1 : end])
     tokens = _tokens(part)
     section = [source, list(path), occurrence]
-    location = [*section, number]
     return Chunk(
-        id=_hash([*location, text]),
-        location_id=_hash(location),
+        id=_hash([*section, number]),
         section_id=_hash(section),
         content_hash=_hash(text),
         source=source,
         heading_path=path,
-        breadcrumb=BREADCRUMB_SEPARATOR.join((source, *path)),
+        breadcrumb=BREADCRUMB_SEPARATOR.join((project, *path)),
         heading_level=level,
         occurrence=occurrence,
         part=number,
