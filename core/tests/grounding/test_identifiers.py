@@ -57,11 +57,27 @@ def test_quotes_backticks_and_abbreviations() -> None:
     [
         ("A connect timeout of 1 second.", "Use `Timeout(connect=1.0)`."),
         ("A connect timeout of 1.0 second.", "Use `Timeout(connect=1)`."),
-        ("Waits 0.50 seconds.", "Waits 0.5 seconds."),
+        ("A connect timeout of 1.00 second.", "Use `Timeout(connect=1.0)`."),
+        ("At most 1,000 connections.", "At most 1000 connections."),
+        ("At most 1000000 bytes.", "At most 1,000,000 bytes."),
     ],
 )
-def test_plain_numbers_are_compared_by_value(claim: str, reference: str) -> None:
+def test_trailing_zeros_and_thousands_separators(claim: str, reference: str) -> None:
     assert _missing(claim, reference) == ()
+
+
+@pytest.mark.parametrize(
+    ("claim", "reference", "missing"),
+    [
+        ("Python 3.10 is supported.", "Python 3.1 is supported.", ("3.10",)),
+        ("Waits 0.50 seconds.", "Waits 0.5 seconds.", ("0.50",)),
+        ("At most 1,00 connections.", "At most 100 connections.", ("1", "00")),
+    ],
+)
+def test_other_numbers_are_compared_as_written(
+    claim: str, reference: str, missing: tuple[str, ...]
+) -> None:
+    assert _missing(claim, reference) == missing
 
 
 def test_versions_are_compared_as_written() -> None:
@@ -111,6 +127,13 @@ def test_acronym_plurals_are_not_identifiers(claim: str) -> None:
     assert _missing(claim, "Loads CA certificates, parses an URL, one API.") == ()
 
 
+def test_backticked_expression_is_split_into_names_and_numbers() -> None:
+    ref = "Pass total=3 to Retry."
+    assert _missing("Use `Retry(total=3)`.", ref) == ()
+    assert _missing("Use `Retry(total=5)`.", ref) == ("5",)
+    assert _missing("Use `Retry(connect=3)`.", ref) == ("connect",)
+
+
 def test_inner_capital_names_are_still_identifiers() -> None:
     assert _missing("Raises `SSLError`.", "Raises an error.") == ("SSLError",)
     assert _missing("Uses HTTPSConnection.", "Uses a connection.") == ("HTTPSConnection",)
@@ -122,6 +145,18 @@ def test_capitalized_inventory_names_are_identifiers() -> None:
     assert _missing("Retry limits how long a request waits.", ref, known) == ("Retry",)
     assert _missing("Retry limits how long a request waits.", ref) == ()  # not in inventory
     assert _missing("Timeout limits how long a request waits.", ref, known) == ()
+
+
+def test_capitalized_inventory_name_starting_a_sentence_matches_any_case() -> None:
+    known = frozenset({"Timeout", "Retry"})
+    ref = "Read timeout errors are retried."
+    assert _missing("Timeout errors are retried.", ref, known) == ()
+    assert _missing("Errors are counted. Timeout errors are retried.", ref, known) == ()
+    assert _missing("The Timeout object is retried.", ref, known) == ("Timeout",)
+    assert _missing("`Timeout` errors are retried.", ref, known) == ("Timeout",)
+    # also elsewhere in the claim: case matters again
+    assert _missing("Timeout errors use Timeout.", ref, known) == ("Timeout",)
+    assert _missing("Retry errors are retried.", ref, known) == ("Retry",)
 
 
 def test_lowercase_inventory_names_count_only_when_backticked() -> None:

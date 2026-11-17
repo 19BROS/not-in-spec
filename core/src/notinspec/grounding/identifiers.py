@@ -12,22 +12,28 @@ What the claim is checked for (both sides normalized like the citation check):
 - **identifier**: a backticked span, or a word with `_`, a dot between names (`Retry.total`),
   a trailing `()`, an inner capital (`ProxyManager`, `SSLError`) or letters + digits
   (`urllib3`). A single capitalized word (`Retry`) counts when it is a name in the inventory.
-  Plain words, lowercase inventory names that are also words (`read`, `total`, unless
-  backticked), acronyms (HTTPS) and their plurals (`URLs`, `CAs`) are not checked.
+  A backticked span that is not one name (`Retry(total=3)`) is split into its names and
+  numbers, each checked on its own. Plain words, lowercase inventory names that are also
+  words (`read`, `total`, unless backticked), acronyms (HTTPS) and their plurals (`URLs`,
+  `CAs`) are not checked.
   Matching is case-sensitive on name boundaries: `ssl_context` does not match inside
   `proxy_ssl_context`, but does match `ProxyConfig.ssl_context`. A trailing `()` and a leading
   dot (`.request()`) are ignored. A dotted name that starts with the project name also passes
-  without it (`urllib3.Timeout` on `Timeout`).
-- **number**: compared by value, so "1 second" matches `Timeout(connect=1.0)`. A unit glued to
-  the number is allowed on both sides ("2.5s"). A number never matches inside a name or a
-  longer version (`3` is not in `urllib3`, `3.13` is not in `3.13.14`).
+  without it (`urllib3.Timeout` on `Timeout`). Only a capitalized inventory name that starts
+  a sentence of the claim (and is not backticked) matches regardless of case: "Timeout errors
+  are retried." passes on "Read timeout errors". Everywhere else case matters, because short
+  class names are also words (`Request` would pass in 81 instead of 7 of 481 urllib3 sections).
+- **number**: compared as written; the only extra equality is trailing zeros against an
+  integer, so "1 second" matches `Timeout(connect=1.0)` but `3.10` is not `3.1`. Thousands
+  separators are dropped (`1,000` = `1000`, groups of exactly 3 digits). A unit glued to the
+  number is allowed on both sides ("2.5s"). A number never matches inside a name or a longer
+  version (`3` is not in `urllib3`, `3.13` is not in `3.13.14`).
 - **version**: two dots or more (`2.8.0`), compared as written; a leading `v` is ignored. An
   acronym glued to a version is the acronym and the version: `TLSv1.2` = "TLS 1.2".
 """
 
 import re
 from collections.abc import Sequence
-from decimal import Decimal
 
 from notinspec.chunking import Chunk, prose_sentences
 from notinspec.grounding.citation import QUOTES
@@ -36,7 +42,10 @@ from notinspec.inventory import Inventory
 _NAME = r"[A-Za-z_][A-Za-z0-9_]*"
 _WORD = re.compile(rf"(?<![\w.]){_NAME}(?:\.{_NAME})*(?:\(\))?")
 _NUMBER = re.compile(r"(?<![\w.])v?(\d+(?:\.\d+)*)(?:[A-Za-z]+)?(?![\w]|\.\d)")
+_SINGLE_NAME = re.compile(rf"{_NAME}(?:\.{_NAME})*(?:\(\))?")
 _BACKTICKED = re.compile(r"`([^`]+)`")
+_THOUSANDS = re.compile(r"(?<![\w.,])(\d{1,3})((?:,\d{3})+)(?![\w]|,\d|\.\d)")
+_TRAILING_ZEROS = re.compile(r"(\d+)\.0+")
 # an acronym glued to a version: TLSv1.2, IPv6, HTTP2 (read as "TLS 1.2")
 _ACRONYM_VERSION = re.compile(r"(?<![\w.])([A-Z]{2,})v?(\d+(?:\.\d+)*)(?![\w]|\.\d)")
 
@@ -52,10 +61,10 @@ def missing_identifiers(
     ref = _norm(reference)
     prefix = f"{project}."
     out: list[str] = []
-    for name in _identifiers(claim, known_names):
-        if _name_in(name, ref):
+    for name, any_case in _identifiers(claim, known_names).items():
+        if _name_in(name, ref, any_case):
             continue
-        if name.startswith(prefix) and _name_in(name.removeprefix(prefix), ref):
+        if name.startswith(prefix) and _name_in(name.removeprefix(prefix), ref, any_case):
             continue
         out.append(name)
     ref_numbers = {_value(n) for n in _numbers(ref)}
@@ -119,24 +128,46 @@ def _is_identifier(word: str, known_names: frozenset[str]) -> bool:
     )
 
 
-def _identifiers(claim: str, known_names: frozenset[str]) -> list[str]:
+def _identifiers(claim: str, known_names: frozenset[str]) -> dict[str, bool]:
+    """Identifiers of the claim, each with whether it may match regardless of case."""
     text = _ACRONYM_VERSION.sub(r"\1 \2", claim.translate(QUOTES))
-    found = [_norm(s).removesuffix("()").lstrip(".") for s in _BACKTICKED.findall(text)]
-    found += [
-        w.removesuffix("()") for w in _WORD.findall(_norm(text)) if _is_identifier(w, known_names)
-    ]
-    # a backticked number or phrase is left to the number check
-    return list(dict.fromkeys(f for f in found if f and not _NUMBER.fullmatch(f) and " " not in f))
+    found: dict[str, bool] = {}
+    for span in _BACKTICKED.findall(text):
+        name = " ".join(span.split()).removesuffix("()").lstrip(".")
+        names = [name] if _SINGLE_NAME.fullmatch(name) else _WORD.findall(span)
+        for n in names:
+            found[n.removesuffix("()")] = False
+    # backticked spans are blanked out, so offsets stay valid for finding sentence starts
+    plain = _BACKTICKED.sub(lambda m: " " * len(m.group(0)), text)
+    for match in _WORD.finditer(plain):
+        word = match.group(0)
+        if not _is_identifier(word, known_names):
+            continue
+        name = word.removesuffix("()")
+        initial = (
+            name[:1].isupper() and name in known_names and _starts_sentence(plain, match.start())
+        )
+        found[name] = found.get(name, True) and initial
+    # a number is left to the number check
+    return {n: c for n, c in found.items() if n and not _NUMBER.fullmatch(n)}
+
+
+def _starts_sentence(text: str, at: int) -> bool:
+    before = text[:at].rstrip().rstrip("\"'([")
+    return not before or before[-1] in ".!?"
 
 
 def _numbers(text: str) -> list[str]:
+    text = _THOUSANDS.sub(lambda m: m.group(1) + m.group(2).replace(",", ""), text)
     return list(dict.fromkeys(_NUMBER.findall(text)))
 
 
-def _value(number: str) -> str | Decimal:
-    """A plain number by value (`1` = `1.0`), a version (two dots or more) as written."""
-    return number if number.count(".") >= 2 else Decimal(number)
+def _value(number: str) -> str:
+    """The number as written, but `1.0` and `1.00` are `1`."""
+    match = _TRAILING_ZEROS.fullmatch(number)
+    return match.group(1) if match else number
 
 
-def _name_in(name: str, ref: str) -> bool:
-    return re.search(rf"(?<!\w){re.escape(name)}(?!\w)", ref) is not None
+def _name_in(name: str, ref: str, any_case: bool = False) -> bool:
+    pattern = rf"(?<!\w){re.escape(name)}(?!\w)"
+    return re.search(pattern, ref, re.IGNORECASE if any_case else 0) is not None
