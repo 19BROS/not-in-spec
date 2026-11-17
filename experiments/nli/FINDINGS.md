@@ -291,7 +291,9 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 
 - **Sample (180):** all 91 hand-made / outside / beyond claims, the 7 real claims where large + local or the draft disagreed, and 82 random real claims.
 - Afterwards, the 9 claims where the human and the draft disagreed on keep/drop were re-read by the same person, without seeing the draft's label. 6 changed.
+- **The sample is not random.** The 7 disputed claims were picked where large + local or the draft said no, so misses of the local setups are over-represented. Same-section recall below (e.g. 86 vs 90 of 92 for window 400) is not an estimate for all claims. The significant differences are on the cross pairs, where every pair any compared setup kept is labelled.
 - **Round 2 (43):** every cross pair kept by at least one of the compared setups (`labeling/build_cross.py`).
+- **ChatGPT inputs:** `labeling/build.py` also writes per-section prompts (`labeling/chatgpt-instructions.md`) for a third annotator. They have not been run yet; no number here uses them. Their labels would be stored as `annotator=chatgpt`, separate from `annotator=human`.
 - Files: `labels-human.csv`, `labels-human-cross.csv`. Numbers: `runs/007-block-premise-new-models/posthoc/human_labels.py` → `human_labels.txt`.
 
 **Human vs claude-draft:** keep/drop agreement 98.3% (kappa 0.97). With all three labels the agreement is 92.8% (kappa 0.88); most differences are neutral vs contradiction. 3 keep/drop differences remain: bugfixes n3, bugfixes sonnet-outside b1 and security sonnet-outside o1. The draft-based conclusions above therefore hold.
