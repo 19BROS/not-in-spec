@@ -20,6 +20,7 @@ Python packages form one **uv workspace** (root `pyproject.toml`). Each lives in
 
 ```sh
 uv sync --all-packages              # install everything (Python 3.12+)
+uv sync --all-packages --extra nli  # + torch CPU and transformers for the real NLI model; plain uv sync removes them
 uv run ruff check && uv run ruff format --check
 uv run mypy                         # strict, core only
 uv run pytest --cov=notinspec       # all Python tests, coverage gate on core

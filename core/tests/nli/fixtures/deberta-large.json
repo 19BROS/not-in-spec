@@ -1,0 +1,102 @@
+[
+  {
+    "contradiction": 0.0003796213131863624,
+    "entailment": 0.9990823268890381,
+    "hypothesis": "HTTPSConnection continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0005381295923143625,
+    "premise": "urllib3 > Changelog > 2.8.0 (2026-09-15) > Bugfixes:\n\nFixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010481617646291852,
+    "entailment": 0.005362375173717737,
+    "hypothesis": "In urllib3 2.8.0, urllib3.contrib.pyopenssl was fixed to use cryptography APIs when reading a certificate subject and loading encrypted private keys.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9935895204544067,
+    "premise": "urllib3 > Changelog > 2.8.0 (2026-09-15) > Security:\n\nFixed the following security issues:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0020938124507665634,
+    "entailment": 0.0032286569476127625,
+    "hypothesis": "Passing `ssl_context` instead of `proxy_ssl_context` for HTTPS proxies when `use_forwarding_for_https=True` in urllib3 will raise an error in v3.0.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9946775436401367,
+    "premise": "urllib3 > Changelog > 2.8.0 (2026-09-15) > Security:\n\nFixed the following security issues:\n\nThe TLS configuration for HTTPS proxies could be ignored or overridden. (High severity, GHSA-8988-9cw3-xx77)",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007771395612508059,
+    "entailment": 0.9949336647987366,
+    "hypothesis": "urllib3's Retry applies no delay before the second attempt (the first retry).",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0042892927303910255,
+    "premise": "urllib3 > User Guide > Retrying Requests > Configuring Exponential Backoff:\n\nseconds, with no delay before the second attempt (the first retry) because most transient errors resolve immediately. For example, a backoff_factor of 0.5 yields retry sleeps of 0.0s, 1.0s, 2.0s, etc., up to backoff_max:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00010247022873954847,
+    "entailment": 0.9990197420120239,
+    "hypothesis": "Specifying redirect=False disables redirects while keeping the retrying logic in urllib3.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0008778023184277117,
+    "premise": "urllib3 > User Guide > Retrying Requests:\n\nTo disable redirects but keep the retrying logic, specify redirect=False:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9994398951530457,
+    "entailment": 0.000261960260104388,
+    "hypothesis": "By default, urllib3 follows up to 10 redirects.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0002980823628604412,
+    "premise": "urllib3 > User Guide > Retrying Requests:\n\nYou can control the retries using the retries parameter to request(). By default, urllib3 will retry requests 3 times and follow up to 3 redirects.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0013682080898433924,
+    "entailment": 0.9744393229484558,
+    "hypothesis": "urllib3 can automatically retry idempotent requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.02419251762330532,
+    "premise": "urllib3 > User Guide > Retrying Requests:\n\nurllib3 can automatically retry idempotent requests. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. This same mechanism also handles redirects, and the number of retries can be set. ",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": true
+  },
+  {
+    "contradiction": 0.00029237213311716914,
+    "entailment": 0.0008481305558234453,
+    "hypothesis": "Setting a non-zero backoff_factor in urllib3's Retry introduces exponential delays between retries when no server-requested delay is applied.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9988595247268677,
+    "premise": "urllib3 > User Guide > Retrying Requests:\n\nurllib3 can automatically retry idempotent requests. This same mechanism also handles redirects.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9995243549346924,
+    "entailment": 0.00024191544798668474,
+    "hypothesis": "urllib3 never retries idempotent requests automatically.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00023370407870970666,
+    "premise": "urllib3 > User Guide > Retrying Requests:\n\nurllib3 can automatically retry idempotent requests. This same mechanism also handles redirects.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9697932600975037,
+    "entailment": 0.003902797121554613,
+    "hypothesis": "Timeouts in urllib3 are specified in milliseconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.026303952559828758,
+    "premise": "urllib3 > User Guide > Using Timeouts:\n\nTimeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  }
+]

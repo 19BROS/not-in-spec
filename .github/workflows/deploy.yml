@@ -34,6 +34,8 @@ jobs:
       - run: echo "IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
       - run: $COMPOSE pull postgres api worker web proxy backup
+      # NLI model weights onto the hf-models volume (SPEC §12); offline no-op once they are there
+      - run: $COMPOSE run --rm --no-deps -e HF_HUB_OFFLINE=0 worker python -m notinspec.nli fetch
       - run: $COMPOSE up -d --no-build --wait postgres api worker web proxy backup
       # tagged images of past deploys are not "dangling"; drop unused ones after a week (rollback re-pulls from GHCR)
       - run: docker image prune -af --filter until=168h
