@@ -8,7 +8,7 @@ Gold = human (labels-human.csv + labels-human-cross.csv): 92 should-keep, 88 sho
   section + project prefix + number words     3/12               6/23               0            86/92
     identifiers only                          2/12               6/23               0            86/92
     numbers / versions only                   1/12               0/23               0            86/92
-  check alone (section + project prefix): flags 25/88 should-drop (22 already dropped by NLI) and 19/41 cross (13 already dropped)
+  check alone (section + project prefix): flags 21/88 should-drop (18 already dropped by NLI) and 19/41 cross (13 already dropped)
 
 Compare: gold = claude-draft (labels.csv, all claims): 261 should-keep, 89 should-drop, 259 cross should-drop
   NLI alone: recall 256/261, false keeps 11, wrong cross keeps 24
@@ -19,7 +19,7 @@ Compare: gold = claude-draft (labels.csv, all claims): 261 should-keep, 89 shoul
   section + project prefix + number words     3/11               6/24               0            256/261
     identifiers only                          2/11               6/24               0            256/261
     numbers / versions only                   1/11               0/24               0            256/261
-  check alone (section + project prefix): flags 25/89 should-drop (22 already dropped by NLI) and 163/259 cross (157 already dropped)
+  check alone (section + project prefix): flags 21/89 should-drop (18 already dropped by NLI) and 163/259 cross (157 already dropped)
 
 Compare: gold = chatgpt (labels-chatgpt.csv, human sample; cross = human): 87 should-keep, 93 should-drop, 41 cross should-drop
   NLI alone: recall 81/87, false keeps 17, wrong cross keeps 23
@@ -30,7 +30,7 @@ Compare: gold = chatgpt (labels-chatgpt.csv, human sample; cross = human): 87 sh
   section + project prefix + number words     3/17               6/23               0            81/87
     identifiers only                          2/17               6/23               0            81/87
     numbers / versions only                   1/17               0/23               0            81/87
-  check alone (section + project prefix): flags 25/93 should-drop (22 already dropped by NLI) and 19/41 cross (13 already dropped)
+  check alone (section + project prefix): flags 21/93 should-drop (18 already dropped by NLI) and 19/41 cross (13 already dropped)
 
 Good claims (human) flagged by 'premise': 5
   retrying-requests/flash-3.6-high/c12  NLI keeps  missing ['PoolManager']: A PoolManager pool-level retry policy in urllib3 can be overridden by specifying retries to request().

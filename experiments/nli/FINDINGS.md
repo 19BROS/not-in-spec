@@ -356,13 +356,14 @@ Human labels as gold (12 false keeps and 23 wrong cross keeps of large + local-b
 
 With the section as reference, large + local-block + the check keeps 86/92 good claims (unchanged), 9 false keeps (was 12) and 17 wrong cross pairs (was 23). The other label sets give the same picture: Claude draft 3/11, 6/24, 0/261 good dropped; ChatGPT 3/17, 6/23, 0/87.
 
+2 of the 3 caught false keeps are hand-made negatives (bugfixes n4, security n3). On the 9 model-written false keeps it catches 1 (security flash-outside o1), so 3/12 is not a precision estimate. The 6/23 cross pairs are real extractor claims.
+
 1. **What it catches.** False keeps: "Python 3.13" vs "3.13.14+" (bugfixes n4), `ssl_context` instead of `proxy_ssl_context` (security n3), and `ProxyManager` named on the Security section, which never mentions it (security flash-outside o1). Cross pairs: `HTTPSConnection`, `HTTPSConnection.connect()` / `ProxyConfig.ssl_context` judged against Security, and three "retries parameter of `request()`" claims judged against the backoff section. Only one catch is a number; the rest are names.
 2. **What it misses.** The other 9 false keeps name only tokens that are there: tense ("raises an error" vs "will raise an error in v3.0", bugfixes n2), a dropped qualifier ("HTTPS connections" vs "HTTPS forwarding proxy connections"), and capability claims built from names in the sentence (`HTTPResponse.stream()` reads chunked bodies). Most cross keeps are paraphrases with no names at all. The check is a cheap addition to NLI, not a replacement.
 3. **The premise is too small as reference.** Correct claims name things from a neighbouring sentence of the same section: `PoolManager` and `request()` in "a pool-level retry policy set on `PoolManager` can be overridden by specifying retries to `request()`" (5 human-labelled claims, 14 in the draft). The whole section's prose fixes all of them and loses one cross catch (`proxy_ssl_context` also appears in Bugfixes).
 4. **Project prefix.** `urllib3.Timeout` is the only good claim (draft) the section reference still drops; letting a dotted name pass without a leading project name (from the breadcrumb) fixes it.
 5. **Number words don't matter here.** 16 claims write numbers as words ("four types", "one second"); reading "zero" .. "twelve" as digits changes nothing. The option stays in `id_check.py` but is off.
 6. **Limits.** Small, urllib3-heavy sample (5 urllib3 sections, 1 httpx). The hand-made negatives were written to swap names, so this sample may favour the check. Code blocks are not part of the reference (SPEC §6.1), so a claim that names something only shown in code is dropped; that never happened here.
-
 7. **Tuned on the same data.** The section reference, the project prefix and the number-word option were chosen on these 180 (and the draft's 350) claims, so 0/92 is optimistic. Check again on new docs (e.g. the Sphinx reader output for urllib3).
 
 **Before / when moving it to `core/`** (tracked in #26; found in review of #24, none of them shows up in this sample):

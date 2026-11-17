@@ -9,7 +9,8 @@ What counts as a token in the claim (both sides normalized like the citation che
 backticks removed, typographic quotes made plain):
 - identifier: a backticked span, or a word with `_`, a dot between names (`Retry.total`),
   a trailing `()`, an inner capital (`ProxyManager`, `SSLError`) or letters + digits (`urllib3`).
-  Plain words and all-caps acronyms (HTTPS, TLS) are not checked. Matching is case-sensitive,
+  Plain words, single capitalized words (`Retry`, `Timeout`) and all-caps acronyms (HTTPS, TLS)
+  are not checked unless backticked. Matching is case-sensitive,
   on name boundaries: `ssl_context` does not match inside `proxy_ssl_context`, but does match
   `ProxyConfig.ssl_context`. A trailing `()` is ignored when matching.
 - number / version: `3`, `0.5`, `2.8.0`, `v3.0` (the `v` is ignored). A number must appear as a

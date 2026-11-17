@@ -110,7 +110,8 @@ def table(title, pos, neg, xbad):
             f"  {v:40} {len(fk & flagged):4}/{len(fk):<13} {len(wx & flagged):4}/{len(wx):<13}"
             f" {len(good):4}            {len((nli_kept & pos) - flagged)}/{len(pos)}"
         )
-    flagged = {k for k in rows if miss(k, MAIN)}
+    # rows the citation check already dropped have no premise and are left out here
+    flagged = {k for k in rows if rows[k]["premise"] and miss(k, MAIN)}
     print(
         f"  check alone ({MAIN}): flags {len(neg & flagged)}/{len(neg)} should-drop"
         f" ({len(neg & flagged - nli_kept)} already dropped by NLI) and"
