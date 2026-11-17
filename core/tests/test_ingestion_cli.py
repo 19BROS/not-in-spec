@@ -6,6 +6,7 @@ from typing import Any
 import pytest
 
 from notinspec.cli import main
+from notinspec.sphinx import SPHINX_READER_VERSION
 
 EXAMPLE = Path(__file__).parents[1] / "examples" / "cli"
 
@@ -64,6 +65,7 @@ def test_no_fabricated_evaluation_results(project: Path, tmp_path: Path) -> None
     assert result["findings"] == []
     assert result["ingestion"]["chunks"] == 3
     assert result["ingestion"]["operations"] == 2
+    assert (result["ingestion"]["symbols"], result["ingestion"]["changes"]) == (0, 0)
     assert (output / "comment.md").read_text("utf-8").startswith("<!-- notinspec -->")
     assert "LLM evaluation has not run" in (output / "report.html").read_text("utf-8")
 
@@ -270,7 +272,7 @@ def test_sphinx_with_markdown_and_broken_xml(
     output = tmp_path / "out"
     assert run(project, output) == 0
     data = json.loads((output / "ingestion.json").read_bytes())
-    assert data["sphinx"] == {"version": "9.1.0", "reader_version": 1}
+    assert data["sphinx"] == {"version": "9.1.0", "reader_version": SPHINX_READER_VERSION}
     assert [(f["source"], f["kind"]) for f in data["files"]] == [
         ("docs/guide.md", "markdown"),
         ("build/xml/api/client.xml", "sphinx"),

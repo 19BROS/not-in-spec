@@ -48,6 +48,16 @@ _FRONT_MATTER = {"---": ("---", "..."), "+++": ("+++",)}  # YAML, TOML (Hugo)
 
 
 @dataclass(frozen=True)
+class SignatureParameter:
+    """One parameter of an API signature, as the docs show it (Sphinx `desc_parameter`)."""
+
+    name: str  # "url", "*args", "**kwargs"; the separators are "*" and "/" alone
+    annotation: str | None = None  # "str | None"
+    default: str | None = None  # as written: "None", "'GET'"; None = no default
+    optional: bool = False  # inside optional brackets: `compile(source[, filename])`
+
+
+@dataclass(frozen=True)
 class Block:
     kind: BlockKind
     start_line: int  # 1-based, inclusive, in the source file
@@ -57,9 +67,19 @@ class Block:
     code: str | None = None  # code only: the code without the fence lines
     # code inside a list item or quote: its lines are also part of the container block before it
     nested: bool = False
-    name: str | None = None  # field: "timeout", "RuntimeError"; None for an unnamed return value
+    # field: "timeout", "RuntimeError"; None for an unnamed return value. signature: see objtype
+    name: str | None = None
     field: str | None = None  # field, signature: "param" | "returns" | "raises" | "return-type"
-    type: str | None = None  # field: "float | None"
+    # field: "float | None"; signature: return annotation ("-> X") or attribute type (": X")
+    type: str | None = None
+    # signature of an API description: domain and object type ("py:function", "py:method");
+    # its `name` is then the qualified symbol path ("urllib3.util.Retry.sleep")
+    objtype: str | None = None
+    # signature of an API description: its parameter list; None = no list (attribute, property)
+    parameters: tuple[SignatureParameter, ...] | None = None
+    # text, field: Sphinx version directives in it, (type, version):
+    # ("deprecated", "2.0.0"); type is deprecated | versionadded | versionchanged | versionremoved
+    directives: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass(frozen=True)

@@ -33,6 +33,11 @@ def test_sphinx_example_end_to_end(library: str, tmp_path: Path) -> None:
     docnames = {p.relative_to(xml).with_suffix("").as_posix() for p in xml.rglob("*.xml")}
     assert sources <= docnames
     assert len(sources) >= len(docnames) - 2  # only toctree-only pages may be empty
+    # the inventory: every symbol comes from a chunk of this run
+    sections = {c["section_id"] for c in data["chunks"]}
+    symbols = data["inventory"]["symbols"]
+    assert symbols and all(s["sources"][0]["section_id"] in sections for s in symbols)
+    assert data["inventory_builder_version"] >= 1
     report = (first / "report.html").read_text("utf-8")
     assert all(f"id='c-{c['id']}'" in report for c in data["chunks"])
     assert "<script" not in report

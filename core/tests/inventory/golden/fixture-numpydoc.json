@@ -1,0 +1,542 @@
+{
+  "build": {
+    "inventory": {
+      "symbols": [
+        {
+          "path": "Pool",
+          "kind": "class",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "ba6d62aa36115526",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "size",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "ba6d62aa36115526",
+                      "pointer": null
+                    }
+                  ],
+                  "type": null,
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "ba6d62aa36115526",
+                  "pointer": null
+                }
+              ],
+              "text": "Pool(size)",
+              "returns": null
+            }
+          ]
+        },
+        {
+          "path": "Pool.acquire",
+          "kind": "method",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "f875cc75b21654bc",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "f875cc75b21654bc",
+                  "pointer": null
+                }
+              ],
+              "text": "Pool.acquire()",
+              "returns": null
+            }
+          ]
+        },
+        {
+          "path": "Pool.release",
+          "kind": "method",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "cce53fd6c6a0e5f0",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "conn",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "cce53fd6c6a0e5f0",
+                      "pointer": null
+                    }
+                  ],
+                  "type": null,
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "cce53fd6c6a0e5f0",
+                  "pointer": null
+                }
+              ],
+              "text": "Pool.release(conn)",
+              "returns": null
+            }
+          ]
+        },
+        {
+          "path": "Pool.size",
+          "kind": "attribute",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "446259a4069591b5",
+              "pointer": null
+            }
+          ],
+          "signatures": []
+        },
+        {
+          "path": "fixturelib.Connection",
+          "kind": "class",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "e179f68a26cce8b3",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "host",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "e179f68a26cce8b3",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "str",
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "e179f68a26cce8b3",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.Connection(host: str)",
+              "returns": null
+            }
+          ]
+        },
+        {
+          "path": "fixturelib.Connection.Stats",
+          "kind": "class",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "b7b11b477a34fce0",
+              "pointer": null
+            }
+          ],
+          "signatures": []
+        },
+        {
+          "path": "fixturelib.Connection.Stats.reset",
+          "kind": "method",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "81cd703fd57ba1a5",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "81cd703fd57ba1a5",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.Connection.Stats.reset() -> None",
+              "returns": {
+                "type": "None",
+                "sources": [
+                  {
+                    "type": "signature",
+                    "section_id": "81cd703fd57ba1a5",
+                    "pointer": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "fixturelib.Connection.close",
+          "kind": "method",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "b124d88843018445",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "b124d88843018445",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.Connection.close() -> None",
+              "returns": {
+                "type": "None",
+                "sources": [
+                  {
+                    "type": "signature",
+                    "section_id": "b124d88843018445",
+                    "pointer": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "fixturelib.Connection.default_timeout",
+          "kind": "attribute",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "1e11267a9adfc63c",
+              "pointer": null
+            }
+          ],
+          "signatures": []
+        },
+        {
+          "path": "fixturelib.connect",
+          "kind": "function",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "565a3d52d5aae69c",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "host",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "565a3d52d5aae69c",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "str",
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                },
+                {
+                  "name": "timeout",
+                  "kind": "positional_or_keyword",
+                  "required": false,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "565a3d52d5aae69c",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "float | None",
+                  "default": "None",
+                  "location": null,
+                  "constraints": []
+                },
+                {
+                  "name": "retries",
+                  "kind": "positional_or_keyword",
+                  "required": false,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "565a3d52d5aae69c",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "int",
+                  "default": "3",
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "565a3d52d5aae69c",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.connect(host: str, timeout: float | None = None, retries: int = 3) -> Connection",
+              "returns": {
+                "type": "Connection",
+                "sources": [
+                  {
+                    "type": "signature",
+                    "section_id": "565a3d52d5aae69c",
+                    "pointer": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "fixturelib.receive",
+          "kind": "function",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "7c943bb7e5e6dd2b",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "size",
+                  "kind": "positional_or_keyword",
+                  "required": false,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "7c943bb7e5e6dd2b",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "int",
+                  "default": "1024",
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "7c943bb7e5e6dd2b",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.receive(size: int = 1024) -> bytes",
+              "returns": {
+                "type": "bytes",
+                "sources": [
+                  {
+                    "type": "signature",
+                    "section_id": "7c943bb7e5e6dd2b",
+                    "pointer": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "fixturelib.send",
+          "kind": "function",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "5b56b31c9e645943",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "data",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "5b56b31c9e645943",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "bytes",
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                },
+                {
+                  "name": "flush",
+                  "kind": "keyword_only",
+                  "required": false,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "5b56b31c9e645943",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "bool",
+                  "default": "False",
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "5b56b31c9e645943",
+                  "pointer": null
+                }
+              ],
+              "text": "fixturelib.send(data: bytes, *, flush: bool = False) -> int",
+              "returns": {
+                "type": "int",
+                "sources": [
+                  {
+                    "type": "signature",
+                    "section_id": "5b56b31c9e645943",
+                    "pointer": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "ping",
+          "kind": "function",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "71486691a5e44435",
+              "pointer": null
+            }
+          ],
+          "signatures": [
+            {
+              "parameters": [
+                {
+                  "name": "host",
+                  "kind": "positional_or_keyword",
+                  "required": true,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "71486691a5e44435",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "str",
+                  "default": null,
+                  "location": null,
+                  "constraints": []
+                },
+                {
+                  "name": "count",
+                  "kind": "positional_or_keyword",
+                  "required": false,
+                  "sources": [
+                    {
+                      "type": "signature",
+                      "section_id": "71486691a5e44435",
+                      "pointer": null
+                    }
+                  ],
+                  "type": "int",
+                  "default": "1",
+                  "location": null,
+                  "constraints": []
+                }
+              ],
+              "sources": [
+                {
+                  "type": "signature",
+                  "section_id": "71486691a5e44435",
+                  "pointer": null
+                }
+              ],
+              "text": "ping(host, count=1)",
+              "returns": null
+            }
+          ]
+        }
+      ],
+      "changes": [
+        {
+          "symbol": "fixturelib.Connection.close",
+          "kind": "added",
+          "version": "1.1",
+          "sources": [
+            {
+              "type": "signature",
+              "section_id": "b124d88843018445",
+              "pointer": null
+            }
+          ],
+          "parameter": null,
+          "replacement": null,
+          "removal_planned": null
+        }
+      ]
+    },
+    "conflicts": [],
+    "warnings": []
+  },
+  "builder_version": 1
+}

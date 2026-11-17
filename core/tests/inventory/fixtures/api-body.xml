@@ -1,0 +1,55 @@
+<!-- one function with every parameter kind, a deprecated symbol and a parameter added
+     later; a parameter entry without a name; a class deprecated inside a note; a property
+     (no parameter list), a method without directives; optional brackets (not valid Python);
+     a non-Python description. The body of a <document>, read by test_build.py -->
+<section ids="api"><title>API</title>
+<desc domain="py" objtype="function">
+ <desc_signature fullname="fetch" module="pkg">
+  <desc_addname>pkg.</desc_addname><desc_name>fetch</desc_name>
+  <desc_parameterlist>
+   <desc_parameter><desc_sig_name>url</desc_sig_name><desc_sig_punctuation>:</desc_sig_punctuation><desc_sig_space> </desc_sig_space><desc_sig_name>str</desc_sig_name></desc_parameter>
+   <desc_parameter><desc_sig_operator>/</desc_sig_operator></desc_parameter>
+   <desc_parameter><desc_sig_name>mode</desc_sig_name><desc_sig_punctuation>:</desc_sig_punctuation><desc_sig_space> </desc_sig_space><desc_sig_name>Literal['a, b', 'c']</desc_sig_name><desc_sig_space> </desc_sig_space><desc_sig_operator>=</desc_sig_operator><desc_sig_space> </desc_sig_space><inline classes="default_value">'c'</inline></desc_parameter>
+   <desc_parameter><desc_sig_operator>*</desc_sig_operator><desc_sig_name>args</desc_sig_name></desc_parameter>
+   <desc_parameter><desc_sig_name>timeout</desc_sig_name></desc_parameter>
+   <desc_parameter><desc_sig_name>retries</desc_sig_name><desc_sig_operator>=</desc_sig_operator><inline classes="default_value">3</inline></desc_parameter>
+   <desc_parameter><desc_sig_operator>**</desc_sig_operator><desc_sig_name>kw</desc_sig_name></desc_parameter>
+  </desc_parameterlist>
+  <desc_returns><desc_sig_name>bytes</desc_sig_name></desc_returns>
+ </desc_signature>
+ <desc_content>
+  <versionmodified type="deprecated" version="2.0"><paragraph>Deprecated since version 2.0: Use get.</paragraph></versionmodified>
+  <versionmodified type="versionchanged" version="1.5"><paragraph>Changed in version 1.5: Faster.</paragraph></versionmodified>
+  <versionmodified type="versionremoved" version="next"><paragraph>Removed in version next.</paragraph></versionmodified>
+  <field_list><field><field_name>Parameters</field_name><field_body><bullet_list>
+   <list_item><paragraph><literal_strong>timeout</literal_strong> (<literal_emphasis>float</literal_emphasis>) – Seconds.</paragraph>
+    <versionmodified type="versionadded" version="1.1"><paragraph>New in version 1.1.</paragraph></versionmodified></list_item>
+   <list_item><paragraph><literal_strong>retries</literal_strong> – How often.</paragraph></list_item>
+   <list_item><paragraph>Some other keyword.</paragraph>
+    <versionmodified type="deprecated" version="1.9"><paragraph>Deprecated since version 1.9.</paragraph></versionmodified></list_item>
+  </bullet_list></field_body></field></field_list>
+ </desc_content>
+</desc>
+<desc domain="py" objtype="class">
+ <desc_signature fullname="Pool" module="pkg"><desc_annotation><desc_sig_keyword>class</desc_sig_keyword><desc_sig_space> </desc_sig_space></desc_annotation><desc_addname>pkg.</desc_addname><desc_name>Pool</desc_name></desc_signature>
+ <desc_content>
+  <note><versionmodified type="deprecated" version="3.0"><paragraph>Deprecated since version 3.0: Use Group.</paragraph></versionmodified></note>
+  <desc domain="py" objtype="property">
+   <desc_signature fullname="Pool.size" module="pkg"><desc_annotation><desc_sig_keyword>property</desc_sig_keyword><desc_sig_space> </desc_sig_space></desc_annotation><desc_name>size</desc_name><desc_annotation><desc_sig_punctuation>:</desc_sig_punctuation><desc_sig_space> </desc_sig_space><desc_sig_name>int</desc_sig_name></desc_annotation></desc_signature>
+  </desc>
+  <desc domain="py" objtype="method">
+   <desc_signature fullname="Pool.close" module="pkg"><desc_name>close</desc_name><desc_parameterlist/></desc_signature>
+   <desc_content><field_list><field><field_name>Return type</field_name><field_body><paragraph><literal_emphasis>None</literal_emphasis></paragraph></field_body></field></field_list></desc_content>
+  </desc>
+ </desc_content>
+</desc>
+<desc domain="py" objtype="function">
+ <desc_signature fullname="compile" module="pkg"><desc_addname>pkg.</desc_addname><desc_name>compile</desc_name>
+  <desc_parameterlist>
+   <desc_parameter><desc_sig_name>source</desc_sig_name></desc_parameter>
+   <desc_optional><desc_parameter><desc_sig_name>filename</desc_sig_name></desc_parameter><desc_optional><desc_parameter><desc_sig_name>symbol</desc_sig_name></desc_parameter></desc_optional></desc_optional>
+  </desc_parameterlist>
+ </desc_signature>
+</desc>
+<desc domain="std" objtype="option"><desc_signature ids="cmdoption-v"><desc_name>-v</desc_name></desc_signature></desc>
+</section>

@@ -29,7 +29,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -41,7 +44,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -75,7 +81,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -85,9 +94,31 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.connect",
           "field": null,
-          "type": null
+          "type": "Connection",
+          "objtype": "py:function",
+          "parameters": [
+            {
+              "name": "host",
+              "annotation": "str",
+              "default": null,
+              "optional": false
+            },
+            {
+              "name": "timeout",
+              "annotation": "float | None",
+              "default": "None",
+              "optional": false
+            },
+            {
+              "name": "retries",
+              "annotation": "int",
+              "default": "3",
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -99,7 +130,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -111,7 +145,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -123,7 +160,10 @@
           "nested": false,
           "name": "host",
           "field": "param",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -135,7 +175,10 @@
           "nested": false,
           "name": "timeout",
           "field": "param",
-          "type": "float or None"
+          "type": "float or None",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -147,7 +190,10 @@
           "nested": false,
           "name": "retries",
           "field": "param",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -159,7 +205,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -171,7 +220,10 @@
           "nested": false,
           "name": null,
           "field": "returns",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -183,7 +235,10 @@
           "nested": false,
           "name": null,
           "field": "return-type",
-          "type": "Connection"
+          "type": "Connection",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -195,7 +250,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -207,7 +265,10 @@
           "nested": false,
           "name": "ValueError",
           "field": "raises",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -219,7 +280,10 @@
           "nested": false,
           "name": "TimeoutError",
           "field": "raises",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -253,7 +317,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -263,9 +330,31 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.send",
           "field": null,
-          "type": null
+          "type": "int",
+          "objtype": "py:function",
+          "parameters": [
+            {
+              "name": "data",
+              "annotation": "bytes",
+              "default": null,
+              "optional": false
+            },
+            {
+              "name": "*",
+              "annotation": null,
+              "default": null,
+              "optional": false
+            },
+            {
+              "name": "flush",
+              "annotation": "bool",
+              "default": "False",
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -277,7 +366,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -289,7 +381,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -301,7 +396,10 @@
           "nested": false,
           "name": "data",
           "field": "param",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -313,7 +411,10 @@
           "nested": false,
           "name": "flush",
           "field": "param",
-          "type": "bool"
+          "type": "bool",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -325,7 +426,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -337,7 +441,10 @@
           "nested": false,
           "name": null,
           "field": "returns",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -349,7 +456,10 @@
           "nested": false,
           "name": null,
           "field": "return-type",
-          "type": "int"
+          "type": "int",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -361,7 +471,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -373,7 +486,10 @@
           "nested": false,
           "name": "ConnectionError",
           "field": "raises",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -407,7 +523,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -417,9 +536,19 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.receive",
           "field": null,
-          "type": null
+          "type": "bytes",
+          "objtype": "py:function",
+          "parameters": [
+            {
+              "name": "size",
+              "annotation": "int",
+              "default": "1024",
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -431,7 +560,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -443,7 +575,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -455,7 +590,10 @@
           "nested": false,
           "name": "size",
           "field": "param",
-          "type": "int, optional"
+          "type": "int, optional",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -467,7 +605,10 @@
           "nested": false,
           "name": "strict",
           "field": "param",
-          "type": "bool"
+          "type": "bool",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -479,7 +620,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -491,7 +635,10 @@
           "nested": false,
           "name": null,
           "field": "returns",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -503,7 +650,10 @@
           "nested": false,
           "name": null,
           "field": "return-type",
-          "type": "bytes"
+          "type": "bytes",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -515,7 +665,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -527,7 +680,10 @@
           "nested": false,
           "name": "ConnectionError",
           "field": "raises",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -539,7 +695,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "code",
@@ -551,7 +710,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -585,7 +747,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -595,9 +760,19 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.Connection",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:class",
+          "parameters": [
+            {
+              "name": "host",
+              "annotation": "str",
+              "default": null,
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -609,7 +784,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -621,7 +799,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -633,7 +814,10 @@
           "nested": false,
           "name": "host",
           "field": "param",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -668,7 +852,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -678,9 +865,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.Connection.default_timeout",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:attribute",
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -692,7 +882,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -727,7 +920,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -737,9 +933,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.Connection.close",
           "field": null,
-          "type": null
+          "type": "None",
+          "objtype": "py:method",
+          "parameters": [],
+          "directives": []
         },
         {
           "kind": "text",
@@ -751,7 +950,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -763,7 +965,15 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": [
+            [
+              "versionadded",
+              "1.1"
+            ]
+          ]
         },
         {
           "kind": "admonition",
@@ -775,7 +985,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -810,7 +1023,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -820,9 +1036,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.Connection.Stats",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:class",
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -834,7 +1053,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -870,7 +1092,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -880,9 +1105,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "fixturelib.Connection.Stats.reset",
           "field": null,
-          "type": null
+          "type": "None",
+          "objtype": "py:method",
+          "parameters": [],
+          "directives": []
         },
         {
           "kind": "text",
@@ -894,7 +1122,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -927,7 +1158,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -939,7 +1173,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "admonition",
@@ -951,7 +1188,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "admonition",
@@ -963,7 +1203,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "code",
@@ -975,7 +1218,10 @@
           "nested": true,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1009,7 +1255,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1021,7 +1270,15 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": [
+            [
+              "versionadded",
+              "1.1"
+            ]
+          ]
         },
         {
           "kind": "text",
@@ -1033,7 +1290,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1045,7 +1305,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "code",
@@ -1057,7 +1320,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "code",
@@ -1069,7 +1335,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "table",
@@ -1081,7 +1350,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1093,7 +1365,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "list",
@@ -1105,7 +1380,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1139,7 +1417,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1151,7 +1432,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "admonition",
@@ -1163,7 +1447,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1175,7 +1462,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1187,7 +1477,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1222,7 +1515,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -1232,9 +1528,25 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "ping",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:function",
+          "parameters": [
+            {
+              "name": "host",
+              "annotation": null,
+              "default": null,
+              "optional": false
+            },
+            {
+              "name": "count",
+              "annotation": null,
+              "default": "1",
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -1246,7 +1558,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1258,7 +1573,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -1270,7 +1588,10 @@
           "nested": false,
           "name": "host",
           "field": "param",
-          "type": "str"
+          "type": "str",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -1282,7 +1603,10 @@
           "nested": false,
           "name": "count",
           "field": "param",
-          "type": "int"
+          "type": "int",
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1294,7 +1618,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "field",
@@ -1306,7 +1633,10 @@
           "nested": false,
           "name": null,
           "field": "returns",
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1341,7 +1671,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -1351,9 +1684,19 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "Pool",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:class",
+          "parameters": [
+            {
+              "name": "size",
+              "annotation": null,
+              "default": null,
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -1365,7 +1708,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1401,7 +1747,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -1411,9 +1760,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "Pool.acquire",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:method",
+          "parameters": [],
+          "directives": []
         },
         {
           "kind": "text",
@@ -1425,7 +1777,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1461,7 +1816,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -1471,9 +1829,19 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "Pool.release",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:method",
+          "parameters": [
+            {
+              "name": "conn",
+              "annotation": null,
+              "default": null,
+              "optional": false
+            }
+          ],
+          "directives": []
         },
         {
           "kind": "text",
@@ -1485,7 +1853,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1521,7 +1892,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "signature",
@@ -1531,9 +1905,12 @@
           "lang": null,
           "code": null,
           "nested": false,
-          "name": null,
+          "name": "Pool.size",
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": "py:attribute",
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1545,7 +1922,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1578,7 +1958,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1590,7 +1973,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1623,7 +2009,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "text",
@@ -1635,7 +2024,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "admonition",
@@ -1647,7 +2039,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     },
@@ -1681,7 +2076,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "list",
@@ -1693,7 +2091,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "code",
@@ -1705,7 +2106,10 @@
           "nested": true,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         },
         {
           "kind": "table",
@@ -1717,7 +2121,10 @@
           "nested": false,
           "name": null,
           "field": null,
-          "type": null
+          "type": null,
+          "objtype": null,
+          "parameters": null,
+          "directives": []
         }
       ]
     }
@@ -1744,7 +2151,7 @@
       "8e15577b08be27c1b84c3ae7ea0d4ecfa185d20cf2dff124a311bc5645e4228a"
     ]
   ],
-  "reader_version": 1,
+  "reader_version": 2,
   "sphinx_version": "9.1.1",
   "warnings": [
     "source path outside the Sphinx source folder in guide (1x)"

@@ -10,6 +10,11 @@ Structure:
 - `desc` (any domain and object type) → `heading` one level below its parent; the title is the
   `desc_name` of the first signature, plus `()` for functions, methods and decorators. Each
   `desc_signature` → one `signature` block (the whole signature in backticks, one line).
+  The block also carries the signature as data, input for the inventory (SPEC §6.3):
+  `name` = qualified path (`module` + `fullname`), `objtype` = domain + object type
+  (`py:method`), `parameters` from the `desc_parameter` node types (name with `*` / `**`,
+  annotation, default; `*` and `/` separators as their own entries), `type` = `-> X` or the
+  `: X` of an attribute.
   `desc_content` is transparent.
 - **Order inside a section or `desc_content`:** first all its own body content in document
   order, then nested `desc`s, then subsections. Prose that follows a `desc` in the source
@@ -19,7 +24,8 @@ Body nodes:
 
 | Node | Block |
 |---|---|
-| `paragraph`, `compact_paragraph`, `versionmodified` | `text` |
+| `paragraph`, `compact_paragraph` | `text` |
+| `versionmodified` (`deprecated`, `versionadded`, ...) | `text` + `directives` (below) |
 | `bullet_list`, `enumerated_list`, `definition_list`, `glossary` | `list` (never cut), `- ` items |
 | `literal_block`, `doctest_block` (`pycon`), `math_block` (`math`) | `code`, fenced, text as is |
 | `container.literal-block-wrapper` | one `code` block, the `caption` above the fence |
@@ -34,16 +40,21 @@ Body nodes:
 | toctree `compound` and `compact_paragraph` | ignored (navigation, not content) |
 | anything else | its children (or its text) with a warning `unknown node <tag>` |
 
+Version directives (`versionmodified`) are prose, and their first block also keeps the
+directive's `(type, version)` in `Block.directives`, input for `Change` (SPEC §6.3). Inside a
+parameter entry, the `field` block keeps it.
+
 Code inside a list, quote, admonition or field entry is part of that block and is also
 recorded as a nested `code` block, so NLI windows leave it out.
 """
 
+import keyword
 import unicodedata
 from collections import Counter
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from xml.etree.ElementTree import Element
 
-from notinspec.chunking import Block, BlockDocument, BlockKind, ParsedBlock
+from notinspec.chunking import Block, BlockDocument, BlockKind, ParsedBlock, SignatureParameter
 from notinspec.sphinx import fields
 from notinspec.sphinx.fields import Atom, atoms
 from notinspec.sphinx.inline import (
@@ -59,7 +70,15 @@ from notinspec.sphinx.inline import (
     render,
     text,
 )
-from notinspec.sphinx.pieces import Nested, Piece, code_piece, compose, prefixed, text_piece
+from notinspec.sphinx.pieces import (
+    Composed,
+    Nested,
+    Piece,
+    code_piece,
+    compose,
+    prefixed,
+    text_piece,
+)
 
 _INLINE = (
     CODE_TAGS | TEXT_TAGS | SKIP_TAGS | {"footnote_reference", "citation_reference", "problematic"}
@@ -141,7 +160,8 @@ class _Renderer:
         if el.get("objtype") in _CALLABLE:
             title += "()"
         out = [Piece("heading", [f"{'#' * min(level, 6)} {title}"], heading=(level, title))]
-        out += [Piece("signature", [backticks(_signature(s))]) for s in signatures]
+        objtype = ":".join(filter(None, (el.get("domain"), el.get("objtype")))) or None
+        out += [_signature_piece(s, objtype) for s in signatures]
         content = el.find("desc_content")
         if content is not None:
             self.in_desc += 1
@@ -180,7 +200,9 @@ class _Renderer:
         tag = el.tag
         if tag in _IGNORED:
             return []
-        if tag in ("paragraph", "compact_paragraph", "versionmodified", "glossary"):
+        if tag == "versionmodified":
+            return self.version_modified(el, level)
+        if tag in ("paragraph", "compact_paragraph", "glossary"):
             if el.get("toctree") == "1":
                 return []
             return self.children(el, level)
@@ -235,6 +257,14 @@ class _Renderer:
         line = inline(el, self.ctx)
         return [text_piece(line)] if line else []
 
+    def version_modified(self, el: Element, level: int) -> list[Piece]:
+        """`deprecated`, `versionadded`, ...: prose, and its first block keeps type and version."""
+        pieces = self.children(el, level)
+        type_, version = el.get("type"), el.get("version")
+        if pieces and type_ and version:
+            pieces[0].directives.append((type_, version))
+        return pieces
+
     def container(self, el: Element, level: int) -> list[Piece]:
         if "literal-block-wrapper" not in el.get("classes", "").split():
             return self.children(el, level)
@@ -250,7 +280,7 @@ class _Renderer:
             number = int(el.get("start", "1"))
         except ValueError:
             number = 1
-        items: list[tuple[list[str], list[Nested]]] = []
+        items: list[Composed] = []
         for i, item in enumerate(el.findall("list_item")):
             marker = "- " if el.tag == "bullet_list" else f"{number + i}. "
             items.append(compose(self.children(item, level), marker, " " * len(marker)))
@@ -287,9 +317,9 @@ class _Renderer:
         return [_merge("admonition", prefixed(f"{label}:", pieces))]
 
     def quote(self, el: Element, level: int) -> list[Piece]:
-        lines, nested = compose(self.children(el, level))
+        lines, nested, directives = compose(self.children(el, level))
         quoted = [f"> {line}" if line else ">" for line in lines]
-        return [Piece("quote", quoted, nested=nested)]
+        return [Piece("quote", quoted, nested=nested, directives=directives)]
 
     def table(self, el: Element, level: int) -> list[Piece]:
         head: list[list[str]] = []
@@ -315,6 +345,87 @@ class _Renderer:
             words = " ".join(line.strip() for p in pieces for line in p.lines if line.strip())
             cells.append(words.replace("|", "\\|"))
         return cells
+
+
+def _signature_piece(sig: Element, objtype: str | None) -> Piece:
+    """One `desc_signature`: the line to show, plus its path, parameters and type as data."""
+    params = sig.find("desc_parameterlist")
+    return Piece(
+        "signature",
+        [backticks(_signature(sig))],
+        name=_path(sig),
+        type=_signature_type(sig),
+        objtype=objtype,
+        parameters=None if params is None else tuple(_parameters(params, optional=False)),
+    )
+
+
+def _path(sig: Element) -> str | None:
+    """Qualified name: `module` + `fullname` (Python domain), else the first id, else the name.
+
+    `ids` is no fallback for Python: overloads have none and some are slugified. Without a
+    current module Sphinx 9 writes `module="True"`, so only a dotted Python name counts.
+    """
+    fullname, module = sig.get("fullname"), sig.get("module")
+    if fullname:
+        return f"{module}.{fullname}" if module and _module_name(module) else fullname
+    ids = sig.get("ids", "").split()
+    if ids:
+        return ids[0]
+    name = sig.find("desc_name")
+    return text(name) or None if name is not None else None
+
+
+def _module_name(value: str) -> bool:
+    return all(part.isidentifier() and not keyword.iskeyword(part) for part in value.split("."))
+
+
+def _signature_type(sig: Element) -> str | None:
+    """`-> X` of a callable, or `: X` of an attribute or property."""
+    returns = sig.find("desc_returns")
+    if returns is not None:
+        return text(returns) or None
+    for annotation in sig.findall("desc_annotation"):
+        children = [c for c in annotation if c.tag != "desc_sig_space"]
+        if children and children[0].tag == "desc_sig_punctuation" and text(children[0]) == ":":
+            return collapse("".join(text(c) for c in children[1:])) or None
+    return None
+
+
+def _parameters(params: Element, *, optional: bool) -> Iterator[SignatureParameter]:
+    """Children of a parameter list. `desc_optional` (`compile(source[, filename])`, used for
+    signatures that are not valid Python) is walked into; what is inside it is optional."""
+    for child in params:
+        if child.tag == "desc_optional":
+            yield from _parameters(child, optional=True)
+        elif child.tag == "desc_parameter":
+            yield _parameter(child, optional=optional)
+
+
+def _parameter(param: Element, *, optional: bool = False) -> SignatureParameter:
+    """`desc_parameter` → name (with `*` / `**`), annotation and default, from the node types."""
+    prefix, name = "", None
+    annotation: list[str] = []
+    default: str | None = None
+    part = "name"  # name → annotation (after ":") → default (after "=")
+    for child in param:
+        value = "".join(child.itertext())
+        if child.tag == "desc_sig_operator" and value in ("*", "**", "/") and name is None:
+            prefix += value
+        elif child.tag == "desc_sig_name" and name is None:
+            name = value
+        elif child.tag == "desc_sig_punctuation" and value == ":" and part == "name":
+            part = "annotation"
+        elif child.tag == "desc_sig_operator" and value == "=" and part != "default":
+            part = "default"
+        elif "default_value" in child.get("classes", "").split():
+            default = collapse(value)
+        elif part == "annotation":
+            annotation.append(value)
+    if name is None:
+        return SignatureParameter(prefix or collapse("".join(param.itertext())), optional=optional)
+    annotated = collapse("".join(annotation)) or None
+    return SignatureParameter(prefix + name, annotated, default, optional=optional)
 
 
 def _signature(sig: Element) -> str:
@@ -383,18 +494,20 @@ def _labelled(head: str, pieces: list[Piece]) -> list[Piece]:
 
 
 def _merge(kind: BlockKind, pieces: list[Piece]) -> Piece:
-    lines, nested = compose(pieces)
-    return Piece(kind, lines, nested=nested)
+    lines, nested, directives = compose(pieces)
+    return Piece(kind, lines, nested=nested, directives=directives)
 
 
-def _join(kind: BlockKind, items: list[tuple[list[str], list[Nested]]]) -> Piece:
+def _join(kind: BlockKind, items: list[Composed]) -> Piece:
     lines: list[str] = []
     nested: list[Nested] = []
-    for item_lines, item_nested in items:
+    directives: list[tuple[str, str]] = []
+    for item in items:
         offset = len(lines)
-        lines += item_lines
-        nested += [Nested(n.start + offset, n.end + offset, n.lang, n.code) for n in item_nested]
-    return Piece(kind, lines, nested=nested)
+        lines += item.lines
+        nested += [Nested(n.start + offset, n.end + offset, n.lang, n.code) for n in item.nested]
+        directives += item.directives
+    return Piece(kind, lines, nested=nested, directives=directives)
 
 
 def _row(cells: list[str]) -> str:
@@ -427,6 +540,9 @@ def _layout(docname: str, pieces: list[Piece], count_tokens: Callable[[str], int
             name=_nfc_or_none(piece.name),
             field=piece.field,
             type=_nfc_or_none(piece.type),
+            objtype=piece.objtype,
+            parameters=_nfc_parameters(piece.parameters),
+            directives=tuple(piece.directives),
         )
         nested = tuple(
             Block(
@@ -451,3 +567,16 @@ def _nfc(value: str) -> str:
 
 def _nfc_or_none(value: str | None) -> str | None:
     return _nfc(value) if value is not None else None
+
+
+def _nfc_parameters(
+    parameters: tuple[SignatureParameter, ...] | None,
+) -> tuple[SignatureParameter, ...] | None:
+    if parameters is None:
+        return None
+    return tuple(
+        SignatureParameter(
+            _nfc(p.name), _nfc_or_none(p.annotation), _nfc_or_none(p.default), p.optional
+        )
+        for p in parameters
+    )

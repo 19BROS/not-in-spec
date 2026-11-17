@@ -19,6 +19,7 @@ from notinspec import __version__
 from notinspec.adapters.canonical import canonical_json
 from notinspec.chunking import Chunk
 from notinspec.ingestion import Ingestion
+from notinspec.inventory import Source, Symbol
 
 COMMENT_MARKER = "<!-- notinspec -->"
 NOT_EVALUATED = "LLM evaluation has not run. No L0-L4 scores or regression verdict are available."
@@ -50,6 +51,9 @@ def build_results(ingestion: Ingestion, root: Path) -> dict[str, Any]:
             "chunks": len(ingestion.chunks),
             "sections": len({c.section_id for c in ingestion.chunks}),
             "operations": sum(len(i.spec.operations) for i in ingestion.openapi),
+            "symbols": len(ingestion.inventory.symbols),
+            "changes": len(ingestion.inventory.changes),
+            "conflicts": len(ingestion.conflicts),
             "warnings": list(ingestion.warnings),
         },
         "results": [],
@@ -128,6 +132,8 @@ def render_comment(results: dict[str, Any]) -> str:
         "",
         f"{counts['files']} files, {counts['sections']} sections, "
         f"{counts['chunks']} chunks, {counts['operations']} OpenAPI operations.",
+        f"Inventory: {counts['symbols']} symbols, {counts['changes']} changes, "
+        f"{counts['conflicts']} conflicts between sources.",
         "",
         NOT_EVALUATED,
         "",
@@ -175,6 +181,9 @@ def render_report(ingestion: Ingestion) -> str:
         "sections": len({c.section_id for c in chunks}),
         "oversized chunks": sum(c.oversized for c in chunks),
         "OpenAPI operations": sum(len(i.spec.operations) for i in ingestion.openapi),
+        "inventory symbols": len(ingestion.inventory.symbols),
+        "inventory changes": len(ingestion.inventory.changes),
+        "inventory conflicts": len(ingestion.conflicts),
         "warnings": len(ingestion.warnings),
     }
     out = [
@@ -187,6 +196,7 @@ def render_report(ingestion: Ingestion) -> str:
         *(f"<tr><th>{name}<td>{value}" for name, value in counts.items()),
         f"<tr><th>input hash<td><code>{_e(ingestion.input_hash)}</code>",
         f"<tr><th>chunker<td>v{ingestion.chunker_version}, soft limit {ingestion.soft_limit}",
+        f"<tr><th>inventory builder<td>v{ingestion.inventory_builder_version}",
         *(
             [
                 f"<tr><th>Sphinx<td>{_e(ingestion.sphinx.version)} "
@@ -198,6 +208,7 @@ def render_report(ingestion: Ingestion) -> str:
         "</table>",
         "<p>Full data: <a href=ingestion.json>ingestion.json</a>.</p>",
         *_warnings(ingestion.warnings),
+        *_inventory(ingestion),
         "<h2>Documents</h2><ol>",
         *(
             f"<li><a href='#d{n}'>{_e(source)}</a> <span class=meta>{len(items)} chunks</span>"
@@ -229,6 +240,63 @@ def _warnings(warnings: tuple[str, ...]) -> list[str]:
         *(f"<tr><td>{_e(message)}<td>{count}" for _, message, count in sorted(rows)),
         "</table>",
     ]
+
+
+def _inventory(ingestion: Ingestion) -> list[str]:
+    """Symbols, changes and conflicts, each linked to the chunk it was read from (SPEC §6.3)."""
+    inventory = ingestion.inventory
+    first_chunk: dict[str, str] = {}
+    for chunk in ingestion.chunks:
+        first_chunk.setdefault(chunk.section_id, chunk.id)
+
+    def where(sources: tuple[Source, ...]) -> str:
+        links = [
+            f"<a href='#c-{_e(first_chunk[s.section_id])}'>{_e(s.type)}</a>"
+            if s.section_id in first_chunk
+            else _e(s.type)
+            for s in sources
+        ]
+        return ", ".join(links)
+
+    out = ["<h2>Inventory</h2>"]
+    if not inventory.symbols and not inventory.changes:
+        return [*out, "<p>No API descriptions.</p>"]
+    kinds = Counter(s.kind for s in inventory.symbols)
+    out.append("<p>" + " · ".join(f"{_e(kind)} {n}" for kind, n in sorted(kinds.items())) + "</p>")
+    out.append(f"<h3>Changes ({len(inventory.changes)})</h3>")
+    if inventory.changes:
+        out.append(
+            "<table><tr><th>symbol<th>parameter<th>kind<th>version<th>replacement"
+            "<th>removal planned<th>sources"
+        )
+        out += [
+            f"<tr><td><code>{_e(c.symbol)}</code><td>{_e(c.parameter or '')}<td>{c.kind}"
+            f"<td>{_e(c.version)}<td>{_e(c.replacement or '')}<td>{_e(c.removal_planned or '')}"
+            f"<td>{where(c.sources)}"
+            for c in inventory.changes
+        ]
+        out.append("</table>")
+    out.append(f"<h3>Conflicts between sources ({len(ingestion.conflicts)})</h3>")
+    if ingestion.conflicts:
+        out.append("<table><tr><th>subject<th>attribute<th>kept<th>other<th>other's sources")
+        out += [
+            f"<tr><td><code>{_e(c.subject)}</code><td>{_e(c.attribute)}<td>{_e(c.kept or '')}"
+            f"<td>{_e(c.other or '')}<td>{where(c.sources)}"
+            for c in ingestion.conflicts
+        ]
+        out.append("</table>")
+    out += [
+        f"<details><summary>Symbols ({len(inventory.symbols)})</summary>",
+        "<table><tr><th>symbol<th>kind<th>signatures<th>sources",
+        *(_symbol(s, where(s.sources)) for s in inventory.symbols),
+        "</table></details>",
+    ]
+    return out
+
+
+def _symbol(symbol: Symbol, where: str) -> str:
+    signatures = "<br>".join(f"<code>{_e(s.text or '')}</code>" for s in symbol.signatures)
+    return f"<tr><td><code>{_e(symbol.path)}</code><td>{_e(symbol.kind)}<td>{signatures}<td>{where}"
 
 
 def _chunk(chunk: Chunk) -> str:

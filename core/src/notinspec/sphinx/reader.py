@@ -34,7 +34,7 @@ from notinspec.chunking import BlockDocument, approx_tokens
 from notinspec.sphinx.render import render_document
 
 # bump when blocks, text or warnings can change for the same XML
-SPHINX_READER_VERSION = 1
+SPHINX_READER_VERSION = 2  # 2: signature data, version directives
 SUPPORTED_SPHINX_MAJOR = 9
 BUILD_ENV = "build-env.txt"
 
