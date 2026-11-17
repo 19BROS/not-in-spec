@@ -544,7 +544,10 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 ## 8. Models
 
-- **LLM access via an API key provided by the faculty.** Provider, endpoint, available models and limits: TBD ([§18](#18-open-items)). The key lives only in env / secrets.
+- **LLM access via [Groq](https://console.groq.com/docs/openai)** (free tier), not a faculty key. Its OpenAI-compatible chat completions API is at `https://api.groq.com/openai/v1`, and the key is `GROQ_API_KEY`, only in env / secrets. The client in `core` (`notinspec.runner`) speaks any OpenAI-compatible API: a provider is a config entry (base URL, key variable, limits), and OpenRouter is kept as a second one.
+- **Limits** count per Groq organization and **per model** (the free tier: e.g. 30 requests/min and 1 000/day for `openai/gpt-oss-*`; exact numbers on the account's limits page, [§18](#18-open-items)). Each model gets its own client-side limiter, and a `429` whose `retry-after` is long pauses the run instead of waiting.
+- **Structured output:** the answer schema is sent as `response_format` `json_schema` in best-effort mode, not `strict` (strict needs every property required, and the answer has optional ones). Groq's docs list it for `openai/gpt-oss-20b`, `openai/gpt-oss-120b`, `openai/gpt-oss-safeguard-20b`, and the previews `qwen/qwen3.8-27b` and `meta-models/muse-spark-open` (Enterprise only). The Llama models have only JSON object mode, so they get the schema in the prompt only. An answer that fails the schema comes back as HTTP 400 `json_validate_failed`. That is the model's `malformed-output` (parsed from `failed_generation`), not a provider error. `notinspec models --probe` checks the list live.
+- Groq runs temperature 0 as `1e-8`; we record the 0 we sent.
 - In the MVP the key exists **only on our VM**: users do not bring a key, and every LLM call of every project runs in our worker within the project's limits ([§11](#11-github-action)). Users bringing their own key belongs to the self-contained Action ([§16.3](#163-future-development)).
 - Roles of LLM calls: models under test (small for PRs, large for nightly), 2 claim extractors, task-text writer, 2 strong round-trip solvers, LLM judge for borderline L2 answers.
 - **Local CPU models:** NLI cross-encoder and embeddings run locally (no GPU on the VM). Models under test are not run locally.
@@ -563,7 +566,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
 | NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5); mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
-| LLM access | faculty-provided API (TBD) |
+| LLM access | Groq free tier through its OpenAI-compatible API, our own client on `httpx2` (no vendor SDK); recorded fake provider in tests and CI |
 | Evaluation / statistics | scikit-learn, bootstrap, McNemar test |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
 | Scheduler | APScheduler in a dedicated `worker` container, job state and the run queue in Postgres (no Redis/Celery) |
@@ -742,7 +745,9 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 
 ## 18. Open items
 
-- [ ] Faculty API key: provider, endpoint, available models, rate limits, budget (in the MVP it is used only on our VM)
+- [x] LLM provider: **Groq** free tier instead of a faculty key ([§8](#8-models)). The key is in `GROQ_API_KEY`, only on our VM. The client is OpenAI-compatible, so changing provider is a config entry
+- [ ] Groq: the free tier's real limits per model for our organization (the docs' table and the models page disagree on gpt-oss: 1 000 requests/day vs. 1 000/min), and whether that is enough for a nightly run of the pilot. Read them from the limits page and the `x-ratelimit-*` headers
+- [ ] Groq structured output with our answer schema: the docs list 5 models, but no live call has run yet. `notinspec models --probe` must confirm that best-effort `json_schema` accepts the schema's `$schema`, `pattern` and empty `body` schema, and that a failure really comes back as `json_validate_failed` with `failed_generation` (the error code and field are not in Groq's docs). Then record one real response of each kind as a fixture
 - [ ] Faculty checkpoint dates
 - [x] Pilot Python library: **urllib3 v2**, first; trio and hydra-zen after it if that is not time-consuming ([§16.1](#161-mvp)). Reasons: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Its docs are built with Sphinx 9.1 and stored in `core/examples/sphinx/urllib3/`
 - [ ] Pilot OpenAPI spec (after the Sphinx part, [§16.1](#161-mvp))
