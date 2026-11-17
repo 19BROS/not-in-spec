@@ -1,0 +1,4 @@
+# Relative to this file. Sphinx XML built by ../build.sh (Sphinx 9.x, see xml/build-env.txt).
+project: "urllib3"
+docs:
+  sphinx_xml: "xml/"
