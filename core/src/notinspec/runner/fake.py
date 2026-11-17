@@ -53,4 +53,4 @@ class RecordingProvider:
 
     def save(self, path: Path) -> None:
         text = json.dumps(self._entries, indent=2, ensure_ascii=False, sort_keys=True)
-        path.write_text(text + "\n", encoding="utf-8")
+        path.write_text(text + "\n", encoding="utf-8", newline="\n")  # same bytes on every OS

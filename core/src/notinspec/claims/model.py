@@ -27,24 +27,34 @@ class ExtractorSpec:
     model: str
     prompt_version: int = PROMPT_VERSION
     max_tokens: int | None = None  # None = the provider's default; part of the prompt hash
+    # None = the provider's default; part of the prompt hash and of the reuse key
+    reasoning_effort: str | None = None
 
 
 # SPEC §6.4: two extractors with different models; Groq limits count per model, so the two
 # don't share a budget (SPEC §8). gpt-oss-20b is a reasoning model: with Groq's default
 # completion limit it often ran out before the JSON (`json_validate_failed`, "max completion
 # tokens reached"; 4 of 11 recorded chunks), with 8192 the same chunk passed (1632 of 1877
-# completion tokens were reasoning).
+# completion tokens were reasoning). With Groq's default effort ("medium") it used ~3.5k tokens
+# per chunk, so the urllib3 demo pages would not fit one day's 200k tokens; "low" took 2.6k
+# instead of 5.8k tokens on User Guide > Using Timeouts (739 vs 4086 reasoning tokens).
 DEFAULT_EXTRACTORS = (
     ExtractorSpec("qwen/qwen3.8-27b", "qwen/qwen3.8-27b"),
-    ExtractorSpec("openai/gpt-oss-20b", "openai/gpt-oss-20b", max_tokens=8192),
+    ExtractorSpec(
+        "openai/gpt-oss-20b", "openai/gpt-oss-20b", max_tokens=8192, reasoning_effort="low"
+    ),
 )
-# models whose extractor gets a larger completion limit when only the model ID is given
-REASONING_MAX_TOKENS = {"openai/gpt-oss-20b": 8192, "openai/gpt-oss-120b": 8192}
+# settings of reasoning models when only the model ID is given: (max_tokens, reasoning_effort)
+REASONING_SETTINGS: dict[str, tuple[int, str | None]] = {
+    "openai/gpt-oss-20b": (8192, "low"),
+    "openai/gpt-oss-120b": (8192, None),
+}
 
 
 def extractor_for(model: str) -> ExtractorSpec:
     """The extractor for a model ID from the config or the command line."""
-    return ExtractorSpec(model, model, max_tokens=REASONING_MAX_TOKENS.get(model))
+    max_tokens, effort = REASONING_SETTINGS.get(model, (None, None))
+    return ExtractorSpec(model, model, max_tokens=max_tokens, reasoning_effort=effort)
 
 
 @dataclass(frozen=True)

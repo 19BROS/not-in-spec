@@ -62,7 +62,12 @@ def extract_claims(
             without_prose += 1
             continue
         key = ReuseKey(
-            chunk.content_hash, chunk.breadcrumb, spec.name, spec.model, spec.prompt_version
+            chunk.content_hash,
+            chunk.breadcrumb,
+            spec.name,
+            spec.model,
+            spec.prompt_version,
+            spec.reasoning_effort,
         )
         if reuse and store is not None and (stored := store.get(key)) is not None:
             claims.extend(_bind(chunk, spec, stored))

@@ -777,5 +777,290 @@
         "seed": 1736587300
       }
     }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Retry > sleep()\n\n<section>\n### sleep()\n\n`sleep(response=None)`\n\nSleep between retry attempts.\n\nThis method will respect a server’s `Retry-After` response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.\n\n**Parameters:**\n\n- `response` (BaseHTTPResponse | None)\n\nReturn type: `None`\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The sleep() method sleeps between retry attempts.\",\"citation\":\"Sleep between retry attempts.\",\"type\":\"fact\"},{\"id\":\"c2\",\"claim\":\"The sleep() method respects a server’s `Retry-After` response header and sleeps the duration of the time requested.\",\"citation\":\"This method will respect a server’s `Retry-After` response header and sleep the duration of the time requested.\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"If a `Retry-After` header is not present, the sleep() method uses an exponential backoff.\",\"citation\":\"If that is not present, it will use an exponential backoff.\",\"type\":\"fact\"},{\"id\":\"c4\",\"claim\":\"By default, the backoff factor for sleep() is 0 and the method returns immediately.\",\"citation\":\"By default, the backoff factor is 0 and this method will return immediately.\",\"type\":\"fact\"},{\"id\":\"c5\",\"claim\":\"The sleep() method accepts a parameter named response of type BaseHTTPResponse or None.\",\"citation\":\"- `response` (BaseHTTPResponse | None)\",\"type\":\"fact\"},{\"id\":\"c6\",\"claim\":\"The return type of the sleep() method is None.\",\"citation\":\"Return type: `None`\",\"type\":\"fact\"}]}",
+            "reasoning": "We need claims from section. Facts: sleep() method signature, sleeps between retry attempts. Respects Retry-After header and sleeps duration requested. If not present, uses exponential backoff. Default backoff factor is 0 and method returns immediately. Parameters: response (BaseHTTPResponse | None). Return type None. So claims: 1) sleep() sleeps between retry attempts. 2) sleep() respects a server’s Retry-After response header and sleeps the duration requested. 3) If Retry-After not present, sleep() uses exponential backoff. 4) By default, backoff factor is 0 and sleep() returns immediately. 5) Parameter response is of type BaseHTTPResponse or None. 6) Return type is None. That's 6 claims. Provide citations exactly. Let's craft citations: from prose: \"Sleep between retry attempts.\" citation: \"Sleep between retry attempts.\" 2) \"This method will respect a server’s `Retry-After` response header and sleep the duration of the time requested.\" citation: \"This method will respect a server’s `Retry-After` response header and sleep the duration of the time requested.\" 3) \"If that is not present, it will use an exponential backoff.\" citation: \"If that is not present, it will use an exponential backoff.\" 4) \"By default, the backoff factor is 0 and this method will return immediately.\" citation: \"By default, the backoff factor is 0 and this method will return immediately.\" 5) Parameter: \"- `response` (BaseHTTPResponse | None)\" citation: \"- `response` (BaseHTTPResponse | None)\" 6) Return type: \"Return type: `None`\" citation: \"Return type: `None`\". Good. IDs c1..c6.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952157,
+      "id": "chatcmpl-a06ee4fc-abc5-469a-b82b-b4448003d4c8",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_a4315eb300",
+      "usage": {
+        "completion_time": 0.708759241,
+        "completion_tokens": 651,
+        "completion_tokens_details": {
+          "reasoning_tokens": 376
+        },
+        "prompt_time": 0.06332283,
+        "prompt_tokens": 1040,
+        "queue_time": 0.042141807,
+        "total_time": 0.772082071,
+        "total_tokens": 1691
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqrnyper5rscehwkwmcbcs",
+        "seed": 385868710
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Timeout > read_timeout\n\n<section>\n### read_timeout\n\n`property read_timeout: float | None`\n\nGet the value for the read timeout.\n\nThis assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\n\nIf self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a `TimeoutStateError` will be raised.\n\n**Returns:**\n\n- Value to use for the read timeout.\n\nReturn type: `int, float or None`\n\n**Raises:**\n\n- `urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The read_timeout property returns a float or None.\",\"citation\":\"`property read_timeout: float | None`\",\"type\":\"fact\"},{\"id\":\"c2\",\"claim\":\"Get the value for the read timeout.\",\"citation\":\"Get the value for the read timeout.\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\",\"citation\":\"This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\",\"type\":\"fact\"},{\"id\":\"c4\",\"claim\":\"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\"citation\":\"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\"type\":\"fact\"},{\"id\":\"c5\",\"claim\":\"If the connection time has not been established, a TimeoutStateError will be raised.\",\"citation\":\"If the connection time has not been established, a `TimeoutStateError` will be raised.\",\"type\":\"fact\"},{\"id\":\"c6\",\"claim\":\"Returns: Value to use for the read timeout.\",\"citation\":\"Value to use for the read timeout.\",\"type\":\"fact\"},{\"id\":\"c7\",\"claim\":\"Return type: int, float or None.\",\"citation\":\"Return type: `int, float or None`\",\"type\":\"fact\"},{\"id\":\"c8\",\"claim\":\"Raises: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.\",\"citation\":\"`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need claims from section. Facts: property read_timeout: float | None. Get value for read timeout. Assumes some time elapsed in connection timeout and computes read timeout appropriately. If self.total is set, read timeout depends on time taken by connect timeout. If connection time not established, TimeoutStateError raised. Returns value to use for read timeout. Return type int, float or None. Raises TimeoutStateError if start_connect() not yet called.\n\nSo claims: 1. read_timeout property returns float or None. 2. It gets value for read timeout. 3. It assumes some time has elapsed in connection timeout and computes read timeout appropriately. 4. If self.total is set, read timeout depends on amount of time taken by connect timeout. 5. If connection time has not been established, a TimeoutStateError will be raised. 6. Returns value to use for read timeout. 7. Return type int, float or None. 8. Raises TimeoutStateError if start_connect() has not yet been called.\n\nWe need citations exactly. Use shortest contiguous span. Let's craft.\n\nCitation for claim1: \"`property read_timeout: float | None`\". claim: \"The read_timeout property returns a float or None.\" citation: \"`property read_timeout: float | None`\".\n\nClaim2: \"Get the value for the read timeout.\" citation: \"Get the value for the read timeout.\"\n\nClaim3: \"This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\" citation: \"This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\"\n\nClaim4: \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\" citation: \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\"\n\nClaim5: \"If the connection time has not been established, a TimeoutStateError will be raised.\" citation: \"If the connection time has not been established, a `TimeoutStateError` will be raised.\"\n\nClaim6: \"Returns: Value to use for the read timeout.\" citation: \"Value to use for the read timeout.\"\n\nClaim7: \"Return type: int, float or None.\" citation: \"Return type: `int, float or None`\"\n\nClaim8: \"Raises: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.\" citation: \"`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\"\n\nAll facts. IDs c1..c8.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952171,
+      "id": "chatcmpl-35ad067f-21b2-4257-b1fc-f1ce13c0e86f",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_e11c8bbf69",
+      "usage": {
+        "completion_time": 0.94917883,
+        "completion_tokens": 891,
+        "completion_tokens_details": {
+          "reasoning_tokens": 537
+        },
+        "prompt_time": 0.06956478,
+        "prompt_tokens": 1082,
+        "queue_time": 0.207858119,
+        "total_time": 1.01874361,
+        "total_tokens": 1973
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqs2mzejrsmkt1zkc4880m",
+        "seed": 1285407052
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > User Guide > Using Timeouts\n\n<section>\n## Using Timeouts\n\nTimeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a `float` to `request()`:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=4.0\n)\n\nprint(type(resp))\n# <class \"urllib3.response.HTTPResponse\">\n\n# This request will take more time to process than timeout.\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=2.5\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nFor more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0)\n)\n\nprint(type(resp))\n# <urllib3.response.HTTPResponse>\n\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nIf you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(timeout=3.0)\n\nhttp = urllib3.PoolManager(\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n```\n\nYou still override this pool-level timeout by specifying `timeout` to `request()`.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"Timeouts allow you to control how long requests are allowed to run before being aborted.\",\"citation\":\"Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.\",\"type\":\"fact\"},{\"id\":\"c2\",\"claim\":\"You can specify a timeout as a float to request().\",\"citation\":\"you can specify a timeout as a `float` to `request()`\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"The timeout value is in seconds.\",\"citation\":\"(in seconds)\",\"type\":\"fact\"},{\"id\":\"c4\",\"claim\":\"If the request takes longer than the timeout, a MaxRetryError caused by ReadTimeoutError is raised.\",\"citation\":\"MaxRetryError caused by ReadTimeoutError\",\"type\":\"fact\"},{\"id\":\"c5\",\"claim\":\"A Timeout instance lets you specify separate connect and read timeouts.\",\"citation\":\"you can use a `Timeout` instance which lets you specify separate connect and read timeouts\",\"type\":\"fact\"},{\"id\":\"c6\",\"claim\":\"Specifying timeout=urllib3.Timeout(connect=1.0) sets the connect timeout to 1.0 seconds.\",\"citation\":\"timeout=urllib3.Timeout(connect=1.0)\",\"type\":\"fact\"},{\"id\":\"c7\",\"claim\":\"Specifying timeout=urllib3.Timeout(connect=1.0, read=2.0) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.\",\"citation\":\"timeout=urllib3.Timeout(connect=1.0, read=2.0)\",\"type\":\"fact\"},{\"id\":\"c8\",\"claim\":\"You can specify a timeout at the PoolManager level to apply to all requests.\",\"citation\":\"you can specify the timeout at the `PoolManager` level\",\"type\":\"fact\"},{\"id\":\"c9\",\"claim\":\"PoolManager(timeout=3.0) sets the default timeout to 3.0 seconds.\",\"citation\":\"http = urllib3.PoolManager(timeout=3.0)\",\"type\":\"fact\"},{\"id\":\"c10\",\"claim\":\"PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0)) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.\",\"citation\":\"http = urllib3.PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0))\",\"type\":\"fact\"},{\"id\":\"c11\",\"claim\":\"Specifying timeout to request() overrides the pool-level timeout.\",\"citation\":\"You still override this pool-level timeout by specifying `timeout` to `request()`\",\"type\":\"fact\"}]}",
+            "reasoning": "We need extract claims. Let's list:\n\n1. Timeouts allow control of how long requests are allowed to run before being aborted. claim: \"Timeouts allow you to control how long requests are allowed to run before being aborted.\" citation: \"Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.\" type fact.\n\n2. In simple cases, you can specify a timeout as a float to request(). claim: \"You can specify a timeout as a float to request().\" citation: \"you can specify a timeout as a `float` to `request()`:\" type fact.\n\n3. The timeout value is in seconds. claim: \"The timeout value is in seconds.\" citation: \"(in seconds)\" part. type fact.\n\n4. If timeout is less than request duration, MaxRetryError caused by ReadTimeoutError is raised. claim: \"If the request takes longer than the timeout, a MaxRetryError caused by ReadTimeoutError is raised.\" citation: \"MaxRetryError caused by ReadTimeoutError\" type fact.\n\n5. Timeout instance allows separate connect and read timeouts. claim: \"A Timeout instance lets you specify separate connect and read timeouts.\" citation: \"you can use a `Timeout` instance which lets you specify separate connect and read timeouts:\" type fact.\n\n6. Specifying timeout=urllib3.Timeout(connect=1.0) will set connect timeout to 1.0 seconds. claim: \"Specifying timeout=urllib3.Timeout(connect=1.0) sets the connect timeout to 1.0 seconds.\" citation: \"timeout=urllib3.Timeout(connect=1.0)\" type fact.\n\n7. Specifying timeout=urllib3.Timeout(connect=1.0, read=2.0) sets connect to 1.0 and read to 2.0 seconds. claim: \"Specifying timeout=urllib3.Timeout(connect=1.0, read=2.0) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.\" citation: \"timeout=urllib3.Timeout(connect=1.0, read=2.0)\" type fact.\n\n8. If you want all requests to be subject to same timeout, you can specify timeout at PoolManager level. claim: \"You can specify a timeout at the PoolManager level to apply to all requests.\" citation: \"you can specify the timeout at the `PoolManager` level:\" type fact.\n\n9. PoolManager(timeout=3.0) sets default timeout to 3.0 seconds. claim: \"PoolManager(timeout=3.0) sets the default timeout to 3.0 seconds.\" citation: \"http = urllib3.PoolManager(timeout=3.0)\" type fact.\n\n10. PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0)) sets connect and read timeouts. claim: \"PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0)) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.\" citation: \"http = urllib3.PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0))\" type fact.\n\n11. You still override this pool-level timeout by specifying timeout to request(). claim: \"Specifying timeout to request() overrides the pool-level timeout.\" citation: \"You still override this pool-level timeout by specifying `timeout` to `request()`.\" type fact.\n\nCheck duplicates. Good.\n\nReturn JSON with ids c1..c11.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952172,
+      "id": "chatcmpl-8f8394e3-5573-495a-8f77-ad95dc8bcaed",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_ef00694abe",
+      "usage": {
+        "completion_time": 1.434703189,
+        "completion_tokens": 1284,
+        "completion_tokens_details": {
+          "reasoning_tokens": 735
+        },
+        "prompt_time": 0.095934693,
+        "prompt_tokens": 1320,
+        "queue_time": 0.056618619,
+        "total_time": 1.530637882,
+        "total_tokens": 2604
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqs3weepyr756n2hdqax4h",
+        "seed": 340536423
+      }
+    }
   }
 ]

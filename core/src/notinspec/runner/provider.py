@@ -23,10 +23,20 @@ class ChatRequest:
     temperature: float = 0.0
     max_tokens: int | None = None
     response_schema: dict[str, Any] | None = None  # JSON Schema for structured output
+    # how much a reasoning model thinks before it answers (Groq: "low" / "medium" / "high" for
+    # gpt-oss); None = the provider's default, and the parameter is not sent
+    reasoning_effort: str | None = None
 
     def prompt_hash(self) -> str:
-        """sha256 over the whole request, so any change to prompt or parameters is a new prompt."""
-        canonical = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        """sha256 over the whole request, so any change to prompt or parameters is a new prompt.
+
+        A parameter added after recordings existed is left out while it is unset, so the
+        requests of those recordings keep their hash.
+        """
+        data = asdict(self)
+        if data["reasoning_effort"] is None:
+            del data["reasoning_effort"]
+        canonical = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode()).hexdigest()
 
 

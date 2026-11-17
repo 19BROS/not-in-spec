@@ -3,6 +3,8 @@ from dataclasses import replace
 from notinspec.runner import ChatRequest, Message
 from notinspec.verify import ANSWER_SCHEMA
 
+OLD_HASH = "ca2999651cca272ccb1f4baa0c92380e8322f70f37e488250c9d813d3531aae4"
+
 
 def test_prompt_hash_is_stable(request_: ChatRequest) -> None:
     same = ChatRequest(
@@ -20,6 +22,13 @@ def test_prompt_hash_covers_everything_sent(request_: ChatRequest) -> None:
         replace(request_, temperature=0.7),
         replace(request_, max_tokens=100),
         replace(request_, response_schema=ANSWER_SCHEMA),
+        replace(request_, reasoning_effort="low"),
     ]
     hashes = {request_.prompt_hash(), *(v.prompt_hash() for v in variants)}
     assert len(hashes) == len(variants) + 1
+
+
+def test_an_unset_reasoning_effort_keeps_older_hashes(request_: ChatRequest) -> None:
+    # the hash of this request before `reasoning_effort` existed; recordings rely on it
+    assert request_.reasoning_effort is None
+    assert request_.prompt_hash() == OLD_HASH

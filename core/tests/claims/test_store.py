@@ -102,3 +102,20 @@ def test_broken_line_in_the_middle_is_an_error(tmp_path: Path) -> None:
     path.write_text(f'{{"key": {{"content_hash": "a"}}}}\n{lines[1]}\n', encoding="utf-8")
     with pytest.raises(ValueError, match="claims-store.jsonl:1"):
         JsonlClaimStore(path)
+
+
+def test_reasoning_effort_is_part_of_the_key(tmp_path: Path) -> None:
+    path = tmp_path / "claims-store.jsonl"
+    # an entry written before the key had `reasoning_effort`
+    old = {"key": {k: v for k, v in vars(KEY).items() if k != "reasoning_effort"}}
+    old["answer"] = {
+        "claims": [vars(CLAIM)],
+        "problems": [],
+        "run_id": "r1",
+        "prompt_hash": "h1",
+        "model": "acme/model-1",
+    }
+    path.write_text(json.dumps(old) + "\n", encoding="utf-8")
+    store = JsonlClaimStore(path)
+    assert store.get(KEY) is not None
+    assert store.get(ReuseKey("abc", "p > Guide", "x", "acme/model", 1, "low")) is None
