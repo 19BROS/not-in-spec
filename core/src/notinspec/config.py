@@ -48,6 +48,7 @@ class IngestConfig:
     paths: tuple[str, ...]
     openapi: str | None
     changelog: str | None
+    sphinx_xml: str | None = None  # folder with `sphinx-build -b xml` output + build-env.txt
 
 
 def load_config(path: Path) -> IngestConfig:
@@ -66,19 +67,19 @@ def load_config(path: Path) -> IngestConfig:
         )
     if unknown := sorted(set(docs) - _DOC_FIELDS):
         raise ConfigError(f"unknown docs field(s): {', '.join(unknown)}")
-    if docs.get("sphinx_xml") is not None:
-        relative_path(docs["sphinx_xml"], "docs.sphinx_xml")
-        raise ConfigError(
-            "docs.sphinx_xml is not supported yet; use docs.paths for Markdown or docs.openapi"
-        )
+    sphinx_xml = _optional_path(docs.get("sphinx_xml"), "docs.sphinx_xml")
+    if sphinx_xml == ".":
+        raise ConfigError("docs.sphinx_xml must be a folder below the config directory")
     paths = docs.get("paths", [])
     if not isinstance(paths, list):
         raise ConfigError("docs.paths must be a list of relative file patterns")
     patterns = tuple(relative_path(value, "docs.paths") for value in paths)
     openapi = _optional_path(docs.get("openapi"), "docs.openapi")
     changelog = _optional_path(docs.get("changelog"), "docs.changelog")
-    if not patterns and openapi is None and changelog is None:
-        raise ConfigError("configure at least one of docs.paths, docs.openapi or docs.changelog")
+    if not patterns and openapi is None and changelog is None and sphinx_xml is None:
+        raise ConfigError(
+            "configure at least one of docs.sphinx_xml, docs.paths, docs.openapi or docs.changelog"
+        )
     root = path.resolve().parent
     return IngestConfig(
         root=root,
@@ -87,6 +88,7 @@ def load_config(path: Path) -> IngestConfig:
         paths=patterns,
         openapi=openapi,
         changelog=changelog,
+        sphinx_xml=sphinx_xml,
     )
 
 

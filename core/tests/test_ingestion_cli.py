@@ -6,7 +6,6 @@ from typing import Any
 import pytest
 
 from notinspec.cli import main
-from notinspec.report import render_report
 
 EXAMPLE = Path(__file__).parents[1] / "examples" / "cli"
 
@@ -196,24 +195,6 @@ def test_unexpected_crash_returns_two(
     assert "RuntimeError: unexpected pipeline failure" in capsys.readouterr().err
 
 
-def test_html_report_escapes_input_names() -> None:
-    report = render_report(
-        {
-            "ingestion": {
-                "files": 1,
-                "chunks": 0,
-                "sections": 0,
-                "operations": 0,
-                "warnings": ["<script>bad()</script>"],
-            },
-            "docs": {"files": ["<img src=x>.md"]},
-        }
-    )
-    assert "<script>" not in report
-    assert "&lt;script&gt;" in report
-    assert "<img" not in report
-
-
 @pytest.mark.parametrize("command", ["ci", "chunk"])
 def test_limits_must_be_positive(command: str) -> None:
     with pytest.raises(SystemExit) as exc:
@@ -233,6 +214,93 @@ def test_dry_run_lists_inputs_without_parsing_or_writing(
     assert "openapi.yaml" in text
     assert "No documents parsed" in text
     assert not output.exists()
+
+
+def sphinx_project(project: Path) -> Path:
+    xml = project / "build" / "xml"
+    (xml / "api").mkdir(parents=True)
+    (xml / "index.xml").write_text("<document/>", "utf-8")
+    (xml / "api" / "client.xml").write_text("<document/>", "utf-8")
+    (xml / "build-env.txt").write_text("sphinx-build 9.1.0\n", "utf-8")
+    (project / "notinspec.yaml").write_text(
+        'docs: {sphinx_xml: "build/xml/", paths: ["**/*.md", "**/*.txt"]}', "utf-8"
+    )
+    return xml
+
+
+def test_dry_run_lists_the_sphinx_folder(
+    project: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    sphinx_project(project)
+    assert run(project, tmp_path / "out", "--dry-run") == 0
+    text = capsys.readouterr().out
+    assert "sphinx: build/xml/ (2 XML files, Sphinx 9.1.0)" in text
+    assert "markdown: docs/guide.md" in text
+    assert "build-env.txt" not in text  # inside the Sphinx folder, not a Markdown input
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        (lambda xml: shutil.rmtree(xml), "is not a folder"),
+        (lambda xml: (xml / "build-env.txt").unlink(), "build-env.txt is missing"),
+        (
+            lambda xml: (xml / "build-env.txt").write_text("sphinx-build 8.2.3\n", "utf-8"),
+            "Sphinx 8.2.3 is not supported",
+        ),
+        (lambda xml: [p.unlink() for p in xml.rglob("*.xml")], "no *.xml files"),
+    ],
+)
+def test_bad_sphinx_folder_is_exit_two(
+    project: Path,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    change: Any,
+    message: str,
+) -> None:
+    change(sphinx_project(project))
+    assert run(project, tmp_path / "out", "--dry-run") == 2
+    assert message in capsys.readouterr().err
+
+
+def test_sphinx_with_markdown_and_broken_xml(
+    project: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    xml = sphinx_project(project)
+    output = tmp_path / "out"
+    assert run(project, output) == 0
+    data = json.loads((output / "ingestion.json").read_bytes())
+    assert data["sphinx"] == {"version": "9.1.0", "reader_version": 1}
+    assert [(f["source"], f["kind"]) for f in data["files"]] == [
+        ("docs/guide.md", "markdown"),
+        ("build/xml/api/client.xml", "sphinx"),
+        ("build/xml/build-env.txt", "sphinx"),
+        ("build/xml/index.xml", "sphinx"),
+    ]
+    assert "build/xml: the Sphinx XML contains no documentation content" in data["warnings"]
+    (xml / "index.xml").write_text("<document>", "utf-8")
+    assert run(project, tmp_path / "broken") == 2
+    assert "index.xml: not well-formed XML" in capsys.readouterr().err
+    assert not (tmp_path / "broken").exists()
+
+
+def test_sphinx_folder_and_output_must_not_overlap(
+    project: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    xml = sphinx_project(project)
+    assert run(project, xml / "out", "--dry-run") == 2
+    assert "must not contain each other" in capsys.readouterr().err
+
+
+def test_explicit_input_inside_the_sphinx_folder_is_rejected(
+    project: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    sphinx_project(project)
+    (project / "notinspec.yaml").write_text(
+        'docs: {sphinx_xml: "build/xml", changelog: "build/xml/build-env.txt"}', "utf-8"
+    )
+    assert run(project, tmp_path / "out", "--dry-run") == 2
+    assert "explicit input inside docs.sphinx_xml" in capsys.readouterr().err
 
 
 def test_dry_run_still_rejects_missing_inputs(

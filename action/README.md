@@ -36,7 +36,7 @@ jobs:
 
 ### Sphinx docs
 
-> **Not read yet.** The Sphinx reader is not implemented, so the CLI rejects `docs.sphinx_xml` with an explanation. This section is the intended setup.
+> **Sphinx 9.x only.** The reader reads XML built by Sphinx 9 and checks the first line of `build-env.txt` (`sphinx-build 9.1.0`). Without `build-env.txt`, or with another Sphinx major version, the run fails with exit 2. Other versions are future work ([SPEC §16.3](../docs/SPEC.md#163-future-development)).
 
 The Action **never builds Sphinx** ([SPEC §1.1](../docs/SPEC.md#11-what-we-are-not-building)): `sphinx-build` runs your project's code (`conf.py`, autodoc imports the library, `pip install` runs build hooks), and the NOT-IN-SPEC job has your `LLM_API_KEY`. So build the XML in a **separate job without secrets** and pass it on as an artifact. A separate job runs on a separate VM, so build code cannot reach the key.
 
@@ -76,7 +76,7 @@ jobs:
           api-key: ${{ secrets.LLM_API_KEY }}
 ```
 
-- `build-env.txt` records the build environment: autodoc output depends on the Sphinx version, its extensions and the installed library, so the same docs commit can build to different XML ([SPEC §6.1](../docs/SPEC.md#61-reading-and-chunking)).
+- `build-env.txt` is **required**, and `sphinx-build --version` must be its first line. It records the build environment: autodoc output depends on the Sphinx version, its extensions and the installed library, so the same docs commit can build to different XML ([SPEC §6.1](../docs/SPEC.md#61-reading-and-chunking)).
 - Keep the `sphinx-build` command your project already uses (extensions, `-D` options); only the builder changes to `xml`. Don't add napoleon or other extensions just for NOT-IN-SPEC.
 - The XML is treated as untrusted input by the reader.
 

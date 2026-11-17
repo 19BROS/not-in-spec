@@ -15,10 +15,17 @@ from notinspec.chunking import (
     DEFAULT_SOFT_LIMIT,
     Chunk,
     Document,
+    chunk_blocks,
     chunk_documents,
     normalize_text,
 )
 from notinspec.config import ConfigError, IngestConfig
+from notinspec.sphinx import (
+    SPHINX_READER_VERSION,
+    SphinxInputError,
+    read_sphinx_version,
+    read_sphinx_xml,
+)
 
 INGESTION_SCHEMA_VERSION = 3  # 2: chunk id is the location, project added; 3: Block fields
 _TEXT_SUFFIXES = frozenset({".md", ".markdown", ".txt"})
@@ -38,10 +45,20 @@ class OpenApiInput:
 
 
 @dataclass(frozen=True)
+class SphinxInput:
+    """What read the `docs.sphinx_xml` folder: changes here explain changed chunks."""
+
+    version: str  # Sphinx that built the XML, from build-env.txt: "9.1.1"
+    reader_version: int  # SPHINX_READER_VERSION
+
+
+@dataclass(frozen=True)
 class PlannedInput:
     source: str
     path: Path
-    kind: str
+    kind: str  # "markdown" | "openapi" | "sphinx" (a folder)
+    xml_files: int = 0  # sphinx only: number of *.xml files in the folder
+    sphinx_version: str | None = None  # sphinx only: from build-env.txt
 
 
 def plan_ingestion(
@@ -53,14 +70,23 @@ def plan_ingestion(
         raise ConfigError("output must not be the config directory or one of its parents")
     if output.exists() and not output.is_dir():
         raise ConfigError("output must be a directory")
+    sphinx = _sphinx_folder(config, config.sphinx_xml, output) if config.sphinx_xml else None
     paths, warnings = _inputs(config, output)
+    if not paths and sphinx is None:
+        raise ConfigError("no input files matched the configured documentation")
     spec_path = _file(config, config.openapi) if config.openapi else None
     plan = []
     for source, path in sorted(paths.items()):
+        if sphinx and path.is_relative_to(sphinx.path):
+            if source in (config.openapi, config.changelog):
+                raise ConfigError(f"{source}: explicit input inside docs.sphinx_xml")
+            continue  # the Sphinx reader owns its folder (e.g. build-env.txt is not docs)
         kind = "openapi" if path == spec_path else "markdown"
         if kind == "markdown" and path.suffix.lower() not in _TEXT_SUFFIXES:
             raise ConfigError(f"{source}: unsupported text format; use Markdown or llms.txt")
         plan.append(PlannedInput(source, path, kind))
+    if sphinx:
+        plan.append(sphinx)
     return tuple(plan), tuple(warnings)
 
 
@@ -72,6 +98,7 @@ class Ingestion:
     project: str
     chunker_version: int
     soft_limit: int
+    sphinx: SphinxInput | None  # None without docs.sphinx_xml
     files: tuple[InputFile, ...]
     chunks: tuple[Chunk, ...]
     openapi: tuple[OpenApiInput, ...]
@@ -89,8 +116,26 @@ def ingest(
     files: list[InputFile] = []
     documents: list[Document] = []
     specs: list[OpenApiInput] = []
+    sphinx: SphinxInput | None = None
+    sphinx_chunks: list[Chunk] = []
     for item in plan:
         source, path, kind = item.source, item.path, item.kind
+        if kind == "sphinx":
+            try:
+                xml = read_sphinx_xml(path)
+            except SphinxInputError as error:
+                raise ConfigError(f"docs.sphinx_xml {source}: {error}") from error
+            sphinx = SphinxInput(xml.sphinx_version, SPHINX_READER_VERSION)
+            # the hash of the normalized XML, so the checkout path of the build does not matter
+            files.extend(InputFile(f"{source}/{name}", kind, digest) for name, digest in xml.files)
+            warnings.extend(f"{source}: {w}" for w in xml.warnings)
+            for document in xml.documents:
+                sphinx_chunks.extend(
+                    chunk_blocks(document, project=config.project, soft_limit=soft_limit)
+                )
+            if not sphinx_chunks:
+                warnings.append(f"{source}: the Sphinx XML contains no documentation content")
+            continue
         data = path.read_bytes()
         files.append(InputFile(source, kind, hashlib.sha256(data).hexdigest()))
         if kind == "openapi":
@@ -112,6 +157,7 @@ def ingest(
     chunks = chunk_documents(documents, project=config.project, soft_limit=soft_limit)
     if documents and not chunks:
         warnings.append("text inputs contain no documentation content")
+    chunks += tuple(sphinx_chunks)  # after the Markdown chunks
     return Ingestion(
         schema_version=INGESTION_SCHEMA_VERSION,
         config_hash=config.content_hash,
@@ -119,6 +165,7 @@ def ingest(
         project=config.project,
         chunker_version=CHUNKER_VERSION,
         soft_limit=soft_limit,
+        sphinx=sphinx,
         files=tuple(files),
         chunks=chunks,
         openapi=tuple(specs),
@@ -159,6 +206,23 @@ def _inputs(config: IngestConfig, output: Path) -> tuple[dict[str, Path], list[s
                     f"explicit input must not be inside the output directory: {explicit_source}"
                 )
             paths[explicit_source] = path
-    if not paths:
-        raise ConfigError("no input files matched the configured documentation")
     return paths, warnings
+
+
+def _sphinx_folder(config: IngestConfig, source: str, output: Path) -> PlannedInput:
+    """The `sphinx-build -b xml` folder: shape and Sphinx version; no XML is parsed here."""
+    path = (config.root / source).resolve()
+    if not path.is_relative_to(config.root):
+        raise ConfigError(f"docs.sphinx_xml resolves outside the config directory: {source}")
+    if not path.is_dir():
+        raise ConfigError(f"docs.sphinx_xml is not a folder: {source}")
+    if path.is_relative_to(output) or output.is_relative_to(path):
+        raise ConfigError("docs.sphinx_xml and the output directory must not contain each other")
+    try:
+        version = read_sphinx_version(path)  # build-env.txt only: cheap, also for --dry-run
+    except SphinxInputError as error:
+        raise ConfigError(f"docs.sphinx_xml {source}: {error}") from error
+    xml_files = sum(1 for p in path.rglob("*.xml") if p.is_file())
+    if not xml_files:
+        raise ConfigError(f"{source}: no *.xml files; build them with `sphinx-build -b xml`")
+    return PlannedInput(source, path, "sphinx", xml_files, version)

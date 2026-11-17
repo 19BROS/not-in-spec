@@ -88,7 +88,7 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
      fail_on_l3_drop: significant     # statistically significant drop
      fail_on_new_findings: [K1, K4, K7]
    ```
-2. For Sphinx docs: a **CI job that builds the XML** without secrets (`sphinx-build -b xml`) and records its build environment next to it (`pip freeze` and `sphinx-build --version` into `build-env.txt` in the XML folder; file name is a *candidate*). `action/README.md` has the example workflow.
+2. For Sphinx docs: a **CI job that builds the XML** without secrets (`sphinx-build -b xml`) with **Sphinx 9.x** (the only version the MVP reads), and records its build environment in **`build-env.txt`** in the XML folder. The file is **required**: its first line is the output of `sphinx-build --version` (`sphinx-build 9.1.0`), followed by `python --version` and `pip freeze`. A missing file or another Sphinx major version is an error (exit 2). `action/README.md` has the example workflow.
 3. **API key** for the models as a CI secret.
 4. **Review of the golden set** in a PR.
 
@@ -194,7 +194,7 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 
 | Phase | Input | How it is read |
 |---|---|---|
-| MVP | **Sphinx** project | from Sphinx's **structured output** built by the user (`sphinx-build -b xml`, i.e. the docutils doctree; never built by us, [§1.1](#11-what-we-are-not-building)), not from rendered HTML and not with our own reST/MyST parser. Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. `objects.inv` as the list of documented symbols is a *candidate*. |
+| MVP | **Sphinx 9.x** project | from Sphinx's **structured output** built by the user (`sphinx-build -b xml`, i.e. the docutils doctree; never built by us, [§1.1](#11-what-we-are-not-building)), not from rendered HTML and not with our own reST/MyST parser. Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. Only Sphinx 9.x, read from the first line of `build-env.txt` ([§2.3](#23-what-the-tool-needs-from-the-user)); other versions are [future work](#163-future-development). `objects.inv` as the list of documented symbols is a *candidate*. |
 | MVP | plain Markdown, llms.txt, changelog | Markdown parser |
 | MVP | formal spec (OpenAPI) | its own parser (component A); `description` texts become chunks for component D |
 | next iteration | other generators (*candidates:* MkDocs, Docusaurus, TypeDoc) | their structured output where they have one |
@@ -212,6 +212,33 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 - Sections are the unit for **component detection, the inventory `Source`, gold context, IDs and CI diffs**.
 - Output: `Chunk`.
 
+**Sphinx XML → blocks.** The Sphinx reader turns the doctree **straight into typed blocks**; it never converts XML to Markdown and parses that again. A round trip would lose node types (a `desc_signature` would become plain text), break on prose that looks like Markdown (`*args`, a line starting with `#`), and could not express one block per parameter. The Markdown reader stays for Markdown inputs (README, llms.txt, changelogs, guides next to an OpenAPI spec).
+
+- `source` of a Sphinx chunk is the **docname**: the XML path relative to the XML folder, without `.xml` (`reference-core`, `generated/hydra_zen.builds`).
+- The chunk **text** is rendered, Markdown-like and **read-only**: `#` headings, inline code in backticks, `- ` list items, fenced code, pipe tables. It exists for display and citations, and block line ranges point into it; it is never parsed again.
+- Block kinds: the Markdown ones (`heading`, `text`, `code`, `table`, `list`, `quote`) plus **`admonition`** (prose), **`signature`** (not prose) and **`field`** (prose; carries `name`, `field` and `type`, see below).
+- Nodes in short:
+
+  | Node | Block |
+  |---|---|
+  | `section` + `title` | `heading` (level = depth) |
+  | `desc` | `heading` one level below its parent; title = `desc_name`, `()` added for functions, methods and decorators; any domain and object type |
+  | `desc_signature` | `signature`, one per signature |
+  | `paragraph`, `versionmodified`, `footnote`, `citation` | `text` |
+  | `bullet_list`, `enumerated_list`, `definition_list`, `glossary` | `list` (never cut) |
+  | `literal_block`, `doctest_block`, `math_block`, `container.literal-block-wrapper` (caption above the code) | `code` (never cut) |
+  | `table`, `autosummary_table` | `table` (never cut) |
+  | `block_quote` | `quote` |
+  | `note`, `warning`, `seealso`, generic `admonition`, … | `admonition` |
+  | `rubric` (`Examples`, `Notes`, tab labels) | `text` in bold, **never a heading**: it does not start a section |
+  | `field_list` in a `desc` | one `field` or `signature` block per entry (below) |
+  | `index`, `target`, `comment`, `meta`, `substitution_definition`, toctree `compound`, `autosummary_toc`, `image`, `raw` | ignored |
+  | other `container`s, `desc_content` | transparent |
+  | anything else | its children or text are kept, with a warning `unknown node <tag> (Nx)` |
+
+- Inline: `literal` and inline `math` → backticks; links and cross-references → their text, never their target; `footnote_reference` → `[label]`. Whitespace in prose collapses.
+- **Order inside a section or `desc_content`:** first all its own body content in document order, then nested `desc`s, then subsections. Prose that follows a `desc` in the source therefore stays in the section's own chunk instead of being attached to the last API description.
+
 **API reference (Sphinx `desc` nodes).** A page like `automodule :members:` is one heading for a whole module, so heading-based chunks would be huge and the soft limit would cut them at random paragraphs. Instead:
 
 - **Each `desc` node** (function, class, method, attribute) is its own chunk, with the symbol in the breadcrumb: `urllib3 > API Reference > Retry > sleep()`. A nested `desc` (method in a class) is a chunk of its own; the class chunk keeps only the class's own text.
@@ -222,23 +249,25 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
   | `desc_signature` | not prose → component B |
   | `desc_content` → `paragraph`, `note` / `warning`, `versionmodified` | prose, as in a normal section |
   | `desc_content` → `literal_block`, `doctest_block` | code → component C |
-  | `field_list` → one parameter / `Raises` / `Returns` entry | **its own prose block**, the parameter name added to the breadcrumb (`urllib3 > API Reference > Retry > total`) |
+  | `field_list` → one parameter / `Raises` / `Returns` entry | **its own prose block** (`field`); its NLI premise adds the parameter name to the breadcrumb (`urllib3 > API Reference > Retry > total`) |
   | `field_list` → `Return type`, types in parentheses | not prose → component B |
 
 - The reader normalizes the three XML shapes of a field entry into one block (kind, name, type, text):
 
   | Shape | From | XML |
   |---|---|---|
-  | A | reST or napoleon, several params | `field_body > bullet_list > list_item > paragraph`: `literal_strong` name, `literal_emphasis` type, ` – `, text |
+  | A | reST or napoleon, several params | `field_body > bullet_list > list_item > paragraph`: `literal_strong` name, `literal_emphasis` type, ` – ` (en dash), text |
   | B | reST or napoleon, one param | `field_body > paragraph`, no `bullet_list` |
   | C | numpydoc | `field_body > definition_list > item`: `term` = name, `classifier` = type, `definition` = text |
 
-  All text after the dash (A, B) or in the `definition` (C) is one block; nested paragraphs are joined with a blank line.
+  All text after the dash (A, B) or in the `definition` (C) is one block; nested paragraphs are joined with a blank line. A `Returns` entry has no name (in C, a term without a classifier is the type). The entry is rendered as ``- `name` (type) – text``. Each group of entries starts with a **label line** (`**Parameters:**`, `**Raises:**`): a `text` block that the chunker keeps in the same part as the first entry after it, so a split never leaves a label alone at the end of a part.
+- Field names map to the block's `field`: Parameters, Keyword Arguments, Other Parameters, Attributes → `param`; Returns, Yields → `returns`; Raises, Warns → `raises` (all `field` blocks, prose); Return type → `return-type` and Type → `type` (`signature` blocks, not prose). Any other field name is a `field` block with the lower-case name and a warning.
 - **Google style without napoleon** stays a `definition_list` (`Args:` term, all parameters in one paragraph) and is read as plain prose: the text is kept, only the per-parameter split is lost. We do not inject napoleon into the user's `conf.py`: it changes the docs vs. what the project publishes.
 
 **Determinism of Sphinx input.** Autodoc output depends on the Sphinx version, its extensions and the installed library, so the same docs commit can build to different XML.
 
-- The reader's input is the **built XML**: its hash (all files, sorted by path) is the input snapshot hash ([§10](#10-data)). Same XML + reader version ⇒ same chunks and IDs.
+- The reader's input is the **built XML**: its hash (every `*.xml` in the folder and `build-env.txt`, sorted by path) is the input snapshot hash ([§10](#10-data)). Other build output (`_static/` scripts and CSS) is not documentation and is neither read nor hashed. Same XML + reader version ⇒ same chunks and IDs; the Sphinx version and the reader version are stored with every run (`ingestion.json`: `sphinx`).
+- The XML contains the absolute path of the build's checkout in `source="…"` attributes (on `document`, and on `literal_block` from `literalinclude`), so the same docs built in another folder would hash differently. Before hashing, the reader strips the source-folder prefix from every `source=` value (a path outside the source folder keeps only its file name, with a warning). This is done on the file text, so the hash never depends on XML re-serialization. Verified on the three example libraries: two builds from different checkout paths differ only in these paths.
 - The **build environment** (`build-env.txt`, [§2.3](#23-what-the-tool-needs-from-the-user)) is stored with every run, so a change in chunks can be traced to a change in the environment.
 - The reader takes the text of links, never their targets, so intersphinx (which fetches `objects.inv` from the network at build time) does not change the chunk text.
 
@@ -508,7 +537,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 - Reusable action that runs the CLI + Prism inside the CI runner. **No dependency on our hosted service.**
 - Reads `notinspec.yaml` from the caller repo; the model API key comes from the caller's secrets.
-- **Never builds Sphinx.** The caller's separate job (no secrets) runs `sphinx-build -b xml` and uploads the XML as an artifact; our job downloads it and reads `docs.sphinx_xml` ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary. Example workflow in `action/README.md`.
+- **Never builds Sphinx.** The caller's separate job (no secrets) runs `sphinx-build -b xml` (Sphinx 9.x), writes `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)) and uploads the folder as an artifact; our job downloads it and reads `docs.sphinx_xml` ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary. Example workflow in `action/README.md`.
 - UC2: evaluates only changed chunks and their test items, compares with the `main` baseline, posts a **PR comment** and a **status check**, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
 - Outputs JSON results and an HTML report as workflow artifacts.
 - Golden-set changes appear in the PR for review ([§2.5](#25-keeping-golden-set-review-small)).
@@ -536,7 +565,8 @@ The report says what a result pattern means. It does not recommend a fix: findin
 
 - **Fake LLM provider** replaying recorded responses for every LLM role. **CI never calls a real LLM.**
 - **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI premises).
-- **Sphinx reader golden test:** a fixture project with reST `:param:`, Google and NumPy docstrings, built with and without napoleon / numpydoc → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus a test that XML with external entities is rejected.
+- **Sphinx reader golden test:** a small fixture project of our own with reST `:param:`, Google and NumPy docstrings, built three ways (napoleon, numpydoc, neither) with Sphinx 9 → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus tests that XML with external entities and a missing or non-9.x `build-env.txt` are rejected, and that a copy built in another checkout folder hashes the same.
+- **Real Sphinx examples:** the built XML of three libraries is committed in `core/examples/sphinx/` (urllib3: reST fields; trio: Google via napoleon; hydra-zen: numpydoc). An end-to-end test runs the CLI on each: exit 0, `ingestion.json` byte-identical across two runs, no `unknown node` warning, `report.html` written.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - Our own API: OpenAPI validated in CI + Schemathesis.
@@ -594,6 +624,7 @@ Faculty checkpoint dates: **TBD**.
 - Mocks for GraphQL and gRPC (today call-record comparison only).
 - Agentic tasks: the model searches the docs itself via a tool (e.g. MCP).
 - Docs websites without a supported generator (rendered HTML → Markdown).
+- Sphinx versions other than 9.x (the doctree's node types and attributes change between major versions), and migrating chunks and their IDs when a project moves to another Sphinx version.
 
 ## 17. Roles
 
@@ -614,7 +645,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Faculty API key: provider, endpoint, available models, rate limits, budget, whether it may be used from GitHub-hosted runners
 - [ ] Faculty checkpoint dates
 - [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
-- [ ] Sphinx build environment for the pilot: pin Sphinx, its extensions and the library version, build the XML once outside the VM and store it with its `build-env.txt`. The build runs third-party code, so never next to secrets ([§1.1](#11-what-we-are-not-building)). Final shape of `build-env.txt` (plain `pip freeze` vs. JSON)
+- [x] Sphinx build environment for the pilot: built for urllib3, trio and hydra-zen with each release's pinned docs dependencies (Sphinx 9.1), in a container without secrets, stored with `build-env.txt` in `core/examples/sphinx/` (see its README). `build-env.txt` stays plain text; its first line is `sphinx-build 9.x.y` ([§2.3](#23-what-the-tool-needs-from-the-user))
 - [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), so grounding on the text around the citation can drop good claims. Measured in `experiments/nli`: with the breadcrumb, the NLI premise keeps 86 of 92 correct claims in a human-labelled sample. A 400-token window keeps 90, but nearly twice as many wrong ones. Check again on the pilot docs
 - [ ] Soft limit for oversized sections
 - [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample

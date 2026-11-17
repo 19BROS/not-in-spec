@@ -13,8 +13,22 @@ uv run notinspec ci --config core/examples/cli/notinspec.yaml --out tmp/cli-demo
 ```
 
 The example processes one Markdown guide into **3 chunks** and extracts **2 OpenAPI
-operations**. Open `tmp/cli-demo/report.html` to inspect the summary. `ingest` is an alias
+operations**. Open `tmp/cli-demo/report.html` to review every chunk. `ingest` is an alias
 for `ci`; `python -m notinspec.cli` also works. The existing `chunk` command is preserved.
+
+### Sphinx demo
+
+Real Sphinx 9 XML of three libraries is committed in `core/examples/sphinx/` (see its README:
+urllib3 with reST fields, trio with Google docstrings via napoleon, hydra-zen with numpydoc):
+
+```sh
+uv run notinspec ci --config core/examples/sphinx/urllib3/notinspec.yaml --out tmp/urllib3
+uv run notinspec ci --config core/examples/sphinx/trio/notinspec.yaml --out tmp/trio
+uv run notinspec ci --config core/examples/sphinx/hydra-zen/notinspec.yaml --out tmp/hydra-zen
+```
+
+Open `tmp/<lib>/report.html`: chunks grouped by document, each with its breadcrumb, size,
+block kinds and text, and the reader's warnings first. No LLM is called.
 
 Preview which inputs the configuration selects:
 
@@ -23,7 +37,7 @@ uv run notinspec ci --config core/examples/cli/notinspec.yaml --out tmp/cli-demo
 ```
 
 `--dry-run` checks configuration, file existence, supported formats and output location, then
-lists the selected files. It creates no files and preserves existing output. It does **not**
+lists the selected files (a Sphinx XML folder with its XML file count). It creates no files and preserves existing output. It does **not**
 parse document content or validate OpenAPI schemas; run the normal command for those checks.
 
 ## Configuration
@@ -33,6 +47,7 @@ Paths are relative to the configuration file, regardless of the current working 
 ```yaml
 project: "items-api"                  # optional; root of every breadcrumb
 docs:
+  sphinx_xml: "build/xml/"            # optional; folder built by `sphinx-build -b xml`
   paths: ["docs/**/*.md", "llms.txt"]  # optional; glob patterns, duplicates removed
   openapi: "api/openapi.yaml"         # optional; YAML or JSON, OpenAPI 3.x
   changelog: "CHANGES.md"             # optional; Markdown or plain text
@@ -40,9 +55,14 @@ docs:
 
 At least one input is required. Markdown (`.md`, `.markdown`) and plain text (`.txt`) are
 supported. Explicit missing files and unsupported formats fail with an explanation. Patterns
-matching nothing produce a warning, or an error if no inputs remain. Sphinx is not supported
-yet: `docs.sphinx_xml` (the XML built by `sphinx-build -b xml`, SPEC §6.1) produces an error
-instead of silently skipping that documentation, and the old `docs.sphinx` explains the change.
+matching nothing produce a warning, or an error if no inputs remain.
+
+`docs.sphinx_xml` is a folder below the config with the output of `sphinx-build -b xml`
+(SPEC §6.1) and a `build-env.txt` whose first line is `sphinx-build 9.x.y`: **only Sphinx 9.x
+is read**. A missing folder, no `*.xml` files, a missing `build-env.txt` or another Sphinx
+major version is an error (exit 2), also in `--dry-run`. `docs.paths` patterns never select
+files inside that folder. The old `docs.sphinx` (a Sphinx project to build) explains the change:
+the CLI never builds Sphinx.
 `project` starts every chunk breadcrumb (`items-api > Items API > List items`). Without it, the
 repository name from `GITHUB_REPOSITORY` is used, otherwise the config directory's name.
 Unknown fields inside `docs` and duplicate YAML keys are errors with an explanation.
@@ -60,10 +80,10 @@ Explicit relative `--config` and `--out` arguments are resolved from the termina
 
 | File | Content |
 |---|---|
-| `ingestion.json` | deterministic input hashes, source paths, full chunks, normalized OpenAPI operations and warnings; ingestion schema v2 |
+| `ingestion.json` | deterministic input hashes, source paths, full chunks (blocks with `field` / `name` / `type` for API reference entries), normalized OpenAPI operations, the Sphinx and reader version (`sphinx`, `null` without Sphinx input) and warnings; ingestion schema v3 |
 | `results.json` | Action/server envelope v0, ingestion counts, `stage: ingestion`, `verdict: not-evaluated`, empty `results` and `findings` |
 | `comment.md` | summary beginning with the Action's `<!-- notinspec -->` marker |
-| `report.html` | standalone readable summary, linked to `ingestion.json` |
+| `report.html` | plain HTML (no scripts, no external files) for reviewing chunks by eye: counts, warnings with counts, every chunk per document |
 
 `ingestion.json` contains the adapter's intermediate normalized data, **not** the complete v3
 inventory (`Symbol`, `Signature`, `Constraint`, ...). OpenAPI descriptions are retained in

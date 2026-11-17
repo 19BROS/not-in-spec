@@ -10,12 +10,14 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from notinspec import __version__
 from notinspec.adapters.canonical import canonical_json
+from notinspec.chunking import Chunk
 from notinspec.ingestion import Ingestion
 
 COMMENT_MARKER = "<!-- notinspec -->"
@@ -62,7 +64,7 @@ def write_artifacts(output: Path, ingestion: Ingestion, results: dict[str, Any])
         "ingestion.json": canonical_json(ingestion, pretty=True),
         "results.json": canonical_json(results, pretty=True),
         "comment.md": render_comment(results).encode("utf-8"),
-        "report.html": render_report(results).encode("utf-8"),
+        "report.html": render_report(ingestion).encode("utf-8"),
     }
     output.mkdir(parents=True, exist_ok=True)
     for name in artifacts:
@@ -136,24 +138,127 @@ def render_comment(results: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render_report(results: dict[str, Any]) -> str:
-    counts = results["ingestion"]
-    warnings = "".join(f"<li>{html.escape(w)}</li>" for w in counts["warnings"])
-    files = "".join(f"<li>{html.escape(f)}</li>" for f in results["docs"]["files"])
+_STYLE = (
+    ":root{color-scheme:light dark;--fg:#1f2328;--bg:#fff;--muted:#59636e;--line:#d0d7de;"
+    "--code:#f6f8fa;--note:#fff3cd;--bad:#b42318}"
+    "@media (prefers-color-scheme:dark){:root{--fg:#e6edf3;--bg:#0d1117;--muted:#9198a1;"
+    "--line:#3d444d;--code:#161b22;--note:#3b2e00;--bad:#ff7b72}}"
+    "body{font:15px/1.45 system-ui,sans-serif;max-width:1100px;margin:2rem auto;"
+    "padding:0 1rem;color:var(--fg);background:var(--bg)}"
+    "aside{padding:.75rem 1rem;background:var(--note)}"
+    "table{border-collapse:collapse;margin:.5rem 0}"
+    "td,th{border:1px solid var(--line);padding:.2rem .5rem;text-align:left;vertical-align:top}"
+    "td,li,summary{overflow-wrap:anywhere}"
+    "h2{margin-top:2rem;border-bottom:2px solid var(--line)}"
+    "details.chunk{border-bottom:1px solid var(--line);padding:.3rem 0}"
+    "summary{cursor:pointer}.meta{color:var(--muted);font-size:13px}"
+    ".over{color:var(--bad);font-weight:600}"
+    "pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code);padding:.75rem;"
+    "font:13px/1.4 ui-monospace,Consolas,monospace}"
+)
+
+
+def render_report(ingestion: Ingestion) -> str:
+    """Plain HTML for reviewing chunks by eye (SPEC §6.1).
+
+    No scripts and no external files, so it opens from a CI artifact as is and stays
+    usable for thousands of chunks; every input-derived string is HTML-escaped.
+    """
+    chunks = ingestion.chunks
+    documents: dict[str, list[Chunk]] = {}
+    for chunk in chunks:  # document order: the order of the chunks
+        documents.setdefault(chunk.source, []).append(chunk)
+    counts = {
+        "files": len(ingestion.files),
+        "documents with chunks": len(documents),
+        "chunks": len(chunks),
+        "sections": len({c.section_id for c in chunks}),
+        "oversized chunks": sum(c.oversized for c in chunks),
+        "OpenAPI operations": sum(len(i.spec.operations) for i in ingestion.openapi),
+        "warnings": len(ingestion.warnings),
+    }
+    out = [
+        "<!doctype html><html lang=en><meta charset=utf-8>",
+        "<meta name=viewport content='width=device-width,initial-scale=1'>",
+        f"<title>{_e(ingestion.project)} · NOT-IN-SPEC chunks</title><style>{_STYLE}</style>",
+        f"<h1>{_e(ingestion.project)}: documentation chunks</h1>",
+        f"<aside>{NOT_EVALUATED}</aside>",
+        "<table>",
+        *(f"<tr><th>{name}<td>{value}" for name, value in counts.items()),
+        f"<tr><th>input hash<td><code>{_e(ingestion.input_hash)}</code>",
+        f"<tr><th>chunker<td>v{ingestion.chunker_version}, soft limit {ingestion.soft_limit}",
+        *(
+            [
+                f"<tr><th>Sphinx<td>{_e(ingestion.sphinx.version)} "
+                f"(reader v{ingestion.sphinx.reader_version})"
+            ]
+            if ingestion.sphinx
+            else []
+        ),
+        "</table>",
+        "<p>Full data: <a href=ingestion.json>ingestion.json</a>.</p>",
+        *_warnings(ingestion.warnings),
+        "<h2>Documents</h2><ol>",
+        *(
+            f"<li><a href='#d{n}'>{_e(source)}</a> <span class=meta>{len(items)} chunks</span>"
+            for n, (source, items) in enumerate(documents.items(), 1)
+        ),
+        "</ol>" if documents else "</ol><p>No chunks.</p>",
+        f"<details><summary>Input files ({len(ingestion.files)})</summary><ul>",
+        *(f"<li>{_e(f.source)} <span class=meta>{_e(f.kind)}</span>" for f in ingestion.files),
+        "</ul></details>",
+    ]
+    for n, (source, items) in enumerate(documents.items(), 1):
+        out.append(f"<h2 id=d{n}>{_e(source)}</h2>")
+        out.extend(_chunk(chunk) for chunk in items)
+    out.append("</html>\n")
+    return "\n".join(out)
+
+
+def _warnings(warnings: tuple[str, ...]) -> list[str]:
+    """Reader warnings end in "(3x)"; `unknown node` ones go first: the reader missed content."""
+    rows: list[tuple[bool, str, int]] = []
+    for warning in warnings:
+        match = re.fullmatch(r"(.*) \((\d+)x\)", warning)
+        message, count = (match[1], int(match[2])) if match else (warning, 1)
+        rows.append(("unknown node" not in message, message, count))
+    if not rows:
+        return ["<h2>Warnings</h2><p>None.</p>"]
+    return [
+        "<h2>Warnings</h2><table><tr><th>Warning<th>Count",
+        *(f"<tr><td>{_e(message)}<td>{count}" for _, message, count in sorted(rows)),
+        "</table>",
+    ]
+
+
+def _chunk(chunk: Chunk) -> str:
+    kinds = Counter(block.kind for block in chunk.blocks)
+    meta = [f"part {chunk.part}/{chunk.parts}", f"{chunk.tokens} tokens"]
+    meta += [f"{kind} {n}" for kind, n in kinds.items()]
+    oversized = " <span class=over>oversized</span>" if chunk.oversized else ""
     return (
-        "<!doctype html><html lang=en><meta charset=utf-8>"
-        "<title>NOT-IN-SPEC ingestion</title>"
-        "<style>body{font:16px system-ui;max-width:800px;margin:3rem auto;padding:0 1rem}"
-        "li{overflow-wrap:anywhere}aside{padding:1rem;background:#fff3cd}</style>"
-        "<h1>Documentation ingestion completed</h1>"
-        f"<aside>{NOT_EVALUATED}</aside>"
-        f"<p>{counts['files']} files / {counts['sections']} sections / "
-        f"{counts['chunks']} chunks / {counts['operations']} OpenAPI operations.</p>"
-        f"<h2>Input files</h2><ul>{files}</ul>"
-        f"<h2>Warnings</h2><ul>{warnings or '<li>None</li>'}</ul>"
-        "<p>All configured inputs were processed. See <a href=ingestion.json>ingestion.json</a> "
-        "for chunks and normalized OpenAPI data.</p></html>\n"
+        f"<details class=chunk id='c-{_e(chunk.id)}'><summary>{_e(chunk.breadcrumb)} "
+        f"<span class=meta>{' · '.join(meta)}</span>{oversized}</summary>"
+        f"<p class=meta>id {_e(chunk.id)} · section {_e(chunk.section_id)} · "
+        f"lines {chunk.start_line}–{chunk.end_line}</p>"
+        f"<pre>{_e(chunk.text)}</pre>{_fields(chunk)}</details>"
     )
+
+
+def _fields(chunk: Chunk) -> str:
+    """API reference entries as the reader typed them: check name / type / field by eye."""
+    fields = [b for b in chunk.blocks if b.field is not None]
+    if not fields:
+        return ""
+    rows = "".join(
+        f"<tr><td>{_e(b.field or '')}<td>{_e(b.name or '')}<td>{_e(b.type or '')}<td>{b.kind}"
+        for b in fields
+    )
+    return f"<table class=fields><tr><th>field<th>name<th>type<th>kind{rows}</table>"
+
+
+def _e(text: str) -> str:
+    return html.escape(text, quote=True)
 
 
 def _git_head(root: Path) -> str:
