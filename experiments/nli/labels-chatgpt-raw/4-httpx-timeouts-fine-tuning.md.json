@@ -1,0 +1,152 @@
+[
+  {
+    "id": "q741",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q191",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q889",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q705",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q746",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q598",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q541",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q340",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q449",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q408",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q669",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q954",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q975",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q140",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q276",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q922",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q511",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q578",
+    "verdict": "entailment",
+    "borderline": true
+  },
+  {
+    "id": "q664",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q128",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q304",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q143",
+    "verdict": "neutral",
+    "borderline": true
+  },
+  {
+    "id": "q247",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q878",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q986",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q852",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q620",
+    "verdict": "contradiction",
+    "borderline": true
+  },
+  {
+    "id": "q367",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q769",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q442",
+    "verdict": "entailment",
+    "borderline": false
+  }
+]

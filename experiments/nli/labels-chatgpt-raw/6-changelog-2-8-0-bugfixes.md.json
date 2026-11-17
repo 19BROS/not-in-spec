@@ -1,0 +1,192 @@
+[
+  {
+    "id": "q531",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q402",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q153",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q168",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q853",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q470",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q351",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q583",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q633",
+    "verdict": "entailment",
+    "borderline": true
+  },
+  {
+    "id": "q612",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q117",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q157",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q482",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q446",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q254",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q388",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q260",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q374",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q218",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q154",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q270",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q159",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q325",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q199",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q203",
+    "verdict": "neutral",
+    "borderline": true
+  },
+  {
+    "id": "q877",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q576",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q667",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q782",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q644",
+    "verdict": "contradiction",
+    "borderline": false
+  },
+  {
+    "id": "q884",
+    "verdict": "contradiction",
+    "borderline": true
+  },
+  {
+    "id": "q918",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q784",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q652",
+    "verdict": "neutral",
+    "borderline": true
+  },
+  {
+    "id": "q590",
+    "verdict": "neutral",
+    "borderline": false
+  },
+  {
+    "id": "q193",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q228",
+    "verdict": "entailment",
+    "borderline": false
+  },
+  {
+    "id": "q313",
+    "verdict": "entailment",
+    "borderline": false
+  }
+]
