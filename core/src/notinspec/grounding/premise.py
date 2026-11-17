@@ -44,7 +44,8 @@ def nli_premise(chunk: Chunk, span: tuple[int, int]) -> Premise:
     cited = [i for i, s in enumerate(sentences) if s.start < span[1] and span[0] < s.end]
     if not cited:
         raise ValueError(f"span {span} is not in the prose of chunk {chunk.id}")
-    units = [_unit(chunk, s) for s in sentences]
+    lines = chunk.text.split("\n")
+    units = [_unit(chunk, lines, s) for s in sentences]
     cited_units = {units[i] for i in cited}
     low, high = max(cited[0] - RADIUS, 0), min(cited[-1] + RADIUS, len(sentences) - 1)
     picked = [i for i in range(low, high + 1) if units[i] in cited_units]
@@ -94,13 +95,12 @@ def _previous_block(blocks: tuple[Block, ...], index: int) -> int | None:
     return None
 
 
-def _unit(chunk: Chunk, sentence: Sentence) -> _Unit:
+def _unit(chunk: Chunk, lines: list[str], sentence: Sentence) -> _Unit:
     line = _line(chunk, sentence.start)
     for index, block in enumerate(chunk.blocks):
         if block.nested or block.kind not in _PROSE_KINDS:
             continue
         if block.start_line <= line <= block.end_line:
-            lines = chunk.text.split("\n")
             items = [
                 n
                 for n in range(block.start_line, block.end_line + 1)

@@ -24,7 +24,10 @@ type CitationStatus = Literal["found", "not_found", "not_checkable"]
 QUOTES = str.maketrans("“”‘’„‚", "\"\"''\"'")
 _PLAIN = str.maketrans("“”‘’„‚–—", "\"\"''\"'--")  # quotes and dashes, citation check only
 
-# markup removed before matching; each pattern's groups name the characters to drop
+# markup removed before matching; each pattern's groups name the characters to drop.
+# A wrapped Markdown line that starts with "3." is read as a list marker too, although only
+# "1." can interrupt a paragraph in CommonMark. The Sphinx reader writes each paragraph on one
+# line, so this affects only Markdown docs.
 _LINE_MARKERS = re.compile(
     r"^[ \t]*(?:(?:>[ \t]?)+[ \t]*)?"
     r"(#{1,6}[ \t]+|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX]\])?[ \t]+)?",
@@ -39,7 +42,11 @@ _MARKUP = re.compile(r"`|\*\*")
 @dataclass(frozen=True)
 class CitationCheck:
     status: CitationStatus
-    span: tuple[int, int] | None  # offsets into chunk.text; None when not found
+    span: tuple[int, int] | None  # offsets into chunk.text: the first match; None when not found
+    # found: every match in prose, in document order (span is the first). A docstring repeats
+    # sentences across parameter entries, so which one the claim means is decided later.
+    # not_checkable: the first match outside prose only.
+    spans: tuple[tuple[int, int], ...] = ()
 
 
 def normalize(text: str) -> str:
@@ -48,22 +55,26 @@ def normalize(text: str) -> str:
 
 
 def check_citation(chunk: Chunk, citation: str) -> CitationCheck:
-    """Where the citation is in the chunk. The first match inside prose wins."""
+    """Where the citation is in the chunk: all matches in prose, or `not_checkable`."""
     needle = normalize(citation)
     if not needle:
         return CitationCheck("not_found", None)
     haystack, offsets = _normalized(chunk.text)
     sentences = prose_sentences(chunk)
+    prose: list[tuple[int, int]] = []
     first: tuple[int, int] | None = None
     at = haystack.find(needle)
     while at >= 0:
         span = _widen(chunk.text, offsets[at], offsets[at + len(needle) - 1] + 1)
         if any(s.start < span[1] and span[0] < s.end for s in sentences):
-            return CitationCheck("found", span)
-        first = first or span
+            prose.append(span)
+        elif first is None:
+            first = span
         at = haystack.find(needle, at + 1)
+    if prose:
+        return CitationCheck("found", prose[0], tuple(prose))
     if first is not None:
-        return CitationCheck("not_checkable", first)
+        return CitationCheck("not_checkable", first, (first,))
     return CitationCheck("not_found", None)
 
 

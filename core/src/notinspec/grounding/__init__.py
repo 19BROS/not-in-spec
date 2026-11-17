@@ -1,6 +1,6 @@
 """Deterministic grounding checks for claims (SPEC §6.4): no model, same input → same result.
 
-- `check_citation`: is the claim's quoted span in the chunk, and is it prose?
+- `check_citation`: is the claim's quoted span in the chunk (every match), and is it prose?
 - `nli_premise`: the text around the citation that NLI reads (SPEC §6.1).
 - `missing_identifiers` on `section_reference`: does the section name every identifier,
   number and version the claim names (SPEC §18)?
@@ -17,7 +17,9 @@ from notinspec.grounding.identifiers import (
 )
 from notinspec.grounding.premise import PREMISE_RULE, Premise, nli_premise
 
-# bump when any result can change for the same input (normalization, premise, identifier rules)
+# bump when any result can change for the same input (normalization, premise, identifier rules).
+# Results also depend on chunking's sentence splitter (`prose_sentences`), so a claim stores
+# WINDOWS_VERSION and CHUNKER_VERSION next to this one (part D).
 GROUNDING_VERSION = 1
 
 __all__ = [

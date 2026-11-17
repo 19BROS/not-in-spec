@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from notinspec.chunking import Chunk, Document, chunk_blocks, chunk_document
-from notinspec.grounding import check_citation, normalize
+from notinspec.grounding import check_citation, nli_premise, normalize
 from notinspec.sphinx import read_sphinx_xml
 
 
@@ -122,3 +122,31 @@ def test_en_and_em_dashes_are_plain_hyphens(text: str, citation: str) -> None:
     assert result.span is not None
     assert chunk.text[result.span[0] : result.span[1]] == text
     assert normalize("a – b — c") == "a - b - c"
+
+
+URLLIB3 = Path(__file__).parents[2] / "examples" / "sphinx" / "urllib3" / "xml"
+
+
+def test_a_repeated_citation_returns_every_prose_match() -> None:
+    xml = read_sphinx_xml(URLLIB3)
+    chunks = [c for d in xml.documents for c in chunk_blocks(d, project="urllib3")]
+    retry = next(c for c in chunks if c.breadcrumb == "urllib3 > Utilities > Retry")
+    result = check_citation(retry, "Set to `0` to fail on the first retry of this type.")
+    assert result.status == "found"
+    assert len(result.spans) == 5
+    assert result.span == result.spans[0]
+    assert list(result.spans) == sorted(result.spans)
+    crumbs = [nli_premise(retry, span).text.split(":", 1)[0] for span in result.spans]
+    assert crumbs == [
+        f"urllib3 > Utilities > Retry > {name}"
+        for name in ("connect", "read", "redirect", "status", "other")
+    ]
+
+
+def test_a_single_match_has_one_span() -> None:
+    result = check_citation(GUIDE, "A timeout")
+    assert result.status == "not_found"
+    result = check_citation(GUIDE, "is given in")
+    assert result.spans == (result.span,)
+    code = check_citation(GUIDE, "connect(timeout=2.5)")
+    assert code.status == "not_checkable" and code.spans == (code.span,)
