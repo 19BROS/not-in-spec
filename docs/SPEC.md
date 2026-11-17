@@ -383,9 +383,9 @@ Source  – attached to every object above
 
 NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
 
-- **Model:** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (~0.3–0.6 s per claim on CPU, measured on two PCs). It was chosen in `experiments/nli`. The earlier candidate `cross-encoder/nli-deberta-v3-base` with 400-token windows kept only 60 % of correct claims, failing on list-heavy sections. A multilingual XNLI model for non-English docs remains a *candidate*.
+- **Model:** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (~0.3–0.6 s per claim on CPU, measured on two PCs). It was chosen in `experiments/nli`. `notinspec.nli` runs it at a **pinned revision**, always in fp32 (the checkpoint is fp16, ~9× slower on CPU with the same decisions), in batches sorted by length. An input over 512 tokens is cut from the premise, never the claim, and the cut is recorded with the decision. The earlier candidate `cross-encoder/nli-deberta-v3-base` with 400-token windows kept only 60 % of correct claims, failing on list-heavy sections. A multilingual XNLI model for non-English docs remains a *candidate*.
 - **Premise:** for grounding it is the NLI premise; for K5 it is a claim. It is never a whole chunk.
-- **Recorded with every decision:** the NLI model and its revision, the premise rule and the decision rule, so a decision can be reproduced.
+- **Recorded with every decision:** the NLI model and its revision, the premise rule, the decision rule (argmax) and whether the premise was cut, so a decision can be reproduced.
 - **Watch:** NLI does not reliably check exact identifiers, numbers, versions or tense.
 
 ### 6.5 Cross-checks K1–K7
@@ -566,7 +566,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 | Reading docs | Sphinx XML (`xml` builder / docutils doctree, built by the user) parsed with `defusedxml`, `objects.inv` (*candidate*) in the MVP; `markitdown`, `trafilatura` later (*candidates*) |
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
-| NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5); mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
+| NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5), fp32, pinned revision; optional extra `notinspec[nli]` (torch CPU wheels), in-process in the worker, not installed in CI; mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
 | LLM access | Groq free tier through its OpenAI-compatible API, our own client on `httpx2` (no vendor SDK); recorded fake provider in tests and CI |
 | Evaluation / statistics | scikit-learn, bootstrap, McNemar test |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
@@ -642,6 +642,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
   docs/     SPEC, assignment, DEPLOY
   ```
 - **Docker Compose** services: `postgres`, `api`, `worker`, `mock` (Prism), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`; `prism` profile for local dev.
+- The **NLI model** is not in the worker image: its weights live on a named volume (`hf-models`, `HF_HOME`), fetched once by the deploy (`python -m notinspec.nli fetch`). The worker runs with `HF_HUB_OFFLINE=1`, so a run never downloads anything. CI never downloads the model.
 - The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM).
 - **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec (*candidate:* a small control endpoint in `mock`).
 - The **worker** takes queued runs from Postgres (PR runs and main runs uploaded by the Action, UC1 audits) and starts the nightly runs (UC3).

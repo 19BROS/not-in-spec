@@ -29,7 +29,7 @@ Nobody deploys by hand. Merging a PR into `main` does it:
 
 1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web`, `cli` images to GHCR tagged with the commit SHA.
 2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`).
-3. It checks out that commit, pulls the images for that SHA and runs `docker compose up -d` with `/opt/notinspec/.env`.
+3. It checks out that commit, pulls the images for that SHA, makes sure the NLI model is on its volume (see *NLI model* below) and runs `docker compose up -d` with `/opt/notinspec/.env`.
 
 Pull requests, forks included, never run on the VM.
 
@@ -60,6 +60,21 @@ df -h / /data                                     # disk space
 - **Redeploy the current version:** GitHub → Actions → *Deploy* → latest run → *Re-run jobs*.
 - **Roll back:** GitHub → Actions → *Deploy* → open an older **successful** run → *Re-run jobs*. It redeploys that run's commit and images.
 - Better long-term: revert the bad PR on `main`. That deploys automatically.
+
+## NLI model (SPEC §6.4, §12)
+
+The worker scores claims with a local cross-encoder (`MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` at the revision pinned in `core/src/notinspec/nli/local.py`, ~870 MB of weights, ~3 GB peak RAM in fp32). It is not in the image:
+
+- The weights live on the named volume `hf-models` (mounted at `/models`, `HF_HOME`), so under `/data/docker`.
+- The worker image runs with `HF_HUB_OFFLINE=1`: a run never downloads anything, and a missing model is an error that names the fix.
+- Every deploy runs `python -m notinspec.nli fetch` once before `up`. It downloads the pinned revision the first time and after a revision bump, and is an offline no-op otherwise.
+
+```sh
+sudo docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env run --rm --no-deps   -e HF_HUB_OFFLINE=0 worker python -m notinspec.nli fetch     # by hand, e.g. after deleting the volume
+sudo docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env run --rm --no-deps   worker python -m notinspec.nli bench --pairs 64            # speed on the VM (pairs/s = claims/s)
+```
+
+Old revisions stay on the volume after a bump. Free the space with `sudo docker volume rm notinspec_hf-models` (the next deploy fetches again).
 
 ## Backups (SPEC §6)
 
@@ -129,8 +144,7 @@ Only if the instance is lost. Then restore the database from your off-machine du
    WEB_PORT=80
    HTTPS_PORT=443
    SITE_ADDRESS=147-175-151-17.sslip.io
-   LLM_API_KEY=
-   LLM_BASE_URL=
+   GROQ_API_KEY=
    SLACK_WEBHOOK_URL=
    INGEST_TOKEN=$(openssl rand -hex 24)
    EOF
