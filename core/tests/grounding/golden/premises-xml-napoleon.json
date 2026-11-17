@@ -1,0 +1,81 @@
+[
+  {
+    "chunk": "fixturelib > API Reference > connect()",
+    "citation": "Seconds to wait; `None` waits forever.",
+    "premise": "fixturelib > API Reference > connect() > timeout: timeout (float or None) – Seconds to wait; None waits forever.",
+    "span": "Seconds to wait; `None` waits forever.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > API Reference > connect()",
+    "citation": "Set to `0` to fail on the first error.",
+    "premise": "fixturelib > API Reference > connect() > retries: Each retry waits twice as long. Set to 0 to fail on the first error.",
+    "span": "Set to `0` to fail on the first error.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > API Reference > connect()",
+    "citation": "If the server does not answer within `timeout` seconds.",
+    "premise": "fixturelib > API Reference > connect(): TimeoutError – If the server does not answer within timeout seconds.",
+    "span": "If the server does not answer within `timeout` seconds.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > API Reference > receive()",
+    "citation": "Maximum number of bytes",
+    "premise": "fixturelib > API Reference > receive() > size: size (int, optional) – Maximum number of bytes, default 1024. Must be positive.",
+    "span": "Maximum number of bytes",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > User Guide",
+    "citation": "two",
+    "premise": "fixturelib > User Guide: Warning: Warnings too, even with a list and code: two",
+    "span": "two",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > User Guide > Timeouts",
+    "citation": "A word with its definition.",
+    "premise": "fixturelib > User Guide > Timeouts: Definitions: term: A word with its definition.",
+    "span": "A word with its definition.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > User Guide > Timeouts",
+    "citation": "A timeout is in seconds.",
+    "premise": "fixturelib > User Guide > Timeouts: A timeout is in seconds.",
+    "span": "A timeout is in seconds.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > API Reference > Connection > close()",
+    "citation": "Closing twice raises `RuntimeError`.",
+    "premise": "fixturelib > API Reference > Connection > close(): Warning: Closing twice raises RuntimeError.",
+    "span": "Closing twice raises `RuntimeError`.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > User Guide > Low-level API",
+    "citation": "At most `100` connections.",
+    "premise": "fixturelib > User Guide > Low-level API: [1] At most 100 connections.",
+    "span": "At most `100` connections.",
+    "status": "found"
+  },
+  {
+    "chunk": "fixturelib > User Guide > Timeouts",
+    "citation": "conn = connect(\"example.com\", timeout=2.5)",
+    "span": "conn = connect(\"example.com\", timeout=2.5)",
+    "status": "not_checkable"
+  },
+  {
+    "chunk": "fixturelib > User Guide > Timeouts",
+    "citation": "`None` (wait forever)",
+    "span": "`None` (wait forever)",
+    "status": "not_checkable"
+  },
+  {
+    "citation": "Never written anywhere.",
+    "status": "not_found"
+  }
+]
