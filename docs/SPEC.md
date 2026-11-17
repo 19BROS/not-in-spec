@@ -68,7 +68,7 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
    ```yaml
    docs:
      sphinx: "docs/"                  # Sphinx project (folder with conf.py)
-     paths: ["docs/**/*.md"]          # plain Markdown outside Sphinx, optional
+     paths: ["README.md", "guides/**/*.md"]   # plain Markdown outside the Sphinx project, optional
      openapi: "api/openapi.yaml"      # optional
      changelog: "CHANGELOG.md"        # optional
      version: "2.0"
@@ -142,7 +142,7 @@ These exact terms are used in code, diagrams and text.
 | Term | DB model | Meaning |
 |---|---|---|
 | **Chunk** | `Chunk` | one whole documentation section split by headings (no small token limit, code blocks and tables intact, oversized sections split at a soft limit), with a stable ID (hash of heading path + content) and a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
-| **NLI window** | – | short prose-only excerpt of a chunk, sized to fit the NLI model; the premise for NLI. Computed from the chunk, not stored. |
+| **NLI premise** | – | the text a claim is checked against: the chunk's breadcrumb plus the cited sentence(s) ±1 sentence within the cited prose block (for a list item, plus the sentence that introduces the list). Computed from the chunk and the citation, not stored. |
 | **Component** | – | kind of content in a chunk: **A** formal spec, **B** API reference, **C** examples, **D** prose and changelog. One chunk can contain several. |
 | **Symbol** | `Symbol` | anything callable: function, method, class, endpoint, CLI command |
 | **Signature** | `Signature` | header of a symbol: parameters and return type, no body. A symbol can have several (overloads, versions). |
@@ -157,7 +157,7 @@ These exact terms are used in code, diagrams and text.
 | **Adapter** | – | parser + normalization for one language or format (Python, tree-sitter languages, curl, CLI) |
 | **Call record** | `CallRecord` | normalized call: symbol + named arguments. Built from examples and from model answers, in the same shape. |
 | **Claim** | `Claim` | atomic fact from prose or changelog with a citation, verified by NLI grounding. Type *fact* or *change*. |
-| **Grounding** | – | NLI check that a claim follows from its chunk (premise = NLI window(s) around the claim's citation, hypothesis = claim) |
+| **Grounding** | – | NLI check that a claim follows from its chunk (premise = the NLI premise around the claim's citation, hypothesis = claim) |
 | **Cross-check** | – | comparison of two sources (K1–K7); a contradiction is a finding |
 | **Operator** | – | rule that turns a call record or signature into a new reference: copy, adaptation, variation, composition, migration |
 | **Reference** | `Reference` | the correct answer of a test item, computed by a program, not by an LLM |
@@ -171,7 +171,7 @@ These exact terms are used in code, diagrams and text.
 
 | Level | Tests | Source | Format | Evaluation |
 |---|---|---|---|---|
-| **L0 Recognition** | does this symbol / parameter exist (in version X)? | `Symbol`, `Parameter`, `Change`; rejected claims as fake names | yes/no, 4 options | exact match |
+| **L0 Recognition** | does this symbol / parameter exist (in version X)? | `Symbol`, `Parameter`, `Change` | yes/no, 4 options | exact match |
 | **L1 Recall** | path, required parameters, defaults | `Signature`, `Parameter` | open answer | path correctness + Jaccard of parameters |
 | **L2 Comprehension** | behaviour, constraints, "not in the documentation" | `Claim` | questions | normalization → NLI → LLM judge |
 | **L3 Usage** | can it write the call / code that reaches the goal? | `CallRecord`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` | task → code / request | call-record comparison + error category |
@@ -202,7 +202,12 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 - Sections are the unit for **component detection, the inventory `Source`, gold context, IDs and CI diffs**.
 - Output: `Chunk`.
 
-**NLI windows.** The NLI model accepts only a few hundred tokens, so NLI never sees a whole section. An **NLI window** is a short, **prose-only** excerpt of a chunk (code blocks and tables left out), cut at sentence boundaries and sized to fit the NLI model (*candidate:* ≤ 400 tokens, with overlap). Windows are computed deterministically from the chunk (chunk ID + offset), so they need no storage of their own. Use in grounding: [§6.4](#64-prose-and-changelog--claim).
+**Prose and NLI premises.** NLI never sees a whole section: the model accepts only a few hundred tokens, and a long premise dilutes negations and numbers.
+
+- **Prose** = paragraphs, list items and admonitions (notes, warnings). Inline code inside them counts as prose text. Code blocks, tables and API descriptions (`desc` nodes, component B) are not prose.
+- The **NLI premise** for a claim is `<breadcrumb>:` followed by the cited sentence(s) ±1 sentence, **within the cited prose block**. For a list item, the sentence that introduces the list (the last sentence of the paragraph before it, ending with ":") is put in front.
+- The premise is computed deterministically from the chunk and the citation, so it needs no storage of its own. Use in grounding: [§6.4](#64-prose-and-changelog--claim).
+- Evidence: `experiments/nli/FINDINGS.md` (runs 004–007, human-labelled sample). On a human-labelled sample, a 400-token window instead of this premise kept nearly twice as many wrong claims (22 vs 12 of 88) and claims from other sections (38 vs 23 of 259).
 
 ### 6.2 Components and techniques
 
@@ -254,9 +259,11 @@ Source  – attached to every object above
 
 ### 6.4 Prose and changelog → `Claim`
 
-1. **Claim extractor** (LLM; 2 extractors with different models or prompts): reads the **whole chunk** (section) and returns atomic, self-contained claims, each with a **citation** (exact quoted span from the chunk). Type *fact* or *change*. A citation not found verbatim in the chunk → drop the claim (deterministic check).
-2. **Grounding via NLI:** premise = the **NLI window(s) around the citation** (the window containing it, plus the neighbouring window when the citation crosses a window boundary), hypothesis = claim. `entailment` → keep. `neutral` / `contradiction` → drop (may still serve as an unanswerable L2 question or a fake name for L0).
-3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions.
+1. **Claim extractor** (LLM; 2 extractors with different models or prompts): reads the **whole chunk** (section) and returns atomic, self-contained claims, each with a **citation** (exact quoted span from the chunk). Type *fact* or *change*. Deterministic citation check on normalized text (whitespace collapsed, Markdown markup and backticks removed, typographic quotes → plain quotes):
+   - citation not found in the chunk → drop the claim;
+   - citation found only outside prose (code block, table, API description) → `not_checkable`, dropped. Facts in code and signatures are covered by components B and C.
+2. **Grounding via NLI:** premise = the **NLI premise** around the citation ([§6.1](#61-reading-and-chunking)), hypothesis = claim, decision by argmax. `entailment` → keep. `neutral` / `contradiction` → drop. Dropped claims are recorded but **not reused as test material automatically**: NLI also drops some true claims.
+3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions. A whole section can yield many claims, so K5a uses the same prefilter as K5b.
 4. **K5b · claim vs. claim across chunks:** embedding prefilter so not all pairs are compared, then NLI in both directions.
 
 | A ⇒ B | B ⇒ A | Relation | Action |
@@ -268,7 +275,12 @@ Source  – attached to every object above
 
 5. A *change* claim yields a `Change` (low confidence → PR review).
 
-NLI = small local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; cheap and deterministic (*candidates:* `cross-encoder/nli-deberta-v3-base`, a multilingual XNLI model for non-English docs). The premise is always an NLI window or a claim, never a whole chunk. Watch numbers, negation and language. Thresholds are calibrated on our own annotated sample.
+NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
+
+- **Model:** `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (~0.3–0.6 s per claim on CPU, measured on two PCs). It was chosen in `experiments/nli`. The earlier candidate `cross-encoder/nli-deberta-v3-base` with 400-token windows kept only 60 % of correct claims, failing on list-heavy sections. A multilingual XNLI model for non-English docs remains a *candidate*.
+- **Premise:** for grounding it is the NLI premise; for K5 it is a claim. It is never a whole chunk.
+- **Recorded with every decision:** the NLI model and its revision, the premise rule and the decision rule, so a decision can be reproduced.
+- **Watch:** NLI does not reliably check exact identifiers, numbers, versions or tense.
 
 ### 6.5 Cross-checks K1–K7
 
@@ -418,7 +430,7 @@ Every test item × model × mode. **All raw responses are stored.**
 | Reading docs | Sphinx (`xml` builder / docutils doctree, `objects.inv`) in the MVP; `markitdown`, `trafilatura` later (*candidates*) |
 | Parsers | Python `ast`, tree-sitter, `shlex`, `json`, `yaml`, `graphql-core`, protobuf |
 | Spec tooling | OpenAPI 3.x + JSON Schema, **Prism** (mock server, L4 and K7), **Schemathesis** (tests our own API) |
-| NLI / embeddings | `sentence-transformers` CrossEncoder, `cross-encoder/nli-deberta-v3-base`, mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*), CPU only |
+| NLI / embeddings | `transformers` sequence classification with `DeBERTa-v3-large-mnli-fever-anli-ling-wanli` (grounding, K5); mDeBERTa XNLI, `all-MiniLM-L6-v2` (*candidates*); CPU only |
 | LLM access | faculty-provided API (TBD) |
 | Evaluation / statistics | scikit-learn, bootstrap, McNemar test |
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
@@ -465,7 +477,7 @@ Every test item × model × mode. **All raw responses are stored.**
 ## 13. Testing
 
 - **Fake LLM provider** replaying recorded responses for every LLM role. **CI never calls a real LLM.**
-- **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI windows).
+- **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI premises).
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - Our own API: OpenAPI validated in CI + Schemathesis.
@@ -512,7 +524,7 @@ Faculty checkpoint dates: **TBD**.
 
 ### 16.2 Next iteration
 
-`Claim` and L2 (with NLI windows), cross-checks K2, K3, K5, K6, composition, statistics in CI, HTML report, readers for other documentation generators (*candidates:* MkDocs, Docusaurus, TypeDoc).
+`Claim` and L2 (with NLI grounding), cross-checks K2, K3, K5, K6, composition, statistics in CI, HTML report, readers for other documentation generators (*candidates:* MkDocs, Docusaurus, TypeDoc).
 
 ### 16.3 Future development
 
@@ -530,7 +542,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 | # | Role | Owns |
 |---|---|---|
 | 1 | Lead / architecture | core package, golden-set format, this spec |
-| 2 | Inputs & inventory | Sphinx and Markdown readers, chunking, NLI windows, component detector, spec / signature parsers, adapters, inventory |
+| 2 | Inputs & inventory | Sphinx and Markdown readers, chunking, prose blocks (input for NLI premises), component detector, spec / signature parsers, adapters, inventory |
 | 3 | Runner & evaluation | LLM client, rate limiting, Prism, L0–L4 evaluation, error categories |
 | 4 | ML / NLP | claim extraction, NLI grounding, cross-checks, retrieval, statistics, validation track |
 | 5 | Backend & data | FastAPI, Postgres schema, migrations, worker |
@@ -541,15 +553,18 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 
 - [ ] Faculty API key: provider, endpoint, available models, rate limits, budget, whether it may be used from GitHub-hosted runners
 - [ ] Faculty checkpoint dates
-- [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), and a v1 → v2 migration guide and changelog with renames and removals (e.g. `Retry(method_whitelist=…)` → `allowed_methods`) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
+- [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
 - [ ] Sphinx build environment: autodoc imports the documented library, so the reader needs the project's dependencies and Sphinx extensions installed (in the Action and in the worker)
-- [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), and grounding only on the windows around the citation can miss it, so good claims get dropped. Measure on the annotated sample; options are wider windows or combining several windows as the premise
-- [ ] Soft limit for oversized sections, NLI window size and overlap
+- [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), so grounding on the text around the citation can drop good claims. Measured in `experiments/nli`: with the breadcrumb, the NLI premise keeps 86 of 92 correct claims in a human-labelled sample. A 400-token window keeps 90, but nearly twice as many wrong ones. Check again on the pilot docs
+- [ ] Soft limit for oversized sections
+- [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample
+- [ ] **NLI thresholds:** argmax for now. A three-zone rule (keep at p ≥ 0.9, drop below 0.05, human review in between) sends ~8 % of claims to review, but it doesn't catch confident errors (9 of 12 wrong claims kept have p ≥ 0.9). Decide whether the review is worth it
+- [ ] A cheap code check that a claim's identifiers, numbers and versions appear in its cited sentence (NLI misses these; see `experiments/nli/FINDINGS.md`, run 006)
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: how much users will do, which items are auto-approved
 - [ ] Definition of "gold context" for multi-step tasks
-- [ ] NLI model choice, English vs. other languages, threshold calibration
+- [ ] NLI for non-English docs
 - [ ] Retrieval for the `retrieved` mode (BM25, embeddings, hybrid)
 - [ ] Shape of the report and the web UI
 - [ ] Model terms on publishing outputs ([§10](#10-data))
