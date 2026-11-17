@@ -26,7 +26,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   },
@@ -60,7 +63,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "text",
@@ -72,7 +78,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "text",
@@ -84,7 +93,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "code",
@@ -96,7 +108,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   },
@@ -131,7 +146,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "table",
@@ -143,7 +161,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   },
@@ -178,7 +199,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "list",
@@ -190,7 +214,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "code",
@@ -202,7 +229,10 @@
         "nested": true,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   },
@@ -237,7 +267,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "code",
@@ -249,7 +282,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "quote",
@@ -261,7 +297,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   },
@@ -295,7 +334,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "text",
@@ -307,7 +349,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       },
       {
         "kind": "html",
@@ -319,7 +364,10 @@
         "nested": false,
         "name": null,
         "field": null,
-        "type": null
+        "type": null,
+        "objtype": null,
+        "parameters": null,
+        "directives": []
       }
     ]
   }

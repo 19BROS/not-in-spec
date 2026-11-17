@@ -101,6 +101,10 @@ def _ingest(args: argparse.Namespace) -> int:
         f"Processed {counts['files']} files: {counts['chunks']} chunks, "
         f"{counts['operations']} OpenAPI operations."
     )
+    print(
+        f"Inventory: {counts['symbols']} symbols, {counts['changes']} changes, "
+        f"{counts['conflicts']} conflicts between sources."
+    )
     for warning in ingestion.warnings:
         print(f"warning: {warning}", file=sys.stderr)
     print(f"Artifacts: {args.out.resolve()}")

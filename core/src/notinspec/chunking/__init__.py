@@ -5,7 +5,13 @@ chunk, input for NLI grounding. Input here is Markdown (also llms.txt and most M
 other readers (Sphinx) produce the same `Chunk`s.
 """
 
-from notinspec.chunking.blocks import Block, BlockKind, ParsedBlock, parse_blocks
+from notinspec.chunking.blocks import (
+    Block,
+    BlockKind,
+    ParsedBlock,
+    SignatureParameter,
+    parse_blocks,
+)
 from notinspec.chunking.chunker import (
     CHUNKER_VERSION,
     DEFAULT_SOFT_LIMIT,
@@ -41,6 +47,7 @@ __all__ = [
     "Document",
     "NliWindow",
     "Sentence",
+    "SignatureParameter",
     "ParsedBlock",
     "approx_tokens",
     "chunk_blocks",

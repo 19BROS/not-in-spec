@@ -2,7 +2,17 @@ import re
 from dataclasses import replace
 
 from notinspec.chunking import Block, Document, chunk_documents
-from notinspec.ingestion import Ingestion, InputFile, SphinxInput
+from notinspec.ingestion import INGESTION_SCHEMA_VERSION, Ingestion, InputFile, SphinxInput
+from notinspec.inventory import (
+    INVENTORY_BUILDER_VERSION,
+    Change,
+    Conflict,
+    Inventory,
+    Signature,
+    Source,
+    Symbol,
+    build_inventory,
+)
 from notinspec.report import render_report
 
 GUIDE = """\
@@ -25,7 +35,7 @@ Text.
 def ingestion(documents: list[Document], warnings: tuple[str, ...] = ()) -> Ingestion:
     chunks = chunk_documents(documents, project="<proj>", soft_limit=2000)
     return Ingestion(
-        schema_version=3,
+        schema_version=INGESTION_SCHEMA_VERSION,
         config_hash="c" * 64,
         input_hash="a" * 64,
         project="<proj>",
@@ -35,6 +45,9 @@ def ingestion(documents: list[Document], warnings: tuple[str, ...] = ()) -> Inge
         files=tuple(InputFile(d.source, "markdown", "0" * 64) for d in documents),
         chunks=chunks,
         openapi=(),
+        inventory_builder_version=INVENTORY_BUILDER_VERSION,
+        inventory=build_inventory(chunks).inventory,
+        conflicts=(),
         warnings=warnings,
     )
 
@@ -112,3 +125,26 @@ def test_sphinx_version_and_field_table() -> None:
     assert "<tr><td>return-type<td><td><td>signature" in report
     assert "field 2 · signature 1" in report
     assert "Sphinx" not in render_report(data).split("<h2>")[0]
+
+
+def test_inventory_section_links_to_chunks_and_escapes() -> None:
+    data = ingestion([Document("api.md", "# Retry\n\nText.\n")])
+    (chunk,) = data.chunks
+    source = (Source("signature", section_id=chunk.section_id),)
+    symbol = Symbol(
+        "pkg.<b>", "function", source, (Signature((), source, text="pkg.<b>() -> <i>"),)
+    )
+    change = Change("pkg.<b>", "deprecated", "2.0", source, replacement="pkg.<new>")
+    conflict = Conflict(
+        "pkg.<b>", "kind", "function", "<m>", (Source("changelog", section_id="x"),)
+    )
+    report = render_report(
+        replace(data, inventory=Inventory((symbol,), (change,)), conflicts=(conflict,))
+    )
+    assert "<tr><th>inventory symbols<td>1" in report
+    assert "<h3>Changes (1)</h3>" in report and "<td>pkg.&lt;new&gt;" in report
+    assert f"<a href='#c-{chunk.id}'>signature</a>" in report
+    assert "<td>&lt;m&gt;<td>changelog" in report  # a section that is no chunk: no link
+    assert "<code>pkg.&lt;b&gt;() -&gt; &lt;i&gt;</code>" in report
+    assert "<b>" not in report and "<i>" not in report and "<m>" not in report
+    assert "No API descriptions." in render_report(data)

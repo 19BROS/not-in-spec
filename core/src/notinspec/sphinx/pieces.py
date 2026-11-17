@@ -8,7 +8,7 @@ children; code inside them is remembered as `Nested`, so NLI windows can leave i
 import dataclasses
 from dataclasses import dataclass
 
-from notinspec.chunking import BlockKind, normalize_text
+from notinspec.chunking import BlockKind, SignatureParameter, normalize_text
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,9 @@ class Piece:
     name: str | None = None
     field: str | None = None
     type: str | None = None
+    objtype: str | None = None
+    parameters: tuple[SignatureParameter, ...] | None = None
+    directives: list[tuple[str, str]] = dataclasses.field(default_factory=list)
     nested: list[Nested] = dataclasses.field(default_factory=list)
 
 

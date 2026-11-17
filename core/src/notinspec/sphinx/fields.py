@@ -157,8 +157,11 @@ def _entry(field: str, name: str | None, type_: str | None, pieces: list[Piece])
         head = f"{head} ({type_})" if head else f"({type_})"
     if head:
         pieces = prefixed(f"{head} –", pieces) if pieces else [text_piece(head)]
+    directives = [d for p in pieces for d in p.directives]  # deprecated parameter, ...
     lines, nested = compose(pieces, "- ", "  ")
-    return Piece("field", lines, name=name, field=field, type=type_, nested=nested)
+    return Piece(
+        "field", lines, name=name, field=field, type=type_, directives=directives, nested=nested
+    )
 
 
 def _runs(atom: Atom | Element, ctx: Context) -> list[Run]:

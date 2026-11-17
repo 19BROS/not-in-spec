@@ -1,7 +1,8 @@
 """Real ingestion, independent of the CLI, API and report format.
 
-This stage reads all configured inputs. It does not generate tasks, evaluate models,
-perform cross-checks or decide whether documentation is good enough for an LLM.
+This stage reads all configured inputs and builds the inventory from their API reference
+(SPEC §6.3, component B). It does not generate tasks, evaluate models, perform cross-checks or
+decide whether documentation is good enough for an LLM.
 """
 
 import hashlib
@@ -20,6 +21,7 @@ from notinspec.chunking import (
     normalize_text,
 )
 from notinspec.config import ConfigError, IngestConfig
+from notinspec.inventory import INVENTORY_BUILDER_VERSION, Conflict, Inventory, build_inventory
 from notinspec.sphinx import (
     SPHINX_READER_VERSION,
     SphinxInputError,
@@ -27,7 +29,8 @@ from notinspec.sphinx import (
     read_sphinx_xml,
 )
 
-INGESTION_SCHEMA_VERSION = 3  # 2: chunk id is the location, project added; 3: Block fields
+# 2: chunk id is the location, project added; 3: Block fields; 4: inventory, signature data
+INGESTION_SCHEMA_VERSION = 4
 _TEXT_SUFFIXES = frozenset({".md", ".markdown", ".txt"})
 
 
@@ -102,6 +105,9 @@ class Ingestion:
     files: tuple[InputFile, ...]
     chunks: tuple[Chunk, ...]
     openapi: tuple[OpenApiInput, ...]
+    inventory_builder_version: int
+    inventory: Inventory  # from API reference blocks (Sphinx `desc`); OpenAPI comes later
+    conflicts: tuple[Conflict, ...]  # disagreements between sources while merging the inventory
     warnings: tuple[str, ...]
 
 
@@ -158,6 +164,8 @@ def ingest(
     if documents and not chunks:
         warnings.append("text inputs contain no documentation content")
     chunks += tuple(sphinx_chunks)  # after the Markdown chunks
+    built = build_inventory(chunks)
+    warnings.extend(built.warnings)
     return Ingestion(
         schema_version=INGESTION_SCHEMA_VERSION,
         config_hash=config.content_hash,
@@ -169,6 +177,9 @@ def ingest(
         files=tuple(files),
         chunks=chunks,
         openapi=tuple(specs),
+        inventory_builder_version=INVENTORY_BUILDER_VERSION,
+        inventory=built.inventory,
+        conflicts=built.conflicts,
         warnings=tuple(sorted(set(warnings))),
     )
 
