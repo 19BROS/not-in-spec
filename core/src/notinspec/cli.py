@@ -82,7 +82,10 @@ def _ingest(args: argparse.Namespace) -> int:
         print(f"Dry run: {len(plan)} inputs selected.")
         for item in plan:
             if item.kind == "sphinx":
-                print(f"  sphinx: {item.source}/ ({item.xml_files} XML files)")
+                print(
+                    f"  sphinx: {item.source}/ ({item.xml_files} XML files, "
+                    f"Sphinx {item.sphinx_version})"
+                )
             else:
                 print(f"  {item.kind}: {item.source}")
         for warning in warnings:

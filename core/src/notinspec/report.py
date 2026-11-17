@@ -187,6 +187,14 @@ def render_report(ingestion: Ingestion) -> str:
         *(f"<tr><th>{name}<td>{value}" for name, value in counts.items()),
         f"<tr><th>input hash<td><code>{_e(ingestion.input_hash)}</code>",
         f"<tr><th>chunker<td>v{ingestion.chunker_version}, soft limit {ingestion.soft_limit}",
+        *(
+            [
+                f"<tr><th>Sphinx<td>{_e(ingestion.sphinx.version)} "
+                f"(reader v{ingestion.sphinx.reader_version})"
+            ]
+            if ingestion.sphinx
+            else []
+        ),
         "</table>",
         "<p>Full data: <a href=ingestion.json>ingestion.json</a>.</p>",
         *_warnings(ingestion.warnings),
@@ -233,8 +241,20 @@ def _chunk(chunk: Chunk) -> str:
         f"<span class=meta>{' · '.join(meta)}</span>{oversized}</summary>"
         f"<p class=meta>id {_e(chunk.id)} · section {_e(chunk.section_id)} · "
         f"lines {chunk.start_line}–{chunk.end_line}</p>"
-        f"<pre>{_e(chunk.text)}</pre></details>"
+        f"<pre>{_e(chunk.text)}</pre>{_fields(chunk)}</details>"
     )
+
+
+def _fields(chunk: Chunk) -> str:
+    """API reference entries as the reader typed them: check name / type / field by eye."""
+    fields = [b for b in chunk.blocks if b.field is not None]
+    if not fields:
+        return ""
+    rows = "".join(
+        f"<tr><td>{_e(b.field or '')}<td>{_e(b.name or '')}<td>{_e(b.type or '')}<td>{b.kind}"
+        for b in fields
+    )
+    return f"<table class=fields><tr><th>field<th>name<th>type<th>kind{rows}</table>"
 
 
 def _e(text: str) -> str:

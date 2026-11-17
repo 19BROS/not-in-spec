@@ -1,8 +1,8 @@
 import re
 from dataclasses import replace
 
-from notinspec.chunking import Document, chunk_documents
-from notinspec.ingestion import Ingestion, InputFile
+from notinspec.chunking import Block, Document, chunk_documents
+from notinspec.ingestion import Ingestion, InputFile, SphinxInput
 from notinspec.report import render_report
 
 GUIDE = """\
@@ -25,12 +25,13 @@ Text.
 def ingestion(documents: list[Document], warnings: tuple[str, ...] = ()) -> Ingestion:
     chunks = chunk_documents(documents, project="<proj>", soft_limit=2000)
     return Ingestion(
-        schema_version=2,
+        schema_version=3,
         config_hash="c" * 64,
         input_hash="a" * 64,
         project="<proj>",
         chunker_version=3,
         soft_limit=2000,
+        sphinx=None,
         files=tuple(InputFile(d.source, "markdown", "0" * 64) for d in documents),
         chunks=chunks,
         openapi=(),
@@ -93,3 +94,21 @@ def test_oversized_chunk_is_marked_and_empty_input_is_explained() -> None:
     assert "<span class=over>oversized</span>" in report
     assert "<h2>Warnings</h2><p>None.</p>" in report
     assert "No chunks." in render_report(replace(data, chunks=()))
+
+
+def test_sphinx_version_and_field_table() -> None:
+    data = ingestion([Document("api.md", "# Retry\n\nText.\n")])
+    (chunk,) = data.chunks
+    fields = (
+        Block("field", 3, 3, 5, name="<total>", field="param", type="int | None"),
+        Block("field", 4, 4, 5, field="returns"),
+        Block("signature", 5, 5, 2, field="return-type"),
+    )
+    chunk = replace(chunk, blocks=chunk.blocks + fields)
+    report = render_report(replace(data, chunks=(chunk,), sphinx=SphinxInput("9.1.1", 1)))
+    assert "<tr><th>Sphinx<td>9.1.1 (reader v1)" in report
+    assert "<tr><td>param<td>&lt;total&gt;<td>int | None<td>field" in report
+    assert "<tr><td>returns<td><td><td>field" in report
+    assert "<tr><td>return-type<td><td><td>signature" in report
+    assert "field 2 · signature 1" in report
+    assert "Sphinx" not in render_report(data).split("<h2>")[0]
