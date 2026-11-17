@@ -340,5 +340,27 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 - Rejected claims are not reliably wrong either: 5 good claims fall below p = 0.05. They should not become L2/L0 material automatically.
 
 Open:
-1. Prototype the identifier / number / version check from run 006 (a) and measure it on the human labels.
+1. ~~Prototype the identifier / number / version check from run 006 (a) and measure it on the human labels.~~ Done, see the next section.
 2. A larger human sample if the large vs zeroshot choice must be settled on same-section claims. Currently 3 vs 6 claims differ, p = 0.51.
+
+## Identifier / number / version check (2026-11-17)
+
+Prototype of run 006 (a) in `id_check.py`. A claim is dropped if it names an identifier, number or version that the reference text lacks. Identifiers: backticked spans and words with `_`, a dot between names, `()`, an inner capital (`ProxyManager`) or letters + digits (`urllib3`). Plain words and acronyms (HTTPS) are not checked. Matching is case-sensitive on name boundaries (`ssl_context` is not found inside `proxy_ssl_context`), and a number must match as a whole (`3.13` is not found inside `3.13.14`). Normalized like the citation check. Measured after large + local-block, from the run 007 CSV: `runs/007-block-premise-new-models/posthoc/id_check_eval.py` → `id_check_eval.txt`.
+
+Human labels as gold (12 false keeps and 23 wrong cross keeps of large + local-block, 92 good claims):
+
+| reference text | false keeps caught | wrong cross keeps caught | good claims dropped |
+|---|---|---|---|
+| NLI premise (breadcrumb + cited sentence ±1 in block) | 3/12 | 7/23 | 5/92 (4 of them kept by NLI) |
+| **section prose + breadcrumb, `urllib3.` prefix optional** | **3/12** | **6/23** | **0/92** |
+
+With the section as reference, large + local-block + the check keeps 86/92 good claims (unchanged), 9 false keeps (was 12) and 17 wrong cross pairs (was 23). The other label sets give the same picture: Claude draft 3/11, 6/24, 0/261 good dropped; ChatGPT 3/17, 6/23, 0/87.
+
+1. **What it catches.** False keeps: "Python 3.13" vs "3.13.14+" (bugfixes n4), `ssl_context` instead of `proxy_ssl_context` (security n3), and `ProxyManager` named on the Security section, which never mentions it (security flash-outside o1). Cross pairs: `HTTPSConnection`, `HTTPSConnection.connect()` / `ProxyConfig.ssl_context` judged against Security, and three "retries parameter of `request()`" claims judged against the backoff section. Only one catch is a number; the rest are names.
+2. **What it misses.** The other 9 false keeps name only tokens that are there: tense ("raises an error" vs "will raise an error in v3.0", bugfixes n2), a dropped qualifier ("HTTPS connections" vs "HTTPS forwarding proxy connections"), and capability claims built from names in the sentence (`HTTPResponse.stream()` reads chunked bodies). Most cross keeps are paraphrases with no names at all. The check is a cheap addition to NLI, not a replacement.
+3. **The premise is too small as reference.** Correct claims name things from a neighbouring sentence of the same section: `PoolManager` and `request()` in "a pool-level retry policy set on `PoolManager` can be overridden by specifying retries to `request()`" (5 human-labelled claims, 14 in the draft). The whole section's prose fixes all of them and loses one cross catch (`proxy_ssl_context` also appears in Bugfixes).
+4. **Project prefix.** `urllib3.Timeout` is the only good claim (draft) the section reference still drops; letting a dotted name pass without a leading project name (from the breadcrumb) fixes it.
+5. **Number words don't matter here.** 16 claims write numbers as words ("four types", "one second"); reading "zero" .. "twelve" as digits changes nothing. The option stays in `id_check.py` but is off.
+6. **Limits.** Small, urllib3-heavy sample (5 urllib3 sections, 1 httpx). The hand-made negatives were written to swap names, so this sample may favour the check. Code blocks are not part of the reference (SPEC §6.1), so a claim that names something only shown in code is dropped; that never happened here.
+
+Next: move it into grounding in `core/` (after the citation check, section prose as reference, built on `prose_sentences`), and reuse it in the perturbation operator (§6.7).

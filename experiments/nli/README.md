@@ -19,6 +19,7 @@ Sources: **urllib3** (`docs/user-guide.rst` and `CHANGES.rst` @ `d07367d`, the r
 nli_mock.py   build chunks/prompts/windows, pair claims       prompt.md   extractor prompt template
                                                               prompt-outside.md  prompt for realistic unsupported claims
 nli_run.py    run NLI models as a tracked run                 labels.csv  expected verdicts
+id_check.py   identifier / number / version check (proto)
 FINDINGS.md   what we learned, per run                        runs/       one folder per run + INDEX.md
 labeling/     blind human labelling page (build scripts)     labels-human*.csv  human labels (sample)
                                                              labels-chatgpt.csv  ChatGPT labels (same sample)

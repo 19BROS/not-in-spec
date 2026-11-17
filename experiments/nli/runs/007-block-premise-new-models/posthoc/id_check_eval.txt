@@ -1,0 +1,159 @@
+
+Gold = human (labels-human.csv + labels-human-cross.csv): 92 should-keep, 88 should-drop, 41 cross should-drop
+  NLI alone: recall 86/92, false keeps 12, wrong cross keeps 23
+  variant                                  false keeps caught  wrong cross caught  good flagged/92  recall after
+  premise                                     3/12               7/23               5            82/92
+  section                                     3/12               6/23               0            86/92
+  section + project prefix                    3/12               6/23               0            86/92
+  section + project prefix + number words     3/12               6/23               0            86/92
+    identifiers only                          2/12               6/23               0            86/92
+    numbers / versions only                   1/12               0/23               0            86/92
+  check alone (section + project prefix): flags 25/88 should-drop (22 already dropped by NLI) and 19/41 cross (13 already dropped)
+
+Compare: gold = claude-draft (labels.csv, all claims): 261 should-keep, 89 should-drop, 259 cross should-drop
+  NLI alone: recall 256/261, false keeps 11, wrong cross keeps 24
+  variant                                  false keeps caught  wrong cross caught  good flagged/261  recall after
+  premise                                     3/11               7/24              14            244/261
+  section                                     3/11               6/24               1            255/261
+  section + project prefix                    3/11               6/24               0            256/261
+  section + project prefix + number words     3/11               6/24               0            256/261
+    identifiers only                          2/11               6/24               0            256/261
+    numbers / versions only                   1/11               0/24               0            256/261
+  check alone (section + project prefix): flags 25/89 should-drop (22 already dropped by NLI) and 163/259 cross (157 already dropped)
+
+Compare: gold = chatgpt (labels-chatgpt.csv, human sample; cross = human): 87 should-keep, 93 should-drop, 41 cross should-drop
+  NLI alone: recall 81/87, false keeps 17, wrong cross keeps 23
+  variant                                  false keeps caught  wrong cross caught  good flagged/87  recall after
+  premise                                     3/17               7/23               5            77/87
+  section                                     3/17               6/23               0            81/87
+  section + project prefix                    3/17               6/23               0            81/87
+  section + project prefix + number words     3/17               6/23               0            81/87
+    identifiers only                          2/17               6/23               0            81/87
+    numbers / versions only                   1/17               0/23               0            81/87
+  check alone (section + project prefix): flags 25/93 should-drop (22 already dropped by NLI) and 19/41 cross (13 already dropped)
+
+Good claims (human) flagged by 'premise': 5
+  retrying-requests/flash-3.6-high/c12  NLI keeps  missing ['PoolManager']: A PoolManager pool-level retry policy in urllib3 can be overridden by specifying retries to request().
+  retrying-requests/haiku-high/c13  NLI drops  missing ['PoolManager']: A pool-level retry policy set on PoolManager can be overridden by specifying retries for request().
+  retrying-requests/haiku-high/c7  NLI keeps  missing ['request']: Specifying retries=False for request() disables all retry and redirect logic in urllib3.
+  retrying-requests/opus-high/c6  NLI keeps  missing ['request']: Specifying an integer for the retries parameter of urllib3's request() changes the number of retries.
+  retrying-requests/sonnet-medium/c7  NLI keeps  missing ['request']: Specifying retries=False in urllib3's request() disables all retry and redirect logic.
+
+Good claims (human) flagged by 'section': 0
+
+Good claims (human) flagged by 'section + project prefix': 0
+
+Good claims (human) flagged by 'section + project prefix + number words': 0
+
+Good claims (human) flagged by '  identifiers only': 0
+
+Good claims (human) flagged by '  numbers / versions only': 0
+
+False keeps of large + local-block (human gold) (section + project prefix):
+  changelog-2-8-0-bugfixes/flash-3.6-high-outside/o6  passes
+      claim:   assert_fingerprint() raises an SSLError whenever a fingerprint contains non-hexadecimal characters.
+      premise: Fixed assert_fingerprint() to raise SSLError instead of binascii.Error when a fingerprint has a supported length but contains non-hexadecimal characters.
+  changelog-2-8-0-bugfixes/negatives-handmade/n2  passes
+      claim:   In urllib3 2.8.0, passing ssl_context instead of proxy_ssl_context for HTTPS proxies with use_forwarding_for_https=True raises an error.
+      premise: Fixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True. Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  changelog-2-8-0-bugfixes/negatives-handmade/n4  missing ['3.13']
+      claim:   The proxy tunneling safeguards added in urllib3 2.8.0 affect users of Python 3.13.
+      premise: Added safeguards to the proxy tunneling code to prevent potential security issues when handling invalid characters in the proxy host and HTTP headers. This change affects users of Python 3.10, Python 3.11, and Python 3.12 when the standard library does not contain the fix; those on newer Python versions should upgrade to 3.13.14+ or 3.14.5+ to get the same security fixes.
+  changelog-2-8-0-security/flash-3.6-high-outside/b2  passes
+      claim:   Destination client certificates no longer apply to HTTPS connections in urllib3.
+      premise: Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/flash-3.6-high-outside/o1  missing ['ProxyManager']
+      claim:   urllib3's ProxyManager class accepts the proxy_ssl_context parameter for configuring HTTPS proxy TLS settings.
+      premise: Configurations relying on that behavior may require changes. Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/negatives-handmade/n3  missing ['ssl_context']
+      claim:   In urllib3 2.8.0, proxy CA certificates are configured in ssl_context.
+      premise: Configurations relying on that behavior may require changes. Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/sonnet-medium-outside/o1  passes
+      claim:   urllib3 provides the proxy_ssl_context parameter for configuring TLS settings used when connecting to an HTTPS proxy.
+      premise: Configurations relying on that behavior may require changes. Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/sonnet-medium-outside/o2  passes
+      claim:   urllib3's HTTPResponse.stream() method can read response bodies that use chunked transfer encoding.
+      premise: Fixed the following security issues: HTTPResponse.stream() and read_chunked() could buffer a chunk-size line of unbounded length in memory. (High severity, GHSA-vxq7-64xx-v4gw)
+  changelog-2-8-0-security/sonnet-medium-outside/o3  passes
+      claim:   urllib3 supports decoding deflate-encoded response bodies.
+      premise: Fixed the following security issues: Chunked Deflate streaming could enter an infinite loop. (Medium severity, GHSA-gh4c-6fx4-qh6g)
+  httpx-timeouts-fine-tuning/flash-3.6-high-outside/b3  passes
+      claim:   The limits argument is used to configure pool timeouts in HTTPX.
+      premise: If HTTPX is unable to acquire a connection within this time frame, a PoolTimeout exception is raised. A related configuration here is the maximum number of allowable connections in the connection pool, which is configured by the limits argument.
+  using-timeouts/flash-3.6-high-outside/b1  passes
+      claim:   In simple cases, the timeout parameter passed to urllib3's request() function must be a float.
+      premise: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():
+  using-timeouts/flash-3.6-high-outside/b2  passes
+      claim:   To configure separate connect and read timeouts in urllib3, you must instantiate a Timeout object.
+      premise: For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:
+
+Wrong cross keeps of large + local-block (human gold) (section + project prefix):
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~flash-3.6-high/c1  passes
+      claim:   In urllib3 2.8.0, an issue where the TLS configuration for HTTPS proxies could be ignored or overridden was fixed.
+      premise: Fixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True. Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~flash-3.6-high/c10  passes
+      claim:   In urllib3, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~flash-3.6-high/c11  passes
+      claim:   In urllib3, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~flash-3.6-high/c5  passes
+      claim:   urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~flash-3.6-high/c8  passes
+      claim:   In urllib3, proxy client certificates are configured in `proxy_ssl_context`.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~sonnet-medium/c1  passes
+      claim:   In urllib3 2.8.0, a security issue was fixed where the TLS configuration for HTTPS proxies could be ignored or overridden.
+      premise: Fixed usage of proxy_ssl_context with ProxyManager when use_forwarding_for_https=True. Passing ssl_context instead of proxy_ssl_context for HTTPS proxies in this configuration now emits a FutureWarning and will raise an error in v3.0.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~sonnet-medium/c11  passes
+      claim:   urllib3 2.8.0 fixes HTTPS proxy TLS configuration being ignored or overridden by destination settings.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~sonnet-medium/c12  passes
+      claim:   Configurations of urllib3 relying on HTTPS proxy TLS configuration being ignored or overridden by destination settings may require changes.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~sonnet-medium/c15  passes
+      claim:   In urllib3 2.8.0, destination client certificates no longer apply to HTTPS forwarding proxy connections.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-bugfixes/x-changelog-2-8-0-security~sonnet-medium/c16  passes
+      claim:   In urllib3 2.8.0, destination identity overrides no longer apply to HTTPS forwarding proxy connections.
+      premise: Fixed HTTPSConnection.connect() overriding ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy. HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes and continues to use its ssl_context as a fallback when an HTTPS proxy forwards an HTTP target.
+  changelog-2-8-0-security/x-changelog-2-8-0-bugfixes~flash-3.6-high/c23  missing ['HTTPSConnection']
+      claim:   `HTTPSConnection` no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes.
+      premise: Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/x-changelog-2-8-0-bugfixes~sonnet-medium/c27  missing ['HTTPSConnection.connect', 'ProxyConfig.ssl_context']
+      claim:   In urllib3 2.8.0, HTTPSConnection.connect() was fixed so that it no longer overrides ProxyConfig.ssl_context's certificate policy and proxy identity checks with the target connection's TLS settings when forwarding through an HTTPS proxy.
+      premise: Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  changelog-2-8-0-security/x-changelog-2-8-0-bugfixes~sonnet-medium/c28  missing ['HTTPSConnection']
+      claim:   HTTPSConnection no longer applies target SNI, assertions, or client credentials to forwarding proxy handshakes.
+      premise: Configure proxy CA certificates and client certificates in proxy_ssl_context, and proxy identity checks with proxy_assert_hostname or proxy_assert_fingerprint. Destination client certificates and identity overrides no longer apply to HTTPS forwarding proxy connections.
+  configuring-exponential-backoff/x-retrying-requests~flash-3.6-high/c6  passes
+      claim:   Specifying an integer for the retries parameter changes the number of retries in urllib3.
+      premise: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries. The sleep delay is calculated using the formula:
+  configuring-exponential-backoff/x-retrying-requests~flash-3.6-high/c9  passes
+      claim:   A Retry instance can be used for more granular control of retries in urllib3.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~flash-lite-3.6-high/c10  passes
+      claim:   The Retry class allows far greater control of how requests are retried.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~flash-lite-3.6-high/c9  passes
+      claim:   A Retry instance can be used in urllib3 for more granular control of how requests are retried.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~haiku-high/c6  missing ['request']
+      claim:   Specifying an integer for the retries parameter of request() changes the number of retries urllib3 performs.
+      premise: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries. The sleep delay is calculated using the formula:
+  configuring-exponential-backoff/x-retrying-requests~haiku-high/c9  passes
+      claim:   A Retry instance gives more granular control over retries in urllib3.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~opus-high/c11  passes
+      claim:   A urllib3 Retry instance can be used for more granular control of how requests are retried.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~opus-high/c6  missing ['request']
+      claim:   Specifying an integer for the retries parameter of urllib3's request() changes the number of retries.
+      premise: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries. The sleep delay is calculated using the formula:
+  configuring-exponential-backoff/x-retrying-requests~sonnet-medium/c11  passes
+      claim:   The urllib3 Retry class allows far greater control of how requests are retried.
+      premise: By default, Retry does not sleep between retry attempts (backoff_factor=0), though it will still respect delays requested by the server when a response includes a Retry-After header (see respect_retry_after_header). In production systems, retrying immediately without backoff can overwhelm a recovering server or quickly exhaust API rate limits.
+  configuring-exponential-backoff/x-retrying-requests~sonnet-medium/c6  missing ['request']
+      claim:   Specifying an integer as the retries parameter of urllib3's request() changes the number of retries.
+      premise: When no server-requested delay is applied, you can set a non-zero backoff_factor to introduce exponential delays between retries. The sleep delay is calculated using the formula:
