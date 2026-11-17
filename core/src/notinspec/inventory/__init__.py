@@ -6,6 +6,7 @@ to tables (SPEC §18).
 
 from notinspec.inventory.objects import (
     SOURCE_CONFIDENCE,
+    SOURCE_PRIORITY,
     Change,
     ChangeKind,
     Confidence,
@@ -14,8 +15,8 @@ from notinspec.inventory.objects import (
     Inventory,
     Parameter,
     ParameterKind,
+    ParameterLocation,
     ReturnType,
-    Scalar,
     Signature,
     Source,
     SourceType,
@@ -24,6 +25,7 @@ from notinspec.inventory.objects import (
 
 __all__ = [
     "SOURCE_CONFIDENCE",
+    "SOURCE_PRIORITY",
     "Change",
     "ChangeKind",
     "Confidence",
@@ -32,8 +34,8 @@ __all__ = [
     "Inventory",
     "Parameter",
     "ParameterKind",
+    "ParameterLocation",
     "ReturnType",
-    "Scalar",
     "Signature",
     "Source",
     "SourceType",
