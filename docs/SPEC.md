@@ -150,6 +150,7 @@ These exact terms are used in code, diagrams and text.
 |---|---|---|
 | **Chunk** | `Chunk` | one whole documentation section split by headings, or one API description (`desc` node) in API reference (no small token limit, code blocks and tables intact, oversized sections split at a soft limit). Identity = source + heading path; a content hash tells whether it changed. Has a breadcrumb. Unit for component detection, inventory, `Source`, gold context, IDs and CI diffs. |
 | **NLI premise** | – | the text a claim is checked against: the chunk's breadcrumb plus the cited sentence(s) ±1 sentence within the cited prose block (for a list item, plus the sentence that introduces the list). Computed from the chunk and the citation, not stored. |
+| **Recall window** | – | `<breadcrumb>:` + consecutive prose sentences of a chunk, up to a token limit, with overlap. Used only where a missed entailment is the worse error: the unsupported check of the perturbation operator ([§6.7](#67-tasks-and-operators)). Computed from the chunk, not stored. |
 | **Component** | – | kind of content in a chunk: **A** formal spec, **B** API reference, **C** examples, **D** prose and changelog. One chunk can contain several. |
 | **Symbol** | `Symbol` | anything callable: function, method, class, endpoint, CLI command |
 | **Signature** | `Signature` | header of a symbol: parameters and return type, no body. A symbol can have several (overloads, versions). |
@@ -180,7 +181,7 @@ These exact terms are used in code, diagrams and text.
 |---|---|---|---|---|
 | **L0 Recognition** | does this symbol / parameter exist (in version X)? | `Symbol`, `Parameter`, `Change` | yes/no, 4 options | exact match |
 | **L1 Recall** | path, required parameters, defaults | `Signature`, `Parameter` | open answer | path correctness + Jaccard of parameters |
-| **L2 Comprehension** | behaviour, constraints, "not in the documentation" | `Claim` | questions | normalization → NLI → LLM judge |
+| **L2 Comprehension** | behaviour, constraints, "not in the documentation" | `Claim`; "not in the documentation" from claims changed by the perturbation operator ([§6.7](#67-tasks-and-operators)) | questions | normalization → NLI → LLM judge |
 | **L3 Usage** | can it write the call / code that reaches the goal? | `CallRecord`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` | task → code / request | call-record comparison + error category |
 | **L4 Execution** *(OpenAPI only)* | the request is valid per the spec | L3 tasks for OpenAPI operations | task → HTTP request | Prism mock validates the request |
 
@@ -302,7 +303,7 @@ Source  – attached to every object above
 1. **Claim extractor** (LLM; 2 extractors with different models or prompts): reads the **whole chunk** (section) and returns atomic, self-contained claims, each with a **citation** (exact quoted span from the chunk). Type *fact* or *change*. Deterministic citation check on normalized text (whitespace collapsed, Markdown markup and backticks removed, typographic quotes → plain quotes):
    - citation not found in the chunk → drop the claim;
    - citation found only outside prose (code block, table, signature or type) → `not_checkable`, dropped. Facts in code and signatures are covered by components B and C.
-2. **Grounding via NLI:** premise = the **NLI premise** around the citation ([§6.1](#61-reading-and-chunking)), hypothesis = claim, decision by argmax. `entailment` → keep. `neutral` / `contradiction` → drop. Dropped claims are recorded but **not reused as test material automatically**: NLI also drops some true claims.
+2. **Grounding via NLI:** premise = the **NLI premise** around the citation ([§6.1](#61-reading-and-chunking)), hypothesis = claim, decision by argmax. `entailment` → keep. `neutral` / `contradiction` → drop. Dropped claims are recorded but **not reused as test material automatically**: NLI also drops some true claims. "Not in the documentation" questions come from the perturbation operator instead ([§6.7](#67-tasks-and-operators)).
 3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions. A whole section can yield many claims, so K5a uses the same prefilter as K5b.
 4. **K5b · claim vs. claim across chunks:** embedding prefilter so not all pairs are compared, then NLI in both directions.
 
@@ -344,7 +345,7 @@ Decisions are made per symbol, never for the whole documentation:
 |---|---|---|
 | Has a `Signature` with source spec or signature? | L0 · L1 deterministic; adaptation, variation, composition automatic | L0 · L1 only from call records; variation and composition only after review |
 | Has a verified `Example` with a `CallRecord`? | L3: copy, adaptation + leave-one-out | with a signature: L3 from the signature only. With nothing: L3 unavailable → `Finding` |
-| Has a `Claim`? | L2 questions | – |
+| Has a `Claim`? | L2 questions, plus "not in the documentation" questions via perturbation | – |
 | Has a `Change`? | L0 distractors from old names, L3 migration | – |
 | Is it an OpenAPI operation? | **L4 via Prism mock** | L3 by call-record comparison only |
 
@@ -361,6 +362,7 @@ An operator takes a call record or signature and a program computes a new refere
 | **variation** | adds a parameter no example uses | `Parameter`, `Constraint` |
 | **composition** | joins 2–3 symbols via the graph; the combination must not appear in any example | `ReturnType`, data flow in call records |
 | **migration** | old code → new version | `Change` |
+| **perturbation** *(L2 only)* | changes one identifier or number in a grounded claim so that the docs no longer support it; reference = "not in the documentation" | `Claim`, `Symbol`, `Parameter` |
 
 Example reference:
 ```json
@@ -370,6 +372,19 @@ Example reference:
 Task text (written by an LLM): "Give up connecting after 2 minutes."
 
 - **Leave-one-out:** in gold-context mode, the example the task was derived from is removed, to test whether the rest of the docs is enough.
+- **Perturbation ("not in the documentation", L2):** tests whether a model admits that the docs don't say something, instead of inventing an answer.
+  1. Code takes a grounded `Claim` and replaces **exactly one** slot: an identifier with another one of the same kind from the inventory (a parameter of the same signature, a method of the same class), or a number / unit with one that does not appear in the claim's chunk. Example: "`total` set to `0` fails on the first retry" → "`backoff_factor` set to `0` fails on the first retry".
+  2. **Unsupported check:** NLI with the changed claim as the hypothesis, decision by argmax. Any `entailment` or `contradiction` → the docs say something about it, discard. All `neutral` → keep. Premises:
+     - the **NLI premise of the original claim's citation** ([§6.1](#61-reading-and-chunking)): the changed claim keeps the original citation, so this premise is defined;
+     - **recall windows** over the whole claim's chunk and over the top *k* chunks most similar to the changed claim (embedding prefilter, as in K5b). A recall window is `<breadcrumb>:` + consecutive prose sentences of one chunk, cut at sentence boundaries, at most 400 tokens (*candidate*) with a 1/5 overlap, so every prose sentence of the chunk is in at least one window. Windows are computed deterministically from the chunk (chunk ID + offset);
+     - all grounded claims of the project.
+
+     Here the risk is the opposite of grounding: a missed entailment (false `neutral`) leaves an answerable question, while a false entailment only discards a candidate. So the premise favours **recall**: in `experiments/nli/FINDINGS.md` the 400-token window found support for 90 of 92 correct claims vs. 86 of 92 for the NLI premise. Every decision records the premise rule and window size, as for grounding ([§6.4](#64-prose-and-changelog--claim)).
+
+     The cheap identifier check ([§18](#18-open-items)) also runs: the new identifier or number must not appear in the claim's citation.
+  3. The task-text writer (LLM) turns the changed claim into a question ("What happens when `backoff_factor` is set to `0`?"). The reference, "not in the documentation", comes from step 2, not from the LLM.
+  4. **Always reviewed** ([§2.5](#25-keeping-golden-set-review-small)): NLI can miss support for a claim (a false `neutral`), and then the question would be answerable.
+  - Evaluation: the answer must say that the documentation does not cover it. A concrete answer is an error (`invented`), even if it happens to be true for the real software, because the truth is what the documentation says ([§1.1](#11-what-we-are-not-building)).
 - **Difficulty:** explicit (task names the symbol) / semantic (goal only) × single-step / multi-step.
 - **Formats:** a task is asked in every format the docs cover (curl, Python SDK, JS SDK…). Comparing formats is K6.
 - **`TestItem` metadata:** symbol, chunk, level, operator (distance from the docs), source, 2–3 paraphrases.
@@ -407,7 +422,7 @@ Every test item × model × mode. **All raw responses are stored.**
 
 - **L0:** exact match, shuffled option order.
 - **L1:** path correctness + Jaccard of required parameters (+ defaults).
-- **L2:** normalization → NLI (coverage and precision) → **LLM judge** only for borderline cases.
+- **L2:** normalization → NLI (coverage and precision) → **LLM judge** only for borderline cases. For "not in the documentation" items the answer must say the docs don't cover it ([§6.7](#67-tasks-and-operators)).
 - **L3:** model answer → the same adapter as for examples → `CallRecord` → comparison with the reference. Error categories:
 
   | Category | Meaning |
@@ -547,6 +562,7 @@ Candidate data: [NovelAPIBench](https://arxiv.org/html/2606.03657), [CodeUpdateA
 - **L0:** "Which parameter of `connect()` exists in 2.0? a) `retries` b) `retry_policy` c) `max_retry` d) `backoff`" (`retries` comes from `Change`).
 - **L1:** "List the optional parameters of `connect()` and their defaults."
 - **L2:** "In what unit is `timeout`?" (from the claim "timeout is in seconds").
+- **L2 (not in the documentation):** "What is the default of `retry_policy`?" (perturbation of the claim "`timeout` defaults to 30": `timeout` → `retry_policy`, another parameter of `connect()`; no chunk states its default). Expected answer: the documentation doesn't say.
 - **L3 (adaptation, semantic):** "Give up connecting after 2 minutes and try at most three times." Answer `client.connect(timeout=120, retries=3)` → `timeout` correct, `retries` = `deprecated-api`, `retry_policy` missing.
 - **L4:** unavailable, `connect()` is not an OpenAPI operation. For `POST /orders` the model's request would go to Prism.
 
@@ -602,7 +618,8 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Soft limit for oversized sections
 - [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample
 - [ ] **NLI thresholds:** argmax for now. A three-zone rule (keep at p ≥ 0.9, drop below 0.05, human review in between) sends ~8 % of claims to review, but it doesn't catch confident errors (9 of 12 wrong claims kept have p ≥ 0.9). Decide whether the review is worth it
-- [ ] A cheap code check that a claim's identifiers, numbers and versions appear in its cited sentence (NLI misses these; see `experiments/nli/FINDINGS.md`, run 006)
+- [ ] A cheap code check that a claim's identifiers, numbers and versions appear in its cited sentence (NLI misses these; see `experiments/nli/FINDINGS.md`, run 006). Also used by the perturbation operator ([§6.7](#67-tasks-and-operators))
+- [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: how much users will do, which items are auto-approved
