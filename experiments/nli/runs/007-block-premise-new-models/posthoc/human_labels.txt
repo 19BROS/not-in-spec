@@ -1,8 +1,32 @@
 Human sample: 180 claims, 19 borderline; {'entailment': 92, 'neutral': 61, 'contradiction': 27}
-Human vs claude-draft: 3-way 92.8% (kappa 0.88), keep/drop 98.3% (kappa 0.97)
-  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'negatives-handmade', 'n3') human=entailment draft=contradiction
-  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b1') human=entailment draft=neutral
-  keep/drop disagreement: ('changelog-2-8-0-security', 'sonnet-medium-outside', 'o1') human=neutral draft=entailment
+human vs claude-draft: 3-way 92.8% (kappa 0.88), keep/drop 98.3% (kappa 0.97)
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'negatives-handmade', 'n3') human=entailment claude-draft=contradiction
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b1') human=entailment claude-draft=neutral
+  keep/drop disagreement: ('changelog-2-8-0-security', 'sonnet-medium-outside', 'o1') human=neutral claude-draft=entailment
+human vs chatgpt: 3-way 87.8% (kappa 0.80), keep/drop 93.9% (kappa 0.88)
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'negatives-handmade', 'n3') human=entailment chatgpt=contradiction
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b1') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b2') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'o1') human=neutral chatgpt=entailment
+  keep/drop disagreement: ('changelog-2-8-0-security', 'sonnet-medium-outside', 'o1') human=neutral chatgpt=entailment
+  keep/drop disagreement: ('configuring-exponential-backoff', 'flash-3.6-high', 'c3') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'flash-lite-3.6-high', 'c3') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c3') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c8') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c9') human=entailment chatgpt=neutral
+  keep/drop disagreement: ('retrying-requests', 'sonnet-medium', 'c10') human=neutral chatgpt=entailment
+claude-draft vs chatgpt: 3-way 93.9% (kappa 0.90), keep/drop 95.6% (kappa 0.91)
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'b2') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('changelog-2-8-0-bugfixes', 'sonnet-medium-outside', 'o1') claude-draft=neutral chatgpt=entailment
+  keep/drop disagreement: ('configuring-exponential-backoff', 'flash-3.6-high', 'c3') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'flash-lite-3.6-high', 'c3') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c3') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c8') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('configuring-exponential-backoff', 'haiku-high', 'c9') claude-draft=entailment chatgpt=neutral
+  keep/drop disagreement: ('retrying-requests', 'sonnet-medium', 'c10') claude-draft=neutral chatgpt=entailment
+human vs chatgpt without the 15 quoted claims: 3-way 89.7% (kappa 0.83), keep/drop 95.2% (kappa 0.90)
+  human vs draft differ on 13 (3-way); chatgpt sides with the draft on 12
+  11 human/chatgpt keep/drop differences, human keeps in 8
 Cross sample: 43 pairs kept by at least one compared setup; {'neutral': 41, 'entailment': 2}
 
 setup                                                recall/92  false keeps/88  cross kept (wrong / supported)

@@ -293,10 +293,22 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 - Afterwards, the 9 claims where the human and the draft disagreed on keep/drop were re-read by the same person, without seeing the draft's label. 6 changed.
 - **The sample is not random.** The 7 disputed claims were picked where large + local or the draft said no, so misses of the local setups are over-represented. Same-section recall below (e.g. 86 vs 90 of 92 for window 400) is not an estimate for all claims. The significant differences are on the cross pairs, where every pair any compared setup kept is labelled.
 - **Round 2 (43):** every cross pair kept by at least one of the compared setups (`labeling/build_cross.py`).
-- **ChatGPT inputs:** `labeling/build.py` also writes per-section prompts (`labeling/chatgpt-instructions.md`) for a third annotator. They have not been run yet; no number here uses them. Their labels would be stored as `annotator=chatgpt`, separate from `annotator=human`.
+- **ChatGPT inputs:** `labeling/build.py` also writes per-section prompts (`labeling/chatgpt-instructions.md`) for a third annotator. One run is in `labels-chatgpt.csv` (`annotator=chatgpt`), with the model's output per prompt in `labels-chatgpt-raw/`. It is only compared below; no table uses it as gold.
 - Files: `labels-human.csv`, `labels-human-cross.csv`. Numbers: `runs/007-block-premise-new-models/posthoc/human_labels.py` → `human_labels.txt`.
 
 **Human vs claude-draft:** keep/drop agreement 98.3% (kappa 0.97). With all three labels the agreement is 92.8% (kappa 0.88); most differences are neutral vs contradiction. 3 keep/drop differences remain: bugfixes n3, bugfixes sonnet-outside b1 and security sonnet-outside o1. The draft-based conclusions above therefore hold.
+
+**ChatGPT as a third annotator (2026-11-17):** Codex (reported as GPT-6; exact model ID and reasoning setting unknown) labelled the same 180 claims from the six prompts. Numbers come from the same `human_labels.py`.
+
+| pair | keep/drop | kappa | 3 classes | kappa |
+|---|---|---|---|---|
+| human vs chatgpt | 93.9% (11 differ) | 0.88 | 87.8% (22) | 0.80 |
+| claude-draft vs chatgpt | 95.6% (8) | 0.91 | 93.9% (11) | 0.90 |
+| human vs claude-draft | 98.3% (3) | 0.97 | 92.8% (13) | 0.88 |
+
+- **ChatGPT is stricter than the human.** In 8 of the 11 keep/drop differences the human keeps and ChatGPT drops. Three of them are the same claim from three extractors ("Retry respects delays requested by the server when a response includes a `Retry-After` header"). One more drops "up to `backoff_max`", a qualifier the prompt lists.
+- **The two LLMs agree with each other more than with the human.** On the 13 claims where the human and the draft differ, ChatGPT sides with the draft 12 times, including all 3 keep/drop differences above. The prompt calls "a different value" a contradiction, which explains most neutral vs contradiction differences on hand-made negatives. Their mistakes are correlated, so ChatGPT is not an independent check of the draft. The human label stays gold. The 3 claims can go to the human for another look, but no label is changed automatically.
+- **Neither LLM was fully blind.** ChatGPT saw only the prompts (section prose, claim, citation; no extractor, source or model output). But earlier in the same chat it had seen summary results and example claims of this experiment (PR #19), and blindness is its own report. 15 of the 180 claims are quoted in this file with an implied label. ChatGPT goes against that label on 3 of them (retry sonnet c10, backoff haiku c9, the `stream()` `amt` claim). Without those 15, human vs chatgpt agreement on keep/drop is 95.2% (kappa 0.90), so the quoted claims did not inflate it. It also differs from both label files on 10 claims, so it did not copy them. The Claude draft was less blind: it was written with extractor and source visible in `labels.csv` (e.g. `negatives-handmade`). Only `labels-human.csv` is blind.
 
 **Setups on the human labels** (92 should-keep, 88 should-drop; the cross column counts only pairs the human judged *not* supported by the other section):
 
@@ -328,5 +340,40 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 - Rejected claims are not reliably wrong either: 5 good claims fall below p = 0.05. They should not become L2/L0 material automatically.
 
 Open:
-1. Prototype the identifier / number / version check from run 006 (a) and measure it on the human labels.
+1. ~~Prototype the identifier / number / version check from run 006 (a) and measure it on the human labels.~~ Done, see the next section.
 2. A larger human sample if the large vs zeroshot choice must be settled on same-section claims. Currently 3 vs 6 claims differ, p = 0.51.
+
+## Identifier / number / version check (2026-11-17)
+
+Prototype of run 006 (a) in `id_check.py`. A claim is dropped if it names an identifier, number or version that the reference text lacks. Identifiers: backticked spans and words with `_`, a dot between names, `()`, an inner capital (`ProxyManager`) or letters + digits (`urllib3`). Plain words and acronyms (HTTPS) are not checked. Matching is case-sensitive on name boundaries (`ssl_context` is not found inside `proxy_ssl_context`), and a number must match as a whole (`3.13` is not found inside `3.13.14`). Normalized like the citation check. Measured after large + local-block, from the run 007 CSV: `runs/007-block-premise-new-models/posthoc/id_check_eval.py` → `id_check_eval.txt`.
+
+Human labels as gold (12 false keeps and 23 wrong cross keeps of large + local-block, 92 good claims):
+
+| reference text | false keeps caught | wrong cross keeps caught | good claims dropped |
+|---|---|---|---|
+| NLI premise (breadcrumb + cited sentence ±1 in block) | 3/12 | 7/23 | 5/92 (4 of them kept by NLI) |
+| **section prose + breadcrumb, `urllib3.` prefix optional** | **3/12** | **6/23** | **0/92** |
+
+With the section as reference, large + local-block + the check keeps 86/92 good claims (unchanged), 9 false keeps (was 12) and 17 wrong cross pairs (was 23). The other label sets give the same picture: Claude draft 3/11, 6/24, 0/261 good dropped; ChatGPT 3/17, 6/23, 0/87.
+
+2 of the 3 caught false keeps are hand-made negatives (bugfixes n4, security n3). On the 9 model-written false keeps it catches 1 (security flash-outside o1), so 3/12 is not a precision estimate. The 6/23 cross pairs are real extractor claims.
+
+1. **What it catches.** False keeps: "Python 3.13" vs "3.13.14+" (bugfixes n4), `ssl_context` instead of `proxy_ssl_context` (security n3), and `ProxyManager` named on the Security section, which never mentions it (security flash-outside o1). Cross pairs: `HTTPSConnection`, `HTTPSConnection.connect()` / `ProxyConfig.ssl_context` judged against Security, and three "retries parameter of `request()`" claims judged against the backoff section. Only one catch is a number; the rest are names.
+2. **What it misses.** The other 9 false keeps name only tokens that are there: tense ("raises an error" vs "will raise an error in v3.0", bugfixes n2), a dropped qualifier ("HTTPS connections" vs "HTTPS forwarding proxy connections"), and capability claims built from names in the sentence (`HTTPResponse.stream()` reads chunked bodies). Most cross keeps are paraphrases with no names at all. The check is a cheap addition to NLI, not a replacement.
+3. **The premise is too small as reference.** Correct claims name things from a neighbouring sentence of the same section: `PoolManager` and `request()` in "a pool-level retry policy set on `PoolManager` can be overridden by specifying retries to `request()`" (5 human-labelled claims, 14 in the draft). The whole section's prose fixes all of them and loses one cross catch (`proxy_ssl_context` also appears in Bugfixes).
+4. **Project prefix.** `urllib3.Timeout` is the only good claim (draft) the section reference still drops; letting a dotted name pass without a leading project name (from the breadcrumb) fixes it.
+5. **Number words don't matter here.** 16 claims write numbers as words ("four types", "one second"); reading "zero" .. "twelve" as digits changes nothing. The option stays in `id_check.py` but is off.
+6. **Limits.** Small, urllib3-heavy sample (5 urllib3 sections, 1 httpx). The hand-made negatives were written to swap names, so this sample may favour the check. Code blocks are not part of the reference (SPEC §6.1), so a claim that names something only shown in code is dropped; that never happened here.
+7. **Tuned on the same data.** The section reference, the project prefix and the number-word option were chosen on these 180 (and the draft's 350) claims, so 0/92 is optimistic. Check again on new docs (e.g. the Sphinx reader output for urllib3).
+
+**Before / when moving it to `core/`** (tracked in #26; found in review of #24, none of them shows up in this sample):
+
+- Numbers are compared as strings: "1 second" fails against `Timeout(connect=1.0)`. Compare non-version numbers by value.
+- A number glued to a unit in the reference is skipped: "2.5 seconds" fails against "2.5s". Allow a unit right after the number.
+- A backticked name with a leading dot (`` `.request()` ``) fails against `PoolManager.request()`.
+- `TLSv1.2` fails against "TLS 1.2" (it is read as the name `TLSv1` + a number).
+- Keep the project prefix rule.
+- Docstrings: code and signatures are not in the reference, so a parameter named only in the signature would fail. Add the symbol's inventory names (`Parameter`, `Symbol`) to the reference for docstring sections only; guides keep "code doesn't count".
+- The perturbation operator (§6.7) uses the claim's citation as reference, not the section.
+
+Then: put it into grounding in `core/` (after the citation check, section prose as reference, built on `prose_sentences`).

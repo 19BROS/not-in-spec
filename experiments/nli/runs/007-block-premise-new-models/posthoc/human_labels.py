@@ -1,5 +1,7 @@
 """Score runs 006 and 007 on the human labels (labels-human.csv, labels-human-cross.csv).
 
+Also prints annotator agreement: human, claude-draft (labels.csv) and chatgpt (labels-chatgpt.csv).
+
 usage (from experiments/nli): python runs/007-block-premise-new-models/posthoc/human_labels.py
 Read-only; prints the tables used in FINDINGS.md.
 """
@@ -82,15 +84,59 @@ print(
     f"Human sample: {len(human)} claims, {n_bl} borderline;",
     dict(Counter(v["gold"] for v in human.values())),
 )
-p3 = [(v["gold"], draft[k]["gold"]) for k, v in human.items()]
-po3, k3 = kappa(p3)
-po2, k2 = kappa([(a == "entailment", b == "entailment") for a, b in p3])
+annot = {"human": human, "claude-draft": draft, "chatgpt": read("labels-chatgpt.csv")}
+
+
+def agreement(a, b, keys):
+    p3 = [(annot[a][k]["gold"], annot[b][k]["gold"]) for k in keys]
+    po3, k3 = kappa(p3)
+    po2, k2 = kappa([(x == "entailment", y == "entailment") for x, y in p3])
+    return f"3-way {po3:.1%} (kappa {k3:.2f}), keep/drop {po2:.1%} (kappa {k2:.2f})"
+
+
+for a, b in (("human", "claude-draft"), ("human", "chatgpt"), ("claude-draft", "chatgpt")):
+    print(f"{a} vs {b}: {agreement(a, b, human)}")
+    for k in sorted(human):
+        x, y = annot[a][k]["gold"], annot[b][k]["gold"]
+        if (x == "entailment") != (y == "entailment"):
+            print(f"  keep/drop disagreement: {k} {a}={x} {b}={y}")
+
+# Sample claims quoted in FINDINGS.md with an implied label. ChatGPT may have seen them
+# in its chat before labelling (PR #19), so agreement is also shown without them.
+QUOTED = {
+    ("configuring-exponential-backoff", "negatives-handmade", "n5"),
+    ("configuring-exponential-backoff", "haiku-high", "c9"),
+    ("configuring-exponential-backoff", "haiku-high", "c11"),
+    ("retrying-requests", "negatives-handmade", "n4"),
+    ("retrying-requests", "sonnet-medium", "c10"),
+    ("using-timeouts", "flash-3.6-high-outside", "b1"),
+    ("using-timeouts", "flash-3.6-high-outside", "o3"),
+    ("changelog-2-8-0-bugfixes", "sonnet-medium-outside", "o1"),
+    ("changelog-2-8-0-bugfixes", "negatives-handmade", "n2"),
+    ("changelog-2-8-0-security", "flash-3.6-high-outside", "b2"),
+    ("changelog-2-8-0-security", "negatives-handmade", "n3"),
+    ("changelog-2-8-0-security", "negatives-handmade", "n1"),
+    ("changelog-2-8-0-security", "flash-3.6-high", "c2"),
+    ("httpx-timeouts-fine-tuning", "sonnet-medium", "c14"),
+    ("httpx-timeouts-fine-tuning", "flash-3.6-high-outside", "b1"),
+}
+assert QUOTED <= set(human)
+unquoted = set(human) - QUOTED
 print(
-    f"Human vs claude-draft: 3-way {po3:.1%} (kappa {k3:.2f}), keep/drop {po2:.1%} (kappa {k2:.2f})"
+    f"human vs chatgpt without the {len(QUOTED)} quoted claims:",
+    agreement("human", "chatgpt", unquoted),
 )
-for k, v in sorted(human.items()):
-    if (v["gold"] == "entailment") != (draft[k]["gold"] == "entailment"):
-        print(f"  keep/drop disagreement: {k} human={v['gold']} draft={draft[k]['gold']}")
+hd = [k for k in human if human[k]["gold"] != draft[k]["gold"]]
+gpt = annot["chatgpt"]
+print(
+    f"  human vs draft differ on {len(hd)} (3-way); chatgpt sides with the draft on"
+    f" {sum(gpt[k]['gold'] == draft[k]['gold'] for k in hd)}"
+)
+kd = [k for k in human if (human[k]["gold"] == "entailment") != (gpt[k]["gold"] == "entailment")]
+print(
+    f"  {len(kd)} human/chatgpt keep/drop differences, human keeps in"
+    f" {sum(human[k]['gold'] == 'entailment' for k in kd)}"
+)
 print(
     f"Cross sample: {len(cross)} pairs kept by at least one compared setup;",
     dict(Counter(v["gold"] for v in cross.values())),
