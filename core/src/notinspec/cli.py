@@ -1,7 +1,10 @@
 import argparse
+import fnmatch
 import json
 import statistics
 import sys
+import uuid
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
 
@@ -14,6 +17,14 @@ from notinspec.chunking import (
     load_documents,
     nli_windows,
 )
+from notinspec.claims import (
+    DEFAULT_EXTRACTORS,
+    PROMPT_VERSION,
+    JsonlCallLog,
+    JsonlClaimStore,
+    extract_claims,
+    extractor_for,
+)
 from notinspec.config import load_config
 from notinspec.ingestion import ingest, plan_ingestion
 from notinspec.report import build_results, write_artifacts
@@ -21,16 +32,21 @@ from notinspec.runner import (
     GROQ,
     PROVIDERS,
     ChatRequest,
+    Completion,
     Message,
     ModelClient,
     ModelUnavailable,
     OpenAICompatProvider,
+    Provider,
     ProviderError,
     QuotaExhausted,
     RecordingProvider,
     TransientError,
 )
 from notinspec.verify import ANSWER_SCHEMA, parse_answer
+
+# bump when the shape of extracted-claims.json changes
+CLAIMS_SCHEMA_VERSION = 1
 
 # ad-hoc instruction for trying a model by hand; real prompts come from the generator's templates
 _ASK_SYSTEM = (
@@ -96,9 +112,52 @@ def main(argv: list[str] | None = None) -> int:
     )
     _provider_option(models)
 
+    claims = commands.add_parser("claims", help="claims from prose (SPEC §6.4)")
+    claims_commands = claims.add_subparsers(dest="claims_command")
+    extract = claims_commands.add_parser(
+        "extract",
+        help="extract claims with the LLM extractors (Groq: needs GROQ_API_KEY); no grounding",
+        description="Reads the configured docs, sends every prose chunk to each extractor and "
+        "writes extracted-claims.json (not grounded yet). Every request is appended to "
+        "llm-calls.jsonl; claims of unchanged chunks are reused from claims-store.jsonl in the "
+        "output folder.",
+    )
+    extract.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
+    extract.add_argument("--out", type=Path, default=Path("notinspec-out"))
+    extract.add_argument(
+        "--source",
+        action="append",
+        help="only chunks whose source (Sphinx docname or file path) matches this glob; "
+        "repeatable (default: every chunk)",
+    )
+    extract.add_argument(
+        "--extractor",
+        action="append",
+        metavar="MODEL",
+        help="extractor model ID; repeatable (default: "
+        + ", ".join(s.model for s in DEFAULT_EXTRACTORS)
+        + ")",
+    )
+    extract.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
+    extract.add_argument(
+        "--no-reuse",
+        action="store_true",
+        help="ask again for every chunk and replace its stored claims",
+    )
+    extract.add_argument("--run-id", help="run ID for the response cache (default: random)")
+    extract.add_argument(
+        "--record", type=Path, help="also save the raw responses as a fake-provider fixture"
+    )
+    _provider_option(extract)
+
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
     try:
+        if args.command == "claims":
+            if args.claims_command == "extract":
+                return _extract_claims(args)
+            claims.print_help()
+            return 0
         if args.command == "chunk":
             return _chunk(args)
         if args.command in ("ci", "ingest"):
@@ -168,6 +227,92 @@ def _ingest(args: argparse.Namespace) -> int:
     print(f"Artifacts: {args.out.resolve()}")
     print("LLM evaluation: not run (no pass/fail verdict).")
     return 0
+
+
+class _LazyProvider:
+    """Builds the live provider on the first request, so a fully reused run needs no API key.
+
+    A provider that cannot be built (no key) stops the whole command instead of failing every
+    chunk: it is not a per-chunk provider error.
+    """
+
+    def __init__(self, factory: Callable[[], Provider]) -> None:
+        self._factory = factory
+        self._provider: Provider | None = None
+
+    def complete(self, request: ChatRequest) -> Completion:
+        if self._provider is None:
+            try:
+                self._provider = self._factory()
+            except ProviderError as e:
+                raise RuntimeError(str(e)) from e
+        return self._provider.complete(request)
+
+
+def _live_provider(name: str) -> Provider:
+    """Seam for tests: the CLI never calls a real provider in CI."""
+    return OpenAICompatProvider.from_env(PROVIDERS[name])
+
+
+def _extract_claims(args: argparse.Namespace) -> int:
+    config = load_config(args.config)
+    specs = (
+        tuple(extractor_for(m) for m in args.extractor) if args.extractor else DEFAULT_EXTRACTORS
+    )
+    patterns: list[str] = args.source or []
+    ingestion = ingest(config, output=args.out, soft_limit=args.soft_limit)
+    chunks = [
+        c
+        for c in ingestion.chunks
+        if not patterns or any(fnmatch.fnmatchcase(c.source, p) for p in patterns)
+    ]
+    if patterns and not chunks:
+        raise ValueError(f"no chunk source matches {', '.join(patterns)}")
+    args.out.mkdir(parents=True, exist_ok=True)
+    calls = JsonlCallLog(args.out / "llm-calls.jsonl")
+    store = JsonlClaimStore(args.out / "claims-store.jsonl")
+    for warning in store.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    provider_name: str = args.provider
+    live = RecordingProvider(_LazyProvider(lambda: _live_provider(provider_name)))
+    client = ModelClient(live, limits=PROVIDERS[provider_name].limiters())
+    run_id = args.run_id or uuid.uuid4().hex
+    print(f"Extracting claims from {len(chunks)} chunks with {len(specs)} extractors.")
+    results = []
+    try:
+        for spec in specs:
+            result = extract_claims(
+                chunks, spec, client, run_id, calls, store=store, reuse=not args.no_reuse
+            )
+            results.append(result)
+            print(
+                f"  {spec.name}: {len(result.claims)} claims, {result.asked} chunks asked, "
+                f"{result.reused} reused, {result.without_prose} without prose, "
+                f"{len(result.failures)} failed, {len(result.problems)} claims skipped"
+                + (f"; stopped: {result.stopped}" if result.stopped else "")
+            )
+    finally:  # a recording of the answers so far is worth keeping when a later step fails
+        if args.record is not None:
+            live.save(args.record)
+    output = {
+        "schema_version": CLAIMS_SCHEMA_VERSION,
+        "project": ingestion.project,
+        "input_hash": ingestion.input_hash,
+        "prompt_version": PROMPT_VERSION,
+        "sources": sorted(patterns),
+        "chunks": len(chunks),
+        "extractors": [r.extractor for r in results],
+        "claims": [c for r in results for c in r.claims],
+        "failures": [f for r in results for f in r.failures],
+        "problems": [p for r in results for p in r.problems],
+    }
+    path = args.out / "extracted-claims.json"
+    path.write_bytes(canonical_json(output, pretty=True))
+    print(f"Extracted claims: {path.resolve()}")
+    stopped = [r for r in results if r.stopped]
+    for r in stopped:
+        print(f"stopped: {r.extractor.name}: {r.stopped}; run again to continue", file=sys.stderr)
+    return 2 if stopped else 0
 
 
 def _chunk(args: argparse.Namespace) -> int:
