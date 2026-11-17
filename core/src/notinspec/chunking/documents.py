@@ -8,7 +8,7 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class Document:
-    source: str  # path relative to the docs root, "/"-separated; part of breadcrumbs and chunk IDs
+    source: str  # path relative to the docs root, "/"-separated; in chunk IDs, not breadcrumbs
     text: str  # Markdown
 
 

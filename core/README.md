@@ -31,6 +31,7 @@ parse document content or validate OpenAPI schemas; run the normal command for t
 Paths are relative to the configuration file, regardless of the current working directory.
 
 ```yaml
+project: "items-api"                  # optional; root of every breadcrumb
 docs:
   paths: ["docs/**/*.md", "llms.txt"]  # optional; glob patterns, duplicates removed
   openapi: "api/openapi.yaml"         # optional; YAML or JSON, OpenAPI 3.x
@@ -40,7 +41,10 @@ docs:
 At least one input is required. Markdown (`.md`, `.markdown`) and plain text (`.txt`) are
 supported. Explicit missing files and unsupported formats fail with an explanation. Patterns
 matching nothing produce a warning, or an error if no inputs remain. Sphinx is not supported
-yet: `docs.sphinx` produces an error instead of silently skipping that documentation.
+yet: `docs.sphinx_xml` (the XML built by `sphinx-build -b xml`, SPEC §6.1) produces an error
+instead of silently skipping that documentation, and the old `docs.sphinx` explains the change.
+`project` starts every chunk breadcrumb (`items-api > Items API > List items`). Without it, the
+repository name from `GITHUB_REPOSITORY` is used, otherwise the config directory's name.
 Unknown fields inside `docs` and duplicate YAML keys are errors with an explanation.
 `docs.version` is accepted as metadata reserved for later stages. Top-level model, budget and
 threshold settings remain unused; this is not validation of the complete future config schema.
@@ -56,7 +60,7 @@ Explicit relative `--config` and `--out` arguments are resolved from the termina
 
 | File | Content |
 |---|---|
-| `ingestion.json` | deterministic input hashes, source paths, full chunks, normalized OpenAPI operations and warnings; ingestion schema v1 |
+| `ingestion.json` | deterministic input hashes, source paths, full chunks, normalized OpenAPI operations and warnings; ingestion schema v2 |
 | `results.json` | Action/server envelope v0, ingestion counts, `stage: ingestion`, `verdict: not-evaluated`, empty `results` and `findings` |
 | `comment.md` | summary beginning with the Action's `<!-- notinspec -->` marker |
 | `report.html` | standalone readable summary, linked to `ingestion.json` |

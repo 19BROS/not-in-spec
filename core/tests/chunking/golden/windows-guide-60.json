@@ -1,8 +1,8 @@
 {
-  "0c96c9cac95cdcfb": [
+  "080c57b7fa11850e": [
     {
-      "id": "0c96c9cac95cdcfb@12",
-      "chunk_id": "0c96c9cac95cdcfb",
+      "id": "080c57b7fa11850e@12",
+      "chunk_id": "080c57b7fa11850e",
       "index": 0,
       "start": 12,
       "end": 306,
@@ -43,8 +43,8 @@
       ]
     },
     {
-      "id": "0c96c9cac95cdcfb@259",
-      "chunk_id": "0c96c9cac95cdcfb",
+      "id": "080c57b7fa11850e@259",
+      "chunk_id": "080c57b7fa11850e",
       "index": 1,
       "start": 259,
       "end": 657,
@@ -85,8 +85,8 @@
       ]
     },
     {
-      "id": "0c96c9cac95cdcfb@660",
-      "chunk_id": "0c96c9cac95cdcfb",
+      "id": "080c57b7fa11850e@660",
+      "chunk_id": "080c57b7fa11850e",
       "index": 2,
       "start": 660,
       "end": 711,
@@ -103,10 +103,102 @@
       ]
     }
   ],
-  "1343f02fe892f184": [
+  "2ed9d78e5f35d20c": [
     {
-      "id": "1343f02fe892f184@23",
-      "chunk_id": "1343f02fe892f184",
+      "id": "2ed9d78e5f35d20c@13",
+      "chunk_id": "2ed9d78e5f35d20c",
+      "index": 0,
+      "start": 13,
+      "end": 188,
+      "tokens": 38,
+      "oversized": false,
+      "text": "Every request has a timeout. By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
+      "sentences": [
+        {
+          "start": 13,
+          "end": 41,
+          "text": "Every request has a timeout.",
+          "tokens": 6
+        },
+        {
+          "start": 42,
+          "end": 188,
+          "text": "By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
+          "tokens": 32
+        }
+      ]
+    },
+    {
+      "id": "2ed9d78e5f35d20c@189",
+      "chunk_id": "2ed9d78e5f35d20c",
+      "index": 1,
+      "start": 189,
+      "end": 459,
+      "tokens": 59,
+      "oversized": false,
+      "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60). What happens when the timeout is reached? Strand raises strand.TimeoutError and closes the connection. The error is never retried unless you enable retries (see Retries).",
+      "sentences": [
+        {
+          "start": 189,
+          "end": 273,
+          "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60).",
+          "tokens": 27
+        },
+        {
+          "start": 275,
+          "end": 316,
+          "text": "What happens when the timeout is reached?",
+          "tokens": 8
+        },
+        {
+          "start": 317,
+          "end": 379,
+          "text": "Strand raises strand.TimeoutError and closes the connection.",
+          "tokens": 10
+        },
+        {
+          "start": 380,
+          "end": 459,
+          "text": "The error is never retried unless you enable retries (see Retries).",
+          "tokens": 14
+        }
+      ]
+    },
+    {
+      "id": "2ed9d78e5f35d20c@786",
+      "chunk_id": "2ed9d78e5f35d20c",
+      "index": 2,
+      "start": 786,
+      "end": 1094,
+      "tokens": 29,
+      "oversized": false,
+      "text": "Example: A timeout of 0 is not allowed and raises ValueError. Use None to wait forever, which is almost never what you want in production.",
+      "sentences": [
+        {
+          "start": 786,
+          "end": 794,
+          "text": "Example:",
+          "tokens": 2
+        },
+        {
+          "start": 959,
+          "end": 1015,
+          "text": "A timeout of 0 is not allowed and raises ValueError.",
+          "tokens": 11
+        },
+        {
+          "start": 1016,
+          "end": 1094,
+          "text": "Use None to wait forever, which is almost never what you want in production.",
+          "tokens": 16
+        }
+      ]
+    }
+  ],
+  "767801c96fdac434": [
+    {
+      "id": "767801c96fdac434@23",
+      "chunk_id": "767801c96fdac434",
       "index": 0,
       "start": 23,
       "end": 203,
@@ -141,8 +233,8 @@
       ]
     },
     {
-      "id": "1343f02fe892f184@159",
-      "chunk_id": "1343f02fe892f184",
+      "id": "767801c96fdac434@159",
+      "chunk_id": "767801c96fdac434",
       "index": 1,
       "start": 159,
       "end": 358,
@@ -177,8 +269,8 @@
       ]
     },
     {
-      "id": "1343f02fe892f184@332",
-      "chunk_id": "1343f02fe892f184",
+      "id": "767801c96fdac434@332",
+      "chunk_id": "767801c96fdac434",
       "index": 2,
       "start": 332,
       "end": 648,
@@ -219,8 +311,8 @@
       ]
     },
     {
-      "id": "1343f02fe892f184@605",
-      "chunk_id": "1343f02fe892f184",
+      "id": "767801c96fdac434@605",
+      "chunk_id": "767801c96fdac434",
       "index": 3,
       "start": 605,
       "end": 1113,
@@ -273,10 +365,10 @@
       ]
     }
   ],
-  "17e5ed42c9f59c9d": [
+  "7b49655b614c6453": [
     {
-      "id": "17e5ed42c9f59c9d@0",
-      "chunk_id": "17e5ed42c9f59c9d",
+      "id": "7b49655b614c6453@0",
+      "chunk_id": "7b49655b614c6453",
       "index": 0,
       "start": 0,
       "end": 98,
@@ -299,10 +391,10 @@
       ]
     }
   ],
-  "18e5004b0fafa3e5": [
+  "94d08065a18f7b24": [
     {
-      "id": "18e5004b0fafa3e5@13",
-      "chunk_id": "18e5004b0fafa3e5",
+      "id": "94d08065a18f7b24@13",
+      "chunk_id": "94d08065a18f7b24",
       "index": 0,
       "start": 13,
       "end": 239,
@@ -331,8 +423,8 @@
       ]
     },
     {
-      "id": "18e5004b0fafa3e5@241",
-      "chunk_id": "18e5004b0fafa3e5",
+      "id": "94d08065a18f7b24@241",
+      "chunk_id": "94d08065a18f7b24",
       "index": 1,
       "start": 241,
       "end": 408,
@@ -357,98 +449,6 @@
           "end": 408,
           "text": "Set respect_retry_after=False to ignore the header.",
           "tokens": 9
-        }
-      ]
-    }
-  ],
-  "28cdc1d58dcbfa9e": [
-    {
-      "id": "28cdc1d58dcbfa9e@13",
-      "chunk_id": "28cdc1d58dcbfa9e",
-      "index": 0,
-      "start": 13,
-      "end": 188,
-      "tokens": 38,
-      "oversized": false,
-      "text": "Every request has a timeout. By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
-      "sentences": [
-        {
-          "start": 13,
-          "end": 41,
-          "text": "Every request has a timeout.",
-          "tokens": 6
-        },
-        {
-          "start": 42,
-          "end": 188,
-          "text": "By default Strand waits 10 seconds for the connection and 30 seconds for the response, i.e. a slow server fails after at most 40 seconds in total.",
-          "tokens": 32
-        }
-      ]
-    },
-    {
-      "id": "28cdc1d58dcbfa9e@189",
-      "chunk_id": "28cdc1d58dcbfa9e",
-      "index": 1,
-      "start": 189,
-      "end": 459,
-      "tokens": 59,
-      "oversized": false,
-      "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60). What happens when the timeout is reached? Strand raises strand.TimeoutError and closes the connection. The error is never retried unless you enable retries (see Retries).",
-      "sentences": [
-        {
-          "start": 189,
-          "end": 273,
-          "text": "Pass a strand.Timeout object to change that, e.g. Timeout(connect=2.5, read=60).",
-          "tokens": 27
-        },
-        {
-          "start": 275,
-          "end": 316,
-          "text": "What happens when the timeout is reached?",
-          "tokens": 8
-        },
-        {
-          "start": 317,
-          "end": 379,
-          "text": "Strand raises strand.TimeoutError and closes the connection.",
-          "tokens": 10
-        },
-        {
-          "start": 380,
-          "end": 459,
-          "text": "The error is never retried unless you enable retries (see Retries).",
-          "tokens": 14
-        }
-      ]
-    },
-    {
-      "id": "28cdc1d58dcbfa9e@786",
-      "chunk_id": "28cdc1d58dcbfa9e",
-      "index": 2,
-      "start": 786,
-      "end": 1094,
-      "tokens": 29,
-      "oversized": false,
-      "text": "Example: A timeout of 0 is not allowed and raises ValueError. Use None to wait forever, which is almost never what you want in production.",
-      "sentences": [
-        {
-          "start": 786,
-          "end": 794,
-          "text": "Example:",
-          "tokens": 2
-        },
-        {
-          "start": 959,
-          "end": 1015,
-          "text": "A timeout of 0 is not allowed and raises ValueError.",
-          "tokens": 11
-        },
-        {
-          "start": 1016,
-          "end": 1094,
-          "text": "Use None to wait forever, which is almost never what you want in production.",
-          "tokens": 16
         }
       ]
     }

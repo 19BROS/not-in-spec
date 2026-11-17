@@ -1,12 +1,11 @@
 [
   {
-    "id": "90542eaab15241c4",
-    "location_id": "9bb311a829d01292",
+    "id": "9bb311a829d01292",
     "section_id": "d1da4261f587e16a",
     "content_hash": "c027619b2d84ac81",
     "source": "client.md",
     "heading_path": [],
-    "breadcrumb": "client.md",
+    "breadcrumb": "acme",
     "heading_level": 0,
     "occurrence": 0,
     "part": 1,
@@ -29,8 +28,7 @@
     ]
   },
   {
-    "id": "567c2d8367a49993",
-    "location_id": "a3ee57887aa64cde",
+    "id": "a3ee57887aa64cde",
     "section_id": "2c309498114a7c8f",
     "content_hash": "980c246c0fefc5c1",
     "source": "client.md",
@@ -38,7 +36,7 @@
       "Client",
       "Connecting"
     ],
-    "breadcrumb": "client.md > Client > Connecting",
+    "breadcrumb": "acme > Client > Connecting",
     "heading_level": 2,
     "occurrence": 0,
     "part": 1,
@@ -88,8 +86,7 @@
     ]
   },
   {
-    "id": "d2e7bc26994f6eb6",
-    "location_id": "56c4d75725cf914f",
+    "id": "56c4d75725cf914f",
     "section_id": "3ee237387be0c7c4",
     "content_hash": "c56878b2c6fd3787",
     "source": "client.md",
@@ -98,7 +95,7 @@
       "Connecting",
       "Parameters"
     ],
-    "breadcrumb": "client.md > Client > Connecting > Parameters",
+    "breadcrumb": "acme > Client > Connecting > Parameters",
     "heading_level": 3,
     "occurrence": 0,
     "part": 1,
@@ -130,8 +127,7 @@
     ]
   },
   {
-    "id": "30c2532da31e018c",
-    "location_id": "38952dd42dcd79ad",
+    "id": "38952dd42dcd79ad",
     "section_id": "4ba987d7d2895659",
     "content_hash": "0ac18f9973518888",
     "source": "client.md",
@@ -140,7 +136,7 @@
       "Connecting",
       "Example"
     ],
-    "breadcrumb": "client.md > Client > Connecting > Example",
+    "breadcrumb": "acme > Client > Connecting > Example",
     "heading_level": 3,
     "occurrence": 0,
     "part": 1,
@@ -181,8 +177,7 @@
     ]
   },
   {
-    "id": "ad8a4f627a5410e6",
-    "location_id": "ea59bb80e6640de4",
+    "id": "ea59bb80e6640de4",
     "section_id": "b69d7346fb25d838",
     "content_hash": "a2f835b0337cbbc2",
     "source": "client.md",
@@ -191,7 +186,7 @@
       "Charges",
       "Example"
     ],
-    "breadcrumb": "client.md > Client > Charges > Example",
+    "breadcrumb": "acme > Client > Charges > Example",
     "heading_level": 3,
     "occurrence": 0,
     "part": 1,
@@ -232,8 +227,7 @@
     ]
   },
   {
-    "id": "ec01bc87d6c0bc04",
-    "location_id": "01ee7636d555eb99",
+    "id": "01ee7636d555eb99",
     "section_id": "b63430cb272fadd4",
     "content_hash": "230a2c84d1c0c372",
     "source": "client.md",
@@ -241,7 +235,7 @@
       "Client",
       "Errors"
     ],
-    "breadcrumb": "client.md > Client > Errors",
+    "breadcrumb": "acme > Client > Errors",
     "heading_level": 2,
     "occurrence": 0,
     "part": 1,

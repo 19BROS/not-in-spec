@@ -34,8 +34,14 @@ def test_chunk_summary(capsys: pytest.CaptureFixture[str]) -> None:
 def test_chunk_list_and_small_limits(capsys: pytest.CaptureFixture[str]) -> None:
     code, out = _run(capsys, "--list", "--soft-limit", "150", "--window-tokens", "60")
     assert code == 0
-    assert "timeouts.md > Timeouts and retries > Migrating from 1.x" in out
+    assert "guide > Timeouts and retries > Migrating from 1.x" in out  # default: root's name
     assert " 1/2 " in out and " 2/2 " in out
+
+
+def test_chunk_project_name(capsys: pytest.CaptureFixture[str]) -> None:
+    code, out = _run(capsys, "--list", "--project", "urllib3")
+    assert code == 0
+    assert "urllib3 > Timeouts and retries > Migrating from 1.x" in out
 
 
 def test_chunk_json(capsys: pytest.CaptureFixture[str]) -> None:

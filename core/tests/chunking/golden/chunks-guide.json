@@ -1,12 +1,11 @@
 [
   {
-    "id": "17e5ed42c9f59c9d",
-    "location_id": "7b49655b614c6453",
+    "id": "7b49655b614c6453",
     "section_id": "385f08d3cc2db068",
     "content_hash": "b0af9062bd5d38bd",
     "source": "timeouts.md",
     "heading_path": [],
-    "breadcrumb": "timeouts.md",
+    "breadcrumb": "guide",
     "heading_level": 0,
     "occurrence": 0,
     "part": 1,
@@ -29,8 +28,7 @@
     ]
   },
   {
-    "id": "28cdc1d58dcbfa9e",
-    "location_id": "2ed9d78e5f35d20c",
+    "id": "2ed9d78e5f35d20c",
     "section_id": "42d4a833ba1ddad1",
     "content_hash": "94a721d66005608e",
     "source": "timeouts.md",
@@ -38,7 +36,7 @@
       "Timeouts and retries",
       "Timeouts"
     ],
-    "breadcrumb": "timeouts.md > Timeouts and retries > Timeouts",
+    "breadcrumb": "guide > Timeouts and retries > Timeouts",
     "heading_level": 2,
     "occurrence": 0,
     "part": 1,
@@ -115,8 +113,7 @@
     ]
   },
   {
-    "id": "0c96c9cac95cdcfb",
-    "location_id": "080c57b7fa11850e",
+    "id": "080c57b7fa11850e",
     "section_id": "3025a3e5adb34589",
     "content_hash": "a7e131b03bd04ad1",
     "source": "timeouts.md",
@@ -124,7 +121,7 @@
       "Timeouts and retries",
       "Retries"
     ],
-    "breadcrumb": "timeouts.md > Timeouts and retries > Retries",
+    "breadcrumb": "guide > Timeouts and retries > Retries",
     "heading_level": 2,
     "occurrence": 0,
     "part": 1,
@@ -183,8 +180,7 @@
     ]
   },
   {
-    "id": "18e5004b0fafa3e5",
-    "location_id": "94d08065a18f7b24",
+    "id": "94d08065a18f7b24",
     "section_id": "3e03966f8ae9a39e",
     "content_hash": "e5ed602070ab6a11",
     "source": "timeouts.md",
@@ -193,7 +189,7 @@
       "Retries",
       "Backoff"
     ],
-    "breadcrumb": "timeouts.md > Timeouts and retries > Retries > Backoff",
+    "breadcrumb": "guide > Timeouts and retries > Retries > Backoff",
     "heading_level": 3,
     "occurrence": 0,
     "part": 1,
@@ -234,8 +230,7 @@
     ]
   },
   {
-    "id": "1343f02fe892f184",
-    "location_id": "767801c96fdac434",
+    "id": "767801c96fdac434",
     "section_id": "df926a6aa248266f",
     "content_hash": "3f9d6669800d5117",
     "source": "timeouts.md",
@@ -243,7 +238,7 @@
       "Timeouts and retries",
       "Migrating from 1.x"
     ],
-    "breadcrumb": "timeouts.md > Timeouts and retries > Migrating from 1.x",
+    "breadcrumb": "guide > Timeouts and retries > Migrating from 1.x",
     "heading_level": 2,
     "occurrence": 0,
     "part": 1,

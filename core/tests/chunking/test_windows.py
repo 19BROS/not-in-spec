@@ -22,12 +22,12 @@ GUIDE = Path(__file__).parent / "fixtures" / "guide"
 
 @pytest.fixture
 def guide() -> dict[str, Chunk]:
-    chunks = chunk_documents(load_documents(GUIDE, ["*.md"]))
+    chunks = chunk_documents(load_documents(GUIDE, ["*.md"]), project="guide")
     return {c.heading_path[-1] if c.heading_path else "": c for c in chunks}
 
 
 def _chunk(text: str) -> Chunk:
-    return chunk_document(Document("docs/a.md", text))[0]
+    return chunk_document(Document("docs/a.md", text), project="acme")[0]
 
 
 def _sentences(text: str) -> list[str]:
