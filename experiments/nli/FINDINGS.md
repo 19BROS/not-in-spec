@@ -293,10 +293,22 @@ One person labelled a blind sample in a local page (`labeling/build.py`, seed `2
 - Afterwards, the 9 claims where the human and the draft disagreed on keep/drop were re-read by the same person, without seeing the draft's label. 6 changed.
 - **The sample is not random.** The 7 disputed claims were picked where large + local or the draft said no, so misses of the local setups are over-represented. Same-section recall below (e.g. 86 vs 90 of 92 for window 400) is not an estimate for all claims. The significant differences are on the cross pairs, where every pair any compared setup kept is labelled.
 - **Round 2 (43):** every cross pair kept by at least one of the compared setups (`labeling/build_cross.py`).
-- **ChatGPT inputs:** `labeling/build.py` also writes per-section prompts (`labeling/chatgpt-instructions.md`) for a third annotator. They have not been run yet; no number here uses them. Their labels would be stored as `annotator=chatgpt`, separate from `annotator=human`.
+- **ChatGPT inputs:** `labeling/build.py` also writes per-section prompts (`labeling/chatgpt-instructions.md`) for a third annotator. One run is in `labels-chatgpt.csv` (`annotator=chatgpt`), with the model's output per prompt in `labels-chatgpt-raw/`. It is only compared below; no table uses it as gold.
 - Files: `labels-human.csv`, `labels-human-cross.csv`. Numbers: `runs/007-block-premise-new-models/posthoc/human_labels.py` → `human_labels.txt`.
 
 **Human vs claude-draft:** keep/drop agreement 98.3% (kappa 0.97). With all three labels the agreement is 92.8% (kappa 0.88); most differences are neutral vs contradiction. 3 keep/drop differences remain: bugfixes n3, bugfixes sonnet-outside b1 and security sonnet-outside o1. The draft-based conclusions above therefore hold.
+
+**ChatGPT as a third annotator (2026-11-17):** Codex (reported as GPT-6; exact model ID and reasoning setting unknown) labelled the same 180 claims from the six prompts.
+
+| pair | keep/drop | kappa | 3 classes | kappa |
+|---|---|---|---|---|
+| human vs chatgpt | 93.9% (11 differ) | 0.88 | 87.8% (22) | 0.80 |
+| claude-draft vs chatgpt | 95.6% (8) | 0.91 | 93.9% (11) | 0.90 |
+| human vs claude-draft | 98.3% (3) | 0.97 | 92.8% (13) | 0.88 |
+
+- **ChatGPT is stricter than the human.** In 8 of the 11 keep/drop differences the human keeps and ChatGPT drops. Three of them are the same claim from three extractors ("Retry respects delays requested by the server when a response includes a `Retry-After` header"). One more drops "up to `backoff_max`", a qualifier the prompt lists.
+- **The two LLMs agree with each other more than with the human.** On the 13 claims where the human and the draft differ, ChatGPT sides with the draft 12 times, including all 3 keep/drop differences above. The prompt calls "a different value" a contradiction, which explains most neutral vs contradiction differences on hand-made negatives. Their mistakes are correlated, so ChatGPT is not an independent check of the draft. The human label stays gold. The 3 claims can go to the human for another look, but no label is changed automatically.
+- **Neither LLM was fully blind.** ChatGPT saw only the prompts (section prose, claim, citation; no extractor, source or model output). But earlier in the same chat it had seen summary results and example claims of this experiment (PR #19), and blindness is its own report. 15 of the 180 claims are quoted in this file with an implied label. ChatGPT goes against that label on 3 of them (retry sonnet c10, backoff haiku c9, the `stream()` `amt` claim). Without those 15, human vs chatgpt agreement on keep/drop is 95.2% (kappa 0.90), so the quoted claims did not inflate it. It also differs from both label files on 10 claims, so it did not copy them. The Claude draft was less blind: it was written with extractor and source visible in `labels.csv` (e.g. `negatives-handmade`). Only `labels-human.csv` is blind.
 
 **Setups on the human labels** (92 should-keep, 88 should-drop; the cross column counts only pairs the human judged *not* supported by the other section):
 
