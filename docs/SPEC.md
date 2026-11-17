@@ -22,7 +22,7 @@ Given software documentation (a Sphinx project, Markdown docs, a formal spec suc
 5. freezes the approved test items as a **golden set**, versioned in the repo;
 6. runs the golden set against several models in **three modes** (no context, retrieved context, gold context);
 7. evaluates answers by code: parses the model's code/request into a normalized **call record** and compares it with the reference; for OpenAPI operations also **sends the request to a Prism mock** generated from the spec;
-8. reports results **per level, model and mode**, failing documentation sections, failure categories, findings and a **recommended fix type**, and how all of it changes over time. **Never a single score.**
+8. reports results **per level, model and mode**, failing documentation sections, failure categories and findings, and how all of it changes over time. It does not recommend fixes: the docs author fixes the docs. **Never a single score.**
 
 It ships as:
 
@@ -53,7 +53,7 @@ The tool is for a team that **owns a software product's documentation** (library
 | Persona | Who | Wants | Meets the tool in | Gets |
 |---|---|---|---|---|
 | **P1 · Maintainer** | developer / maintainer, owns the repo and CI | a change must not make the software harder for LLMs to use; fast, cheap runs | CI status check, PR comment | pass / fail, L3 (L4) drop vs. `main`, new findings in changed sections |
-| **P2 · Docs author** | technical writer, DevRel, developer writing docs | to know **which section to fix and how** | PR comment, HTML report / web UI, golden-set review | worst sections first, findings, sample wrong model answers, **recommended fix type** |
+| **P2 · Docs author** | technical writer, DevRel, developer writing docs | to know **which section fails and why** | PR comment, HTML report / web UI, golden-set review | worst sections first, findings, sample wrong model answers, diagnosis |
 | **P3 · Team lead / product** | tech lead, product owner, platform team | quality over time and before releases; which models the docs are good enough for | nightly / release report, web UI | results per level and model, trend across versions, model comparison |
 
 Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web UI** with results (P2, P3).
@@ -98,7 +98,7 @@ Both entry points are built: the **GitHub Action** (P1, P2 in PRs) and the **web
 |---|---|---|
 | CI status check | P1 | pass / fail + reason |
 | PR comment | P1, P2 | short summary: score change, new findings, links to sections |
-| HTML report / web UI | P2, P3 | worst sections first, symbol profile, sample answers, recommended fixes, trend |
+| HTML report / web UI | P2, P3 | worst sections first, symbol profile, sample answers, diagnosis, trend |
 | JSON results | integrations | machine-readable results and findings |
 | golden set | P2 | files in the repo, reviewable in a PR |
 
@@ -107,7 +107,6 @@ Example PR comment (UC2):
 NOT-IN-SPEC · 3 changed sections · 2 models · 0.18 €
 ✗ L3 docs/client.md > Connecting > connect()   91 % → 64 % (p = 0.01)
   most common error: wrong arguments – timeout given in ms
-  recommendation: state the unit of the timeout parameter
 ✗ new finding K4: example in docs/retry.md uses removed parameter retries
 ✓ L3 docs/orders.md, L4 POST /orders unchanged
 ```
@@ -439,21 +438,23 @@ Every test item × model × mode. **All raw responses are stored.**
 
 **Limits without execution:** L3 cannot check semantics (correct call with a wrongly computed value) or stateful procedures. Conceptual documentation without code or signatures yields only L0–L2.
 
-### 6.11 Diagnosis and recommended fix
+### 6.11 Diagnosis
 
-| Situation (gold context) | Interpretation | Recommended fix (P2) |
-|---|---|---|
-| L3 OK | docs enable usage | – |
-| L3 bad, L1 bad | unclear signature | describe parameters clearly |
-| L3 bad, L1 and L2 OK | missing example or guide ("knows what, not how") | add a usage example |
-| L3 bad, category `deprecated-api` | weights override the context | highlight the change, add a migration example |
-| copy OK, variation bad | docs work only via copy-paste of examples | describe parameters, not only examples |
-| with example OK, leave-one-out bad | symbol relies on a single example | add parameter descriptions |
-| wrong arguments due to a unit | missing unit | state the unit at the parameter |
-| bad without context, OK with gold | model doesn't know it from weights, docs work | – |
-| OK with gold, bad with retrieved | text is good but hard to find | improve headings and structure |
-| K1 / K4 / K7 finding | example does not match signature or spec | fix the example |
-| K5 contradiction | sections contradict each other | unify them |
+The report says what a result pattern means. It does not recommend a fix: findings and failures differ too much for a reliable rule, so the docs author decides how to fix them.
+
+| Situation (gold context) | Interpretation |
+|---|---|
+| L3 OK | docs enable usage |
+| L3 bad, L1 bad | unclear signature |
+| L3 bad, L1 and L2 OK | missing example or guide ("knows what, not how") |
+| L3 bad, category `deprecated-api` | weights override the context |
+| copy OK, variation bad | docs work only via copy-paste of examples |
+| with example OK, leave-one-out bad | symbol relies on a single example |
+| wrong arguments due to a unit | missing unit |
+| bad without context, OK with gold | model doesn't know it from weights, docs work |
+| OK with gold, bad with retrieved | text is good but hard to find |
+| K1 / K4 / K7 finding | example does not match signature or spec |
+| K5 contradiction | sections contradict each other |
 
 ## 7. CI behaviour and repeated runs
 
@@ -577,7 +578,7 @@ Faculty checkpoint dates: **TBD**.
 3. Adapters Python `ast` and curl; cross-checks K1, K4, K7.
 4. L1 and L3 tasks (copy, adaptation, variation), L0 from `Change`, L4 via Prism for OpenAPI.
 5. 2 small models + 1 large model, 3 modes.
-6. Output: JSON results + PR comment (UC2) with findings and recommended fix type; web UI with results.
+6. Output: JSON results + PR comment (UC2) with findings and diagnosis; web UI with results.
 7. Check hypothesis H1 on the OpenAPI part.
 8. CI/CD to the faculty VM, nightly runs of the pilot.
 
@@ -619,6 +620,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] **NLI model:** the default is DeBERTa-v3-large wanli. `MoritzLaurer/deberta-v3-large-zeroshot-v2.0` keeps far fewer claims from other sections (7 vs 23 of 259) and is about equal on the rest, but it has no contradiction label. Should we switch, or add it as a second "belongs to this section" check? Needs a larger human-labelled sample
 - [ ] **NLI thresholds:** argmax for now. A three-zone rule (keep at p ≥ 0.9, drop below 0.05, human review in between) sends ~8 % of claims to review, but it doesn't catch confident errors (9 of 12 wrong claims kept have p ≥ 0.9). Decide whether the review is worth it
 - [ ] A cheap code check that a claim's identifiers, numbers and versions appear in its cited sentence (NLI misses these; see `experiments/nli/FINDINGS.md`, run 006). Also used by the perturbation operator ([§6.7](#67-tasks-and-operators))
+- [ ] Grounding on docstring prose is not measured yet: `experiments/nli` covered only guide and changelog sections, and parameter blocks are short and lean on the breadcrumb. Check once the Sphinx reader exists
 - [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
 - [ ] Models under test (small vs. large) and per-run budget
 - [ ] Attributes of the DB models
