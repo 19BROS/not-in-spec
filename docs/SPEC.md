@@ -167,7 +167,7 @@ These exact terms are used in code, diagrams and text.
 | **Parameter** | `Parameter` | one input of a signature: name, type, required / optional, default |
 | **Constraint** | `Constraint` | rule for a parameter value: enum, range, unit, format |
 | **Return type** | `ReturnType` | what a symbol returns; used by the composition operator |
-| **Change** | `Change` | rename, removal or addition of a symbol or parameter in a version |
+| **Change** | `Change` | addition, deprecation or removal of a symbol or parameter in a version, optionally with its replacement (a rename is a deprecation or removal with a replacement). A deprecated symbol still exists and works. |
 | **Source** | `Source` | where a fact comes from (chunk, source type) and with what confidence; attached to every inventory object |
 | **Inventory** | – | composition of `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change`, `Source` = what exists in the API |
 | **API reference** | – | the part of the docs describing signatures (parameter tables, docstrings, JSDoc); component B |
@@ -235,7 +235,8 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
   | `section` + `title` | `heading` (level = depth) |
   | `desc` | `heading` one level below its parent; title = `desc_name`, `()` added for functions, methods and decorators; any domain and object type |
   | `desc_signature` | `signature`, one per signature |
-  | `paragraph`, `versionmodified`, `footnote`, `citation` | `text` |
+  | `paragraph`, `footnote`, `citation` | `text` |
+  | `versionmodified` (`deprecated`, `versionadded`, `versionchanged`, `versionremoved` directives) | `text`, which also keeps the directive's `type` and `version` as input for `Change` ([§6.3](#63-inventory)). Inside a parameter entry the `field` block keeps them. |
   | `bullet_list`, `enumerated_list`, `definition_list`, `glossary` | `list` (never cut) |
   | `literal_block`, `doctest_block`, `math_block`, `container.literal-block-wrapper` (caption above the code) | `code` (never cut) |
   | `table`, `autosummary_table` | `table` (never cut) |
@@ -296,7 +297,7 @@ A component detector finds **all** components present in each chunk (file extens
 | Component | What | Technique | Output |
 |---|---|---|---|
 | **A · Formal spec** | OpenAPI, GraphQL schema, `.proto`, JSON Schema | spec parser (YAML/JSON, `graphql-core`, protobuf), deterministic. `description` texts go to D. For OpenAPI a Prism mock is also started. | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` (`deprecated`) |
-| **B · API reference** | signatures, parameter tables, docstrings, JSDoc, Sphinx API descriptions (`py:function`, autodoc) | Sphinx `desc` nodes, signature parser (`ast` / tree-sitter) and table parser, deterministic | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType` |
+| **B · API reference** | signatures, parameter tables, docstrings, JSDoc, Sphinx API descriptions (`py:function`, autodoc) | Sphinx `desc` nodes, signature parser (`ast` / tree-sitter) and table parser, deterministic | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`; `Change` from Sphinx version directives ([§6.3](#63-inventory)) |
 | **C · Examples** | code blocks in any language or format | `Example` → language adapter → normalization using the inventory (variable → class, positional argument → `Parameter`). Invalid code is dropped (`Finding`). | `Example`, `CallRecord`; into the inventory only missing `Symbol` and `Parameter` |
 | **D · Prose and changelog** | guides, concepts, changelog, spec `description` | claim extractor (LLM) → grounding (NLI) → K5a, K5b (NLI) | `Claim`; a *change* claim yields a `Change` |
 
@@ -330,11 +331,36 @@ Source  – attached to every object above
 | Written by | Objects | `Source` |
 |---|---|---|
 | A · spec parser | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change` | spec, high confidence |
-| B · signature and table parser | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType` | signature, high confidence |
+| B · signature and table parser | `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`; `Change` from version directives (below) | signature, high confidence |
 | C · example normalization | `Symbol`, `Parameter`, only if not yet in the inventory | example, medium confidence |
 | D · *change* claim | `Change` | changelog, low confidence → review by our team ([§2.5](#25-golden-set-review)) |
 
 - **Merge:** objects of the same symbol from several sources are merged with priority **spec > signature > example > changelog**. A disagreement between sources is a `Finding`.
+
+**`Change`:**
+
+- **Kind = the status of the name** the `Change` is about: `added`, `deprecated` or `removed`. A `deprecated` symbol or parameter still exists and works. For example, `format_header_param()` in urllib3 2.x is deprecated, so the L0 question "does it exist in 2.0?" has the answer yes.
+- **Attributes** (optional): `replacement` (the symbol or parameter to use instead) and `removal_planned` (a version).
+- **A rename is not a kind.** It is a `Change` of the **old name** with the new name as `replacement`:
+  - if the old name keeps working (an alias), the kind is `deprecated`;
+  - otherwise it is `removed`.
+  
+  Code decides between the two, not the extractor: `deprecated` if the old name is still in the inventory of that version, otherwise `removed` (what the docs do not describe does not exist for us, [§1.1](#11-what-we-are-not-building)). "Renamed from A and B" on the new symbol therefore gives one `Change` per old name, keyed by the old name.
+- **Key:** symbol + parameter (if any) + kind + version, where the symbol and parameter are always the old name. The version is taken from the directive, or from the changelog heading it is under (`2.0.0 (2023-04-26)` → `2.0.0`), and compared as a PEP 440 `Version` (`2.0 == 2.0.0`).
+- **Merge:** objects with the same key from several sources merge into one `Change` with several `Source`s. In urllib3 2.0.0, `format_header_param` is mentioned three times: its `deprecated` directive ("Renamed to `format_multipart_header_param()`"), the `versionchanged` on the new name ("Renamed from `format_header_param_html5` and `format_header_param`") and the changelog ("Deprecated … in favor of …"). All three have the key (`format_header_param`, `deprecated`, 2.0.0) and become one `Change`.
+- **Review of a *change* claim** (D, [§2.5](#25-golden-set-review)):
+  - If its key matches a `Change` from a version directive, the **key** needs no review: the directive confirms that the change exists. It does not confirm the attributes the LLM extracted.
+  - `replacement` is accepted without review only if code finds it in the inventory **and** in the claim's citation. Otherwise it goes to review, because it feeds the references of the migration operator ([§6.7](#67-tasks-and-operators)).
+  - Other attributes (`removal_planned`) and claims that match no directive go to review.
+- Under the same key, attributes that disagree are a `Finding`. A real case is urllib3 2.x: its API reference says `RequestField`'s `header_formatter` "will be removed in urllib3 v3.0", while the changelog says "in urllib3 v2.1.0". Both sides are claims: on the class this deprecation is a `versionchanged`, which gives no `Change` by itself (below).
+- **From Sphinx version directives** (component B, deterministic). For `deprecated`, `versionadded` and `versionremoved`, code reads:
+  - the kind (`deprecated` / `added` / `removed`) and the version;
+  - the symbol: the enclosing `desc`;
+  - the parameter: the parameter entry the directive sits in. numpydoc puts it there (e.g. hydra-zen's `builds(frozen=…)`). Otherwise there is no parameter.
+- **What a version directive does not give:**
+  - Anything said only in the directive's text: the replacement or rename target ("Renamed to `format_multipart_header_param()`"), a parameter named only in prose (urllib3's `header_formatter` sits on the class) and the planned removal version. These come only through a *change* claim (D).
+  - **`versionchanged` gives no `Change`.** It is free text about any kind of change: of its three uses in urllib3, one is a deprecation, one a rename and one a change in behaviour. Its text goes to claims (D) like any prose.
+- Verified on the three example libraries: urllib3 has 3 `deprecated` and 3 `versionchanged`, hydra-zen has 6 `deprecated` (5 on parameters), trio has none. The big urllib3 changes (`Retry(method_whitelist=…)` → `allowed_methods`, removed in 2.0) are only in the changelog, so D is needed anyway.
 - **Outside the inventory:** `Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`. The composition graph is built from `ReturnType` and the data flow in call records.
 
 ### 6.4 Prose and changelog → `Claim`
@@ -353,7 +379,7 @@ Source  – attached to every object above
 | neutral | neutral | different claims | keep both |
 | contradiction | – | contradiction | `Finding`, no tasks from these claims |
 
-5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)).
+5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)). If it matches a `Change` from a version directive, only its key skips the review; its attributes are checked as described in [§6.3](#63-inventory).
 
 NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
 
@@ -385,7 +411,7 @@ Decisions are made per symbol, never for the whole documentation:
 | Has a `Signature` with source spec or signature? | L0 · L1 deterministic; adaptation, variation, composition automatic | L0 · L1 only from call records; variation and composition only after review |
 | Has a verified `Example` with a `CallRecord`? | L3: copy, adaptation + leave-one-out | with a signature: L3 from the signature only. With nothing: L3 unavailable → `Finding` |
 | Has a `Claim`? | L2 questions, plus "not in the documentation" questions via perturbation | – |
-| Has a `Change`? | L0 distractors from old names, L3 migration | – |
+| Has a `Change`? | L0 distractors only from names **removed** in or before the version asked about (a deprecated name still exists, so it would be a second correct answer); L3 migration | – |
 | Is it an OpenAPI operation? | **L4 via Prism mock** | L3 by call-record comparison only |
 
 The result is the **symbol profile**, from which test items and references are created.
@@ -470,7 +496,7 @@ Every test item × model × mode. **All raw responses are stored.**
   | `wrong-symbol` | calls a different symbol |
   | `wrong-arguments` | right symbol, wrong arguments |
   | `hallucinated-api` | symbol / parameter not in the inventory |
-  | `deprecated-api` | symbol / parameter is in `Change` (removed or replaced) |
+  | `deprecated-api` | symbol / parameter is removed or deprecated per `Change`. The result records which kind. Whether a deprecated one (which still works) can fail the CI gate is open ([§18](#18-open-items)). |
   | `api-bypass` | reaches the goal without the documented API |
   | `invalid-format` | answer cannot be parsed |
 
@@ -625,6 +651,12 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI premises).
 - **Sphinx reader golden test:** a small fixture project of our own with reST `:param:`, Google and NumPy docstrings, built three ways (napoleon, numpydoc, neither) with Sphinx 9 → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus tests that XML with external entities and a missing or non-9.x `build-env.txt` are rejected, and that a copy built in another checkout folder hashes the same.
 - **Real Sphinx examples:** the built XML of three libraries is committed in `core/examples/sphinx/` (urllib3: reST fields; trio: Google via napoleon; hydra-zen: numpydoc). An end-to-end test runs the CLI on each: exit 0, `ingestion.json` byte-identical across two runs, no `unknown node` warning, `report.html` written.
+- **`Change` from version directives:** hydra-zen's `builds(frozen=…)` gives a parameter-level `deprecated`; a `versionchanged` gives no `Change`.
+- **`Change` merging** (claims from the fake extractor):
+  - urllib3's `format_header_param` from its directive, the "Renamed from …" claim on `format_multipart_header_param` and the changelog claim merge into one `Change` with `replacement`;
+  - a `replacement` that is not in the inventory or not in the citation goes to review;
+  - `header_formatter` (removal in v3.0 vs. v2.1.0, both claims) gives a `Finding`;
+  - L0 never uses a deprecated name as a distractor.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec uploaded through the API → worker → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - **Auth:** OIDC checks are tested with tokens signed by a test key and a fake JWKS: wrong `aud`, expired, unknown `repository_id`, a private repo, a forbidden event (`pull_request_target`, `workflow_run`), a foreign `workflow_ref` path, a `push` from another branch, and a replayed (`run_id`, `run_attempt`). CI never talks to GitHub's OIDC.
@@ -652,7 +684,7 @@ Candidate data: [NovelAPIBench](https://arxiv.org/html/2606.03657), [CodeUpdateA
 > conn = client.connect(timeout=10, retry_policy=RetryPolicy(max_attempts=3))
 > ```
 
-- **L0:** "Which parameter of `connect()` exists in 2.0? a) `retries` b) `retry_policy` c) `max_retry` d) `backoff`" (`retries` comes from `Change`).
+- **L0:** "Which parameter of `connect()` exists in 2.0? a) `retries` b) `retry_policy` c) `max_retry` d) `backoff`" (`retries` comes from `Change`: `removed` in 2.0 with `replacement` `retry_policy`, so it is a valid distractor).
 - **L1:** "List the optional parameters of `connect()` and their defaults."
 - **L2:** "In what unit is `timeout`?" (from the claim "timeout is in seconds").
 - **L2 (not in the documentation):** "What is the default of `retry_policy`?" (perturbation of the claim "`timeout` defaults to 30": `timeout` → `retry_policy`, another parameter of `connect()`; no chunk states its default). Expected answer: the documentation doesn't say.
@@ -665,7 +697,9 @@ Faculty checkpoint dates: **TBD**.
 
 ### 16.1 MVP
 
-1. One OpenAPI spec with guides + one Python library with **Sphinx-based documentation**, examples and a changelog (pilot).
+**Order: Sphinx first.** Everything for the Python library is built first, on **urllib3**, then extended to trio (Google via napoleon) and hydra-zen (numpydoc) if that is not time-consuming. The OpenAPI parts come after the Sphinx part works: OpenAPI pilot, curl adapter, K7, L4 via Prism and H1.
+
+1. One OpenAPI spec with guides + one Python library with **Sphinx-based documentation**, examples and a changelog (pilot: urllib3, see [§18](#18-open-items)).
 2. Sphinx and Markdown readers, section chunking, component detector, inventory (`Symbol`, `Signature`, `Parameter`, `Constraint`, `Change`, `Source`), `Example` and `CallRecord`.
 3. Adapters Python `ast` and curl; cross-checks K1, K4, K7.
 4. L1 and L3 tasks (copy, adaptation, variation), L0 from `Change`, L4 via Prism for OpenAPI.
@@ -710,7 +744,8 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 
 - [ ] Faculty API key: provider, endpoint, available models, rate limits, budget (in the MVP it is used only on our VM)
 - [ ] Faculty checkpoint dates
-- [ ] Pilot documentation: which OpenAPI and which Python library (must have Sphinx-based docs). *Recommended library:* **urllib3 v2**: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Alternatives: marshmallow v4, attrs, click. Verify the docs are still built with Sphinx before committing to it
+- [x] Pilot Python library: **urllib3 v2**, first; trio and hydra-zen after it if that is not time-consuming ([§16.1](#161-mvp)). Reasons: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Its docs are built with Sphinx 9.1 and stored in `core/examples/sphinx/urllib3/`
+- [ ] Pilot OpenAPI spec (after the Sphinx part, [§16.1](#161-mvp))
 - [x] Sphinx build environment for the pilot: built for urllib3, trio and hydra-zen with each release's pinned docs dependencies (Sphinx 9.1), in a container without secrets, stored with `build-env.txt` in `core/examples/sphinx/` (see its README). `build-env.txt` stays plain text; its first line is `sphinx-build 9.x.y` ([§2.3](#23-what-the-tool-needs-from-the-user))
 - [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), so grounding on the text around the citation can drop good claims. Measured in `experiments/nli`: with the breadcrumb, the NLI premise keeps 86 of 92 correct claims in a human-labelled sample. A 400-token window keeps 90, but nearly twice as many wrong ones. Check again on the pilot docs
 - [ ] Soft limit for oversized sections
@@ -723,7 +758,8 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Attributes of the DB models
 - [ ] Golden-set review: which items are auto-approved, how much our team can review for the pilot in UC1, and whether and how docs owners review later (GitHub accounts, [§2.5](#25-golden-set-review))
 - [ ] Project limits: allowed models, budget per run / per month, upload size
-- [ ] Where the DB models live in code: in `core` (all logic) with an optional extra so the CLI does not need SQLAlchemy, or a separate workspace package
+- [x] Where the DB models live in code: in `core` as `notinspec.db`, installed with the extra `notinspec[db]` (API and worker), so the CLI does not need SQLAlchemy. Logic around the DB (item reuse by identity key, baselines, superseded items) is logic too, so it stays in `core`. Pipeline code never imports `notinspec.db`: it works on dataclasses, and only `db` maps them to tables. A separate workspace package was rejected: one more package, and logic would drift into it
+- [ ] `deprecated-api` for a **deprecated** symbol or parameter (it still works, but the docs say to use the new one): may it fail the CI gate, or only warn ([§6.10](#610-evaluation))?
 - [ ] Backup of the uploaded-inputs volume (today `pg_dump` only)
 - [ ] Action when our service is down or the run times out: fail the check or skip it
 - [ ] Export format of the golden set and results for the published dataset
