@@ -50,3 +50,10 @@ def urllib3_chunks(tmp_path_factory: pytest.TempPathFactory) -> list[Chunk]:
     ingestion = ingest(config, output=tmp_path_factory.mktemp("urllib3"))
     by_id = {c.id: c for c in ingestion.chunks}
     return [by_id[i] for i in URLLIB3_CHUNKS]
+
+
+# real NLI scores (notinspec.nli.TransformersNli, pinned revision) of every premise / claim pair
+# the pipeline builds from the two recordings above: `guide` through `claims run --record-nli`,
+# the urllib3 chunks through run_claims. Re-record after changing the extractor recordings or
+# any grounding rule that changes a premise.
+NLI_RECORDING = FIXTURES / "nli-claims.json"

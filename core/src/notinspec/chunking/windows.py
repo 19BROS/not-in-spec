@@ -1,8 +1,10 @@
-"""NLI windows: short prose-only excerpts of a chunk (SPEC §6.1).
+"""NLI windows (recall windows, SPEC §4): short prose-only excerpts of a chunk.
 
-Provisional: #10 proposes a shorter NLI premise (the cited sentence ±1 within its prose block)
-instead of windows. The prose sentences and the citation check below are needed either way.
-Picking the premise for a claim is grounding (role 4), so it is not in this module.
+Grounding a claim does not use windows: its NLI premise is the cited sentence ±1 within its
+prose block (#10, `notinspec.grounding.nli_premise`), which keeps fewer wrong claims. Windows
+are for checks where a missed entailment is the worse error, like the perturbation operator's
+unsupported check (SPEC §6.7). The prose sentences below are shared by both, so a grounded claim
+records `WINDOWS_VERSION` too.
 
 The NLI model accepts only a few hundred tokens, so it never sees a whole section. A window is:
 
@@ -16,8 +18,8 @@ The NLI model accepts only a few hundred tokens, so it never sees a whole sectio
 
 Windows are computed from the chunk alone, so they need no storage: `id` is the chunk ID plus
 the window's character offset in `chunk.text`. They still depend on the sentence splitter and
-the token counter, so a `Claim` should record `WINDOWS_VERSION` and its window IDs; bump the
-version when boundaries can change for the same chunk.
+the token counter, so a decision made on a window records `WINDOWS_VERSION` and the window ID;
+bump the version when sentence or window boundaries can change for the same chunk.
 
 Window text is the prose with light Markdown cleanup (list and quote markers, link targets,
 `**` and backticks removed), so the NLI model reads sentences, not markup. Offsets (`start`,

@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import tempfile
 from collections import Counter
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,13 @@ from typing import Any
 from notinspec import __version__
 from notinspec.adapters.canonical import canonical_json
 from notinspec.chunking import Chunk
+from notinspec.claims import (
+    STATUSES,
+    ClaimsRun,
+    ExtractionFailure,
+    ExtractionResult,
+    GroundedClaim,
+)
 from notinspec.ingestion import Ingestion
 from notinspec.inventory import Source, Symbol
 
@@ -340,3 +348,141 @@ def _git_head(root: Path) -> str:
         ).stdout.strip()
     except (OSError, subprocess.SubprocessError):
         return "0" * 40
+
+
+def claim_counts(claims: Sequence[GroundedClaim]) -> dict[str, dict[str, int]]:
+    """Claims per extractor and status, every status listed (zeros too), in STATUSES order."""
+    counts: dict[str, dict[str, int]] = {}
+    for claim in claims:
+        row = counts.setdefault(claim.claim.extractor, dict.fromkeys(STATUSES, 0))
+        row[claim.status] += 1
+    return counts
+
+
+_CLAIMS_NOTE = (
+    "Claims extracted by LLMs and grounded by code and a local NLI model (SPEC §6.4). "
+    "Dropped claims are listed with their reason. No L0-L4 scores."
+)
+_CLAIM_STYLE = (
+    ".kept{color:var(--ok);font-weight:600}.dropped{color:var(--muted)}"
+    "td.claim{min-width:16rem}td.num{text-align:right;white-space:nowrap}"
+    ":root{--ok:#1a7f37}@media (prefers-color-scheme:dark){:root{--ok:#3fb950}}"
+)
+
+
+def render_claims(ingestion: Ingestion, chunks: Sequence[Chunk], run: ClaimsRun) -> str:
+    """claims.html: every claim of a `claims run` with its status, by document and chunk.
+
+    Plain HTML like report.html: no scripts, every input-derived string escaped.
+    """
+    by_chunk: dict[str, list[GroundedClaim]] = {}
+    for claim in run.claims:
+        by_chunk.setdefault(claim.claim.chunk_id, []).append(claim)
+    failures: dict[str, list[ExtractionFailure]] = {}
+    for result in run.results:
+        for failure in result.failures:
+            failures.setdefault(failure.chunk_id, []).append(failure)
+    documents: dict[str, list[Chunk]] = {}
+    for chunk in chunks:
+        if chunk.id in by_chunk or chunk.id in failures:
+            documents.setdefault(chunk.source, []).append(chunk)
+
+    counts = claim_counts(run.claims)
+    versions = run.versions
+    head = "".join(f"<th>{_e(s)}" for s in STATUSES)
+    out = [
+        "<!doctype html><html lang=en><meta charset=utf-8>",
+        "<meta name=viewport content='width=device-width,initial-scale=1'>",
+        f"<title>{_e(ingestion.project)} · NOT-IN-SPEC claims</title>",
+        f"<style>{_STYLE}{_CLAIM_STYLE}</style>",
+        f"<h1>{_e(ingestion.project)}: claims</h1>",
+        f"<aside>{_CLAIMS_NOTE}</aside>",
+        "<table>",
+        f"<tr><th>input hash<td><code>{_e(ingestion.input_hash)}</code>",
+        f"<tr><th>chunks<td>{len(chunks)}",
+        *(_extractor_row(r) for r in run.results),
+        f"<tr><th>NLI<td><code>{_e(versions.nli_model)}</code> @ "
+        f"<code>{_e(versions.nli_revision[:12])}</code>, {_e(versions.decision_rule)}",
+        f"<tr><th>grounding<td>v{versions.grounding}, premise {_e(versions.premise_rule)}, "
+        f"sentences v{versions.windows}, chunker v{versions.chunker}",
+        "</table>",
+        "<p>Full data: <a href=claims.json>claims.json</a>.</p>",
+        f"<h2>Status</h2><table><tr><th>extractor{head}<th>total",
+        *(
+            f"<tr><td><code>{_e(name)}</code>"
+            + "".join(f"<td class=num>{n}" for n in row.values())
+            + f"<td class=num>{sum(row.values())}"
+            for name, row in counts.items()
+        ),
+        "</table>",
+        "<h2>Documents</h2><ol>",
+        *(
+            f"<li><a href='#d{n}'>{_e(source)}</a> <span class=meta>{len(items)} chunks</span>"
+            for n, (source, items) in enumerate(documents.items(), 1)
+        ),
+        "</ol>" if documents else "</ol><p>No claims.</p>",
+    ]
+    for n, (source, items) in enumerate(documents.items(), 1):
+        out.append(f"<h2 id=d{n}>{_e(source)}</h2>")
+        out.extend(_claims_chunk(c, by_chunk.get(c.id, []), failures.get(c.id, [])) for c in items)
+    out.append("</html>\n")
+    return "\n".join(out)
+
+
+def _extractor_row(result: ExtractionResult) -> str:
+    spec = result.extractor
+    settings = [f"prompt v{spec.prompt_version}"]
+    if spec.max_tokens is not None:
+        settings.append(f"max tokens {spec.max_tokens}")
+    if spec.reasoning_effort is not None:
+        settings.append(f"effort {_e(spec.reasoning_effort)}")
+    stopped = f", stopped: {result.stopped}" if result.stopped else ""
+    return (
+        f"<tr><th>extractor<td><code>{_e(spec.model)}</code> ({', '.join(settings)}): "
+        f"{result.asked} chunks asked, {result.reused} reused, {len(result.failures)} failed"
+        f"{stopped}"
+    )
+
+
+def _claims_chunk(
+    chunk: Chunk, claims: list[GroundedClaim], failures: list[ExtractionFailure]
+) -> str:
+    kept = sum(c.status == "kept" for c in claims)
+    rows = "".join(_claim_row(c) for c in claims)
+    failed = "".join(
+        f"<li>{_e(f.extractor)}: {_e(f.cause)} <span class=meta>{_e(f.detail)}</span>"
+        for f in failures
+    )
+    return (
+        f"<details class=chunk id='c-{_e(chunk.id)}'><summary>{_e(chunk.breadcrumb)} "
+        f"<span class=meta>{kept} of {len(claims)} kept"
+        + (f" · {len(failures)} failed" if failures else "")
+        + "</span></summary>"
+        + (f"<ul>{failed}</ul>" if failed else "")
+        + (
+            "<table><tr><th>extractor<th>status<th>claim<th>citation<th>premise"
+            f"<th>e / n / c<th>missing{rows}</table>"
+            if claims
+            else ""
+        )
+        + f"<details><summary class=meta>chunk text</summary><pre>{_e(chunk.text)}</pre>"
+        "</details></details>"
+    )
+
+
+def _claim_row(claim: GroundedClaim) -> str:
+    scores = ""
+    if claim.nli is not None:
+        s = claim.nli
+        scores = f"{s.entailment:.2f} / {s.neutral:.2f} / {s.contradiction:.2f}"
+        scores += " <span class=over>cut</span>" if s.truncated else ""
+    status = _e(claim.status)
+    if claim.citation_matches > 1:
+        status += f" <span class=meta>({claim.citation_matches} matches)</span>"
+    css = "kept" if claim.status == "kept" else "dropped"
+    return (
+        f"<tr><td class=meta>{_e(claim.claim.extractor)}<td class={css}>{status}"
+        f"<td class=claim>{_e(claim.claim.text)}<td>{_e(claim.claim.citation)}"
+        f"<td class=meta>{_e(claim.premise or '')}<td class=num>{scores}"
+        f"<td>{_e(', '.join(claim.missing))}"
+    )

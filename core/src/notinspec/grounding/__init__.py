@@ -19,7 +19,7 @@ from notinspec.grounding.premise import PREMISE_RULE, Premise, nli_premise
 
 # bump when any result can change for the same input (normalization, premise, identifier rules).
 # Results also depend on chunking's sentence splitter (`prose_sentences`), so a claim stores
-# WINDOWS_VERSION and CHUNKER_VERSION next to this one (part D).
+# WINDOWS_VERSION and CHUNKER_VERSION next to this one (`notinspec.claims.GroundingVersions`).
 GROUNDING_VERSION = 1
 
 __all__ = [

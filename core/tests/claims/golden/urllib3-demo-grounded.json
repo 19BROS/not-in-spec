@@ -1,0 +1,1288 @@
+[
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c1",
+      "text": "The sleep() method of urllib3's Retry class sleeps between retry attempts.",
+      "citation": "Sleep between retry attempts.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "01b7913a0fc7b1a3df0077b88e5c9a59742997e89c3f7bd6758b5acd7ada2da4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      37,
+      66
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): Sleep between retry attempts.",
+    "premise_span": [
+      37,
+      66
+    ],
+    "nli": {
+      "entailment": 0.9981932044029236,
+      "neutral": 0.0016297929687425494,
+      "contradiction": 0.00017702433979138732,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c2",
+      "text": "The sleep() method of urllib3's Retry class respects a server's Retry-After response header and sleeps for the duration of the time requested.",
+      "citation": "This method will respect a server's `Retry-After` response header and sleep the duration of the time requested.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "01b7913a0fc7b1a3df0077b88e5c9a59742997e89c3f7bd6758b5acd7ada2da4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      68,
+      179
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff.",
+    "premise_span": [
+      68,
+      239
+    ],
+    "nli": {
+      "entailment": 0.9991583824157715,
+      "neutral": 0.0006486773490905762,
+      "contradiction": 0.00019298440020065755,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c3",
+      "text": "If the Retry-After response header is not present, the sleep() method of urllib3's Retry class uses an exponential backoff.",
+      "citation": "If that is not present, it will use an exponential backoff.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "01b7913a0fc7b1a3df0077b88e5c9a59742997e89c3f7bd6758b5acd7ada2da4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      180,
+      239
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "premise_span": [
+      68,
+      316
+    ],
+    "nli": {
+      "entailment": 0.9996415376663208,
+      "neutral": 0.00019043416250497103,
+      "contradiction": 0.00016800258890725672,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c4",
+      "text": "By default, the backoff factor for the sleep() method of urllib3's Retry class is 0.",
+      "citation": "By default, the backoff factor is 0 and this method will return immediately.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "01b7913a0fc7b1a3df0077b88e5c9a59742997e89c3f7bd6758b5acd7ada2da4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      240,
+      316
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "premise_span": [
+      180,
+      316
+    ],
+    "nli": {
+      "entailment": 0.9991288781166077,
+      "neutral": 0.0006483094184659421,
+      "contradiction": 0.00022279219410847872,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c5",
+      "text": "By default, the sleep() method of urllib3's Retry class returns immediately.",
+      "citation": "By default, the backoff factor is 0 and this method will return immediately.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "01b7913a0fc7b1a3df0077b88e5c9a59742997e89c3f7bd6758b5acd7ada2da4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      240,
+      316
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "premise_span": [
+      180,
+      316
+    ],
+    "nli": {
+      "entailment": 0.9991133809089661,
+      "neutral": 0.0006654827739112079,
+      "contradiction": 0.00022118362539913505,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c1",
+      "text": "The read_timeout property of urllib3's Timeout class returns the value for the read timeout.",
+      "citation": "Get the value for the read timeout.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "f4bd30e30b8cb819f2cb9a75170388e33faa3febcea680b63d7ef71bd8dfeee4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      57,
+      92
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "premise_span": [
+      57,
+      92
+    ],
+    "nli": {
+      "entailment": 0.9966799020767212,
+      "neutral": 0.00309809111058712,
+      "contradiction": 0.0002221149334218353,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c2",
+      "text": "The read_timeout property of urllib3's Timeout class assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "citation": "This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "f4bd30e30b8cb819f2cb9a75170388e33faa3febcea680b63d7ef71bd8dfeee4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      199
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "premise_span": [
+      94,
+      199
+    ],
+    "nli": {
+      "entailment": 0.991392970085144,
+      "neutral": 0.008214582689106464,
+      "contradiction": 0.0003924615157302469,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c3",
+      "text": "If the total attribute of urllib3's Timeout object is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "citation": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "f4bd30e30b8cb819f2cb9a75170388e33faa3febcea680b63d7ef71bd8dfeee4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      304
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9966824650764465,
+      "neutral": 0.002784072421491146,
+      "contradiction": 0.0005334551096893847,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c4",
+      "text": "If the connection time has not been established, urllib3's read_timeout property raises a TimeoutStateError.",
+      "citation": "If the connection time has not been established, a `TimeoutStateError` will be raised.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "f4bd30e30b8cb819f2cb9a75170388e33faa3febcea680b63d7ef71bd8dfeee4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      305,
+      391
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.990251898765564,
+      "neutral": 0.008687828667461872,
+      "contradiction": 0.0010603242553770542,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c5",
+      "text": "urllib3's read_timeout property raises a TimeoutStateError if start_connect() has not yet been called on the object.",
+      "citation": "If `start_connect()` has not yet been called on this object.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "f4bd30e30b8cb819f2cb9a75170388e33faa3febcea680b63d7ef71bd8dfeee4",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      536,
+      596
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "premise_span": [
+      493,
+      596
+    ],
+    "nli": {
+      "entailment": 0.9925530552864075,
+      "neutral": 0.007146654184907675,
+      "contradiction": 0.0003003161691594869,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c1",
+      "text": "urllib3 timeouts control how long requests are allowed to run before being aborted.",
+      "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      19,
+      120
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.998534083366394,
+      "neutral": 0.0009776171064004302,
+      "contradiction": 0.0004882480716332793,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c2",
+      "text": "urllib3 timeouts are measured in seconds.",
+      "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      19,
+      120
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9949055910110474,
+      "neutral": 0.0038747258950024843,
+      "contradiction": 0.0012196435127407312,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c3",
+      "text": "In simple cases, a timeout can be specified as a float to urllib3.request().",
+      "citation": "In simple cases, you can specify a timeout as a `float` to `request()`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      121,
+      191
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.998316764831543,
+      "neutral": 0.001462386455386877,
+      "contradiction": 0.00022084965894464403,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c4",
+      "text": "A urllib3.Timeout instance allows specifying separate connect and read timeouts.",
+      "citation": "For more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      559,
+      675
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:",
+    "premise_span": [
+      559,
+      676
+    ],
+    "nli": {
+      "entailment": 0.9981474876403809,
+      "neutral": 0.0015872892690822482,
+      "contradiction": 0.0002652674447745085,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c5",
+      "text": "A timeout can be specified at the urllib3.PoolManager level to apply to all requests.",
+      "citation": "If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1035,
+      1149
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: If you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:",
+    "premise_span": [
+      1035,
+      1150
+    ],
+    "nli": {
+      "entailment": 0.9963823556900024,
+      "neutral": 0.003406653879210353,
+      "contradiction": 0.00021099789591971785,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "qwen/qwen3.8-27b",
+      "local_id": "c6",
+      "text": "Specifying a timeout to urllib3.request() overrides the pool-level timeout.",
+      "citation": "You still override this pool-level timeout by specifying `timeout` to `request()`.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6bc7979c0c9cf1ed7616a59d528023bdbb644fadfd8371578e5bcde969290137",
+      "model": "qwen/qwen3.8-27b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1305,
+      1387
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: You still override this pool-level timeout by specifying timeout to request().",
+    "premise_span": [
+      1305,
+      1387
+    ],
+    "nli": {
+      "entailment": 0.9987486600875854,
+      "neutral": 0.0011197786079719663,
+      "contradiction": 0.0001315253903158009,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c1",
+      "text": "The sleep() method sleeps between retry attempts.",
+      "citation": "Sleep between retry attempts.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      37,
+      66
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): Sleep between retry attempts.",
+    "premise_span": [
+      37,
+      66
+    ],
+    "nli": {
+      "entailment": 0.9971832633018494,
+      "neutral": 0.0024459678679704666,
+      "contradiction": 0.0003707731084432453,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c2",
+      "text": "The sleep() method respects a server’s `Retry-After` response header and sleeps the duration of the time requested.",
+      "citation": "This method will respect a server’s `Retry-After` response header and sleep the duration of the time requested.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      68,
+      179
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff.",
+    "premise_span": [
+      68,
+      239
+    ],
+    "nli": {
+      "entailment": 0.9978415966033936,
+      "neutral": 0.0016392628895118833,
+      "contradiction": 0.000519162742421031,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c3",
+      "text": "If a `Retry-After` header is not present, the sleep() method uses an exponential backoff.",
+      "citation": "If that is not present, it will use an exponential backoff.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      180,
+      239
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "premise_span": [
+      68,
+      316
+    ],
+    "nli": {
+      "entailment": 0.9994891881942749,
+      "neutral": 0.0002958503318950534,
+      "contradiction": 0.0002149083447875455,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c4",
+      "text": "By default, the backoff factor for sleep() is 0 and the method returns immediately.",
+      "citation": "By default, the backoff factor is 0 and this method will return immediately.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      240,
+      316
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "premise_span": [
+      180,
+      316
+    ],
+    "nli": {
+      "entailment": 0.9985976815223694,
+      "neutral": 0.0011325768427923322,
+      "contradiction": 0.00026971675106324255,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c5",
+      "text": "The sleep() method accepts a parameter named response of type BaseHTTPResponse or None.",
+      "citation": "- `response` (BaseHTTPResponse | None)",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      337,
+      373
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Retry > sleep() > response: response (BaseHTTPResponse | None)",
+    "premise_span": [
+      335,
+      373
+    ],
+    "nli": {
+      "entailment": 0.993355393409729,
+      "neutral": 0.006139611359685659,
+      "contradiction": 0.0005050296313129365,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "567cff0c95e2e342",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c6",
+      "text": "The return type of the sleep() method is None.",
+      "citation": "Return type: `None`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "860291a80548661b53bdd941036d597ad0ecd4edca30f08fad8061cd8bebf707",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      375,
+      394
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c1",
+      "text": "The read_timeout property returns a float or None.",
+      "citation": "`property read_timeout: float | None`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      18,
+      55
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c2",
+      "text": "Get the value for the read timeout.",
+      "citation": "Get the value for the read timeout.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      57,
+      92
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "premise_span": [
+      57,
+      92
+    ],
+    "nli": {
+      "entailment": 0.998362123966217,
+      "neutral": 0.0012488942593336105,
+      "contradiction": 0.0003889335202984512,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c3",
+      "text": "This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "citation": "This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      199
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "premise_span": [
+      94,
+      199
+    ],
+    "nli": {
+      "entailment": 0.9975073933601379,
+      "neutral": 0.0021736144553869963,
+      "contradiction": 0.00031903828494250774,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c4",
+      "text": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "citation": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      304
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9970472455024719,
+      "neutral": 0.0020086353179067373,
+      "contradiction": 0.0009440500871278346,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c5",
+      "text": "If the connection time has not been established, a TimeoutStateError will be raised.",
+      "citation": "If the connection time has not been established, a `TimeoutStateError` will be raised.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      305,
+      391
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9975945353507996,
+      "neutral": 0.001593042747117579,
+      "contradiction": 0.0008124172454699874,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c6",
+      "text": "Returns: Value to use for the read timeout.",
+      "citation": "Value to use for the read timeout.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      409,
+      443
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Value to use for the read timeout.",
+    "premise_span": [
+      407,
+      443
+    ],
+    "nli": {
+      "entailment": 0.9014191031455994,
+      "neutral": 0.07750049233436584,
+      "contradiction": 0.021080419421195984,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c7",
+      "text": "Return type: int, float or None.",
+      "citation": "Return type: `int, float or None`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      445,
+      478
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c8",
+      "text": "Raises: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+      "citation": "`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "6f6b8e200b3fef8beb2681f15c436fd6afcc887a92745863093a64bb1d27ad4c",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      495,
+      596
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "premise_span": [
+      493,
+      596
+    ],
+    "nli": {
+      "entailment": 0.9951820969581604,
+      "neutral": 0.003982765134423971,
+      "contradiction": 0.0008350519347004592,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c1",
+      "text": "Timeouts allow you to control how long requests are allowed to run before being aborted.",
+      "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      19,
+      120
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9978635907173157,
+      "neutral": 0.0014255833812057972,
+      "contradiction": 0.0007108217687346041,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c2",
+      "text": "You can specify a timeout as a float to request().",
+      "citation": "you can specify a timeout as a `float` to `request()`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      138,
+      191
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9976855516433716,
+      "neutral": 0.0019122632220387459,
+      "contradiction": 0.0004021882195957005,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c3",
+      "text": "The timeout value is in seconds.",
+      "citation": "(in seconds)",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      58,
+      70
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "premise_span": [
+      19,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9738896489143372,
+      "neutral": 0.020693445578217506,
+      "contradiction": 0.00541692553088069,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c4",
+      "text": "If the request takes longer than the timeout, a MaxRetryError caused by ReadTimeoutError is raised.",
+      "citation": "MaxRetryError caused by ReadTimeoutError",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      513,
+      553
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c5",
+      "text": "A Timeout instance lets you specify separate connect and read timeouts.",
+      "citation": "you can use a `Timeout` instance which lets you specify separate connect and read timeouts",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      585,
+      675
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:",
+    "premise_span": [
+      559,
+      676
+    ],
+    "nli": {
+      "entailment": 0.9988082647323608,
+      "neutral": 0.0008610539953224361,
+      "contradiction": 0.0003306095313746482,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c6",
+      "text": "Specifying timeout=urllib3.Timeout(connect=1.0) sets the connect timeout to 1.0 seconds.",
+      "citation": "timeout=urllib3.Timeout(connect=1.0)",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      778,
+      814
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c7",
+      "text": "Specifying timeout=urllib3.Timeout(connect=1.0, read=2.0) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.",
+      "citation": "timeout=urllib3.Timeout(connect=1.0, read=2.0)",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      938,
+      984
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c8",
+      "text": "You can specify a timeout at the PoolManager level to apply to all requests.",
+      "citation": "you can specify the timeout at the `PoolManager` level",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1095,
+      1149
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: If you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:",
+    "premise_span": [
+      1035,
+      1150
+    ],
+    "nli": {
+      "entailment": 0.9981966614723206,
+      "neutral": 0.0016390440287068486,
+      "contradiction": 0.0001643130526645109,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c9",
+      "text": "PoolManager(timeout=3.0) sets the default timeout to 3.0 seconds.",
+      "citation": "http = urllib3.PoolManager(timeout=3.0)",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      1178,
+      1217
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c10",
+      "text": "PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0)) sets the connect timeout to 1.0 seconds and the read timeout to 2.0 seconds.",
+      "citation": "http = urllib3.PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0))",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "citation_not_found",
+    "citation_span": null,
+    "citation_matches": 0,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "00fb7285ec99b133",
+      "extractor": "openai/gpt-oss-20b",
+      "local_id": "c11",
+      "text": "Specifying timeout to request() overrides the pool-level timeout.",
+      "citation": "You still override this pool-level timeout by specifying `timeout` to `request()`",
+      "type": "fact",
+      "run_id": "r",
+      "prompt_hash": "9c79ae2005dfcd86ec2bfd94f14a51ccd4e667a10ad8e012297a3953545835de",
+      "model": "openai/gpt-oss-20b"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1305,
+      1386
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Using Timeouts: You still override this pool-level timeout by specifying timeout to request().",
+    "premise_span": [
+      1305,
+      1387
+    ],
+    "nli": {
+      "entailment": 0.9986504912376404,
+      "neutral": 0.0011967598693445325,
+      "contradiction": 0.0001526940759504214,
+      "truncated": false
+    },
+    "missing": []
+  }
+]

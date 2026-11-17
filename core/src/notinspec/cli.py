@@ -4,9 +4,10 @@ import json
 import statistics
 import sys
 import uuid
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 
 from notinspec import __version__
 from notinspec.adapters.canonical import canonical_json
@@ -20,14 +21,17 @@ from notinspec.chunking import (
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
     PROMPT_VERSION,
+    ExtractionResult,
     JsonlCallLog,
     JsonlClaimStore,
     extract_claims,
     extractor_for,
+    run_claims,
 )
 from notinspec.config import load_config
 from notinspec.ingestion import ingest, plan_ingestion
-from notinspec.report import build_results, write_artifacts
+from notinspec.nli import NliModel, RecordingNli, TransformersNli
+from notinspec.report import build_results, claim_counts, render_claims, write_artifacts
 from notinspec.runner import (
     GROQ,
     PROVIDERS,
@@ -47,6 +51,8 @@ from notinspec.verify import ANSWER_SCHEMA, parse_answer
 
 # bump when the shape of extracted-claims.json changes
 CLAIMS_SCHEMA_VERSION = 1
+# bump when the shape of claims.json (grounded claims) changes
+GROUNDED_SCHEMA_VERSION = 1
 
 # ad-hoc instruction for trying a model by hand; real prompts come from the generator's templates
 _ASK_SYSTEM = (
@@ -122,33 +128,18 @@ def main(argv: list[str] | None = None) -> int:
         "llm-calls.jsonl; claims of unchanged chunks are reused from claims-store.jsonl in the "
         "output folder.",
     )
-    extract.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
-    extract.add_argument("--out", type=Path, default=Path("notinspec-out"))
-    extract.add_argument(
-        "--source",
-        action="append",
-        help="only chunks whose source (Sphinx docname or file path) matches this glob; "
-        "repeatable (default: every chunk)",
+    _claims_options(extract)
+    run = claims_commands.add_parser(
+        "run",
+        help="extract and ground claims (Groq: needs GROQ_API_KEY; NLI: needs notinspec[nli])",
+        description="Extracts claims like `claims extract`, then grounds each one: citation "
+        "check, NLI premise, NLI with the local model, identifier check. Writes claims.json "
+        "(every claim with its status, dropped ones too) and claims.html.",
     )
-    extract.add_argument(
-        "--extractor",
-        action="append",
-        metavar="MODEL",
-        help="extractor model ID; repeatable (default: "
-        + ", ".join(s.model for s in DEFAULT_EXTRACTORS)
-        + ")",
+    _claims_options(run)
+    run.add_argument(
+        "--record-nli", type=Path, help="also save the NLI scores as a recorded-NLI fixture"
     )
-    extract.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
-    extract.add_argument(
-        "--no-reuse",
-        action="store_true",
-        help="ask again for every chunk and replace its stored claims",
-    )
-    extract.add_argument("--run-id", help="run ID for the response cache (default: random)")
-    extract.add_argument(
-        "--record", type=Path, help="also save the raw responses as a fake-provider fixture"
-    )
-    _provider_option(extract)
 
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
@@ -156,6 +147,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "claims":
             if args.claims_command == "extract":
                 return _extract_claims(args)
+            if args.claims_command == "run":
+                return _run_claims(args)
             claims.print_help()
             return 0
         if args.command == "chunk":
@@ -177,6 +170,36 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     parser.print_help()
     return 0
+
+
+def _claims_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
+    command.add_argument("--out", type=Path, default=Path("notinspec-out"))
+    command.add_argument(
+        "--source",
+        action="append",
+        help="only chunks whose source (Sphinx docname or file path) matches this glob; "
+        "repeatable (default: every chunk)",
+    )
+    command.add_argument(
+        "--extractor",
+        action="append",
+        metavar="MODEL",
+        help="extractor model ID; repeatable (default: "
+        + ", ".join(s.model for s in DEFAULT_EXTRACTORS)
+        + ")",
+    )
+    command.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
+    command.add_argument(
+        "--no-reuse",
+        action="store_true",
+        help="ask again for every chunk and replace its stored claims",
+    )
+    command.add_argument("--run-id", help="run ID for the response cache (default: random)")
+    command.add_argument(
+        "--record", type=Path, help="also save the raw responses as a fake-provider fixture"
+    )
+    _provider_option(command)
 
 
 def _provider_option(command: argparse.ArgumentParser) -> None:
@@ -254,53 +277,87 @@ def _live_provider(name: str) -> Provider:
     return OpenAICompatProvider.from_env(PROVIDERS[name])
 
 
-def _extract_claims(args: argparse.Namespace) -> int:
-    config = load_config(args.config)
-    specs = (
-        tuple(extractor_for(m) for m in args.extractor) if args.extractor else DEFAULT_EXTRACTORS
+def _nli_model() -> NliModel:
+    """Seam for tests: CI replays recorded NLI scores and never loads the real model."""
+    return TransformersNli()
+
+
+class _ClaimsInput:
+    """What both claims commands read: the docs, the chosen chunks, extractors and logs."""
+
+    def __init__(self, args: argparse.Namespace) -> None:
+        config = load_config(args.config)
+        self.specs = (
+            tuple(extractor_for(m) for m in args.extractor)
+            if args.extractor
+            else DEFAULT_EXTRACTORS
+        )
+        self.patterns: list[str] = args.source or []
+        self.ingestion = ingest(config, output=args.out, soft_limit=args.soft_limit)
+        self.chunks = [
+            c
+            for c in self.ingestion.chunks
+            if not self.patterns or any(fnmatch.fnmatchcase(c.source, p) for p in self.patterns)
+        ]
+        if self.patterns and not self.chunks:
+            raise ValueError(f"no chunk source matches {', '.join(self.patterns)}")
+        args.out.mkdir(parents=True, exist_ok=True)
+        self.calls = JsonlCallLog(args.out / "llm-calls.jsonl")
+        self.store = JsonlClaimStore(args.out / "claims-store.jsonl")
+        for warning in self.store.warnings:
+            print(f"warning: {warning}", file=sys.stderr)
+        provider_name: str = args.provider
+        self.live = RecordingProvider(_LazyProvider(lambda: _live_provider(provider_name)))
+        self.client = ModelClient(self.live, limits=PROVIDERS[provider_name].limiters())
+        self.run_id: str = args.run_id or uuid.uuid4().hex
+        self.reuse = not args.no_reuse
+        self.record: Path | None = args.record
+
+    def header(self) -> dict[str, Any]:
+        return {
+            "project": self.ingestion.project,
+            "input_hash": self.ingestion.input_hash,
+            "prompt_version": PROMPT_VERSION,
+            "sources": sorted(self.patterns),
+            "chunks": len(self.chunks),
+        }
+
+
+def _print_extraction(result: ExtractionResult) -> None:
+    print(
+        f"  {result.extractor.name}: {len(result.claims)} claims, {result.asked} chunks asked, "
+        f"{result.reused} reused, {result.without_prose} without prose, "
+        f"{len(result.failures)} failed, {len(result.problems)} claims skipped"
+        + (f"; stopped: {result.stopped}" if result.stopped else ""),
+        flush=True,
     )
-    patterns: list[str] = args.source or []
-    ingestion = ingest(config, output=args.out, soft_limit=args.soft_limit)
-    chunks = [
-        c
-        for c in ingestion.chunks
-        if not patterns or any(fnmatch.fnmatchcase(c.source, p) for p in patterns)
-    ]
-    if patterns and not chunks:
-        raise ValueError(f"no chunk source matches {', '.join(patterns)}")
-    args.out.mkdir(parents=True, exist_ok=True)
-    calls = JsonlCallLog(args.out / "llm-calls.jsonl")
-    store = JsonlClaimStore(args.out / "claims-store.jsonl")
-    for warning in store.warnings:
-        print(f"warning: {warning}", file=sys.stderr)
-    provider_name: str = args.provider
-    live = RecordingProvider(_LazyProvider(lambda: _live_provider(provider_name)))
-    client = ModelClient(live, limits=PROVIDERS[provider_name].limiters())
-    run_id = args.run_id or uuid.uuid4().hex
-    print(f"Extracting claims from {len(chunks)} chunks with {len(specs)} extractors.")
+
+
+def _stopped(results: Sequence[ExtractionResult]) -> int:
+    stopped = [r for r in results if r.stopped]
+    for r in stopped:
+        print(f"stopped: {r.extractor.name}: {r.stopped}; run again to continue", file=sys.stderr)
+    return 2 if stopped else 0
+
+
+def _extract_claims(args: argparse.Namespace) -> int:
+    run = _ClaimsInput(args)
+    print(f"Extracting claims from {len(run.chunks)} chunks with {len(run.specs)} extractors.")
     results = []
     try:
-        for spec in specs:
+        for spec in run.specs:
             result = extract_claims(
-                chunks, spec, client, run_id, calls, store=store, reuse=not args.no_reuse
-            )
+                run.chunks, spec, run.client, run.run_id, run.calls, store=run.store,
+                reuse=run.reuse,
+            )  # fmt: skip
             results.append(result)
-            print(
-                f"  {spec.name}: {len(result.claims)} claims, {result.asked} chunks asked, "
-                f"{result.reused} reused, {result.without_prose} without prose, "
-                f"{len(result.failures)} failed, {len(result.problems)} claims skipped"
-                + (f"; stopped: {result.stopped}" if result.stopped else "")
-            )
+            _print_extraction(result)
     finally:  # a recording of the answers so far is worth keeping when a later step fails
-        if args.record is not None:
-            live.save(args.record)
+        if run.record is not None:
+            run.live.save(run.record)
     output = {
         "schema_version": CLAIMS_SCHEMA_VERSION,
-        "project": ingestion.project,
-        "input_hash": ingestion.input_hash,
-        "prompt_version": PROMPT_VERSION,
-        "sources": sorted(patterns),
-        "chunks": len(chunks),
+        **run.header(),
         "extractors": [r.extractor for r in results],
         "claims": [c for r in results for c in r.claims],
         "failures": [f for r in results for f in r.failures],
@@ -309,10 +366,56 @@ def _extract_claims(args: argparse.Namespace) -> int:
     path = args.out / "extracted-claims.json"
     path.write_bytes(canonical_json(output, pretty=True))
     print(f"Extracted claims: {path.resolve()}")
-    stopped = [r for r in results if r.stopped]
-    for r in stopped:
-        print(f"stopped: {r.extractor.name}: {r.stopped}; run again to continue", file=sys.stderr)
-    return 2 if stopped else 0
+    return _stopped(results)
+
+
+def _run_claims(args: argparse.Namespace) -> int:
+    run = _ClaimsInput(args)
+    nli: NliModel = _nli_model()
+    if isinstance(nli, TransformersNli):
+        nli.load()  # before any LLM call: a missing extra or model stops the run here
+    recording = RecordingNli(nli) if args.record_nli is not None else None
+    print(f"Claims from {len(run.chunks)} chunks with {len(run.specs)} extractors.", flush=True)
+    try:
+        result = run_claims(
+            run.chunks,
+            run.specs,
+            run.client,
+            recording or nli,
+            run.run_id,
+            run.calls,
+            sections=run.ingestion.chunks,
+            inventory=run.ingestion.inventory,
+            project=run.ingestion.project,
+            store=run.store,
+            reuse=run.reuse,
+            on_extracted=_print_extraction,
+        )
+    finally:
+        if run.record is not None:
+            run.live.save(run.record)
+    if recording is not None:
+        recording.save(args.record_nli)
+    counts = claim_counts(result.claims)
+    output = {
+        "schema_version": GROUNDED_SCHEMA_VERSION,
+        **run.header(),
+        "extractors": [r.extractor for r in result.results],
+        "versions": result.versions,
+        "counts": counts,
+        "claims": result.claims,
+        "failures": [f for r in result.results for f in r.failures],
+        "problems": [p for r in result.results for p in r.problems],
+    }
+    path = args.out / "claims.json"
+    path.write_bytes(canonical_json(output, pretty=True))
+    page = args.out / "claims.html"
+    page.write_bytes(render_claims(run.ingestion, run.chunks, result).encode("utf-8"))
+    for name, by_status in counts.items():
+        print(f"  {name}: " + ", ".join(f"{n} {status}" for status, n in by_status.items()))
+    print(f"Claims: {path.resolve()}")
+    print(f"Report: {page.resolve()}")
+    return _stopped(result.results)
 
 
 def _chunk(args: argparse.Namespace) -> int:

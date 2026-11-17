@@ -1,7 +1,8 @@
-"""Claims from prose and changelog (SPEC §6.4): the LLM claim extractor.
+"""Claims from prose and changelog (SPEC §6.4): the LLM claim extractor and the pipeline.
 
-This package extracts claims with their citations. Grounding (citation check, NLI premise, NLI,
-identifier check) is a separate step that consumes `ExtractedClaim`s.
+`extract_claims` extracts claims with their citations. `ground_claims` grounds them (citation
+check, NLI premise, NLI, identifier check, from `notinspec.grounding` and `notinspec.nli`), and
+`run_claims` does both.
 """
 
 from notinspec.claims.extract import ROLE, extract_claims
@@ -19,6 +20,15 @@ from notinspec.claims.model import (
     extractor_for,
 )
 from notinspec.claims.parse import ParsedClaims, parse_claims
+from notinspec.claims.pipeline import (
+    STATUSES,
+    ClaimsRun,
+    GroundedClaim,
+    GroundingStatus,
+    GroundingVersions,
+    ground_claims,
+    run_claims,
+)
 from notinspec.claims.prompt import CLAIMS_SCHEMA, build_request, render_prompt
 from notinspec.claims.store import (
     CallLog,
@@ -37,8 +47,10 @@ __all__ = [
     "DEFAULT_EXTRACTORS",
     "PROMPT_VERSION",
     "ROLE",
+    "STATUSES",
     "CallLog",
     "ClaimStore",
+    "ClaimsRun",
     "ClaimType",
     "ExtractedClaim",
     "ExtractionCause",
@@ -46,6 +58,9 @@ __all__ = [
     "ExtractionProblem",
     "ExtractionResult",
     "ExtractorSpec",
+    "GroundedClaim",
+    "GroundingStatus",
+    "GroundingVersions",
     "JsonlCallLog",
     "JsonlClaimStore",
     "LlmCall",
@@ -58,6 +73,8 @@ __all__ = [
     "build_request",
     "extract_claims",
     "extractor_for",
+    "ground_claims",
     "parse_claims",
     "render_prompt",
+    "run_claims",
 ]

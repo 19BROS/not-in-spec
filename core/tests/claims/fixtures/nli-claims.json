@@ -1,0 +1,522 @@
+[
+  {
+    "contradiction": 0.0001744148466968909,
+    "entailment": 0.9968690276145935,
+    "hypothesis": "The acquire() function of the Pool class in fixturelib takes a connection.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0029565319418907166,
+    "premise": "fixturelib > User Guide > Low-level API > Pool > acquire(): Take a connection.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00014537337119691074,
+    "entailment": 0.9984317421913147,
+    "hypothesis": "The acquire() method of the Pool class takes a connection.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0014228925574570894,
+    "premise": "fixturelib > User Guide > Low-level API > Pool > acquire(): Take a connection.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003139288164675236,
+    "entailment": 0.995090126991272,
+    "hypothesis": "The size attribute of the Pool class returns the number of connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004595997743308544,
+    "premise": "fixturelib > User Guide > Low-level API > Pool > size: Number of connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00034031859831884503,
+    "entailment": 0.9905911087989807,
+    "hypothesis": "The size parameter of the Pool class in fixturelib represents the number of connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.009068596176803112,
+    "premise": "fixturelib > User Guide > Low-level API > Pool > size: Number of connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00043436078703962266,
+    "entailment": 0.9715021252632141,
+    "hypothesis": "The Pool class in fixturelib is a pool of connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.028063463047146797,
+    "premise": "fixturelib > User Guide > Low-level API > Pool: A pool of connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009257560595870018,
+    "entailment": 0.86225426197052,
+    "hypothesis": "The class Pool(size) is a pool of connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.1368200033903122,
+    "premise": "fixturelib > User Guide > Low-level API > Pool: A pool of connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00022618731600232422,
+    "entailment": 0.9616748690605164,
+    "hypothesis": "The count parameter of ping() is an integer representing how many pings to send.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0380990169942379,
+    "premise": "fixturelib > User Guide > Low-level API > ping() > count: count (int) – How many.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00018169693066738546,
+    "entailment": 0.9964321851730347,
+    "hypothesis": "The host parameter of ping() is a string representing a server name.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0033860907424241304,
+    "premise": "fixturelib > User Guide > Low-level API > ping() > host: host (str) – Server name.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00031445204513147473,
+    "entailment": 0.9953969120979309,
+    "hypothesis": "The ping() function returns round-trip times in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004288591910153627,
+    "premise": "fixturelib > User Guide > Low-level API > ping(): Round-trip times in seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00019332296506036073,
+    "entailment": 0.9981212019920349,
+    "hypothesis": "The ping() function sends pings.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016854462446644902,
+    "premise": "fixturelib > User Guide > Low-level API > ping(): Send pings.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004265711468178779,
+    "entailment": 0.9907659292221069,
+    "hypothesis": "The fixturelib low-level API allows at most 100 connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.008807441219687462,
+    "premise": "fixturelib > User Guide > Low-level API: [1] At most 100 connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009132504346780479,
+    "entailment": 0.9716750979423523,
+    "hypothesis": "The library allows at most 100 connections.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.027411699295043945,
+    "premise": "fixturelib > User Guide > Low-level API: [1] At most 100 connections.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002431466564303264,
+    "entailment": 0.9987059831619263,
+    "hypothesis": "A timeout is in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.001050907070748508,
+    "premise": "fixturelib > User Guide > Timeouts: A timeout is in seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0015344290295615792,
+    "entailment": 0.9755513668060303,
+    "hypothesis": "The timeout value for fixturelib is specified in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.022914228960871696,
+    "premise": "fixturelib > User Guide > Timeouts: A timeout is in seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00013641000259667635,
+    "entailment": 0.9988530874252319,
+    "hypothesis": "The `timeout` parameter was added in version 1.1 of fixturelib.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0010104426182806492,
+    "premise": "fixturelib > User Guide > Timeouts: Added in version 1.1: The timeout parameter.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001605744328116998,
+    "entailment": 0.9992339611053467,
+    "hypothesis": "The timeout parameter was added in version 1.1.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006054412224330008,
+    "premise": "fixturelib > User Guide > Timeouts: Added in version 1.1: The timeout parameter.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010778855066746473,
+    "entailment": 0.9956598877906799,
+    "hypothesis": "Call fixturelib.connect() with a host.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003262241603806615,
+    "premise": "fixturelib > User Guide: Connections are cheap. Call fixturelib.connect() with a host; see the footnote [1] for limits.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001772912946762517,
+    "entailment": 0.9982436895370483,
+    "hypothesis": "Connections are cheap.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0015789507888257504,
+    "premise": "fixturelib > User Guide: Connections are cheap. Call fixturelib.connect() with a host; see the footnote [1] for limits.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003566936356946826,
+    "entailment": 0.9981017708778381,
+    "hypothesis": "Notes are prose.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00154154933989048,
+    "premise": "fixturelib > User Guide: Note: Notes are prose.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003306095313746482,
+    "entailment": 0.9988082647323608,
+    "hypothesis": "A Timeout instance lets you specify separate connect and read timeouts.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0008610539953224361,
+    "premise": "urllib3 > User Guide > Using Timeouts: For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002652674447745085,
+    "entailment": 0.9981474876403809,
+    "hypothesis": "A urllib3.Timeout instance allows specifying separate connect and read timeouts.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0015872892690822482,
+    "premise": "urllib3 > User Guide > Using Timeouts: For more granular control you can use a Timeout instance which lets you specify separate connect and read timeouts:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00021099789591971785,
+    "entailment": 0.9963823556900024,
+    "hypothesis": "A timeout can be specified at the urllib3.PoolManager level to apply to all requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003406653879210353,
+    "premise": "urllib3 > User Guide > Using Timeouts: If you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001643130526645109,
+    "entailment": 0.9981966614723206,
+    "hypothesis": "You can specify a timeout at the PoolManager level to apply to all requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016390440287068486,
+    "premise": "urllib3 > User Guide > Using Timeouts: If you want all requests to be subject to the same timeout, you can specify the timeout at the PoolManager level:",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00022084965894464403,
+    "entailment": 0.998316764831543,
+    "hypothesis": "In simple cases, a timeout can be specified as a float to urllib3.request().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.001462386455386877,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00541692553088069,
+    "entailment": 0.9738896489143372,
+    "hypothesis": "The timeout value is in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.020693445578217506,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007108217687346041,
+    "entailment": 0.9978635907173157,
+    "hypothesis": "Timeouts allow you to control how long requests are allowed to run before being aborted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0014255833812057972,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004021882195957005,
+    "entailment": 0.9976855516433716,
+    "hypothesis": "You can specify a timeout as a float to request().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0019122632220387459,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012196435127407312,
+    "entailment": 0.9949055910110474,
+    "hypothesis": "urllib3 timeouts are measured in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0038747258950024843,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004882480716332793,
+    "entailment": 0.998534083366394,
+    "hypothesis": "urllib3 timeouts control how long requests are allowed to run before being aborted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0009776171064004302,
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001315253903158009,
+    "entailment": 0.9987486600875854,
+    "hypothesis": "Specifying a timeout to urllib3.request() overrides the pool-level timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0011197786079719663,
+    "premise": "urllib3 > User Guide > Using Timeouts: You still override this pool-level timeout by specifying timeout to request().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001526940759504214,
+    "entailment": 0.9986504912376404,
+    "hypothesis": "Specifying timeout to request() overrides the pool-level timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0011967598693445325,
+    "premise": "urllib3 > User Guide > Using Timeouts: You still override this pool-level timeout by specifying timeout to request().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005050296313129365,
+    "entailment": 0.993355393409729,
+    "hypothesis": "The sleep() method accepts a parameter named response of type BaseHTTPResponse or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006139611359685659,
+    "premise": "urllib3 > Utilities > Retry > sleep() > response: response (BaseHTTPResponse | None)",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00026971675106324255,
+    "entailment": 0.9985976815223694,
+    "hypothesis": "By default, the backoff factor for sleep() is 0 and the method returns immediately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0011325768427923322,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00022279219410847872,
+    "entailment": 0.9991288781166077,
+    "hypothesis": "By default, the backoff factor for the sleep() method of urllib3's Retry class is 0.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006483094184659421,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00022118362539913505,
+    "entailment": 0.9991133809089661,
+    "hypothesis": "By default, the sleep() method of urllib3's Retry class returns immediately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006654827739112079,
+    "premise": "urllib3 > Utilities > Retry > sleep(): If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00017702433979138732,
+    "entailment": 0.9981932044029236,
+    "hypothesis": "The sleep() method of urllib3's Retry class sleeps between retry attempts.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016297929687425494,
+    "premise": "urllib3 > Utilities > Retry > sleep(): Sleep between retry attempts.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003707731084432453,
+    "entailment": 0.9971832633018494,
+    "hypothesis": "The sleep() method sleeps between retry attempts.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0024459678679704666,
+    "premise": "urllib3 > Utilities > Retry > sleep(): Sleep between retry attempts.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00019298440020065755,
+    "entailment": 0.9991583824157715,
+    "hypothesis": "The sleep() method of urllib3's Retry class respects a server's Retry-After response header and sleeps for the duration of the time requested.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006486773490905762,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000519162742421031,
+    "entailment": 0.9978415966033936,
+    "hypothesis": "The sleep() method respects a server’s `Retry-After` response header and sleeps the duration of the time requested.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016392628895118833,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002149083447875455,
+    "entailment": 0.9994891881942749,
+    "hypothesis": "If a `Retry-After` header is not present, the sleep() method uses an exponential backoff.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0002958503318950534,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00016800258890725672,
+    "entailment": 0.9996415376663208,
+    "hypothesis": "If the Retry-After response header is not present, the sleep() method of urllib3's Retry class uses an exponential backoff.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00019043416250497103,
+    "premise": "urllib3 > Utilities > Retry > sleep(): This method will respect a server’s Retry-After response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003889335202984512,
+    "entailment": 0.998362123966217,
+    "hypothesis": "Get the value for the read timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0012488942593336105,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002221149334218353,
+    "entailment": 0.9966799020767212,
+    "hypothesis": "The read_timeout property of urllib3's Timeout class returns the value for the read timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00309809111058712,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009440500871278346,
+    "entailment": 0.9970472455024719,
+    "hypothesis": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0020086353179067373,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008124172454699874,
+    "entailment": 0.9975945353507996,
+    "hypothesis": "If the connection time has not been established, a TimeoutStateError will be raised.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.001593042747117579,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010603242553770542,
+    "entailment": 0.990251898765564,
+    "hypothesis": "If the connection time has not been established, urllib3's read_timeout property raises a TimeoutStateError.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.008687828667461872,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005334551096893847,
+    "entailment": 0.9966824650764465,
+    "hypothesis": "If the total attribute of urllib3's Timeout object is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.002784072421491146,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003924615157302469,
+    "entailment": 0.991392970085144,
+    "hypothesis": "The read_timeout property of urllib3's Timeout class assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.008214582689106464,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00031903828494250774,
+    "entailment": 0.9975073933601379,
+    "hypothesis": "This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0021736144553869963,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.021080419421195984,
+    "entailment": 0.9014191031455994,
+    "hypothesis": "Returns: Value to use for the read timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.07750049233436584,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Value to use for the read timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008350519347004592,
+    "entailment": 0.9951820969581604,
+    "hypothesis": "Raises: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003982765134423971,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003003161691594869,
+    "entailment": 0.9925530552864075,
+    "hypothesis": "urllib3's read_timeout property raises a TimeoutStateError if start_connect() has not yet been called on the object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.007146654184907675,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  }
+]
