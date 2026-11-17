@@ -167,7 +167,7 @@ These exact terms are used in code, diagrams and text.
 | **Parameter** | `Parameter` | one input of a signature: name, type, required / optional, default |
 | **Constraint** | `Constraint` | rule for a parameter value: enum, range, unit, format |
 | **Return type** | `ReturnType` | what a symbol returns; used by the composition operator |
-| **Change** | `Change` | addition, deprecation, rename or removal of a symbol or parameter in a version. A deprecated symbol still exists and works. |
+| **Change** | `Change` | addition, deprecation or removal of a symbol or parameter in a version, optionally with its replacement (a rename is a deprecation or removal with a replacement). A deprecated symbol still exists and works. |
 | **Source** | `Source` | where a fact comes from (chunk, source type) and with what confidence; attached to every inventory object |
 | **Inventory** | – | composition of `Symbol`, `Signature`, `Parameter`, `Constraint`, `ReturnType`, `Change`, `Source` = what exists in the API |
 | **API reference** | – | the part of the docs describing signatures (parameter tables, docstrings, JSDoc); component B |
@@ -339,9 +339,20 @@ Source  – attached to every object above
 
 **`Change`:**
 
-- **Kinds:** `added`, `deprecated`, `renamed`, `removed`. A `deprecated` symbol or parameter still exists and works. For example, `format_header_param()` in urllib3 2.x is deprecated, so the L0 question "does it exist in 2.0?" has the answer yes.
-- **Key:** symbol + parameter (if any) + kind + version. The version is normalized (PEP 440 for Python), because a changelog heading reads `2.0.0 (2023-04-26)` while the directive says `2.0.0`. Objects with the same key from several sources merge into one `Change` with several `Source`s. One deprecation can appear in three places: on the old symbol ("Renamed to …"), on the new one ("Renamed from …") and in the changelog. All three become one `Change`. A *change* claim that matches a `Change` from a version directive needs no review.
-- Under the same key, attributes that disagree (e.g. the planned removal version) are a `Finding`. A real case is urllib3 2.x: its API reference says `RequestField`'s `header_formatter` "will be removed in urllib3 v3.0", while the changelog says "in urllib3 v2.1.0".
+- **Kind = the status of the name** the `Change` is about: `added`, `deprecated` or `removed`. A `deprecated` symbol or parameter still exists and works. For example, `format_header_param()` in urllib3 2.x is deprecated, so the L0 question "does it exist in 2.0?" has the answer yes.
+- **Attributes** (optional): `replacement` (the symbol or parameter to use instead) and `removal_planned` (a version).
+- **A rename is not a kind.** It is a `Change` of the **old name** with the new name as `replacement`:
+  - if the old name keeps working (an alias), the kind is `deprecated`;
+  - otherwise it is `removed`.
+  
+  Code decides between the two, not the extractor: `deprecated` if the old name is still in the inventory of that version, otherwise `removed` (what the docs do not describe does not exist for us, [§1.1](#11-what-we-are-not-building)). "Renamed from A and B" on the new symbol therefore gives one `Change` per old name, keyed by the old name.
+- **Key:** symbol + parameter (if any) + kind + version, where the symbol and parameter are always the old name. The version is taken from the directive, or from the changelog heading it is under (`2.0.0 (2023-04-26)` → `2.0.0`), and compared as a PEP 440 `Version` (`2.0 == 2.0.0`).
+- **Merge:** objects with the same key from several sources merge into one `Change` with several `Source`s. In urllib3 2.0.0, `format_header_param` is mentioned three times: its `deprecated` directive ("Renamed to `format_multipart_header_param()`"), the `versionchanged` on the new name ("Renamed from `format_header_param_html5` and `format_header_param`") and the changelog ("Deprecated … in favor of …"). All three have the key (`format_header_param`, `deprecated`, 2.0.0) and become one `Change`.
+- **Review of a *change* claim** (D, [§2.5](#25-golden-set-review)):
+  - If its key matches a `Change` from a version directive, the **key** needs no review: the directive confirms that the change exists. It does not confirm the attributes the LLM extracted.
+  - `replacement` is accepted without review only if code finds it in the inventory **and** in the claim's citation. Otherwise it goes to review, because it feeds the references of the migration operator ([§6.7](#67-tasks-and-operators)).
+  - Other attributes (`removal_planned`) and claims that match no directive go to review.
+- Under the same key, attributes that disagree are a `Finding`. A real case is urllib3 2.x: its API reference says `RequestField`'s `header_formatter` "will be removed in urllib3 v3.0", while the changelog says "in urllib3 v2.1.0". Both sides are claims: on the class this deprecation is a `versionchanged`, which gives no `Change` by itself (below).
 - **From Sphinx version directives** (component B, deterministic). For `deprecated`, `versionadded` and `versionremoved`, code reads:
   - the kind (`deprecated` / `added` / `removed`) and the version;
   - the symbol: the enclosing `desc`;
@@ -368,7 +379,7 @@ Source  – attached to every object above
 | neutral | neutral | different claims | keep both |
 | contradiction | – | contradiction | `Finding`, no tasks from these claims |
 
-5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)), unless it matches a `Change` from a version directive ([§6.3](#63-inventory)).
+5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)). If it matches a `Change` from a version directive, only its key skips the review; its attributes are checked as described in [§6.3](#63-inventory).
 
 NLI = local cross-encoder classifying (premise, hypothesis) → entailment / contradiction / neutral; deterministic, CPU only.
 
@@ -400,7 +411,7 @@ Decisions are made per symbol, never for the whole documentation:
 | Has a `Signature` with source spec or signature? | L0 · L1 deterministic; adaptation, variation, composition automatic | L0 · L1 only from call records; variation and composition only after review |
 | Has a verified `Example` with a `CallRecord`? | L3: copy, adaptation + leave-one-out | with a signature: L3 from the signature only. With nothing: L3 unavailable → `Finding` |
 | Has a `Claim`? | L2 questions, plus "not in the documentation" questions via perturbation | – |
-| Has a `Change`? | L0 distractors from old names, L3 migration | – |
+| Has a `Change`? | L0 distractors only from names **removed** in or before the version asked about (a deprecated name still exists, so it would be a second correct answer); L3 migration | – |
 | Is it an OpenAPI operation? | **L4 via Prism mock** | L3 by call-record comparison only |
 
 The result is the **symbol profile**, from which test items and references are created.
@@ -485,7 +496,7 @@ Every test item × model × mode. **All raw responses are stored.**
   | `wrong-symbol` | calls a different symbol |
   | `wrong-arguments` | right symbol, wrong arguments |
   | `hallucinated-api` | symbol / parameter not in the inventory |
-  | `deprecated-api` | symbol / parameter is removed, renamed or deprecated per `Change`. The result records which kind. Whether a deprecated one (which still works) can fail the CI gate is open ([§18](#18-open-items)). |
+  | `deprecated-api` | symbol / parameter is removed or deprecated per `Change`. The result records which kind. Whether a deprecated one (which still works) can fail the CI gate is open ([§18](#18-open-items)). |
   | `api-bypass` | reaches the goal without the documented API |
   | `invalid-format` | answer cannot be parsed |
 
@@ -640,7 +651,12 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - **Determinism tests:** same input + generator version ⇒ same references (hash); golden files per adapter and per reader (a small fixture Sphinx project → expected chunks and NLI premises).
 - **Sphinx reader golden test:** a small fixture project of our own with reST `:param:`, Google and NumPy docstrings, built three ways (napoleon, numpydoc, neither) with Sphinx 9 → expected blocks (all three field shapes, [§6.1](#61-reading-and-chunking)). The built XML is committed, so CI never runs `sphinx-build`. Plus tests that XML with external entities and a missing or non-9.x `build-env.txt` are rejected, and that a copy built in another checkout folder hashes the same.
 - **Real Sphinx examples:** the built XML of three libraries is committed in `core/examples/sphinx/` (urllib3: reST fields; trio: Google via napoleon; hydra-zen: numpydoc). An end-to-end test runs the CLI on each: exit 0, `ingestion.json` byte-identical across two runs, no `unknown node` warning, `report.html` written.
-- **`Change` from version directives:** hydra-zen's `builds(frozen=…)` gives a parameter-level `deprecated`; a `versionchanged` gives no `Change`; the same deprecation from a directive and a changelog claim merges into one `Change`; urllib3's `header_formatter` (removal in v3.0 vs. v2.1.0) gives a `Finding`.
+- **`Change` from version directives:** hydra-zen's `builds(frozen=…)` gives a parameter-level `deprecated`; a `versionchanged` gives no `Change`.
+- **`Change` merging** (claims from the fake extractor):
+  - urllib3's `format_header_param` from its directive, the "Renamed from …" claim on `format_multipart_header_param` and the changelog claim merge into one `Change` with `replacement`;
+  - a `replacement` that is not in the inventory or not in the citation goes to review;
+  - `header_formatter` (removal in v3.0 vs. v2.1.0, both claims) gives a `Finding`;
+  - L0 never uses a deprecated name as a distractor.
 - NLI: fake classifier in unit tests, the real local model only in marked slow tests.
 - **Integration:** Compose up → fixture Sphinx docs + spec uploaded through the API → worker → chunking → inventory → cross-checks → L3 / L4 via Prism → report.
 - **Auth:** OIDC checks are tested with tokens signed by a test key and a fake JWKS: wrong `aud`, expired, unknown `repository_id`, a private repo, a forbidden event (`pull_request_target`, `workflow_run`), a foreign `workflow_ref` path, a `push` from another branch, and a replayed (`run_id`, `run_attempt`). CI never talks to GitHub's OIDC.
@@ -668,7 +684,7 @@ Candidate data: [NovelAPIBench](https://arxiv.org/html/2606.03657), [CodeUpdateA
 > conn = client.connect(timeout=10, retry_policy=RetryPolicy(max_attempts=3))
 > ```
 
-- **L0:** "Which parameter of `connect()` exists in 2.0? a) `retries` b) `retry_policy` c) `max_retry` d) `backoff`" (`retries` comes from `Change`).
+- **L0:** "Which parameter of `connect()` exists in 2.0? a) `retries` b) `retry_policy` c) `max_retry` d) `backoff`" (`retries` comes from `Change`: `removed` in 2.0 with `replacement` `retry_policy`, so it is a valid distractor).
 - **L1:** "List the optional parameters of `connect()` and their defaults."
 - **L2:** "In what unit is `timeout`?" (from the claim "timeout is in seconds").
 - **L2 (not in the documentation):** "What is the default of `retry_policy`?" (perturbation of the claim "`timeout` defaults to 30": `timeout` → `retry_policy`, another parameter of `connect()`; no chunk states its default). Expected answer: the documentation doesn't say.
