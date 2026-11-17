@@ -13,7 +13,7 @@ The work is split into three parts that run in parallel, then one integration st
 | C · NLI runtime | `core/nli-runtime` | jmiticky4130 | `core/src/notinspec/nli/`, `core/tests/nli/`, `pyproject.toml` (root and `core/`), `uv.lock`, `worker/Dockerfile`, `deploy/` |
 | D · integration + measurement | `core/claims-pipeline` | Hinzun, after A, B and C are merged | `claims/pipeline.py`, CLI `claims`, report, `experiments/nli` run 008 |
 
-SPEC edits: each part changes only its own lines. A: §18 identifier-check bullet. B: §6.4 step 1 and §8 (extractor models). C: §6.4 NLI paragraph, §9, §12. Nobody rewrites a shared paragraph. This file is deleted in the last commit of C's PR, or moved to an issue.
+SPEC edits: each part changes only its own lines. A: §18 identifier-check bullet. B: §6.4 step 1 and §8 (extractor models). C: §6.4 NLI paragraph, §9, §12. Nobody rewrites a shared paragraph. This file is deleted in the last commit of D's PR.
 
 ## Contracts
 
@@ -87,7 +87,7 @@ Built on `prose_sentences` / `find_citation` in `chunking/windows.py`. Don't edi
 3. **Budget:** the demo pages (top of this file) fit with one call per chunk. For the whole of urllib3 (430 prose chunks, 54k tokens), one call per chunk with a ~1k-token prompt is ~560k tokens per extractor, which is ~3 days of Groq's 200k tokens/day. So, after the demo, batch several small chunks of the **same page** into one call, up to a token budget. Each chunk is tagged by id, every claim returns its chunk id, and each chunk is still read whole. Measure the tokens per extractor on the demo and write them down.
 4. **Raw responses are append-only:** every call (request, raw body, usage, time, run id) is appended to a `CallLog`. In the CLI that is a JSONL file in the output folder (`llm-calls.jsonl`). The DB later stores the same records.
 5. **Reuse:** extraction is generation, not a model under test, so claims are reused by (chunk `content_hash`, extractor name, model, prompt version). A second run asks only for changed chunks.
-6. CLI `notinspec claims extract <config> --out <dir>` (live Groq, needs `GROQ_API_KEY`). Extractor models can be set in config. `--source <glob>` (repeatable) limits extraction to the chunks whose `source` (Sphinx docname) matches, for the demo pages.
+6. CLI `notinspec claims extract <config> --out <dir>` (live Groq, needs `GROQ_API_KEY`). Extractor models are chosen with `--extractor` (default: both). `--source <glob>` (repeatable) limits extraction to the chunks whose `source` (Sphinx docname) matches, for the demo pages.
 7. Tests: record real Groq answers with `RecordingProvider` on the Sphinx fixture project and a few urllib3 chunks, then replay them with `FakeProvider`.
 
 ## C · NLI runtime (`core/nli-runtime`), jmiticky4130
@@ -103,4 +103,5 @@ Built on `prose_sentences` / `find_citation` in `chunking/windows.py`. Don't edi
 1. `claims/pipeline.py`: extract (2 extractors) → `check_citation` → `nli_premise` → `NliModel.score` → `missing_identifiers` → `GroundedClaim` with status `kept` / `citation_not_found` / `not_checkable` / `nli_neutral` / `nli_contradiction` / `id_missing`. Each claim records all versions (prompt, grounding, NLI model + revision). Dropped claims are kept with their reason (§6.4).
 2. CLI `notinspec claims <config> --out <dir>` → `claims.json` + `llm-calls.jsonl`, plus a claims section in the report. End-to-end test on the fixture project with recorded extractor answers and recorded NLI scores.
 3. **Real run on the demo pages of urllib3** (see the top of this file; the whole library later), then a blind human-labelled sample like `experiments/nli/labeling` (run 008), stratified by status and by guide vs. docstring. It measures: precision of kept claims, recall on good claims, false drops of the identifier check (is it still 0?), docstring vs. guide grounding. This closes "check again" in #26 and the docstring item in §18.
-4. Later, not in this plan: K5a/K5b, *change* claim → `Change` (§6.3), DB tables for claims and LLM calls (they need the DB models), the worker job.
+4. **Carried over from C (#34):** add `GROQ_API_KEY=` to `/opt/notinspec/.env` on the VM (not in git; the old `LLM_API_KEY` is unused). After the first deploy with C, which downloads ~870 MB of weights onto the `hf-models` volume, measure on the VM with `python -m notinspec.nli bench --pairs 64` (command in `docs/DEPLOY.md`) and write the claims/s into SPEC §6.4. Record D's own NLI scores for the pipeline test: `RecordedNli` matches the exact premise string, and A's premise format differs from `SAMPLE` (same tokens, different text).
+5. Later, not in this plan: K5a/K5b, *change* claim → `Change` (§6.3), DB tables for claims and LLM calls (they need the DB models), the worker job.
