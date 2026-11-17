@@ -9,13 +9,15 @@ from notinspec.adapters.python import (
     ApiIndex,
     Argument,
     CallIssue,
+    CallRecord,
     NormalizedCalls,
     Value,
     example_additions,
+    merge_additions,
     normalize_calls,
     parse_python,
 )
-from notinspec.inventory import Inventory, Source
+from notinspec.inventory import Inventory, Source, Symbol
 
 type MakeInventory = Callable[[Mapping[str, Mapping[str, Any]]], Inventory]
 
@@ -42,6 +44,10 @@ ACME: dict[str, dict[str, Any]] = {
         "signatures": [["a", "b"], ["a", "/", "*", "c"]],
     },
     "acme.legacy": {"kind": "function"},
+    "acme.open_pool": {
+        "kind": "function",
+        "signatures": [["url"], {"params": ["url", "pool"], "returns": "Client"}],
+    },
 }
 
 
@@ -264,3 +270,91 @@ print("x")
     assert all(
         p.sources == (source,) and not p.required for p in additions[1].signatures[0].parameters
     )
+
+
+def issues(record: CallRecord) -> list[tuple[str, str]]:
+    return [(i.kind, i.detail) for i in record.issues]
+
+
+@pytest.mark.parametrize(
+    ("code", "written"),
+    [
+        ("from acme.fake import Client\nClient('h')\n", "acme.fake.Client"),
+        ("from acme.response import Timeout\nTimeout()\n", "acme.response.Timeout"),
+        ("import acme\nacme.nonexistent.Timeout()\n", "acme.nonexistent.Timeout"),
+        ("import acme.util.timeout as t\nt.Timeout()\n", "acme.util.timeout.Timeout"),
+        ("import acme\nacme.fake.Timeout.from_float(1)\n", "acme.fake.Timeout.from_float"),
+    ],
+)
+def test_alias_from_a_module_the_docs_do_not_name_is_wrong_module(
+    code: str, written: str, api: ApiIndex
+) -> None:
+    (call,) = normalize(code, api).calls
+    assert call.resolved_by == "alias"
+    assert issues(call) == [("wrong-module", written)]
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        "import acme\nacme.Timeout()\n",  # re-export at the package root
+        "from acme import Timeout\nTimeout.from_float(1)\n",
+        "from acme.util import Timeout\nTimeout()\n",  # the documented module itself
+    ],
+)
+def test_reexport_above_the_documented_module_is_clean(code: str, api: ApiIndex) -> None:
+    assert all(c.issues == () for c in normalize(code, api).calls)
+
+
+def test_attribute_is_not_callable(api: ApiIndex) -> None:
+    code = "import acme\nacme.Client.status()\nc = acme.Client('h')\nc.status()\n"
+    direct, _, variable = normalize(code, api).calls
+    assert (direct.symbol, issues(direct)) == (
+        "acme.Client.status",
+        [("not-callable", "attribute")],
+    )
+    assert (variable.resolved_by, issues(variable)) == ("variable", [("not-callable", "attribute")])
+
+
+def test_return_type_comes_only_from_the_bound_signature(api: ApiIndex) -> None:
+    code = "import acme\nacme.open_pool('u').get('/')\nacme.open_pool('u', 1).get('/')\n"
+    result = normalize(code, api)
+    signatures = api.symbols["acme.open_pool"].signatures
+    assert [
+        len(signatures[c.signature].parameters) for c in result.calls[:2] if c.signature is not None
+    ] == [1, 2]
+    assert [c.symbol for c in result.calls] == [
+        "acme.open_pool",
+        "acme.open_pool",
+        "acme.Client.get",
+    ]
+    # the one-parameter overload documents no return type: not borrowed from the other one
+    assert [(u.symbol, u.reason) for u in result.unresolved] == [
+        ("acme.open_pool('u').get", "unknown-type")
+    ]
+
+
+def test_additions_for_a_symbol_without_signature(api: ApiIndex) -> None:
+    parsed = parse_python("import acme\nacme.legacy(1, b=2)\nacme.request('GET', '/')\n", "python")
+    normalized = normalize_calls(parsed.calls, api)
+    (addition,) = example_additions(parsed.calls, normalized, api, "e" * 16)
+    assert (addition.path, addition.kind) == ("acme.legacy", "function")  # the inventory's kind
+    assert [p.name for p in addition.signatures[0].parameters] == ["b"]
+
+
+def test_merge_additions_gives_one_symbol_per_path(api: ApiIndex) -> None:
+    def additions(code: str, section: str) -> tuple[Symbol, ...]:
+        parsed = parse_python(code, "python")
+        return example_additions(parsed.calls, normalize_calls(parsed.calls, api), api, section)
+
+    first = additions("import acme\nacme.Session(pool=1)\nacme.legacy(a=1)\n", "a" * 16)
+    second = additions("import acme\nacme.Session(retries=2)\n", "b" * 16)
+    merged = merge_additions([*first, *second])
+    assert merged == merge_additions([*second, *first])
+    session = next(s for s in merged.symbols if s.path == "acme.Session")
+    (signature,) = session.signatures
+    assert [p.name for p in signature.parameters] == ["pool", "retries"]
+    sections = [s.section_id for s in session.sources]
+    assert sections == ["a" * 16, "b" * 16]
+    assert all(p.sources == signature.sources for p in signature.parameters)
+    assert [s.path for s in merged.symbols] == ["acme.Session", "acme.legacy"]

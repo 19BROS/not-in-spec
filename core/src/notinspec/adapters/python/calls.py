@@ -27,19 +27,23 @@ ever refers to earlier records.
 
 Rules for one example's code (`parse_python`):
 
-- `>>>` prompts (`pycon`, Sphinx `doctest_block`, or any Python block whose first line is a
-  prompt) are stripped with `doctest`'s own parser; output lines are dropped. Line numbers
-  always point into the original code.
+- `>>>` prompts are stripped with `doctest`'s own parser; output lines are dropped. A `pycon`
+  block (also Sphinx `doctest_block`) is read as a session when any line is a prompt, any
+  other block when its first line is one; otherwise it is plain code. Line numbers always
+  point into the original code.
 - An explicit Python language that does not parse is `invalid` (a `Finding` later, SPEC §6.2).
+  The error is only its kind and line (`SyntaxError (line 3)`): CPython's wording changes
+  between minor versions, and the same code must give the same record.
   Sphinx's `default` language (and no language) means "Python if it parses", so a shell
   session or program output there is `not-python`, not an error.
 """
 
 import ast
 import math
+import re
 import textwrap
 import warnings
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Literal
 
 from notinspec.adapters.python.prompts import Source, has_prompts, plain, strip_prompts
@@ -66,7 +70,8 @@ class Value:
 
     kind: ValueKind
     source: str  # as written, spelled by `ast.unparse`: "urllib3.Timeout(connect=1.0)", "http"
-    literal: JsonValue = None  # literal: the value; tuples and lists both become tuples
+    # literal: the value; tuples and lists both become tuples. Not hashed: it can hold a dict
+    literal: JsonValue = field(default=None, hash=False)
     call: int | None = None  # call: index of the call record whose result this is
     path: str | None = None  # import: dotted path ("urllib3.util.Timeout"), attributes included
     name: str | None = None  # name: identifier not bound in the example ("print", "http")
@@ -108,24 +113,24 @@ def parse_python(code: str, lang: str | None) -> PythonCode:
         raise ValueError(f"not a Python language: {lang!r}")
     failed: ParseStatus = "invalid" if lang in PYTHON_LANGS else "not-python"
     try:
-        source = strip_prompts(code) if lang in PROMPT_LANGS or has_prompts(code) else None
+        prompts = has_prompts(code, anywhere=lang in PROMPT_LANGS)
+        source = strip_prompts(code) if prompts else plain(textwrap.dedent(code))
     except ValueError as error:  # inconsistent indentation after a prompt
-        return PythonCode(failed, (), f"ValueError: {error}")
-    if source is None:
-        source = plain(textwrap.dedent(code))
+        match = re.search(r"\bline (\d+)\b", str(error))
+        return PythonCode(failed, (), f"bad prompt ({match[0] if match else 'line ?'})")
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # SyntaxWarning for invalid escapes in examples
             tree = ast.parse(source.text)
     except SyntaxError as error:
-        line = _map_line(source, error.lineno or 1)
-        return PythonCode(failed, (), f"SyntaxError: {error.msg} (line {line})")
+        # never `error.msg`: CPython rewords it between minor versions
+        return PythonCode(failed, (), f"SyntaxError (line {_map_line(source, error.lineno or 1)})")
     except (ValueError, RecursionError, MemoryError) as error:  # null bytes, deep nesting
-        return PythonCode(failed, (), f"{type(error).__name__}: {error}")
+        return PythonCode(failed, (), type(error).__name__)
     try:
         calls = _Reader(source).module(tree)
     except RecursionError:
-        return PythonCode(failed, (), "RecursionError: code nested too deeply")
+        return PythonCode(failed, (), "RecursionError")
     return PythonCode("ok", calls)
 
 
@@ -142,6 +147,8 @@ class _Reader:
     def __init__(self, source: Source) -> None:
         self.source = source
         self.calls: list[RawCallRecord] = []
+        # inside a class body: the scope its methods see (Python skips the class scope)
+        self.function_scope: _Env | None = None
 
     def module(self, tree: ast.Module) -> tuple[RawCallRecord, ...]:
         self.block(tree.body, {})
@@ -207,14 +214,19 @@ class _Reader:
                 for decorator in node.decorator_list:
                     self.expr(decorator, env)
                 inner = self.arguments(node.args, env)
+                outer, self.function_scope = self.function_scope, None
                 self.block(node.body, inner)
+                self.function_scope = outer
                 env[node.name] = Value("expr", node.name)
             case ast.ClassDef():
                 for expression in (*node.decorator_list, *node.bases):
                     self.expr(expression, env)
                 for keyword in node.keywords:
                     self.expr(keyword.value, env)
+                outer = self.function_scope
+                self.function_scope = env if outer is None else outer
                 self.block(node.body, dict(env))
+                self.function_scope = outer
                 env[node.name] = Value("expr", node.name)
             case ast.Delete(targets=targets):
                 for target in targets:
@@ -246,10 +258,13 @@ class _Reader:
                 self.children(target, env)
 
     def arguments(self, args: ast.arguments, env: _Env) -> _Env:
-        """Evaluate defaults in `env`; return the body's scope with the parameters unbound."""
+        """Evaluate defaults in `env`; return the body's scope with the parameters unbound.
+
+        In a class body the body's scope starts from the enclosing scope, not the class's.
+        """
         for default in (*args.defaults, *(d for d in args.kw_defaults if d is not None)):
             self.expr(default, env)
-        inner = dict(env)
+        inner = dict(env if self.function_scope is None else self.function_scope)
         every = (*args.posonlyargs, *args.args, *args.kwonlyargs, args.vararg, args.kwarg)
         for arg in every:
             if arg is not None:

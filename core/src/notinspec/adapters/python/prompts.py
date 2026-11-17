@@ -17,10 +17,14 @@ class Source:
     line_map: tuple[int, ...]
 
 
-def has_prompts(code: str) -> bool:
-    """True when the first non-blank line starts with a `>>>` prompt."""
-    first = next((line.strip() for line in code.splitlines() if line.strip()), "")
-    return first == ">>>" or first.startswith(">>> ")
+def has_prompts(code: str, *, anywhere: bool = False) -> bool:
+    """True when the first non-blank line (or, with `anywhere`, any line) is a `>>>` prompt."""
+    lines = [line.strip() for line in code.splitlines() if line.strip()]
+    return any(_is_prompt(line) for line in (lines if anywhere else lines[:1]))
+
+
+def _is_prompt(line: str) -> bool:
+    return line == ">>>" or line.startswith(">>> ")
 
 
 def strip_prompts(code: str) -> Source:

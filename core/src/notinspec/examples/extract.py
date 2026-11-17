@@ -14,7 +14,7 @@ IDs, derived from the input, never from run order (64-bit hex, as chunk IDs):
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from notinspec.adapters.canonical import content_hash
+from notinspec.adapters.canonical import short_id
 from notinspec.chunking import Chunk
 
 # bump when example IDs or boundaries change for the same chunks
@@ -49,11 +49,11 @@ def chunk_examples(chunk: Chunk) -> tuple[Example, ...]:
         assert block.code is not None
         examples.append(
             Example(
-                id=_hash([chunk.id, position]),
+                id=short_id([chunk.id, position]),
                 chunk_id=chunk.id,
                 section_id=chunk.section_id,
                 position=position,
-                content_hash=_hash([block.lang, block.code]),
+                content_hash=short_id([block.lang, block.code]),
                 lang=block.lang,
                 code=block.code,
                 start_line=block.start_line,
@@ -67,7 +67,3 @@ def chunk_examples(chunk: Chunk) -> tuple[Example, ...]:
 def extract_examples(chunks: Iterable[Chunk]) -> tuple[Example, ...]:
     """The examples of all chunks, in chunk order. Pure."""
     return tuple(example for chunk in chunks for example in chunk_examples(chunk))
-
-
-def _hash(obj: object) -> str:
-    return content_hash(obj)[:16]

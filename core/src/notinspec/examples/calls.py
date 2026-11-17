@@ -5,7 +5,8 @@ no adapter reads (`bash`, `text`, `json`, ...) gives no record at all, not an er
 
 Two steps, so the inventory is needed only for the second: `read_calls` gives raw call
 records (the call as written), `normalize_example` maps them onto the inventory and lists the
-symbols the inventory lacks (`Source` example, SPEC §6.3).
+symbols the inventory lacks (`Source` example, SPEC §6.3). `merge_additions` (from the
+adapter) turns the additions of all examples into one inventory for the merge with B.
 """
 
 from dataclasses import dataclass

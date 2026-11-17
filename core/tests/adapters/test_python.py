@@ -255,20 +255,60 @@ def test_syntax_error_in_python_is_invalid() -> None:
     result = parse_python('import urllib3\n\nresp.json()\n{\n  "num": 1,\n  ...\n}\n', "python")
     assert result.status == "invalid"
     assert result.calls == ()
-    assert result.error is not None and result.error.startswith("SyntaxError")
-    assert result.error.endswith("(line 6)")
+    assert result.error == "SyntaxError (line 6)"  # no CPython wording: it changes per version
 
 
 def test_syntax_error_in_doctest_maps_the_line() -> None:
     result = parse_python(">>> a = 1\n>>> b = (\n...   2\n...   3)\n", "pycon")
-    assert result.status == "invalid"
-    assert result.error is not None and result.error.endswith("(line 3)")
+    assert (result.status, result.error) == ("invalid", "SyntaxError (line 3)")
 
 
 def test_bad_prompt_indentation_is_invalid() -> None:
     result = parse_python("  >>> if x:\n... y()\n", "pycon")  # `...` less indented than `>>>`
-    assert (result.status, result.calls) == ("invalid", ())
-    assert result.error is not None and result.error.startswith("ValueError")
+    assert (result.status, result.calls, result.error) == ("invalid", (), "bad prompt (line 2)")
+
+
+def test_pycon_without_prompts_is_plain_code() -> None:
+    (record,) = calls("import urllib3\nhttp = urllib3.PoolManager()\n", "pycon")
+    assert (record.symbol, record.line) == ("urllib3.PoolManager", 2)
+
+
+def test_pycon_session_may_start_with_a_comment() -> None:
+    (record,) = calls("# a session\n>>> import a\n>>> a.b()\n", "pycon")
+    assert (record.callee, record.line) == (imported("a.b"), 3)
+
+
+def test_prompt_later_in_a_python_block_is_not_a_session() -> None:
+    result = parse_python("x = 1\n>>> y\n", "python")
+    assert result.status == "invalid"
+
+
+def test_methods_do_not_see_the_class_scope() -> None:
+    code = """\
+from urllib3 import Retry
+class A:
+    Retry = 1
+    timeout = make()
+    def f(self, value=Retry):
+        Retry(3)
+        timeout.close()
+    class B:
+        def g(self):
+            Retry(4)
+"""
+    records = calls(code)
+    assert [(r.symbol, r.callee.kind) for r in records] == [
+        ("make", "name"),
+        ("Retry", "import"),
+        ("timeout.close", "name"),  # `timeout` lives in the class scope only
+        ("Retry", "import"),
+    ]
+
+
+def test_values_with_dict_literals_are_hashable() -> None:
+    (record,) = calls("f(fields={'a': [1, {'b': 2}]})\n")
+    assert len({record, record}) == 1
+    assert record.kwargs[0].value.literal == {"a": (1, {"b": 2})}
 
 
 @pytest.mark.parametrize("lang", ["default", "none", None])

@@ -45,7 +45,8 @@ def golden(request: pytest.FixtureRequest) -> Callable[[str, object], None]:
 
 # Inventories for component C tests, until component B builds them from Sphinx `desc` nodes.
 # Format: {path: {kind, params: ["a", "/", "b=1", "*args", "*", "c: int = 2", "**kw"], returns}};
-# `signatures: [[...], [...]]` instead of `params` for several signatures.
+# `signatures: [[...], {params: [...], returns: X}]` instead of `params` for several signatures
+# (a list entry takes the symbol's `returns`).
 INVENTORY_SOURCE = Source("signature", section_id="0" * 16)
 URLLIB3_INVENTORY = Path(__file__).parent / "examples" / "fixtures" / "urllib3-inventory.yaml"
 
@@ -86,12 +87,21 @@ def _parameters(texts: list[str]) -> tuple[Parameter, ...]:
 def inventory_from(data: Mapping[str, Mapping[str, Any]]) -> Inventory:
     symbols = []
     for path, entry in data.items():
-        returns = ReturnType(entry["returns"], (INVENTORY_SOURCE,)) if "returns" in entry else None
-        lists = entry.get("signatures", [entry["params"]] if "params" in entry else [])
-        signatures = tuple(
-            Signature(_parameters(params), (INVENTORY_SOURCE,), None, returns) for params in lists
-        )
-        symbols.append(Symbol(path, entry["kind"], (INVENTORY_SOURCE,), signatures))
+        default = {"params": entry["params"]} if "params" in entry else None
+        specs = entry.get("signatures", [default] if default else [])
+        signatures = []
+        for spec in specs:
+            spec = spec if isinstance(spec, dict) else {"params": spec}
+            returns = spec.get("returns", entry.get("returns"))
+            signatures.append(
+                Signature(
+                    _parameters(spec["params"]),
+                    (INVENTORY_SOURCE,),
+                    None,
+                    ReturnType(returns, (INVENTORY_SOURCE,)) if returns else None,
+                )
+            )
+        symbols.append(Symbol(path, entry["kind"], (INVENTORY_SOURCE,), tuple(signatures)))
     return Inventory(tuple(symbols))
 
 

@@ -16,6 +16,7 @@ from notinspec.adapters.python.calls import (
     parse_python,
 )
 from notinspec.adapters.python.normalize import (
+    CALLABLE_KINDS,
     CLASS_KINDS,
     ApiIndex,
     Argument,
@@ -25,11 +26,13 @@ from notinspec.adapters.python.normalize import (
     NormalizedCalls,
     UnresolvedCall,
     example_additions,
+    merge_additions,
     normalize_calls,
 )
 
 __all__ = [
     "AUTO_LANGS",
+    "CALLABLE_KINDS",
     "CLASS_KINDS",
     "PYTHON_ADAPTER_VERSION",
     "PYTHON_LANGS",
@@ -46,6 +49,7 @@ __all__ = [
     "Value",
     "accepts",
     "example_additions",
+    "merge_additions",
     "normalize_calls",
     "parse_python",
 ]
