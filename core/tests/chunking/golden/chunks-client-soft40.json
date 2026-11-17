@@ -23,7 +23,10 @@
         "tokens": 11,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -54,7 +57,10 @@
         "tokens": 3,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -63,7 +69,10 @@
         "tokens": 35,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -94,7 +103,10 @@
         "tokens": 2,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -103,7 +115,10 @@
         "tokens": 32,
         "lang": "python",
         "code": "# create a client and connect\nconn = client.connect(timeout=10, retry_policy=RetryPolicy(max_attempts=3))\n",
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -135,7 +150,10 @@
         "tokens": 4,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "table",
@@ -144,7 +162,10 @@
         "tokens": 65,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -176,7 +197,10 @@
         "tokens": 4,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "list",
@@ -185,7 +209,10 @@
         "tokens": 24,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -194,7 +221,10 @@
         "tokens": 10,
         "lang": "sh",
         "code": "pip install acme\n",
-        "nested": true
+        "nested": true,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -226,7 +256,10 @@
         "tokens": 4,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "code",
@@ -235,7 +268,10 @@
         "tokens": 45,
         "lang": "bash",
         "code": "curl -X POST https://api.acme.test/v1/charges \\\n  -H \"Authorization: Bearer $ACME_KEY\" \\\n  -d amount=1000 -d currency=eur\n",
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -267,7 +303,10 @@
         "tokens": 12,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   },
@@ -298,7 +337,10 @@
         "tokens": 7,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "text",
@@ -307,7 +349,10 @@
         "tokens": 13,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       },
       {
         "kind": "html",
@@ -316,7 +361,10 @@
         "tokens": 16,
         "lang": null,
         "code": null,
-        "nested": false
+        "nested": false,
+        "name": null,
+        "field": null,
+        "type": null
       }
     ]
   }

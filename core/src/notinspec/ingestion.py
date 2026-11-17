@@ -20,7 +20,7 @@ from notinspec.chunking import (
 )
 from notinspec.config import ConfigError, IngestConfig
 
-INGESTION_SCHEMA_VERSION = 2  # 2: chunk id is the location, project added
+INGESTION_SCHEMA_VERSION = 3  # 2: chunk id is the location, project added; 3: Block fields
 _TEXT_SUFFIXES = frozenset({".md", ".markdown", ".txt"})
 
 

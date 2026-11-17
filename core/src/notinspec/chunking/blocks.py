@@ -2,6 +2,9 @@
 
 A real CommonMark parser decides what a block is, so a `# comment` inside a code fence is never
 a heading and a table is always one block. Headings inside lists or quotes don't start sections.
+
+`Block` is shared by every reader. The kinds `admonition`, `signature` and `field` come only from
+structured input (the Sphinx reader, `notinspec.sphinx`), never from Markdown.
 """
 
 import re
@@ -12,7 +15,19 @@ from typing import Literal
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
 
-type BlockKind = Literal["heading", "text", "code", "table", "list", "quote", "html", "rule"]
+type BlockKind = Literal[
+    "heading",
+    "text",
+    "code",
+    "table",
+    "list",
+    "quote",
+    "html",
+    "rule",
+    "admonition",  # note, warning, seealso, ...: prose
+    "signature",  # API signature, "Return type" / "Type" field: not prose
+    "field",  # one Parameters / Returns / Raises entry of an API description: prose
+]
 
 _MD = MarkdownIt("commonmark").enable("table")
 
@@ -42,12 +57,15 @@ class Block:
     code: str | None = None  # code only: the code without the fence lines
     # code inside a list item or quote: its lines are also part of the container block before it
     nested: bool = False
+    name: str | None = None  # field: "timeout", "RuntimeError"; None for an unnamed return value
+    field: str | None = None  # field, signature: "param" | "returns" | "raises" | "return-type"
+    type: str | None = None  # field: "float | None"
 
 
 @dataclass(frozen=True)
 class ParsedBlock:
     block: Block
-    heading: tuple[int, str] | None  # (level 1–6, plain text) for headings
+    heading: tuple[int, str] | None  # (level, plain text) for headings: 1–6 in Markdown
     nested: tuple[Block, ...]  # code blocks inside a list or quote
 
 
