@@ -37,9 +37,11 @@ services:
     build: { context: .., dockerfile: worker/Dockerfile }
     environment:
       <<: *app-env
-      LLM_API_KEY: ${LLM_API_KEY:-}
-      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-} # read by notinspec.runner (SPEC §8)
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+    volumes:
+      # NLI model weights (HF_HOME); the image runs with HF_HUB_OFFLINE=1, the deploy fetches once
+      - hf-models:/models
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -119,3 +121,4 @@ volumes:
   pgdata:
   results:
   caddy-data:
+  hf-models:
