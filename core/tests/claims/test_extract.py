@@ -9,9 +9,11 @@ import pytest
 from notinspec.chunking import Chunk
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
+    PROMPT_VERSION,
     ExtractorSpec,
     MemoryCallLog,
     MemoryClaimStore,
+    ReuseKey,
     extract_claims,
 )
 from notinspec.runner import (
@@ -96,7 +98,68 @@ def test_reuse_asks_nothing(guide_chunks: list[Chunk]) -> None:
     )
     assert (second.asked, second.reused) == (0, 8)
     assert second.claims == first.claims
+    assert {c.run_id for c in second.claims} == {"r1"}  # the original call, not this run
     assert log.calls == []
+
+
+def test_claims_point_at_their_call(guide_chunks: list[Chunk]) -> None:
+    log = MemoryCallLog()
+    result = extract_claims(
+        guide_chunks, QWEN, _client(FakeProvider.load(GUIDE_RECORDING)), "r", log
+    )
+    calls = {(c.run_id, c.prompt_hash): c for c in log.calls}
+    for claim in result.claims:
+        call = calls[(claim.run_id, claim.prompt_hash)]
+        assert call.chunk_id == claim.chunk_id
+        assert call.response is not None and claim.model == call.response["model"]
+
+
+def test_problems_are_reused_with_the_claims(guide_chunks: list[Chunk]) -> None:
+    store = MemoryClaimStore()
+    extract_claims(
+        guide_chunks,
+        QWEN,
+        _client(FakeProvider.load(GUIDE_RECORDING)),
+        "r",
+        MemoryCallLog(),
+        store=store,
+    )
+    chunk = guide_chunks[0]
+    key = ReuseKey(chunk.content_hash, chunk.breadcrumb, QWEN.name, QWEN.model, PROMPT_VERSION)
+    stored = store.get(key)
+    assert stored is not None
+    store.put(key, replace(stored, problems=("claim 3: unknown type 'opinion'",)))
+    result = extract_claims(
+        guide_chunks,
+        QWEN,
+        _client(_Raising(ProviderError("x"))),
+        "r2",
+        MemoryCallLog(),
+        store=store,
+    )
+    assert result.reused == 8
+    assert [(p.chunk_id, p.detail) for p in result.problems] == [
+        (chunk.id, "claim 3: unknown type 'opinion'")
+    ]
+
+
+def test_no_reuse_asks_again_and_replaces(guide_chunks: list[Chunk]) -> None:
+    store = MemoryClaimStore()
+    fake = FakeProvider.load(GUIDE_RECORDING)
+    extract_claims(guide_chunks, QWEN, _client(fake), "r1", MemoryCallLog(), store=store)
+    again = extract_claims(
+        guide_chunks, QWEN, _client(fake), "r2", MemoryCallLog(), store=store, reuse=False
+    )
+    assert (again.asked, again.reused) == (8, 0)
+    later = extract_claims(
+        guide_chunks,
+        QWEN,
+        _client(_Raising(ProviderError("x"))),
+        "r3",
+        MemoryCallLog(),
+        store=store,
+    )
+    assert later.reused == 8 and {c.run_id for c in later.claims} == {"r2"}
 
 
 def test_reuse_needs_the_same_breadcrumb(guide_chunks: list[Chunk]) -> None:

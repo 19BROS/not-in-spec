@@ -65,6 +65,11 @@ class ExtractedClaim:
     text: str
     citation: str
     type: ClaimType
+    # the LLM call that produced the claim, (run_id, prompt_hash) = its `LlmCall`; a reused
+    # claim keeps the values of the original call
+    run_id: str
+    prompt_hash: str
+    model: str  # exact model ID that answered, as the provider reported it
 
 
 @dataclass(frozen=True)

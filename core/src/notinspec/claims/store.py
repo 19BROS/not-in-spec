@@ -6,8 +6,8 @@ The DB stores the same records later.
 
 **Claim store**: extraction is generation, not a model under test, so the claims of a chunk are
 reused while the chunk's text, its breadcrumb (which is in the prompt), the extractor, its model
-and the prompt version stay the same. Only parsed answers are stored; a failed chunk is asked
-again by the next run.
+and the prompt version stay the same. Only parsed answers are stored, with their skipped claims
+and the call that produced them; a failed chunk is asked again by the next run.
 """
 
 import json
@@ -63,47 +63,93 @@ class ReuseKey:
     extractor: str
     model: str
     prompt_version: int
+    # not `max_tokens`: it only decides whether an answer is cut off, and cut-off answers are
+    # never stored
+
+
+@dataclass(frozen=True)
+class StoredAnswer:
+    """A parsed answer, kept for reuse together with the call that produced it."""
+
+    claims: tuple[RawClaim, ...]
+    problems: tuple[str, ...]  # claims of the answer that were skipped, and why
+    run_id: str
+    prompt_hash: str
+    model: str  # exact model ID that answered
 
 
 class ClaimStore(Protocol):
-    def get(self, key: ReuseKey) -> tuple[RawClaim, ...] | None: ...
-    def put(self, key: ReuseKey, claims: tuple[RawClaim, ...]) -> None: ...
+    def get(self, key: ReuseKey) -> StoredAnswer | None: ...
+    def put(self, key: ReuseKey, answer: StoredAnswer) -> None: ...
 
 
 class MemoryClaimStore:
     def __init__(self) -> None:
-        self._items: dict[ReuseKey, tuple[RawClaim, ...]] = {}
+        self._items: dict[ReuseKey, StoredAnswer] = {}
 
-    def get(self, key: ReuseKey) -> tuple[RawClaim, ...] | None:
+    def get(self, key: ReuseKey) -> StoredAnswer | None:
         return self._items.get(key)
 
-    def put(self, key: ReuseKey, claims: tuple[RawClaim, ...]) -> None:
-        self._items[key] = claims
+    def put(self, key: ReuseKey, answer: StoredAnswer) -> None:
+        self._items[key] = answer
 
 
 class JsonlClaimStore:
-    """A JSONL file of {key, claims}, read once and appended to. A later line wins."""
+    """A JSONL file of {key, answer}, read once and appended to. A later line wins.
+
+    A crash while writing can cut off only the last line, so a broken last line is removed
+    from the file with a warning (`warnings`), and the run asks for that chunk again. A broken
+    line anywhere else means the file was damaged otherwise, which is an error.
+    """
 
     def __init__(self, path: Path) -> None:
         self.path = path
-        self._items: dict[ReuseKey, tuple[RawClaim, ...]] = {}
-        if path.exists():
-            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-                if not line.strip():
-                    continue
-                try:
-                    entry = json.loads(line)
-                    key = ReuseKey(**entry["key"])
-                    claims = tuple(RawClaim(**c) for c in entry["claims"])
-                except (ValueError, TypeError, KeyError) as e:
+        self.warnings: list[str] = []
+        self._items: dict[ReuseKey, StoredAnswer] = {}
+        if not path.exists():
+            return
+        data = path.read_bytes()
+        lines = data.split(b"\n")
+        offset = 0
+        for number, line in enumerate(lines, 1):
+            start, offset = offset, offset + len(line) + 1
+            if not line.strip():
+                continue
+            try:
+                key, answer = _entry(line)
+            except (ValueError, TypeError, KeyError) as e:
+                if any(rest.strip() for rest in lines[number:]):
                     raise ValueError(f"{path}:{number}: not a claim store entry: {e}") from e
-                self._items[key] = claims
+                with path.open("r+b") as f:
+                    f.truncate(start)
+                self.warnings.append(
+                    f"{path.name}:{number}: removed a cut-off last line ({e}); "
+                    "its chunk is asked again"
+                )
+                return
+            self._items[key] = answer
+        if data and not data.endswith(b"\n"):  # a whole last line whose newline was cut off
+            with path.open("ab") as f:
+                f.write(b"\n")
 
-    def get(self, key: ReuseKey) -> tuple[RawClaim, ...] | None:
+    def get(self, key: ReuseKey) -> StoredAnswer | None:
         return self._items.get(key)
 
-    def put(self, key: ReuseKey, claims: tuple[RawClaim, ...]) -> None:
-        self._items[key] = claims
-        entry = {"key": asdict(key), "claims": [asdict(c) for c in claims]}
+    def put(self, key: ReuseKey, answer: StoredAnswer) -> None:
+        self._items[key] = answer
+        entry = {"key": asdict(key), "answer": asdict(answer)}
         with self.path.open("a", encoding="utf-8", newline="\n") as f:
             f.write(json.dumps(entry, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def _entry(line: bytes) -> tuple[ReuseKey, StoredAnswer]:
+    entry = json.loads(line)
+    answer = entry["answer"]
+    stored = StoredAnswer(
+        claims=tuple(RawClaim(**c) for c in answer["claims"]),
+        problems=tuple(str(p) for p in answer["problems"]),
+        run_id=str(answer["run_id"]),
+        prompt_hash=str(answer["prompt_hash"]),
+        model=str(answer["model"]),
+    )
+    return ReuseKey(**entry["key"]), stored

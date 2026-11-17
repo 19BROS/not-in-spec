@@ -45,7 +45,7 @@ from notinspec.runner import (
 )
 from notinspec.verify import ANSWER_SCHEMA, parse_answer
 
-# bump when the shape of claims.json changes
+# bump when the shape of extracted-claims.json changes
 CLAIMS_SCHEMA_VERSION = 1
 
 # ad-hoc instruction for trying a model by hand; real prompts come from the generator's templates
@@ -118,8 +118,9 @@ def main(argv: list[str] | None = None) -> int:
         "extract",
         help="extract claims with the LLM extractors (Groq: needs GROQ_API_KEY); no grounding",
         description="Reads the configured docs, sends every prose chunk to each extractor and "
-        "writes claims.json. Every request is appended to llm-calls.jsonl; claims of unchanged "
-        "chunks are reused from claims-store.jsonl in the output folder.",
+        "writes extracted-claims.json (not grounded yet). Every request is appended to "
+        "llm-calls.jsonl; claims of unchanged chunks are reused from claims-store.jsonl in the "
+        "output folder.",
     )
     extract.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
     extract.add_argument("--out", type=Path, default=Path("notinspec-out"))
@@ -138,7 +139,11 @@ def main(argv: list[str] | None = None) -> int:
         + ")",
     )
     extract.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
-    extract.add_argument("--no-reuse", action="store_true", help="ask again for every chunk")
+    extract.add_argument(
+        "--no-reuse",
+        action="store_true",
+        help="ask again for every chunk and replace its stored claims",
+    )
     extract.add_argument("--run-id", help="run ID for the response cache (default: random)")
     extract.add_argument(
         "--record", type=Path, help="also save the raw responses as a fake-provider fixture"
@@ -265,24 +270,30 @@ def _extract_claims(args: argparse.Namespace) -> int:
         raise ValueError(f"no chunk source matches {', '.join(patterns)}")
     args.out.mkdir(parents=True, exist_ok=True)
     calls = JsonlCallLog(args.out / "llm-calls.jsonl")
-    store = None if args.no_reuse else JsonlClaimStore(args.out / "claims-store.jsonl")
+    store = JsonlClaimStore(args.out / "claims-store.jsonl")
+    for warning in store.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
     provider_name: str = args.provider
     live = RecordingProvider(_LazyProvider(lambda: _live_provider(provider_name)))
     client = ModelClient(live, limits=PROVIDERS[provider_name].limiters())
     run_id = args.run_id or uuid.uuid4().hex
     print(f"Extracting claims from {len(chunks)} chunks with {len(specs)} extractors.")
     results = []
-    for spec in specs:
-        result = extract_claims(chunks, spec, client, run_id, calls, store=store)
-        results.append(result)
-        print(
-            f"  {spec.name}: {len(result.claims)} claims, {result.asked} chunks asked, "
-            f"{result.reused} reused, {result.without_prose} without prose, "
-            f"{len(result.failures)} failed, {len(result.problems)} claims skipped"
-            + (f"; stopped: {result.stopped}" if result.stopped else "")
-        )
-    if args.record is not None:
-        live.save(args.record)
+    try:
+        for spec in specs:
+            result = extract_claims(
+                chunks, spec, client, run_id, calls, store=store, reuse=not args.no_reuse
+            )
+            results.append(result)
+            print(
+                f"  {spec.name}: {len(result.claims)} claims, {result.asked} chunks asked, "
+                f"{result.reused} reused, {result.without_prose} without prose, "
+                f"{len(result.failures)} failed, {len(result.problems)} claims skipped"
+                + (f"; stopped: {result.stopped}" if result.stopped else "")
+            )
+    finally:  # a recording of the answers so far is worth keeping when a later step fails
+        if args.record is not None:
+            live.save(args.record)
     output = {
         "schema_version": CLAIMS_SCHEMA_VERSION,
         "project": ingestion.project,
@@ -295,8 +306,9 @@ def _extract_claims(args: argparse.Namespace) -> int:
         "failures": [f for r in results for f in r.failures],
         "problems": [p for r in results for p in r.problems],
     }
-    (args.out / "claims.json").write_bytes(canonical_json(output, pretty=True))
-    print(f"Claims: {(args.out / 'claims.json').resolve()}")
+    path = args.out / "extracted-claims.json"
+    path.write_bytes(canonical_json(output, pretty=True))
+    print(f"Extracted claims: {path.resolve()}")
     stopped = [r for r in results if r.stopped]
     for r in stopped:
         print(f"stopped: {r.extractor.name}: {r.stopped}; run again to continue", file=sys.stderr)

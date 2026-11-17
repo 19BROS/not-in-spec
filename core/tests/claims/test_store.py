@@ -3,10 +3,20 @@ from pathlib import Path
 
 import pytest
 
-from notinspec.claims import JsonlCallLog, JsonlClaimStore, LlmCall, RawClaim, ReuseKey
+from notinspec.claims import (
+    JsonlCallLog,
+    JsonlClaimStore,
+    LlmCall,
+    RawClaim,
+    ReuseKey,
+    StoredAnswer,
+)
 
 KEY = ReuseKey("abc", "p > Guide", "x", "acme/model", 1)
+OTHER = ReuseKey("def", "p", "x", "acme/model", 1)
 CLAIM = RawClaim("c1", "Timeouts are in seconds.", "in seconds", "fact")
+ANSWER = StoredAnswer((CLAIM,), ("claim 2: unknown type 'opinion'",), "r1", "h1", "acme/model-1")
+EMPTY = StoredAnswer((), (), "r2", "h2", "acme/model-1")
 
 
 def _call(n: int) -> LlmCall:
@@ -40,23 +50,55 @@ def test_claim_store_survives_a_new_process(tmp_path: Path) -> None:
     path = tmp_path / "claims-store.jsonl"
     store = JsonlClaimStore(path)
     assert store.get(KEY) is None
-    store.put(KEY, (CLAIM,))
-    store.put(ReuseKey("def", "p", "x", "acme/model", 1), ())
+    store.put(KEY, ANSWER)
+    store.put(OTHER, EMPTY)
     reopened = JsonlClaimStore(path)
-    assert reopened.get(KEY) == (CLAIM,)
-    assert reopened.get(ReuseKey("def", "p", "x", "acme/model", 1)) == ()
+    assert reopened.get(KEY) == ANSWER
+    assert reopened.get(OTHER) == EMPTY
     assert reopened.get(ReuseKey("abc", "p > Guide", "x", "acme/model", 2)) is None
+    assert reopened.warnings == []
 
 
 def test_later_entry_wins(tmp_path: Path) -> None:
     path = tmp_path / "claims-store.jsonl"
-    JsonlClaimStore(path).put(KEY, (CLAIM,))
-    JsonlClaimStore(path).put(KEY, ())
-    assert JsonlClaimStore(path).get(KEY) == ()
+    JsonlClaimStore(path).put(KEY, ANSWER)
+    JsonlClaimStore(path).put(KEY, EMPTY)
+    assert JsonlClaimStore(path).get(KEY) == EMPTY
 
 
-def test_broken_store_is_an_error(tmp_path: Path) -> None:
+def test_cut_off_last_line_is_removed_with_a_warning(tmp_path: Path) -> None:
     path = tmp_path / "claims-store.jsonl"
-    path.write_text('{"key": {"content_hash": "a"}}\n', encoding="utf-8")
+    store = JsonlClaimStore(path)
+    store.put(KEY, ANSWER)
+    store.put(OTHER, EMPTY)
+    whole = path.read_bytes()
+    path.write_bytes(whole[:-30])  # killed while writing the second entry
+    reopened = JsonlClaimStore(path)
+    assert reopened.get(KEY) == ANSWER and reopened.get(OTHER) is None
+    assert len(reopened.warnings) == 1
+    assert "claims-store.jsonl:2: removed a cut-off last line" in reopened.warnings[0]
+    # the file is usable again: the next entry starts on its own line
+    reopened.put(OTHER, EMPTY)
+    again = JsonlClaimStore(path)
+    assert again.get(OTHER) == EMPTY and again.warnings == []
+
+
+def test_whole_last_line_without_its_newline_is_kept(tmp_path: Path) -> None:
+    path = tmp_path / "claims-store.jsonl"
+    JsonlClaimStore(path).put(KEY, ANSWER)
+    path.write_bytes(path.read_bytes().rstrip(b"\n"))
+    store = JsonlClaimStore(path)
+    assert store.get(KEY) == ANSWER and store.warnings == []
+    store.put(OTHER, EMPTY)
+    assert JsonlClaimStore(path).get(OTHER) == EMPTY
+
+
+def test_broken_line_in_the_middle_is_an_error(tmp_path: Path) -> None:
+    path = tmp_path / "claims-store.jsonl"
+    store = JsonlClaimStore(path)
+    store.put(KEY, ANSWER)
+    store.put(OTHER, EMPTY)
+    lines = path.read_text(encoding="utf-8").splitlines()
+    path.write_text(f'{{"key": {{"content_hash": "a"}}}}\n{lines[1]}\n', encoding="utf-8")
     with pytest.raises(ValueError, match="claims-store.jsonl:1"):
         JsonlClaimStore(path)

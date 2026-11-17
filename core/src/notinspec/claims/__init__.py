@@ -29,6 +29,7 @@ from notinspec.claims.store import (
     MemoryCallLog,
     MemoryClaimStore,
     ReuseKey,
+    StoredAnswer,
 )
 
 __all__ = [
@@ -53,6 +54,7 @@ __all__ = [
     "ParsedClaims",
     "RawClaim",
     "ReuseKey",
+    "StoredAnswer",
     "build_request",
     "extract_claims",
     "extractor_for",

@@ -18,11 +18,10 @@ from notinspec.claims.model import (
     ExtractionProblem,
     ExtractionResult,
     ExtractorSpec,
-    RawClaim,
 )
 from notinspec.claims.parse import ParsedClaims, parse_claims
 from notinspec.claims.prompt import build_request
-from notinspec.claims.store import CallLog, ClaimStore, LlmCall, ReuseKey
+from notinspec.claims.store import CallLog, ClaimStore, LlmCall, ReuseKey, StoredAnswer
 from notinspec.runner import (
     ChatRequest,
     ModelClient,
@@ -46,15 +45,17 @@ def extract_claims(
     calls: CallLog,
     *,
     store: ClaimStore | None = None,
+    reuse: bool = True,
     clock: Callable[[], str] = _now,
 ) -> ExtractionResult:
+    """`reuse=False` asks again for every chunk and replaces its stored answer."""
     claims: list[ExtractedClaim] = []
     failures: list[ExtractionFailure] = []
     problems: list[ExtractionProblem] = []
     asked = reused = without_prose = 0
     stopped: ExtractionCause | None = None
     # two chunks with the same prompt get one answer, logged once
-    answers: dict[str, ParsedClaims] = {}
+    answers: dict[str, tuple[ParsedClaims, StoredAnswer]] = {}
 
     for chunk in chunks:
         if not prose_sentences(chunk):
@@ -63,8 +64,9 @@ def extract_claims(
         key = ReuseKey(
             chunk.content_hash, chunk.breadcrumb, spec.name, spec.model, spec.prompt_version
         )
-        if store is not None and (stored := store.get(key)) is not None:
+        if reuse and store is not None and (stored := store.get(key)) is not None:
             claims.extend(_bind(chunk, spec, stored))
+            problems.extend(ExtractionProblem(chunk.id, spec.name, p) for p in stored.problems)
             reused += 1
             continue
         if stopped is not None:
@@ -72,8 +74,8 @@ def extract_claims(
             continue
 
         request = build_request(chunk, spec)
-        parsed = answers.get(request.prompt_hash())
-        if parsed is None:
+        known = answers.get(request.prompt_hash())
+        if known is None:
             asked += 1
             try:
                 completion = client.ask(run_id, request)
@@ -94,15 +96,20 @@ def extract_claims(
                 refusal=completion.refusal,
                 finish_reason=completion.finish_reason,
             )
-            answers[request.prompt_hash()] = parsed
+            answer = StoredAnswer(
+                parsed.claims, parsed.problems, run_id, request.prompt_hash(), completion.model
+            )
+            answers[request.prompt_hash()] = parsed, answer
+        else:
+            parsed, answer = known
 
         if parsed.cause is not None:
             failures.append(ExtractionFailure(chunk.id, spec.name, parsed.cause, parsed.detail))
             continue
-        claims.extend(_bind(chunk, spec, parsed.claims))
-        problems.extend(ExtractionProblem(chunk.id, spec.name, p) for p in parsed.problems)
+        claims.extend(_bind(chunk, spec, answer))
+        problems.extend(ExtractionProblem(chunk.id, spec.name, p) for p in answer.problems)
         if store is not None:
-            store.put(key, parsed.claims)
+            store.put(key, answer)
 
     return ExtractionResult(
         extractor=spec,
@@ -116,9 +123,20 @@ def extract_claims(
     )
 
 
-def _bind(chunk: Chunk, spec: ExtractorSpec, raw: Sequence[RawClaim]) -> list[ExtractedClaim]:
+def _bind(chunk: Chunk, spec: ExtractorSpec, answer: StoredAnswer) -> list[ExtractedClaim]:
     return [
-        ExtractedClaim(chunk.id, spec.name, c.local_id, c.text, c.citation, c.type) for c in raw
+        ExtractedClaim(
+            chunk.id,
+            spec.name,
+            c.local_id,
+            c.text,
+            c.citation,
+            c.type,
+            run_id=answer.run_id,
+            prompt_hash=answer.prompt_hash,
+            model=answer.model,
+        )
+        for c in answer.claims
     ]
 
 
