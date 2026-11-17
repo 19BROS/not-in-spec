@@ -2,12 +2,19 @@
 
 - `check_citation`: is the claim's quoted span in the chunk, and is it prose?
 - `nli_premise`: the text around the citation that NLI reads (SPEC §6.1).
+- `missing_identifiers` on `section_reference`: does the section name every identifier,
+  number and version the claim names (SPEC §18)?
 
 The NLI decision itself and the claim extractor live elsewhere (`notinspec.nli`,
 `notinspec.claims`); this package only takes chunks, strings and the inventory.
 """
 
 from notinspec.grounding.citation import CitationCheck, CitationStatus, check_citation, normalize
+from notinspec.grounding.identifiers import (
+    inventory_names,
+    missing_identifiers,
+    section_reference,
+)
 from notinspec.grounding.premise import PREMISE_RULE, Premise, nli_premise
 
 # bump when any result can change for the same input (normalization, premise, identifier rules)
@@ -20,6 +27,9 @@ __all__ = [
     "CitationStatus",
     "Premise",
     "check_citation",
+    "inventory_names",
+    "missing_identifiers",
     "nli_premise",
     "normalize",
+    "section_reference",
 ]
