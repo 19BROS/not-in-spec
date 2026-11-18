@@ -265,6 +265,29 @@ def test_load_documents_sorts_and_deduplicates(tmp_path: Path) -> None:
     assert docs[1].text == "# Bad �\n"
 
 
+def test_load_documents_rejects_pattern_outside_root(tmp_path: Path) -> None:
+    (tmp_path / "outside.md").write_text("# Secret\n", encoding="utf-8")
+    (tmp_path / "docs").mkdir()
+    with pytest.raises(ValueError, match="outside the docs root: ../outside.md"):
+        load_documents(tmp_path / "docs", ["../*.md"])
+
+
+def test_load_documents_rejects_symlink_outside_root(tmp_path: Path) -> None:
+    (tmp_path / "outside.md").write_text("# Secret\n", encoding="utf-8")
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "link.md").symlink_to(tmp_path / "outside.md")
+    with pytest.raises(ValueError, match="outside the docs root: link.md"):
+        load_documents(tmp_path / "docs", ["*.md"])
+
+
+def test_load_documents_follows_symlink_inside_root(tmp_path: Path) -> None:
+    (tmp_path / "shared").mkdir()
+    (tmp_path / "shared" / "a.md").write_text("# A\n", encoding="utf-8")
+    (tmp_path / "link.md").symlink_to(tmp_path / "shared" / "a.md")
+    docs = load_documents(tmp_path, ["*.md"])
+    assert [(d.source, d.text) for d in docs] == [("link.md", "# A\n")]
+
+
 def test_normalize_text_keeps_line_count() -> None:
     text = "a  \r\nb\rc\n"
     assert normalize_text(text) == "a\nb\nc\n"
