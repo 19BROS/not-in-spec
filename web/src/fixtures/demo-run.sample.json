@@ -1,0 +1,3226 @@
+{
+ "schema": "notinspec-demo-run",
+ "schema_version": 0,
+ "id": "20261118T1000Z-urllib3-sample",
+ "project": "urllib3",
+ "created_at": "2026-11-18T08:59:39+00:00",
+ "commit": "8cb1aca0f01b392bcc5014454770aff876b5d1e2",
+ "tool_version": "0.0.0",
+ "docs": {
+  "sphinx_version": "9.1.0",
+  "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+  "config_hash": "cc1cc9832131151d3d201a90f70ac4c1a98804c8c8982f4ddccf2963ce540cd9"
+ },
+ "counts": {
+  "files": 22,
+  "chunks": 481,
+  "symbols": 266,
+  "parameters": 464,
+  "changes": 3,
+  "warnings": 0,
+  "claims": 446,
+  "claims_kept": 338
+ },
+ "steps": [
+  {
+   "id": "read",
+   "label": "Read & chunk",
+   "status": "done",
+   "detail": "22 files · 481 chunks"
+  },
+  {
+   "id": "inventory",
+   "label": "Build inventory",
+   "status": "done",
+   "detail": "266 symbols · 3 changes"
+  },
+  {
+   "id": "claims",
+   "label": "Extract claims",
+   "status": "done",
+   "detail": "446 claims · 1 extractors · 3 pages"
+  },
+  {
+   "id": "grounding",
+   "label": "Ground claims (citation, NLI, identifiers)",
+   "status": "done",
+   "detail": "338 kept · 108 dropped"
+  },
+  {
+   "id": "tests",
+   "label": "Generate tests (L0-L4)",
+   "status": "not_implemented",
+   "detail": "next iteration"
+  },
+  {
+   "id": "models",
+   "label": "Run models",
+   "status": "not_implemented",
+   "detail": "next iteration"
+  },
+  {
+   "id": "evaluate",
+   "label": "Evaluate & report",
+   "status": "not_implemented",
+   "detail": "next iteration"
+  }
+ ],
+ "documents": [
+  {
+   "source": "advanced-usage",
+   "chunks": 17,
+   "tokens": 4135,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "changelog",
+   "chunks": 130,
+   "tokens": 16522,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "contributing",
+   "chunks": 7,
+   "tokens": 1977,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "index",
+   "chunks": 7,
+   "tokens": 427,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/contrib/emscripten",
+   "chunks": 5,
+   "tokens": 759,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/contrib/index",
+   "chunks": 1,
+   "tokens": 29,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/contrib/pyopenssl",
+   "chunks": 3,
+   "tokens": 287,
+   "symbols": 2,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/contrib/socks",
+   "chunks": 9,
+   "tokens": 1129,
+   "symbols": 8,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.connection",
+   "chunks": 20,
+   "tokens": 1973,
+   "symbols": 20,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.connectionpool",
+   "chunks": 14,
+   "tokens": 2261,
+   "symbols": 14,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.exceptions",
+   "chunks": 48,
+   "tokens": 1812,
+   "symbols": 48,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.fields",
+   "chunks": 13,
+   "tokens": 1663,
+   "symbols": 13,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.poolmanager",
+   "chunks": 46,
+   "tokens": 3855,
+   "symbols": 46,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.request",
+   "chunks": 1,
+   "tokens": 661,
+   "symbols": 1,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.response",
+   "chunks": 72,
+   "tokens": 3587,
+   "symbols": 71,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "reference/urllib3.util",
+   "chunks": 44,
+   "tokens": 6413,
+   "symbols": 43,
+   "claims": 250,
+   "claims_kept": 191
+  },
+  {
+   "source": "security",
+   "chunks": 5,
+   "tokens": 552,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "sponsors",
+   "chunks": 2,
+   "tokens": 403,
+   "symbols": 0,
+   "claims": 0,
+   "claims_kept": 0
+  },
+  {
+   "source": "user-guide",
+   "chunks": 17,
+   "tokens": 3699,
+   "symbols": 0,
+   "claims": 93,
+   "claims_kept": 57
+  },
+  {
+   "source": "v2-migration-guide",
+   "chunks": 20,
+   "tokens": 2986,
+   "symbols": 0,
+   "claims": 103,
+   "claims_kept": 90
+  }
+ ],
+ "symbols": [
+  {
+   "path": "urllib3.HTTPConnectionPool",
+   "kind": "class",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "maxsize",
+    "block",
+    "headers",
+    "retries",
+    "_proxy",
+    "_proxy_headers",
+    "_proxy_config",
+    "conn_kw"
+   ]
+  },
+  {
+   "path": "urllib3.HTTPConnectionPool.ConnectionCls",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.HTTPConnectionPool.close",
+   "kind": "method",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.HTTPConnectionPool.is_same_host",
+   "kind": "method",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "url"
+   ]
+  },
+  {
+   "path": "urllib3.HTTPConnectionPool.scheme",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.HTTPConnectionPool.urlopen",
+   "kind": "method",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "method",
+    "url",
+    "body",
+    "headers",
+    "retries",
+    "redirect",
+    "assert_same_host",
+    "timeout",
+    "pool_timeout",
+    "release_conn",
+    "chunked",
+    "body_pos",
+    "preload_content",
+    "decode_content",
+    "response_kw"
+   ]
+  },
+  {
+   "path": "urllib3.HTTPSConnectionPool",
+   "kind": "class",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "maxsize",
+    "block",
+    "headers",
+    "retries",
+    "_proxy",
+    "_proxy_headers",
+    "key_file",
+    "cert_file",
+    "cert_reqs",
+    "key_password",
+    "ca_certs",
+    "ssl_version",
+    "ssl_minimum_version",
+    "ssl_maximum_version",
+    "assert_hostname",
+    "assert_fingerprint",
+    "ca_cert_dir",
+    "conn_kw"
+   ]
+  },
+  {
+   "path": "urllib3.HTTPSConnectionPool.ConnectionCls",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.HTTPSConnectionPool.scheme",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.PoolManager",
+   "kind": "class",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "num_pools",
+    "headers",
+    "connection_pool_kw"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.clear",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.PoolManager.connection_from_context",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "request_context"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.connection_from_host",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "host",
+    "port",
+    "scheme",
+    "pool_kwargs"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.connection_from_pool_key",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "pool_key",
+    "request_context"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.connection_from_url",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "url",
+    "pool_kwargs"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.pools",
+   "kind": "attribute",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.PoolManager.proxy",
+   "kind": "attribute",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.PoolManager.proxy_config",
+   "kind": "attribute",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.PoolManager.request",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "method",
+    "url",
+    "body",
+    "fields",
+    "headers",
+    "json",
+    "urlopen_kw"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.request_encode_body",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "method",
+    "url",
+    "fields",
+    "headers",
+    "encode_multipart",
+    "multipart_boundary",
+    "urlopen_kw"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.request_encode_url",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "method",
+    "url",
+    "fields",
+    "headers",
+    "urlopen_kw"
+   ]
+  },
+  {
+   "path": "urllib3.PoolManager.urlopen",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "method",
+    "url",
+    "redirect",
+    "kw"
+   ]
+  },
+  {
+   "path": "urllib3.ProxyManager",
+   "kind": "class",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "proxy_url",
+    "num_pools",
+    "headers",
+    "proxy_headers",
+    "proxy_ssl_context",
+    "use_forwarding_for_https",
+    "proxy_assert_hostname",
+    "proxy_assert_fingerprint",
+    "connection_pool_kw"
+   ]
+  },
+  {
+   "path": "urllib3.ProxyManager.connection_from_host",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "host",
+    "port",
+    "scheme",
+    "pool_kwargs"
+   ]
+  },
+  {
+   "path": "urllib3.ProxyManager.urlopen",
+   "kind": "method",
+   "source": "reference/urllib3.poolmanager",
+   "parameters": [
+    "method",
+    "url",
+    "redirect",
+    "kw"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection",
+   "kind": "class",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "source_address",
+    "blocksize",
+    "socket_options",
+    "proxy",
+    "proxy_config"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.close",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.connect",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.default_socket_options",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.getresponse",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.host",
+   "kind": "property",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.is_verified",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.proxy_is_forwarding",
+   "kind": "property",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.proxy_is_tunneling",
+   "kind": "property",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.request",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "method",
+    "url",
+    "body",
+    "headers",
+    "chunked",
+    "preload_content",
+    "decode_content",
+    "enforce_content_length"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.request_chunked",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "method",
+    "url",
+    "body",
+    "headers"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPConnection.set_tunnel",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "host",
+    "port",
+    "headers",
+    "scheme"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPSConnection",
+   "kind": "class",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "source_address",
+    "blocksize",
+    "socket_options",
+    "proxy",
+    "proxy_config",
+    "cert_reqs",
+    "assert_hostname",
+    "assert_fingerprint",
+    "server_hostname",
+    "ssl_context",
+    "ca_certs",
+    "ca_cert_dir",
+    "ca_cert_data",
+    "ssl_minimum_version",
+    "ssl_maximum_version",
+    "ssl_version",
+    "cert_file",
+    "key_file",
+    "key_password"
+   ]
+  },
+  {
+   "path": "urllib3.connection.HTTPSConnection.connect",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.HTTPSConnection.set_cert",
+   "kind": "method",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "key_file",
+    "cert_file",
+    "cert_reqs",
+    "key_password",
+    "ca_certs",
+    "assert_hostname",
+    "assert_fingerprint",
+    "ca_cert_dir",
+    "ca_cert_data"
+   ]
+  },
+  {
+   "path": "urllib3.connection.ProxyConfig",
+   "kind": "class",
+   "source": "reference/urllib3.connection",
+   "parameters": [
+    "ssl_context",
+    "use_forwarding_for_https",
+    "assert_hostname",
+    "assert_fingerprint"
+   ]
+  },
+  {
+   "path": "urllib3.connection.ProxyConfig.assert_fingerprint",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.ProxyConfig.assert_hostname",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.ProxyConfig.ssl_context",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connection.ProxyConfig.use_forwarding_for_https",
+   "kind": "attribute",
+   "source": "reference/urllib3.connection",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connectionpool.ConnectionPool",
+   "kind": "class",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "host",
+    "port"
+   ]
+  },
+  {
+   "path": "urllib3.connectionpool.ConnectionPool.QueueCls",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connectionpool.ConnectionPool.close",
+   "kind": "method",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connectionpool.ConnectionPool.scheme",
+   "kind": "attribute",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.connectionpool.connection_from_url",
+   "kind": "function",
+   "source": "reference/urllib3.connectionpool",
+   "parameters": [
+    "url",
+    "kw"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.pyopenssl.extract_from_urllib3",
+   "kind": "function",
+   "source": "reference/contrib/pyopenssl",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.contrib.pyopenssl.inject_into_urllib3",
+   "kind": "function",
+   "source": "reference/contrib/pyopenssl",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSConnection",
+   "kind": "class",
+   "source": "reference/contrib/socks",
+   "parameters": [
+    "_socks_options",
+    "args",
+    "kwargs"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSHTTPConnectionPool",
+   "kind": "class",
+   "source": "reference/contrib/socks",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "maxsize",
+    "block",
+    "headers",
+    "retries",
+    "_proxy",
+    "_proxy_headers",
+    "_proxy_config",
+    "conn_kw"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSHTTPConnectionPool.ConnectionCls",
+   "kind": "attribute",
+   "source": "reference/contrib/socks",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSHTTPSConnection",
+   "kind": "class",
+   "source": "reference/contrib/socks",
+   "parameters": [
+    "_socks_options",
+    "args",
+    "kwargs"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSHTTPSConnectionPool",
+   "kind": "class",
+   "source": "reference/contrib/socks",
+   "parameters": [
+    "host",
+    "port",
+    "timeout",
+    "maxsize",
+    "block",
+    "headers",
+    "retries",
+    "_proxy",
+    "_proxy_headers",
+    "key_file",
+    "cert_file",
+    "cert_reqs",
+    "key_password",
+    "ca_certs",
+    "ssl_version",
+    "ssl_minimum_version",
+    "ssl_maximum_version",
+    "assert_hostname",
+    "assert_fingerprint",
+    "ca_cert_dir",
+    "conn_kw"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSHTTPSConnectionPool.ConnectionCls",
+   "kind": "attribute",
+   "source": "reference/contrib/socks",
+   "parameters": []
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSProxyManager",
+   "kind": "class",
+   "source": "reference/contrib/socks",
+   "parameters": [
+    "proxy_url",
+    "username",
+    "password",
+    "num_pools",
+    "headers",
+    "connection_pool_kw"
+   ]
+  },
+  {
+   "path": "urllib3.contrib.socks.SOCKSProxyManager.pool_classes_by_scheme",
+   "kind": "attribute",
+   "source": "reference/contrib/socks",
+   "parameters": []
+  }
+ ],
+ "changes": [
+  {
+   "symbol": "urllib3.fields.format_header_param",
+   "kind": "deprecated",
+   "version": "2.0.0",
+   "parameter": null,
+   "replacement": null
+  },
+  {
+   "symbol": "urllib3.fields.format_header_param_html5",
+   "kind": "deprecated",
+   "version": "2.0.0",
+   "parameter": null,
+   "replacement": null
+  },
+  {
+   "symbol": "urllib3.fields.format_header_param_rfc2231",
+   "kind": "deprecated",
+   "version": "2.0.0",
+   "parameter": null,
+   "replacement": null
+  }
+ ],
+ "warnings": [],
+ "claims": {
+  "sources": [
+   "reference/urllib3.util",
+   "user-guide",
+   "v2-migration-guide"
+  ],
+  "extractors": [
+   "openai/gpt-oss-20b"
+  ],
+  "counts": {
+   "openai/gpt-oss-20b": {
+    "citation_not_found": 18,
+    "id_missing": 4,
+    "kept": 338,
+    "nli_contradiction": 1,
+    "nli_neutral": 6,
+    "not_checkable": 79
+   }
+  },
+  "versions": {
+   "grounding": 1,
+   "premise_rule": "cited±1-in-block+lead-in",
+   "windows": 1,
+   "chunker": 3,
+   "nli_model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+   "nli_revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+   "decision_rule": "argmax"
+  },
+  "items": [
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c28",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "urllib3 will sleep for backoff_factor * (2 ** (number of previous retries)) seconds.",
+    "citation": "urllib3 will sleep for:\n\n```default\n{backoff factor} * (2 ** ({number of previous retries}))\n```",
+    "status": "nli_neutral",
+    "premise": "urllib3 > Utilities > Retry > backoff_factor: backoff_factor (float) – A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). urllib3 will sleep for: seconds.",
+    "nli": {
+     "entailment": 0.13321702182292938,
+     "neutral": 0.8336318731307983,
+     "contradiction": 0.033151157200336456,
+     "truncated": false
+    },
+    "missing": [
+     "2"
+    ]
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c29",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "If backoff_jitter is non-zero, the sleep is extended by random.uniform(0, backoff jitter) seconds.",
+    "citation": "If backoff_jitter is non-zero, this sleep is extended by:\n\n```default\nrandom.uniform(0, {backoff jitter})\n```",
+    "status": "nli_neutral",
+    "premise": "urllib3 > Utilities > Retry > backoff_factor: seconds. If backoff_jitter is non-zero, this sleep is extended by: seconds.",
+    "nli": {
+     "entailment": 0.03260134160518646,
+     "neutral": 0.7035191059112549,
+     "contradiction": 0.26387953758239746,
+     "truncated": false
+    },
+    "missing": [
+     "random.uniform"
+    ]
+   },
+   {
+    "id": "79ff22f9e621a7cd:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > DEFAULT_ALLOWED_METHODS",
+    "chunk_id": "79ff22f9e621a7cd",
+    "type": "fact",
+    "text": "DEFAULT_ALLOWED_METHODS is a frozenset containing the strings 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', and 'TRACE'.",
+    "citation": "`DEFAULT_ALLOWED_METHODS = frozenset({'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE'})`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "0eada5a8c3c3cabf:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > DEFAULT_BACKOFF_MAX",
+    "chunk_id": "0eada5a8c3c3cabf",
+    "type": "fact",
+    "text": "The constant DEFAULT_BACKOFF_MAX in urllib3 utilities Retry is 120.",
+    "citation": "`DEFAULT_BACKOFF_MAX = 120`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e84355de7e0e6e6d:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > DEFAULT_REMOVE_HEADERS_ON_REDIRECT",
+    "chunk_id": "e84355de7e0e6e6d",
+    "type": "fact",
+    "text": "DEFAULT_REMOVE_HEADERS_ON_REDIRECT is a frozenset containing the strings 'Authorization', 'Cookie', and 'Proxy-Authorization'.",
+    "citation": "`DEFAULT_REMOVE_HEADERS_ON_REDIRECT = frozenset({'Authorization', 'Cookie', 'Proxy-Authorization'})`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "27e9016a11fc13d3:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > DEFAULT_RETRY_AFTER_MAX",
+    "chunk_id": "27e9016a11fc13d3",
+    "type": "fact",
+    "text": "The default maximum allowed value for Retry-After headers in seconds is 21600.",
+    "citation": "`DEFAULT_RETRY_AFTER_MAX: Final[int] = 21600`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "ca3798f7e4e3121b:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > RETRY_AFTER_STATUS_CODES",
+    "chunk_id": "ca3798f7e4e3121b",
+    "type": "fact",
+    "text": "The default status codes that trigger a retry when a Retry-After header is present and `respect_retry_after_header` is enabled are 413, 429, and 503.",
+    "citation": "`RETRY_AFTER_STATUS_CODES = frozenset({413, 429, 503})`\\n\\nDefault status codes that trigger a retry when a Retry-After header is present and `respect_retry_after_header` is enabled.",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "ca3798f7e4e3121b:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > RETRY_AFTER_STATUS_CODES",
+    "chunk_id": "ca3798f7e4e3121b",
+    "type": "fact",
+    "text": "The variable `RETRY_AFTER_STATUS_CODES` is defined as a frozenset containing the integers 413, 429, and 503.",
+    "citation": "`RETRY_AFTER_STATUS_CODES = frozenset({413, 429, 503})`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "01168d1955916c92:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > from_int()",
+    "chunk_id": "01168d1955916c92",
+    "type": "fact",
+    "text": "The from_int method is a classmethod.",
+    "citation": "`classmethod from_int(retries, redirect=True, default=None)`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "01168d1955916c92:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > from_int()",
+    "chunk_id": "01168d1955916c92",
+    "type": "fact",
+    "text": "The return type of from_int is Retry.",
+    "citation": "Return type: `Retry`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "511b023cc3d26663:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > get_backoff_time()",
+    "chunk_id": "511b023cc3d26663",
+    "type": "fact",
+    "text": "The function get_backoff_time() returns a float.",
+    "citation": "Return type: `float`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "22ae584dc49be2ba:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > get_retry_after()",
+    "chunk_id": "22ae584dc49be2ba",
+    "type": "fact",
+    "text": "The get_retry_after function returns a value of type float or None.",
+    "citation": "Return type: `float | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "85b167682cf088da:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > increment()",
+    "chunk_id": "85b167682cf088da",
+    "type": "fact",
+    "text": "The return type of increment() is Self.",
+    "citation": "Return type: Self",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "becd0efdfa1b47fb:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > is_exhausted()",
+    "chunk_id": "becd0efdfa1b47fb",
+    "type": "fact",
+    "text": "The is_exhausted() method returns a boolean value.",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "691aa4a8aff32f96:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > is_retry()",
+    "chunk_id": "691aa4a8aff32f96",
+    "type": "fact",
+    "text": "The return type of is_retry() is bool",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "567cff0c95e2e342:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > sleep()",
+    "chunk_id": "567cff0c95e2e342",
+    "type": "fact",
+    "text": "The return type of the sleep() method is None.",
+    "citation": "Return type: `None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "47581b7a65197128:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > SSLContext",
+    "chunk_id": "47581b7a65197128",
+    "type": "fact",
+    "text": "The class urllib3.util.SSLContext has the signature `class urllib3.util.SSLContext(protocol=None, *args, **kwargs)`",
+    "citation": "`class urllib3.util.SSLContext(protocol=None, *args, **kwargs)`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "315936be29621cc3:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout",
+    "chunk_id": "315936be29621cc3",
+    "type": "fact",
+    "text": "The class urllib3.util.Timeout has a constructor with parameters total, connect, and read.",
+    "citation": "class urllib3.util.Timeout(total=None, connect=_TYPE_DEFAULT.token, read=_TYPE_DEFAULT.token)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "315936be29621cc3:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout",
+    "chunk_id": "315936be29621cc3",
+    "type": "fact",
+    "text": "Timeout can be defined as a default for a pool by passing it to urllib3.PoolManager.",
+    "citation": "timeout = urllib3.util.Timeout(connect=2.0, read=7.0)\\n\\nhttp = urllib3.PoolManager(timeout=timeout)",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "315936be29621cc3:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout",
+    "chunk_id": "315936be29621cc3",
+    "type": "fact",
+    "text": "Timeout can be overridden per request by passing timeout=Timeout(10) to http.request.",
+    "citation": "response = http.request(\"GET\", \"https://example.com/\", timeout=Timeout(10))",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "315936be29621cc3:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout",
+    "chunk_id": "315936be29621cc3",
+    "type": "fact",
+    "text": "Timeouts can be disabled by setting all the parameters to None.",
+    "citation": "no_timeout = Timeout(connect=None, read=None)\\nresponse = http.request(\"GET\", \"https://example.com/\", timeout=no_timeout)",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "2c0a726ae49b6ebe:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > DEFAULT_TIMEOUT",
+    "chunk_id": "2c0a726ae49b6ebe",
+    "type": "fact",
+    "text": "DEFAULT_TIMEOUT is defined as a variable of type float | _TYPE_DEFAULT | None with the value -1.",
+    "citation": "`DEFAULT_TIMEOUT: float | _TYPE_DEFAULT | None = -1`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "aa0b73129092fb4b:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > connect_timeout",
+    "chunk_id": "aa0b73129092fb4b",
+    "type": "fact",
+    "text": "The return type of connect_timeout is int, float, Timeout.DEFAULT_TIMEOUT or None.",
+    "citation": "Return type: `int, float, Timeout.DEFAULT_TIMEOUT or None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "aa0b73129092fb4b:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > connect_timeout",
+    "chunk_id": "aa0b73129092fb4b",
+    "type": "fact",
+    "text": "The connect_timeout property is defined with type float | _TYPE_DEFAULT | None.",
+    "citation": "`property connect_timeout: float | _TYPE_DEFAULT | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "bdcf36138f3f01dc:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > from_float()",
+    "chunk_id": "bdcf36138f3f01dc",
+    "type": "fact",
+    "text": "The legacy timeout value used by httplib.py sets the same timeout on the connect() and recv() socket requests.",
+    "citation": "The timeout value used by httplib.py sets the same timeout on the connect(), and recv() socket requests.",
+    "status": "nli_neutral",
+    "premise": "urllib3 > Utilities > Timeout > from_float(): The timeout value used by httplib.py sets the same timeout on the connect(), and recv() socket requests. This creates a Timeout object that sets the individual timeouts to the timeout value passed to this function.",
+    "nli": {
+     "entailment": 0.01123781781643629,
+     "neutral": 0.9787778854370117,
+     "contradiction": 0.009984305128455162,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "bdcf36138f3f01dc:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > from_float()",
+    "chunk_id": "bdcf36138f3f01dc",
+    "type": "fact",
+    "text": "The from_float method returns a Timeout object.",
+    "citation": "Returns: - Timeout object",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "acea3ace92f50446:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > get_connect_duration()",
+    "chunk_id": "acea3ace92f50446",
+    "type": "fact",
+    "text": "The return type of get_connect_duration() is float.",
+    "citation": "Return type: `float`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "0f1fe6bd0dcdec3d:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > read_timeout",
+    "chunk_id": "0f1fe6bd0dcdec3d",
+    "type": "fact",
+    "text": "The read_timeout property returns a float or None.",
+    "citation": "`property read_timeout: float | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "0f1fe6bd0dcdec3d:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > read_timeout",
+    "chunk_id": "0f1fe6bd0dcdec3d",
+    "type": "fact",
+    "text": "The return type of the read_timeout property is int, float or None.",
+    "citation": "Return type: `int, float or None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "f536563f6f8a522a:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > start_connect()",
+    "chunk_id": "f536563f6f8a522a",
+    "type": "fact",
+    "text": "The start_connect() method raises urllib3.exceptions.TimeoutStateError if you attempt to start a timer that has been started already",
+    "citation": "Raises: - `urllib3.exceptions.TimeoutStateError` – if you attempt to start a timer that has been started already.",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "f536563f6f8a522a:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Timeout > start_connect()",
+    "chunk_id": "f536563f6f8a522a",
+    "type": "fact",
+    "text": "The return type of start_connect() is float",
+    "citation": "Return type: `float`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "d80b991432d22fce:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url",
+    "chunk_id": "d80b991432d22fce",
+    "type": "fact",
+    "text": "The Url class is defined as urllib3.util.Url(scheme=None, auth=None, host=None, port=None, path=None, query=None, fragment=None).",
+    "citation": "`class urllib3.util.Url(scheme=None, auth=None, host=None, port=None, path=None, query=None, fragment=None)`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "a9e60097d5b8c7fe:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > auth_decoded",
+    "chunk_id": "a9e60097d5b8c7fe",
+    "type": "fact",
+    "text": "The property auth_decoded of urllib3 utilities Url returns a tuple of either (None, None) or (str, str | None).",
+    "citation": "`property auth_decoded: tuple[None, None] | tuple[str, str | None]`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8e0d08f6c98769b9:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > auth_decoded_joined",
+    "chunk_id": "8e0d08f6c98769b9",
+    "type": "fact",
+    "text": "The property auth_decoded_joined returns a string or None.",
+    "citation": "`property auth_decoded_joined: str | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "7aed3aa8031bca82:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > authority",
+    "chunk_id": "7aed3aa8031bca82",
+    "type": "fact",
+    "text": "The property authority is of type str or None.",
+    "citation": "`property authority: str | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "1016a056b08a12f3:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > hostname",
+    "chunk_id": "1016a056b08a12f3",
+    "type": "fact",
+    "text": "The Url class has a property named hostname that returns a value of type str or None.",
+    "citation": "`property hostname: str | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "5b5044b5594eb16d:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > netloc",
+    "chunk_id": "5b5044b5594eb16d",
+    "type": "fact",
+    "text": "The property netloc of the Url class is of type str or None.",
+    "citation": "`property netloc: str | None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3b06f87565f579fc:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > url",
+    "chunk_id": "3b06f87565f579fc",
+    "type": "fact",
+    "text": "The property url of urllib3.util.Url returns a string.",
+    "citation": "`property url: str`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3b06f87565f579fc:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > url",
+    "chunk_id": "3b06f87565f579fc",
+    "type": "fact",
+    "text": "The url property should more or less round-trip with urllib3.util.parse_url()",
+    "citation": "`This function should more or less round-trip with parse_url()`",
+    "status": "id_missing",
+    "premise": "urllib3 > Utilities > Url > url: This function should more or less round-trip with parse_url(). The returned url may not be exactly the same as the url inputted to parse_url(), but it should be equivalent by the RFC (e.g., urls with a blank port will have : removed).",
+    "nli": {
+     "entailment": 0.7418851852416992,
+     "neutral": 0.03921651840209961,
+     "contradiction": 0.21889831125736237,
+     "truncated": false
+    },
+    "missing": [
+     "urllib3.util.parse_url"
+    ]
+   },
+   {
+    "id": "3b06f87565f579fc:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > url",
+    "chunk_id": "3b06f87565f579fc",
+    "type": "fact",
+    "text": "When parse_url(\"https://google.com/mail/\") is called, its url property returns \"https://google.com/mail/\"",
+    "citation": "`print(U.url)`\\n`# \"https://google.com/mail/\"`",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3b06f87565f579fc:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > url",
+    "chunk_id": "3b06f87565f579fc",
+    "type": "fact",
+    "text": "When urllib3.util.Url(\"https\", \"username:password\", \"host.com\", 80, \"/path\", \"query\", \"fragment\").url is called, it returns \"https://username:password@host.com:80/path?query#fragment\"",
+    "citation": "`print( urllib3.util.Url(\"https\", \"username:password\",\\n                        \"host.com\", 80, \"/path\", \"query\", \"fragment\"\\n                        ).url`\\n`# \"https://username:password@host.com:80/path?query#fragment\"`",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "597ab1b6b7b5dd67:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > assert_fingerprint()",
+    "chunk_id": "597ab1b6b7b5dd67",
+    "type": "fact",
+    "text": "The return type of urllib3.util.assert_fingerprint is None.",
+    "citation": "Return type: `None`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "7a897b7b860d7108:openai/gpt-oss-20b:c11",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > create_urllib3_context()",
+    "chunk_id": "7a897b7b860d7108",
+    "type": "fact",
+    "text": "The return type of create_urllib3_context is SSLContext.",
+    "citation": "Return type: `SSLContext`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e1726e8f38d96ea4:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > is_connection_dropped()",
+    "chunk_id": "e1726e8f38d96ea4",
+    "type": "fact",
+    "text": "The function urllib3.util.is_connection_dropped(conn) returns a boolean value.",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "51f3339e949a5e6c:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > is_fp_closed()",
+    "chunk_id": "51f3339e949a5e6c",
+    "type": "fact",
+    "text": "urllib3.util.is_fp_closed(obj) returns a bool.",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "7249241293885a9b:openai/gpt-oss-20b:c12",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > make_headers()",
+    "chunk_id": "7249241293885a9b",
+    "type": "fact",
+    "text": "The return type of urllib3.util.make_headers is a dictionary mapping strings to strings.",
+    "citation": "Return type: `dict[str, str]`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "7249241293885a9b:openai/gpt-oss-20b:c13",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > make_headers()",
+    "chunk_id": "7249241293885a9b",
+    "type": "fact",
+    "text": "Calling urllib3.util.make_headers with keep_alive=True and user_agent=\"Batman/1.0\" returns a dictionary containing the entries {'connection': 'keep-alive', 'user-agent': 'Batman/1.0'}.",
+    "citation": "print(urllib3.util.make_headers(keep_alive=True, user_agent=\"Batman/1.0\")) # {'connection': 'keep-alive', 'user-agent': 'Batman/1.0'}",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "7249241293885a9b:openai/gpt-oss-20b:c14",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > make_headers()",
+    "chunk_id": "7249241293885a9b",
+    "type": "fact",
+    "text": "Calling urllib3.util.make_headers with accept_encoding=True returns a dictionary containing the entry {'accept-encoding': 'gzip,deflate'}.",
+    "citation": "print(urllib3.util.make_headers(accept_encoding=True)) # {'accept-encoding': 'gzip,deflate'}",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8b3528352f8e48e1:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > parse_url()",
+    "chunk_id": "8b3528352f8e48e1",
+    "type": "fact",
+    "text": "The function returns a Url.",
+    "citation": "Return type: `Url`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8b3528352f8e48e1:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > parse_url()",
+    "chunk_id": "8b3528352f8e48e1",
+    "type": "fact",
+    "text": "Calling urllib3.util.parse_url('http://google.com/mail/') returns a Url with scheme 'http', host 'google.com', port None, and path '/mail/'.",
+    "citation": "print( urllib3.util.parse_url('http://google.com/mail/'))\\n# Url(scheme='http', host='google.com', port=None, path='/mail/', ... )",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8b3528352f8e48e1:openai/gpt-oss-20b:c10",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > parse_url()",
+    "chunk_id": "8b3528352f8e48e1",
+    "type": "fact",
+    "text": "Calling urllib3.util.parse_url('google.com:80') returns a Url with scheme None, host 'google.com', port 80, and path None.",
+    "citation": "print( urllib3.util.parse_url('google.com:80'))\\n# Url(scheme=None, host='google.com', port=80, path=None, ... )",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8b3528352f8e48e1:openai/gpt-oss-20b:c11",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > parse_url()",
+    "chunk_id": "8b3528352f8e48e1",
+    "type": "fact",
+    "text": "Calling urllib3.util.parse_url('/foo?bar') returns a Url with scheme None, host None, port None, path '/foo', and query 'bar'.",
+    "citation": "print( urllib3.util.parse_url('/foo?bar'))\\n# Url(scheme=None, host=None, port=None, path='/foo', query='bar', ...)",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "239c4275dec79f16:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > resolve_cert_reqs()",
+    "chunk_id": "239c4275dec79f16",
+    "type": "fact",
+    "text": "The function urllib3.util.resolve_cert_reqs(candidate) resolves the argument to a numeric constant that can be passed to the wrap_socket function/method from the ssl module.",
+    "citation": "Resolves the argument to a numeric constant, which can be passed to the wrap_socket function/method from the ssl module",
+    "status": "nli_neutral",
+    "premise": "urllib3 > Utilities > resolve_cert_reqs(): Resolves the argument to a numeric constant, which can be passed to the wrap_socket function/method from the ssl module. Defaults to ssl.CERT_REQUIRED.",
+    "nli": {
+     "entailment": 0.20166926085948944,
+     "neutral": 0.768784761428833,
+     "contradiction": 0.029545919969677925,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "239c4275dec79f16:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > resolve_cert_reqs()",
+    "chunk_id": "239c4275dec79f16",
+    "type": "fact",
+    "text": "The return type of urllib3.util.resolve_cert_reqs(candidate) is VerifyMode.",
+    "citation": "Return type: `VerifyMode`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e1f336bda438ba2e:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > resolve_ssl_version()",
+    "chunk_id": "e1f336bda438ba2e",
+    "type": "fact",
+    "text": "The function urllib3.util.resolve_ssl_version accepts a parameter named candidate.",
+    "citation": "`urllib3.util.resolve_ssl_version(candidate)`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e1f336bda438ba2e:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > resolve_ssl_version()",
+    "chunk_id": "e1f336bda438ba2e",
+    "type": "fact",
+    "text": "The return type of urllib3.util.resolve_ssl_version is int.",
+    "citation": "Return type: `int`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "eefc47cfde210dc9:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > ssl_wrap_socket()",
+    "chunk_id": "eefc47cfde210dc9",
+    "type": "fact",
+    "text": "The return type of ssl_wrap_socket() is ssl.SSLSocket or SSLTransportType",
+    "citation": "Return type: `ssl.SSLSocket | SSLTransportType`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "b91e5ff9d049e758:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > wait_for_read()",
+    "chunk_id": "b91e5ff9d049e758",
+    "type": "fact",
+    "text": "The function urllib3.util.wait_for_read returns a value of type bool.",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "4f9104953522bbda:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > wait_for_write()",
+    "chunk_id": "4f9104953522bbda",
+    "type": "fact",
+    "text": "The function urllib3.util.wait_for_write() returns a value of type bool.",
+    "citation": "Return type: `bool`",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "4b106715a267e6e4:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Making Requests",
+    "chunk_id": "4b106715a267e6e4",
+    "type": "fact",
+    "text": "The urllib3 module can be imported with import urllib3.",
+    "citation": "import urllib3",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "4b106715a267e6e4:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Making Requests",
+    "chunk_id": "4b106715a267e6e4",
+    "type": "fact",
+    "text": "When calling `request()` with method POST, the `fields` keyword argument can be used to add custom form fields.",
+    "citation": "fields={\"hello\": \"world\"} #  Add custom form fields",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8c185645bb6ab2db:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content",
+    "chunk_id": "8c185645bb6ab2db",
+    "type": "fact",
+    "text": "The request function returns an HTTPResponse object.",
+    "citation": "The request function returns HTTPResponse object",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8c185645bb6ab2db:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content",
+    "chunk_id": "8c185645bb6ab2db",
+    "type": "fact",
+    "text": "The status attribute of an HTTPResponse object can be printed and equals 200 for the example request.",
+    "citation": "print(resp.status) # 200",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8c185645bb6ab2db:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content",
+    "chunk_id": "8c185645bb6ab2db",
+    "type": "fact",
+    "text": "The data attribute of an HTTPResponse object can be printed and contains a bytes object.",
+    "citation": "print(resp.data) # b\"{\\n  \\\"origin\\\": \\\"104.232.115.37\\\"\\n}\\n\"",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8c185645bb6ab2db:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content",
+    "chunk_id": "8c185645bb6ab2db",
+    "type": "fact",
+    "text": "The headers attribute of an HTTPResponse object can be printed and contains an HTTPHeaderDict.",
+    "citation": "print(resp.headers) # HTTPHeaderDict({\"Content-Length\": \"32\", ...})",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8dcc1dd896188012:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content > JSON Content",
+    "chunk_id": "8dcc1dd896188012",
+    "type": "fact",
+    "text": "resp.json() returns a dictionary with key \"origin\" and value \"127.0.0.1\".",
+    "citation": "print(resp.json())\n# {\"origin\": \"127.0.0.1\"}",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8dcc1dd896188012:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content > JSON Content",
+    "chunk_id": "8dcc1dd896188012",
+    "type": "fact",
+    "text": "orjson.loads(resp.data)[\"json\"] returns a dictionary with key \"attribute\" and value \"value\".",
+    "citation": "print(orjson.loads(resp.data)[\"json\"])\n# {'attribute': 'value'}",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e5974b8348cde80a:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Response Content > Using io Wrappers with Response Content",
+    "chunk_id": "e5974b8348cde80a",
+    "type": "fact",
+    "text": "io.TextIOWrapper can iterate over an HTTPResponse when the response’s auto_close attribute is set to False.",
+    "citation": "for line in io.TextIOWrapper(resp):",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "5a1eab098fcc666a:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Headers",
+    "chunk_id": "5a1eab098fcc666a",
+    "type": "fact",
+    "text": "Passing a headers dictionary to request() sends those headers in the HTTP request.",
+    "citation": "headers={ \"X-Something\": \"value\" }",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "5a1eab098fcc666a:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Headers",
+    "chunk_id": "5a1eab098fcc666a",
+    "type": "fact",
+    "text": "When multiple values are added to the same header using HTTPHeaderDict, the resulting header value is a comma-separated list of the values.",
+    "citation": "{\"Accept\": \"application/json, text/plain\", ...}",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "974bfceea7c3ef70:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Query Parameters",
+    "chunk_id": "974bfceea7c3ef70",
+    "type": "fact",
+    "text": "The urllib.parse.urlencode function can be used to encode a dictionary of query parameters into URL grammar.",
+    "citation": "Encode the args into url grammar.",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "8a7245545e6ff89d:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Form Data",
+    "chunk_id": "8a7245545e6ff89d",
+    "type": "fact",
+    "text": "The form data sent by urllib3 is reflected in the JSON response under the key \"form\"",
+    "citation": "print(resp.json()[\"form\"])\\n# {\"field\": \"value\"}",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "6607a0df96196cb0:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "chunk_id": "6607a0df96196cb0",
+    "type": "fact",
+    "text": "urllib3.request can upload files using multipart/form-data encoding by specifying the file field as a tuple of `(file_name, file_data)`",
+    "citation": "you can use the same approach as Form Data and specify the file field as a tuple of `(file_name, file_data)`",
+    "status": "id_missing",
+    "premise": "urllib3 > User Guide > Request Data > Files & Binary Data: For uploading files using multipart/form-data encoding you can use the same approach as Form Data and specify the file field as a tuple of (file_name, file_data):",
+    "nli": {
+     "entailment": 0.9699357748031616,
+     "neutral": 0.028708266094326973,
+     "contradiction": 0.0013558948412537575,
+     "truncated": false
+    },
+    "missing": [
+     "urllib3.request"
+    ]
+   },
+   {
+    "id": "6607a0df96196cb0:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "chunk_id": "6607a0df96196cb0",
+    "type": "fact",
+    "text": "urllib3.request allows a third item in the tuple to specify the file’s MIME type explicitly",
+    "citation": "You can also pass a third item in the tuple to specify the file’s MIME type explicitly",
+    "status": "id_missing",
+    "premise": "urllib3 > User Guide > Request Data > Files & Binary Data: While specifying the filename is not strictly required, it’s recommended in order to match browser behavior. You can also pass a third item in the tuple to specify the file’s MIME type explicitly:",
+    "nli": {
+     "entailment": 0.9965233206748962,
+     "neutral": 0.0031392991077154875,
+     "contradiction": 0.0003373411891516298,
+     "truncated": false
+    },
+    "missing": [
+     "urllib3.request"
+    ]
+   },
+   {
+    "id": "6607a0df96196cb0:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "chunk_id": "6607a0df96196cb0",
+    "type": "fact",
+    "text": "urllib3.request can send raw binary data by specifying the `body` argument",
+    "citation": "For sending raw binary data simply specify the `body` argument",
+    "status": "id_missing",
+    "premise": "urllib3 > User Guide > Request Data > Files & Binary Data: For sending raw binary data simply specify the body argument. It’s also recommended to set the Content-Type header:",
+    "nli": {
+     "entailment": 0.9970882534980774,
+     "neutral": 0.0026294561102986336,
+     "contradiction": 0.0002823279646690935,
+     "truncated": false
+    },
+    "missing": [
+     "urllib3.request"
+    ]
+   },
+   {
+    "id": "b44acfa274aa1a44:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Certificate Verification",
+    "chunk_id": "b44acfa274aa1a44",
+    "type": "fact",
+    "text": "A PoolManager created with `cert_reqs=\"CERT_REQUIRED\"` and `ca_certs=certifi.where()` verifies certificates when making requests.",
+    "citation": "http = urllib3.PoolManager(\n    cert_reqs=\"CERT_REQUIRED\",\n    ca_certs=certifi.where()\n)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "b44acfa274aa1a44:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Certificate Verification",
+    "chunk_id": "b44acfa274aa1a44",
+    "type": "fact",
+    "text": "A request to `https://httpbin.org/` using a PoolManager with certificate verification does not raise an exception.",
+    "citation": "http.request(\"GET\", \"https://httpbin.org/\")\n# (No exception)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "b44acfa274aa1a44:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Certificate Verification",
+    "chunk_id": "b44acfa274aa1a44",
+    "type": "fact",
+    "text": "A request to `https://expired.badssl.com` using a PoolManager with certificate verification raises an `SSLError`.",
+    "citation": "http.request(\"GET\", \"https://expired.badssl.com\")\n# urllib3.exceptions.SSLError ...",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "When timeout=4.0, urllib3.request returns an object of type urllib3.response.HTTPResponse.",
+    "citation": "print(type(resp))\n# <class \"urllib3.response.HTTPResponse\">",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "When timeout=2.5, urllib3.request raises MaxRetryError caused by ReadTimeoutError.",
+    "citation": "# MaxRetryError caused by ReadTimeoutError",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "When timeout=urllib3.Timeout(connect=1.0), urllib3.request returns an object of type urllib3.response.HTTPResponse.",
+    "citation": "print(type(resp))\n# <urllib3.response.HTTPResponse>",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "When timeout=urllib3.Timeout(connect=1.0, read=2.0), urllib3.request raises MaxRetryError caused by ReadTimeoutError.",
+    "citation": "# MaxRetryError caused by ReadTimeoutError",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "PoolManager(timeout=3.0) creates a PoolManager with timeout 3.0.",
+    "citation": "http = urllib3.PoolManager(timeout=3.0)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c10",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "PoolManager(timeout=urllib3.Timeout(connect=1.0, read=2.0)) creates a PoolManager with connect=1.0 and read=2.0 timeouts.",
+    "citation": "http = urllib3.PoolManager(\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "To change the number of retries, specify an integer to the retries parameter.",
+    "citation": "To change the number of retries just specify an integer:",
+    "status": "nli_neutral",
+    "premise": "urllib3 > User Guide > Retrying Requests: To change the number of retries just specify an integer:",
+    "nli": {
+     "entailment": 0.3073107600212097,
+     "neutral": 0.6918686032295227,
+     "contradiction": 0.0008206436177715659,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "When retries=False, a NewConnectionError is raised for a non-existent domain.",
+    "citation": "# NewConnectionError",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "When retries=False, a 302 status is returned for a redirect.",
+    "citation": "print(resp.status)\n# 302",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c11",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "When redirect=False, a 302 status is returned.",
+    "citation": "print(resp.status)\n# 302",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c13",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "A Retry instance can be configured to allow 3 total retries and limit to 2 redirects.",
+    "citation": "urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/redirect/3\",\n    retries=urllib3.Retry(3, redirect=2)\n)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c14",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "When exceeding retry or redirect limits, a MaxRetryError is raised.",
+    "citation": "# MaxRetryError",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c15",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "Setting raise_on_redirect=False disables exceptions for too many redirects and returns the 302 response.",
+    "citation": "raise_on_redirect=False",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c16",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "When raise_on_redirect=False, a 302 status is returned.",
+    "citation": "print(resp.status)\n# 302",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e831f399b02913dd:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Errors & Exceptions",
+    "chunk_id": "e831f399b02913dd",
+    "type": "fact",
+    "text": "urllib3.request accepts a retries parameter that can be set to False",
+    "citation": "urllib3.request(\"GET\",\"https://nx.example.com\", retries=False)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "e831f399b02913dd:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Errors & Exceptions",
+    "chunk_id": "e831f399b02913dd",
+    "type": "fact",
+    "text": "urllib3.exceptions.NewConnectionError is raised when a connection fails",
+    "citation": "except urllib3.exceptions.NewConnectionError:",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "c34d2509e8bf7c39:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Logging",
+    "chunk_id": "c34d2509e8bf7c39",
+    "type": "fact",
+    "text": "You can change the log level for urllib3’s logger by calling `logging.getLogger(\"urllib3\").setLevel(logging.WARNING)`.",
+    "citation": "You can use the standard logger interface to change the log level for urllib3’s logger:\n\n```python\nlogging.getLogger(\"urllib3\").setLevel(logging.WARNING)\n```",
+    "status": "nli_neutral",
+    "premise": "urllib3 > User Guide > Logging: In some cases this can be undesirable. You can use the standard logger interface to change the log level for urllib3’s logger:",
+    "nli": {
+     "entailment": 0.010805675759911537,
+     "neutral": 0.9886121153831482,
+     "contradiction": 0.0005821916274726391,
+     "truncated": false
+    },
+    "missing": [
+     "logging.getLogger",
+     "logging.WARNING"
+    ]
+   },
+   {
+    "id": "88cbf399a65a6f68:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ssl module is compiled with OpenSSL 1.0.2.k-fips",
+    "chunk_id": "88cbf399a65a6f68",
+    "type": "fact",
+    "text": "urllib3 v2 only supports OpenSSL 1.1.1+",
+    "citation": "ImportError: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'OpenSSL 1.0.2k-fips  26 Jan 2017'",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "5127febd2f0a270c:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as an application developer?",
+    "chunk_id": "5127febd2f0a270c",
+    "type": "fact",
+    "text": "botocore==1.38.36 requires urllib3>=1.25.4,<1.27.",
+    "citation": "botocore==1.38.36 [requires: urllib3>=1.25.4,<1.27]",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "5127febd2f0a270c:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as an application developer?",
+    "chunk_id": "5127febd2f0a270c",
+    "type": "fact",
+    "text": "requests==2.32.4 requires urllib3>=1.21.1,<3.",
+    "citation": "requests==2.32.4 [requires: urllib3>=1.21.1,<3]",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "Specifying install_requires=\"urllib3>=1.26,<3\" allows both urllib3 1.26.x and 2.x to be used.",
+    "citation": "install_requires=[\"urllib3>=1.26,<3\"]",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c7",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "Setting PYTHONWARNINGS=\"default\" shows all warnings.",
+    "citation": "# Set PYTHONWARNING=default to show all warnings.\n$ export PYTHONWARNINGS=\"default\"",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "Pytest automatically prints all warnings.",
+    "citation": "# Run your test suite and look for failures.\n# Pytest automatically prints all warnings.",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "Calling warnings.filterwarnings(\"default\", category=FutureWarning) in Python code will output FutureWarnings to the terminal.",
+    "citation": "import warnings\nwarnings.filterwarnings(\"default\", category=FutureWarning)",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c12",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "A FutureWarning example for the ssl_version option is: \"FutureWarning: 'ssl_version' option is deprecated and will be removed in urllib3 v3.0. Instead use 'ssl_minimum_version'\".",
+    "citation": "FutureWarning: 'ssl_version' option is deprecated and will be removed\nin urllib3 v3.0. Instead use 'ssl_minimum_version'",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "dd115d2851eb4422:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 💪 User-friendly features > urllib3.request()",
+    "chunk_id": "dd115d2851eb4422",
+    "type": "fact",
+    "text": "The response object returned by urllib3.request has a status attribute equal to 200 for a GET request to https://example.com",
+    "citation": ">>> resp.status\n200",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "b7de9228e41a1e41:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 💪 User-friendly features > JSON support for requests and responses",
+    "chunk_id": "b7de9228e41a1e41",
+    "type": "fact",
+    "text": "Using the json= parameter adds 'Content-Type: application/json' by default",
+    "citation": "This adds 'Content-Type: application/json' by default",
+    "status": "not_checkable",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "42766add097cdb07:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+",
+    "chunk_id": "42766add097cdb07",
+    "type": "fact",
+    "text": "urllib3 2.x specifically targets PyPy v7.3.20+",
+    "citation": "urllib3 2.x specifically targets PyPy v7.3.20+",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "0c987dda5db82797:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 📜 Type-hinted APIs",
+    "chunk_id": "0c987dda5db82797",
+    "type": "fact",
+    "text": "Sub‑classing an interface in urllib3 ensures that only supported public APIs are used, which helps maintain compatibility and minimize breakages down the road.",
+    "citation": "to ensure that when you’re sub‑classing an interface you’re only using supported public APIs to ensure compatibility and minimize breakages down the road.",
+    "status": "citation_not_found",
+    "premise": null,
+    "nli": null,
+    "missing": []
+   },
+   {
+    "id": "db499224854663e8:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+",
+    "chunk_id": "db499224854663e8",
+    "type": "fact",
+    "text": "The default minimum TLS version is set to 1.2.",
+    "citation": "we’re comfortable switching the default minimum TLS version to be 1.2",
+    "status": "nli_contradiction",
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+: Greater than 95% of websites support TLS 1.2 or above. At this point we’re comfortable switching the default minimum TLS version to be 1.2 to ensure high security for users without breaking services.",
+    "nli": {
+     "entailment": 0.02629266493022442,
+     "neutral": 0.0024271619040519,
+     "contradiction": 0.9712801575660706,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "47581b7a65197128:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > SSLContext",
+    "chunk_id": "47581b7a65197128",
+    "type": "fact",
+    "text": "An SSLContext holds various SSL-related configuration options and data, such as certificates and possibly a private key",
+    "citation": "An SSLContext holds various SSL-related configuration options and data, such as certificates and possibly a private key.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > SSLContext: An SSLContext holds various SSL-related configuration options and data, such as certificates and possibly a private key.",
+    "nli": {
+     "entailment": 0.998262345790863,
+     "neutral": 0.0013646208681166172,
+     "contradiction": 0.0003731192264240235,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "b17d244630a138bb:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > AttributeError: module ‘urllib3.connectionpool’ has no attribute ‘VerifiedHTTPSConnection’",
+    "chunk_id": "b17d244630a138bb",
+    "type": "fact",
+    "text": "The new name of the `VerifiedHTTPSConnection` class is `HTTPSConnection`.",
+    "citation": "Note that the new name of this class is `HTTPSConnection`",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > AttributeError: module ‘urllib3.connectionpool’ has no attribute ‘VerifiedHTTPSConnection’: Note that the new name of this class is HTTPSConnection. It can be used starting from urllib3 1.25.9.",
+    "nli": {
+     "entailment": 0.9972442388534546,
+     "neutral": 0.0010217464296147227,
+     "contradiction": 0.0017340118065476418,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c31",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "The backoff_max parameter specifies the maximum backoff time in seconds between retry attempts.",
+    "citation": "`backoff_max` (float) – The maximum backoff time (in seconds) between retry attempts.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > backoff_max: backoff_max (float) – The maximum backoff time (in seconds) between retry attempts. This value caps the computed backoff from backoff_factor.",
+    "nli": {
+     "entailment": 0.9991106390953064,
+     "neutral": 0.0006090395618230104,
+     "contradiction": 0.000280192238278687,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "5b5044b5594eb16d:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > netloc",
+    "chunk_id": "5b5044b5594eb16d",
+    "type": "fact",
+    "text": "To obtain the equivalent of urllib.parse’s netloc, use the authority property instead of netloc.",
+    "citation": "If you need the equivalent of urllib.parse’s `netloc`, use the `authority` property instead.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > netloc: If you need the equivalent of urllib.parse’s netloc, use the authority property instead.",
+    "nli": {
+     "entailment": 0.9978233575820923,
+     "neutral": 0.0019069178961217403,
+     "contradiction": 0.00026979178073816,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "691aa4a8aff32f96:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > is_retry()",
+    "chunk_id": "691aa4a8aff32f96",
+    "type": "fact",
+    "text": "The status_code parameter of is_retry() is of type int",
+    "citation": "`status_code` (int)",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > is_retry() > status_code: status_code (int)",
+    "nli": {
+     "entailment": 0.9981932044029236,
+     "neutral": 0.001582008902914822,
+     "contradiction": 0.0002247592929052189,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "c54ece2d2cdd5ac1:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🚀 Migrating from 1.x to 2.x",
+    "chunk_id": "c54ece2d2cdd5ac1",
+    "type": "fact",
+    "text": "If users have difficulty migrating to urllib3 2.x or following the guide, they can open an issue on GitHub or reach out in the community Discord channel.",
+    "citation": "If you have difficulty migrating to 2.x or following this guide you can open an issue on GitHub or reach out in our community Discord channel.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🚀 Migrating from 1.x to 2.x: Note: If you have difficulty migrating to 2.x or following this guide you can open an issue on GitHub or reach out in our community Discord channel.",
+    "nli": {
+     "entailment": 0.9976466298103333,
+     "neutral": 0.0019136188784614205,
+     "contradiction": 0.0004397756711114198,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "00fb7285ec99b133:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Using Timeouts",
+    "chunk_id": "00fb7285ec99b133",
+    "type": "fact",
+    "text": "Timeouts allow you to control how long requests are allowed to run before being aborted.",
+    "citation": "Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Using Timeouts: Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a float to request():",
+    "nli": {
+     "entailment": 0.9978635907173157,
+     "neutral": 0.0014255800051614642,
+     "contradiction": 0.0007108224672265351,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "3df22caff4c85673:openai/gpt-oss-20b:c10",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Retrying Requests",
+    "chunk_id": "3df22caff4c85673",
+    "type": "fact",
+    "text": "Specifying redirect=False disables redirects but keeps retry logic.",
+    "citation": "To disable redirects but keep the retrying logic, specify `redirect=False`:",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Retrying Requests: To disable redirects but keep the retrying logic, specify redirect=False:",
+    "nli": {
+     "entailment": 0.9988754391670227,
+     "neutral": 0.0008800499490462244,
+     "contradiction": 0.00024451580247841775,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "db499224854663e8:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+",
+    "chunk_id": "db499224854663e8",
+    "type": "fact",
+    "text": "Dropping TLS 1.0 and TLS 1.1 tightens the list of ciphers that need to be supported to ensure high security for data traveling over the wire.",
+    "citation": "By dropping TLS 1.0 and TLS 1.1 we also tighten the list of ciphers we need to support to ensure high security for data traveling over the wire.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+: Extra security for free! By dropping TLS 1.0 and TLS 1.1 we also tighten the list of ciphers we need to support to ensure high security for data traveling over the wire.",
+    "nli": {
+     "entailment": 0.9994006156921387,
+     "neutral": 0.00043172307778149843,
+     "contradiction": 0.00016759266145527363,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "4b106715a267e6e4:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Making Requests",
+    "chunk_id": "4b106715a267e6e4",
+    "type": "fact",
+    "text": "`request()` returns a `HTTPResponse` object.",
+    "citation": "`request()` returns a `HTTPResponse` object",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Making Requests: request() returns a HTTPResponse object, the Response Content section explains how to handle various responses.",
+    "nli": {
+     "entailment": 0.9979111552238464,
+     "neutral": 0.0017949282191693783,
+     "contradiction": 0.00029391361749731004,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "d80b991432d22fce:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url",
+    "chunk_id": "d80b991432d22fce",
+    "type": "fact",
+    "text": "The Url class is a data structure for representing an HTTP URL.",
+    "citation": "Data structure for representing an HTTP URL.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url: Data structure for representing an HTTP URL. Used as a return value for parse_url().",
+    "nli": {
+     "entailment": 0.9989609718322754,
+     "neutral": 0.0008493406348861754,
+     "contradiction": 0.00018967180221807212,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "22ae584dc49be2ba:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > get_retry_after()",
+    "chunk_id": "22ae584dc49be2ba",
+    "type": "fact",
+    "text": "The get_retry_after function returns the value of Retry-After in seconds.",
+    "citation": "Get the value of Retry-After in seconds.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > get_retry_after(): Get the value of Retry-After in seconds.",
+    "nli": {
+     "entailment": 0.9958017468452454,
+     "neutral": 0.0037767633330076933,
+     "contradiction": 0.0004215610970277339,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "ab5b2df6afed2e27:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide",
+    "chunk_id": "ab5b2df6afed2e27",
+    "type": "fact",
+    "text": "The section provides how to get started and what is contained in the new major release.",
+    "citation": "Read below for how to get started and what is contained in the new major release.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide: urllib3 2.x is now available! Read below for how to get started and what is contained in the new major release.",
+    "nli": {
+     "entailment": 0.9945744872093201,
+     "neutral": 0.004892412107437849,
+     "contradiction": 0.000533207377884537,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c11",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "Setting connect to 0 fails on the first retry of this type.",
+    "citation": "Set to `0` to fail on the first retry of this type.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > connect: These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request. Set to 0 to fail on the first retry of this type.",
+    "nli": {
+     "entailment": 0.9964438080787659,
+     "neutral": 0.0021678684279322624,
+     "contradiction": 0.0013883794890716672,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "4b106715a267e6e4:openai/gpt-oss-20b:c10",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Making Requests",
+    "chunk_id": "4b106715a267e6e4",
+    "type": "fact",
+    "text": "`urllib3.request()` does not accept the low-level `**urlopen_kw` keyword arguments.",
+    "citation": "does not accept the low-level `**urlopen_kw` keyword arguments.",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Making Requests: To avoid side effects, create a new PoolManager instance and use it instead. In addition, the method does not accept the low-level **urlopen_kw keyword arguments. System CA certificates are loaded on default.",
+    "nli": {
+     "entailment": 0.8972415328025818,
+     "neutral": 0.10118479281663895,
+     "contradiction": 0.0015736846253275871,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "6607a0df96196cb0:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Files & Binary Data",
+    "chunk_id": "6607a0df96196cb0",
+    "type": "fact",
+    "text": "Specifying the filename in the tuple is not strictly required but is recommended to match browser behavior",
+    "citation": "While specifying the filename is not strictly required, it’s recommended in order to match browser behavior",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Request Data > Files & Binary Data: While specifying the filename is not strictly required, it’s recommended in order to match browser behavior. You can also pass a third item in the tuple to specify the file’s MIME type explicitly:",
+    "nli": {
+     "entailment": 0.9989676475524902,
+     "neutral": 0.000878605293110013,
+     "contradiction": 0.00015375450311694294,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "295262a8eff5f72e:openai/gpt-oss-20b:c14",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?",
+    "chunk_id": "295262a8eff5f72e",
+    "type": "fact",
+    "text": "After removing deprecation warnings you can publish a new release of your package that supports both urllib3 1.26.x and 2.x.",
+    "citation": "After this you can publish a new release of your package that supports both urllib3 1.26.x and 2.x.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as a package maintainer?: Continue removing deprecation warnings until there are no more. After this you can publish a new release of your package that supports both urllib3 1.26.x and 2.x.",
+    "nli": {
+     "entailment": 0.9979623556137085,
+     "neutral": 0.001190504408441484,
+     "contradiction": 0.0008472140179947019,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "44f45c09c0c7587c:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities",
+    "chunk_id": "44f45c09c0c7587c",
+    "type": "fact",
+    "text": "urllib3 provides various helper methods to aid the limited functionality of http.client.",
+    "citation": "To aid the limited functionality of the `http.client` module, urllib3 provides various helper methods which are used with the higher level components but can also be used independently.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities: To aid the limited functionality of the http.client module, urllib3 provides various helper methods which are used with the higher level components but can also be used independently.",
+    "nli": {
+     "entailment": 0.9984061121940613,
+     "neutral": 0.0011964647565037012,
+     "contradiction": 0.0003974182764068246,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "b44acfa274aa1a44:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Certificate Verification",
+    "chunk_id": "b44acfa274aa1a44",
+    "type": "fact",
+    "text": "You can use OS-provided certificates in urllib3 by specifying the full path to the certificate bundle as the `ca_certs` argument.",
+    "citation": "You can use OS-provided certificates if desired. Just specify the full path to the certificate bundle as the `ca_certs` argument instead of `certifi.where()`.",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Certificate Verification: Note: You can use OS-provided certificates if desired. Just specify the full path to the certificate bundle as the ca_certs argument instead of certifi.where(). For example, most Linux systems store the certificates at /etc/ssl/certs/ca-certificates.crt.",
+    "nli": {
+     "entailment": 0.999461829662323,
+     "neutral": 0.00038497953210026026,
+     "contradiction": 0.00015327395522035658,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "597ab1b6b7b5dd67:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > assert_fingerprint()",
+    "chunk_id": "597ab1b6b7b5dd67",
+    "type": "fact",
+    "text": "The fingerprint parameter of urllib3.util.assert_fingerprint is of type str and represents a fingerprint as a string of hexdigits, which can be interspersed by colons.",
+    "citation": "`fingerprint` (str) – Fingerprint as string of hexdigits, can be interspersed by colons.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > assert_fingerprint() > fingerprint: fingerprint (str) – Fingerprint as string of hexdigits, can be interspersed by colons.",
+    "nli": {
+     "entailment": 0.9977893829345703,
+     "neutral": 0.0020596948452293873,
+     "contradiction": 0.00015095795970410109,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "a9e60097d5b8c7fe:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > auth_decoded",
+    "chunk_id": "a9e60097d5b8c7fe",
+    "type": "fact",
+    "text": "The property auth_decoded returns user information with %-escapes decoded as UTF-8, returned as a (username, password) tuple.",
+    "citation": "User information with %-escapes decoded as UTF-8, returned as a `(username, password)` tuple.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > auth_decoded: User information with %-escapes decoded as UTF-8, returned as a (username, password) tuple.",
+    "nli": {
+     "entailment": 0.9675398468971252,
+     "neutral": 0.030155040323734283,
+     "contradiction": 0.002305222675204277,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "5127febd2f0a270c:openai/gpt-oss-20b:c11",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as an application developer?",
+    "chunk_id": "5127febd2f0a270c",
+    "type": "fact",
+    "text": "urllib3 does not receive security fixes at the moment <#sunsetting-urllib3-1-26-x>.",
+    "citation": "urllib3 does not receive security fixes at the moment <#sunsetting-urllib3-1-26-x>",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > Migrating as an application developer?: It’s important to know urllib3 does not receive security fixes at the moment <#sunsetting-urllib3-1-26-x>.",
+    "nli": {
+     "entailment": 0.9981697797775269,
+     "neutral": 0.0014952404890209436,
+     "contradiction": 0.0003349425387568772,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "85b167682cf088da:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry > increment()",
+    "chunk_id": "85b167682cf088da",
+    "type": "fact",
+    "text": "The error parameter of increment() can be an Exception object or None if the response was received successfully.",
+    "citation": "error (Exception) – An error encountered during the request, or None if the response was received successfully.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > increment() > error: error (Exception) – An error encountered during the request, or None if the response was received successfully.",
+    "nli": {
+     "entailment": 0.9972414970397949,
+     "neutral": 0.0024043088778853416,
+     "contradiction": 0.00035408808616921306,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "8b3528352f8e48e1:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > parse_url()",
+    "chunk_id": "8b3528352f8e48e1",
+    "type": "fact",
+    "text": "urllib3.util.parse_url(url) returns a parsed Url namedtuple.",
+    "citation": "Given a url, return a parsed `Url` namedtuple.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > parse_url(): Given a url, return a parsed Url namedtuple. Best-effort is performed to parse incomplete urls.",
+    "nli": {
+     "entailment": 0.9971170425415039,
+     "neutral": 0.0021715532056987286,
+     "contradiction": 0.0007113657775335014,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c12",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "The read parameter specifies how many times to retry on read errors.",
+    "citation": "`read` (int) – How many times to retry on read errors.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > read: read (int) – How many times to retry on read errors. These errors are raised after the request was sent to the server, so the request may have side-effects.",
+    "nli": {
+     "entailment": 0.9992438554763794,
+     "neutral": 0.0005455628852359951,
+     "contradiction": 0.000210626982152462,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "Setting total to 0 fails on the first retry.",
+    "citation": "Set to `0` to fail on the first retry.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > total: Set to None to remove this constraint and fall back on other counts. Set to 0 to fail on the first retry. Set to False to disable and imply raise_on_redirect=False.",
+    "nli": {
+     "entailment": 0.9988921284675598,
+     "neutral": 0.0006541270413435996,
+     "contradiction": 0.00045376087655313313,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c10",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "The connect parameter specifies how many connection-related errors to retry on.",
+    "citation": "`connect` (int) – How many connection-related errors to retry on.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry > connect: connect (int) – How many connection-related errors to retry on. These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request.",
+    "nli": {
+     "entailment": 0.9991348385810852,
+     "neutral": 0.0005583077436313033,
+     "contradiction": 0.0003069262602366507,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "db499224854663e8:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+",
+    "chunk_id": "db499224854663e8",
+    "type": "fact",
+    "text": "Dropping TLS 1.0 and 1.1 by default prevents vulnerability to TLS downgrade attacks if a vulnerability in TLS 1.0 or 1.1 were discovered in the future.",
+    "citation": "Dropping TLS 1.0 and 1.1 by default means you won’t be vulnerable to TLS downgrade attacks if a vulnerability in TLS 1.0 or 1.1 were discovered in the future.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > HTTPS requires TLS 1.2+: Dropping TLS 1.0 and 1.1 by default means you won’t be vulnerable to TLS downgrade attacks if a vulnerability in TLS 1.0 or 1.1 were discovered in the future. Extra security for free!",
+    "nli": {
+     "entailment": 0.9992772936820984,
+     "neutral": 0.0005531798233278096,
+     "contradiction": 0.00016953659360297024,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "88cbf399a65a6f68:openai/gpt-oss-20b:c8",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ssl module is compiled with OpenSSL 1.0.2.k-fips",
+    "chunk_id": "88cbf399a65a6f68",
+    "type": "fact",
+    "text": "Read the Docs can upgrade its configuration to use Ubuntu 22.04 by setting os: ubuntu-22.04 in the build section",
+    "citation": "Upgrade your configuration file to use Ubuntu 22.04 by using `os: ubuntu-22.04` in the `build` section",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ssl module is compiled with OpenSSL 1.0.2.k-fips: Remediation depends on your system: Read the Docs: Upgrade your configuration file to use Ubuntu 22.04 by using os: ubuntu-22.04 in the build section. Feel free to use the urllib3 configuration as an inspiration.",
+    "nli": {
+     "entailment": 0.9988808035850525,
+     "neutral": 0.0008504951256327331,
+     "contradiction": 0.000268704752670601,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "dab80b5788c33002:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Retry",
+    "chunk_id": "dab80b5788c33002",
+    "type": "fact",
+    "text": "Each retry attempt will create a new Retry object with updated values, so they can be safely reused.",
+    "citation": "Each retry attempt will create a new Retry object with updated values, so they can be safely reused.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Retry: Each retry attempt will create a new Retry object with updated values, so they can be safely reused.",
+    "nli": {
+     "entailment": 0.9957851767539978,
+     "neutral": 0.0036165982019156218,
+     "contradiction": 0.0005981135182082653,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "4b106715a267e6e4:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Making Requests",
+    "chunk_id": "4b106715a267e6e4",
+    "type": "fact",
+    "text": "`request()` can be used to make requests using any HTTP verb.",
+    "citation": "You can use `request()` to make requests using any HTTP verb:",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Making Requests: You can use request() to make requests using any HTTP verb:",
+    "nli": {
+     "entailment": 0.9970276951789856,
+     "neutral": 0.002556657651439309,
+     "contradiction": 0.0004156453360337764,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "d80b991432d22fce:openai/gpt-oss-20b:c6",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url",
+    "chunk_id": "d80b991432d22fce",
+    "type": "fact",
+    "text": "The auth parameter is a string or None – User information as defined in RFC 3986 3.2.1. This component is kept percent-encoded. Use auth_decoded or auth_decoded_joined to get the decoded form.",
+    "citation": "- `auth` (str | None) – User information as defined in RFC 3986 3.2.1. This component is kept percent-encoded. Use `auth_decoded` or `auth_decoded_joined` to get the decoded form.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > auth: auth (str | None) – User information as defined in RFC 3986 3.2.1. This component is kept percent-encoded. Use auth_decoded or auth_decoded_joined to get the decoded form.",
+    "nli": {
+     "entailment": 0.9965483546257019,
+     "neutral": 0.003179150866344571,
+     "contradiction": 0.0002725197409745306,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "974bfceea7c3ef70:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Request Data > Query Parameters",
+    "chunk_id": "974bfceea7c3ef70",
+    "type": "fact",
+    "text": "The fields argument is passed to the request() function.",
+    "citation": "you can simply pass the arguments as a dictionary in the `fields` argument to `request()`",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Request Data > Query Parameters: For GET, HEAD, and DELETE requests, you can simply pass the arguments as a dictionary in the fields argument to request():",
+    "nli": {
+     "entailment": 0.9955155253410339,
+     "neutral": 0.004007522016763687,
+     "contradiction": 0.00047696163528598845,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "d34ef2a195a95a78:openai/gpt-oss-20b:c5",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🚀 Migrating from 1.x to 2.x > Sunsetting urllib3 1.26.x",
+    "chunk_id": "d34ef2a195a95a78",
+    "type": "fact",
+    "text": "Upgrading to urllib3 2.x is still recommended because no new feature developments or fixes will be shipped to the 1.26.x release stream.",
+    "citation": "However, upgrading is still recommended as no new feature developments or fixes will be shipped to the 1.26.x release stream.",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🚀 Migrating from 1.x to 2.x > Sunsetting urllib3 1.26.x: However, upgrading is still recommended as no new feature developments or fixes will be shipped to the 1.26.x release stream.",
+    "nli": {
+     "entailment": 0.998336136341095,
+     "neutral": 0.0014572844374924898,
+     "contradiction": 0.00020658735593315214,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "d80b991432d22fce:openai/gpt-oss-20b:c9",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url",
+    "chunk_id": "d80b991432d22fce",
+    "type": "fact",
+    "text": "The port parameter is an int or None.",
+    "citation": "- `port` (int | None)",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > port: port (int | None)",
+    "nli": {
+     "entailment": 0.9929205775260925,
+     "neutral": 0.006588716059923172,
+     "contradiction": 0.0004907804541289806,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "b44acfa274aa1a44:openai/gpt-oss-20b:c2",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "user-guide",
+    "breadcrumb": "urllib3 > User Guide > Certificate Verification",
+    "chunk_id": "b44acfa274aa1a44",
+    "type": "fact",
+    "text": "You can disable certification verification by setting `cert_reqs = \"CERT_NONE\"` in urllib3.",
+    "citation": "While you can disable certification verification by setting `cert_reqs = \"CERT_NONE\"`",
+    "status": "kept",
+    "premise": "urllib3 > User Guide > Certificate Verification: While you can disable certification verification by setting cert_reqs = \"CERT_NONE\", it is highly recommend to leave it on.",
+    "nli": {
+     "entailment": 0.9963521957397461,
+     "neutral": 0.0031019984744489193,
+     "contradiction": 0.0005457294755615294,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "82602eb6a11f46a6:openai/gpt-oss-20b:c1",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "v2-migration-guide",
+    "breadcrumb": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ImportError: cannot import name 'DEFAULT_CIPHERS' from 'urllib3.util.ssl_'",
+    "chunk_id": "82602eb6a11f46a6",
+    "type": "fact",
+    "text": "ImportError occurs because you’re using botocore which does not support urllib3 2.0 yet.",
+    "citation": "you’re using botocore which does not support urllib3 2.0 yet",
+    "status": "kept",
+    "premise": "urllib3 > v2 Migration Guide > 🤔 Common upgrading issues > ImportError: cannot import name 'DEFAULT_CIPHERS' from 'urllib3.util.ssl_': This likely happens because you’re using botocore which does not support urllib3 2.0 yet. The good news is that botocore explicitly declares in its dependencies that it only supports urllib3<2.",
+    "nli": {
+     "entailment": 0.9967016577720642,
+     "neutral": 0.002153841545805335,
+     "contradiction": 0.0011444411939010024,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "a9e60097d5b8c7fe:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > auth_decoded",
+    "chunk_id": "a9e60097d5b8c7fe",
+    "type": "fact",
+    "text": "The password element of the auth_decoded tuple is None if the auth component does not contain a password.",
+    "citation": "`password` is `None` if not present in the auth component.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > auth_decoded: Both values are None if auth is None. password is None if not present in the auth component.",
+    "nli": {
+     "entailment": 0.9979876279830933,
+     "neutral": 0.0018863066798076034,
+     "contradiction": 0.0001261432480532676,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "eefc47cfde210dc9:openai/gpt-oss-20b:c4",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > ssl_wrap_socket()",
+    "chunk_id": "eefc47cfde210dc9",
+    "type": "fact",
+    "text": "The ciphers parameter of ssl_wrap_socket() is a string of ciphers the client wishes to support",
+    "citation": "`ciphers` (str | None) – A string of ciphers we wish the client to support",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ciphers: ciphers (str | None) – A string of ciphers we wish the client to support.",
+    "nli": {
+     "entailment": 0.9653109312057495,
+     "neutral": 0.02490660734474659,
+     "contradiction": 0.009782444685697556,
+     "truncated": false
+    },
+    "missing": []
+   },
+   {
+    "id": "a9e60097d5b8c7fe:openai/gpt-oss-20b:c3",
+    "extractor": "openai/gpt-oss-20b",
+    "source": "reference/urllib3.util",
+    "breadcrumb": "urllib3 > Utilities > Url > auth_decoded",
+    "chunk_id": "a9e60097d5b8c7fe",
+    "type": "fact",
+    "text": "Both values of the auth_decoded tuple are None if the auth component is None.",
+    "citation": "Both values are `None` if `auth` is `None`.",
+    "status": "kept",
+    "premise": "urllib3 > Utilities > Url > auth_decoded: Both values are None if auth is None. password is None if not present in the auth component.",
+    "nli": {
+     "entailment": 0.9850332140922546,
+     "neutral": 0.014724182896316051,
+     "contradiction": 0.00024254921299871057,
+     "truncated": false
+    },
+    "missing": []
+   }
+  ]
+ }
+}
