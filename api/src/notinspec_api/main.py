@@ -69,19 +69,20 @@ def _runs_dir() -> Path:
     return Path(os.environ.get("NOTINSPEC_RUNS_DIR", "tmp/runs"))
 
 
-def _read_run(path: Path) -> dict[str, Any]:
-    data: dict[str, Any] = json.loads(path.read_bytes())
-    return data
+def _read_run(path: Path) -> dict[str, Any] | None:
+    """None for a missing or unreadable run.json, so one broken run never breaks the list."""
+    try:
+        data = json.loads(path.read_bytes())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
 
 
 @app.get("/demo/runs")
 def demo_runs() -> list[dict[str, Any]]:
     root = _runs_dir()
-    runs = [
-        _read_run(p / "run.json")
-        for p in (root.iterdir() if root.is_dir() else [])
-        if (p / "run.json").is_file()
-    ]
+    folders = root.iterdir() if root.is_dir() else iter(())
+    runs = [r for p in folders if (r := _read_run(p / "run.json")) is not None]
     runs.sort(key=lambda r: (r.get("created_at", ""), r.get("id", "")), reverse=True)
     return [{k: r.get(k) for k in _SUMMARY_FIELDS} for r in runs]
 
@@ -91,7 +92,7 @@ def demo_run(run_id: str) -> dict[str, Any]:
     # run_id becomes a path part, so ".." or slashes must never get through
     if not _REPO_PART.fullmatch(run_id) or run_id in (".", ".."):
         raise HTTPException(422, "bad run id")
-    path = _runs_dir() / run_id / "run.json"
-    if not path.is_file():
+    run = _read_run(_runs_dir() / run_id / "run.json")
+    if run is None:
         raise HTTPException(404, "run not found")
-    return _read_run(path)
+    return run

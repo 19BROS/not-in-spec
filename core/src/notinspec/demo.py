@@ -6,6 +6,7 @@ overall score.
 """
 
 import secrets
+from collections.abc import Sequence
 from datetime import UTC, datetime
 from typing import Any
 
@@ -18,7 +19,9 @@ _NEXT = "next iteration"
 def new_run_id(project: str, now: datetime | None = None) -> str:
     """`YYYYmmddTHHMMZ-<project>-<4 hex>`; the hex keeps two runs in the same minute apart."""
     stamp = (now or datetime.now(UTC)).strftime("%Y%m%dT%H%MZ")
-    name = "".join(ch if ch.isalnum() or ch in "_.-" else "-" for ch in project) or "project"
+    # the API takes [A-Za-z0-9_.-]{1,100} only: ASCII, and the name cut so the ID stays short
+    allowed = (ch if (ch.isascii() and ch.isalnum()) or ch in "_.-" else "-" for ch in project)
+    name = "".join(allowed)[:60] or "project"
     return f"{stamp}-{name}-{secrets.token_hex(2)}"
 
 
@@ -36,8 +39,14 @@ def build_demo_run(
     results: dict[str, Any],
     claims: dict[str, Any] | None,
     run_id: str,
+    *,
+    stopped: Sequence[str] = (),
 ) -> dict[str, Any]:
-    """run.json v0 from ingestion.json, results.json and claims.json (None: claims not run)."""
+    """run.json v0 from ingestion.json, results.json and claims.json (None: claims not run).
+
+    `stopped`: `<extractor>: <reason>` for each extractor whose run stopped (quota), which
+    claims.json does not record; it makes step `claims` `failed`.
+    """
     inventory = ingestion["inventory"]
     symbols: list[dict[str, Any]] = inventory["symbols"]
     changes: list[dict[str, Any]] = inventory["changes"]
@@ -116,8 +125,10 @@ def build_demo_run(
         )
         if failed:
             detail += f" · {failed} chunks failed"
+        if stopped:  # quota ran out: the claims so far are kept, but the step did not finish
+            detail = f"stopped: {'; '.join(stopped)}; run again to continue"
         steps += [
-            _step("claims", "Extract claims", "done", detail),
+            _step("claims", "Extract claims", "failed" if stopped else "done", detail),
             _step(
                 "grounding",
                 "Ground claims (citation, NLI, identifiers)",
@@ -127,7 +138,7 @@ def build_demo_run(
         ]
         claims_out = {
             "sources": claims["sources"],
-            "extractors": [e["model"] for e in claims["extractors"]],
+            "extractors": [e["name"] for e in claims["extractors"]],
             "counts": claims["counts"],
             "versions": claims["versions"],
             "items": items,

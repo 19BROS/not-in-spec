@@ -1,6 +1,7 @@
 import argparse
 import fnmatch
 import json
+import os
 import shutil
 import statistics
 import sys
@@ -22,6 +23,7 @@ from notinspec.chunking import (
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
     PROMPT_VERSION,
+    ClaimsRun,
     ExtractionResult,
     JsonlCallLog,
     JsonlClaimStore,
@@ -398,6 +400,11 @@ def _extract_claims(args: argparse.Namespace) -> int:
 
 
 def _run_claims(args: argparse.Namespace) -> int:
+    return _stopped(_claims_run(args).results)
+
+
+def _claims_run(args: argparse.Namespace) -> ClaimsRun:
+    """`claims run` without its exit code: writes claims.json and claims.html."""
     run = _ClaimsInput(args)
     nli = _nli_model()
     recording = RecordingNli(nli) if args.record_nli is not None else None
@@ -441,7 +448,7 @@ def _run_claims(args: argparse.Namespace) -> int:
         print(f"  {name}: " + ", ".join(f"{n} {status}" for status, n in by_status.items()))
     print(f"Claims: {path.resolve()}")
     print(f"Report: {page.resolve()}")
-    return _stopped(result.results)
+    return result
 
 
 def _demo(args: argparse.Namespace) -> int:
@@ -457,10 +464,11 @@ def _demo(args: argparse.Namespace) -> int:
     code = _ingest(argparse.Namespace(**common, dry_run=False))
     if code:
         return code
+    stopped: list[str] = []
     if not args.no_claims:
         if args.claims_store is not None:
             shutil.copyfile(args.claims_store, out / "claims-store.jsonl")
-        code = _run_claims(
+        result = _claims_run(
             argparse.Namespace(
                 **common,
                 source=args.source,
@@ -472,14 +480,20 @@ def _demo(args: argparse.Namespace) -> int:
                 provider=args.provider,
             )
         )
+        code = _stopped(result.results)
+        stopped = [f"{r.extractor.name}: {r.stopped}" for r in result.results if r.stopped]
     claims = None if args.no_claims else json.loads((out / "claims.json").read_bytes())
     run = build_demo_run(
         json.loads((out / "ingestion.json").read_bytes()),
         json.loads((out / "results.json").read_bytes()),
         claims,
         run_id,
+        stopped=stopped,
     )
-    (out / "run.json").write_bytes(canonical_json(run, pretty=True))  # last: marks it complete
+    # last, and atomic: a run.json that exists is complete (the API lists only those)
+    partial = out / "run.json.tmp"
+    partial.write_bytes(canonical_json(run, pretty=True))
+    os.replace(partial, out / "run.json")
     print(f"Run: {out.resolve()}")
     print(f"Web: http://localhost:5173/#/runs/{run_id}")
     return code

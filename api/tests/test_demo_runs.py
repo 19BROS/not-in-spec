@@ -32,6 +32,14 @@ def test_list_newest_first_without_unfinished(runs: Path) -> None:
     assert set(body[0]) == {"id", "project", "created_at", "commit", "counts"}
 
 
+def test_broken_run_json_is_skipped(runs: Path) -> None:
+    _run(runs, "good", "2026-11-18T10:00:00+00:00")
+    (runs / "half").mkdir()
+    (runs / "half" / "run.json").write_text('{"id": "ha', "utf-8")  # half-written
+    assert [r["id"] for r in client.get("/demo/runs").json()] == ["good"]
+    assert client.get("/demo/runs/half").status_code == 404
+
+
 def test_list_without_folder(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     monkeypatch.setenv("NOTINSPEC_RUNS_DIR", str(tmp_path / "missing"))
     assert client.get("/demo/runs").json() == []

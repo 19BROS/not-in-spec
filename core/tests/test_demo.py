@@ -58,7 +58,7 @@ def _claim(chunk: str, local: str, status: str) -> dict[str, Any]:
 
 CLAIMS: dict[str, Any] = {
     "sources": ["guide"],
-    "extractors": [{"name": "m1", "model": "m1"}],
+    "extractors": [{"name": "m1", "model": "provider/m1-v2"}],  # claims record name
     "counts": {"m1": {"kept": 1, "citation_not_found": 1}},
     "versions": {"grounding": 1},
     "claims": [_claim("k1", "c1", "kept"), _claim("k1", "c2", "citation_not_found")],
@@ -114,9 +114,19 @@ def test_with_claims() -> None:
     }  # fmt: skip
 
 
+def test_stopped_claims_step_failed() -> None:
+    run = build_demo_run(INGESTION, RESULTS, CLAIMS, "rid", stopped=["m1: daily quota"])
+    step = run["steps"][2]
+    assert step["status"] == "failed"
+    assert step["detail"] == "stopped: m1: daily quota; run again to continue"
+    assert run["claims"]["items"]  # the claims so far are still shown
+
+
 def test_run_id_shape() -> None:
     assert re.fullmatch(r"\d{8}T\d{4}Z-hydra-zen-[0-9a-f]{4}", new_run_id("hydra-zen"))
-    assert "/" not in new_run_id("a/b c")
+    api_id = re.compile(r"[A-Za-z0-9_.-]{1,100}")  # what the API accepts
+    for project in ("a/b c", "Zürich-lib", "x" * 120):
+        assert api_id.fullmatch(new_run_id(project)), project
 
 
 def test_cli_demo_without_claims(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
