@@ -3,12 +3,13 @@
 import json
 from collections.abc import Callable
 from pathlib import Path
+from typing import NoReturn
 
 import pytest
 
 from notinspec import cli
 from notinspec.chunking import Chunk
-from notinspec.claims import DEFAULT_EXTRACTORS, MemoryCallLog, run_claims
+from notinspec.claims import DEFAULT_EXTRACTORS, MemoryCallLog, pipeline, run_claims
 from notinspec.config import load_config
 from notinspec.ingestion import ingest
 from notinspec.nli import MODEL_ID, REVISION, NliModel, NliUnavailable, RecordedNli
@@ -118,6 +119,25 @@ def test_record_nli_saves_the_scores(
     assert _run(fixture_project, tmp_path / "out", *args) == 0
     entries = json.loads(record.read_text(encoding="utf-8"))
     assert len(entries) == 6 and {e["revision"] for e in entries} == {REVISION}
+
+
+def test_record_nli_keeps_the_scores_when_a_later_step_fails(
+    fixture_project: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    def broken(*_: object) -> NoReturn:
+        raise RuntimeError("after NLI")
+
+    monkeypatch.setattr(cli, "_live_provider", _fake)
+    monkeypatch.setattr(cli, "_nli_model", _recorded)
+    monkeypatch.setattr(pipeline, "_decide", broken)
+    record = tmp_path / "nli.json"
+    args = ("--source", "guide", "--extractor", "qwen/qwen3.8-27b", "--record-nli", str(record))
+    assert _run(fixture_project, tmp_path / "out", *args) == 2
+    assert "after NLI" in capsys.readouterr().err
+    assert len(json.loads(record.read_text(encoding="utf-8"))) == 6
 
 
 def test_run_claims_on_urllib3_demo_chunks(

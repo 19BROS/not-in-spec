@@ -29,6 +29,7 @@ class Premise:
     text: str  # "<breadcrumb>: <sentences>"
     span: tuple[int, int]  # from the first to the last sentence used, offsets into chunk.text
     rule: str  # PREMISE_RULE
+    parameter: str | None = None  # the parameter entry added to the breadcrumb, if any
 
 
 @dataclass(frozen=True)
@@ -40,29 +41,46 @@ class _Unit:
 
 def nli_premise(chunk: Chunk, span: tuple[int, int]) -> Premise:
     """Premise for a citation at `span` (offsets into chunk.text, from `check_citation`)."""
-    sentences = prose_sentences(chunk)
-    cited = [i for i, s in enumerate(sentences) if s.start < span[1] and span[0] < s.end]
-    if not cited:
-        raise ValueError(f"span {span} is not in the prose of chunk {chunk.id}")
-    lines = chunk.text.split("\n")
-    units = [_unit(chunk, lines, s) for s in sentences]
-    cited_units = {units[i] for i in cited}
-    low, high = max(cited[0] - RADIUS, 0), min(cited[-1] + RADIUS, len(sentences) - 1)
-    picked = [i for i in range(low, high + 1) if units[i] in cited_units]
+    return ChunkPremises(chunk).premise(span)
 
-    first = units[picked[0]]
-    block = chunk.blocks[first.block]
-    if block.kind != "field" and first.list_start is not None:
-        lead = _lead_in(chunk, sentences, units, first)
-        if lead is not None and lead not in picked:
-            picked.insert(0, lead)
 
-    crumb = chunk.breadcrumb
-    if len(cited_units) == 1 and block.kind == "field" and block.field == "param" and block.name:
-        crumb = f"{crumb}{BREADCRUMB_SEPARATOR}{block.name}"
-    used = [sentences[i] for i in picked]
-    text = f"{crumb}: " + " ".join(s.text for s in used)
-    return Premise(text, (used[0].start, max(s.end for s in used)), PREMISE_RULE)
+class ChunkPremises:
+    """Premises of many citations in one chunk: splits and places its sentences only once."""
+
+    def __init__(self, chunk: Chunk, sentences: tuple[Sentence, ...] | None = None) -> None:
+        self.chunk = chunk
+        self.sentences = prose_sentences(chunk) if sentences is None else sentences
+        lines = chunk.text.split("\n")
+        self.units = [_unit(chunk, lines, s) for s in self.sentences]
+
+    def premise(self, span: tuple[int, int]) -> Premise:
+        chunk, sentences, units = self.chunk, self.sentences, self.units
+        cited = [i for i, s in enumerate(sentences) if s.start < span[1] and span[0] < s.end]
+        if not cited:
+            raise ValueError(f"span {span} is not in the prose of chunk {chunk.id}")
+        cited_units = {units[i] for i in cited}
+        low, high = max(cited[0] - RADIUS, 0), min(cited[-1] + RADIUS, len(sentences) - 1)
+        picked = [i for i in range(low, high + 1) if units[i] in cited_units]
+
+        first = units[picked[0]]
+        block = chunk.blocks[first.block]
+        if block.kind != "field" and first.list_start is not None:
+            lead = _lead_in(chunk, sentences, units, first)
+            if lead is not None and lead not in picked:
+                picked.insert(0, lead)
+
+        crumb, parameter = chunk.breadcrumb, None
+        if (
+            len(cited_units) == 1
+            and block.kind == "field"
+            and block.field == "param"
+            and block.name
+        ):
+            parameter = block.name
+            crumb = f"{crumb}{BREADCRUMB_SEPARATOR}{parameter}"
+        used = [sentences[i] for i in picked]
+        text = f"{crumb}: " + " ".join(s.text for s in used)
+        return Premise(text, (used[0].start, max(s.end for s in used)), PREMISE_RULE, parameter)
 
 
 def _lead_in(

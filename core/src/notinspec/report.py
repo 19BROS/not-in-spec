@@ -350,11 +350,16 @@ def _git_head(root: Path) -> str:
         return "0" * 40
 
 
-def claim_counts(claims: Sequence[GroundedClaim]) -> dict[str, dict[str, int]]:
-    """Claims per extractor and status, every status listed (zeros too), in STATUSES order."""
-    counts: dict[str, dict[str, int]] = {}
-    for claim in claims:
-        row = counts.setdefault(claim.claim.extractor, dict.fromkeys(STATUSES, 0))
+def claim_counts(run: ClaimsRun) -> dict[str, dict[str, int]]:
+    """Claims per extractor and status, every extractor and status listed (zeros too).
+
+    Extractors in run order, statuses in STATUSES order. An extractor that produced no claims
+    (quota used up, every chunk failed) still has its row.
+    """
+    zeros: dict[str, int] = dict.fromkeys(STATUSES, 0)
+    counts = {r.extractor.name: dict(zeros) for r in run.results}
+    for claim in run.claims:
+        row = counts.setdefault(claim.claim.extractor, dict(zeros))
         row[claim.status] += 1
     return counts
 
@@ -387,7 +392,7 @@ def render_claims(ingestion: Ingestion, chunks: Sequence[Chunk], run: ClaimsRun)
         if chunk.id in by_chunk or chunk.id in failures:
             documents.setdefault(chunk.source, []).append(chunk)
 
-    counts = claim_counts(run.claims)
+    counts = claim_counts(run)
     versions = run.versions
     head = "".join(f"<th>{_e(s)}" for s in STATUSES)
     out = [

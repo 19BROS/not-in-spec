@@ -4,8 +4,11 @@ from collections.abc import Sequence
 from dataclasses import replace
 from pathlib import Path
 
+import pytest
+
 from notinspec.chunking import Chunk, Document, chunk_blocks, chunk_document
 from notinspec.claims import (
+    ClaimsRun,
     ExtractedClaim,
     ExtractionResult,
     ExtractorSpec,
@@ -15,6 +18,7 @@ from notinspec.claims import (
 from notinspec.grounding import GROUNDING_VERSION, PREMISE_RULE
 from notinspec.inventory import Inventory
 from notinspec.nli import NliScores
+from notinspec.report import claim_counts
 from notinspec.sphinx import read_sphinx_xml
 
 SPHINX = Path(__file__).parents[1] / "fixtures" / "sphinx" / "xml-napoleon"
@@ -174,3 +178,39 @@ def test_no_claims_no_nli_call() -> None:
     nli = _FakeNli()
     assert ground_claims([_result()], [], Inventory(()), nli, project="acme") == ()
     assert nli.calls == []
+
+
+def test_a_premise_labelled_entailment_beats_a_higher_entailment_probability() -> None:
+    chunk = _connect_chunk()
+    claim = _claim(chunk, "connect() takes a server name.", "Server name.")
+    host = NliScores(0.48, 0.50, 0.02)  # higher entailment, but argmax says neutral
+    timeout = NliScores(0.45, 0.30, 0.25)  # argmax says entailment
+
+    class Split(_FakeNli):
+        def score(self, pairs: Sequence[tuple[str, str]]) -> list[NliScores]:
+            return [timeout if "> timeout:" in p else host for p, _ in pairs]
+
+    (out,) = ground_claims([_result(claim)], [chunk], Inventory(()), Split(), project="fixturelib")
+    assert out.premise_candidates == 2
+    assert out.premise is not None and "> timeout:" in out.premise
+    assert out.nli == timeout and out.status == "kept"
+
+
+def test_a_claim_outside_sections_is_an_error() -> None:
+    chunk = _chunk("# Pool\n\nThe pool keeps idle connections.\n")
+    claim = _claim(chunk, "The pool keeps idle connections.", "keeps idle")
+    with pytest.raises(ValueError, match="not in `sections`"):
+        ground_claims([_result(claim)], [], Inventory(()), _FakeNli(), project="acme")
+
+
+def test_counts_list_an_extractor_without_claims() -> None:
+    chunk = _chunk("# Pool\n\nThe pool keeps idle connections.\n")
+    claim = _claim(chunk, "The pool keeps idle connections.", "keeps idle")
+    empty = ExtractionResult(
+        ExtractorSpec("y", "acme/other", prompt_version=1), (), (), (), 1, 0, 0, "quota-exhausted"
+    )
+    results = (_result(claim), empty)
+    grounded = ground_claims(results, [chunk], Inventory(()), _FakeNli(), project="acme")
+    counts = claim_counts(ClaimsRun(results, grounded, GroundingVersions.of(_FakeNli())))
+    assert list(counts) == ["x", "y"]
+    assert counts["x"]["kept"] == 1 and set(counts["y"].values()) == {0}

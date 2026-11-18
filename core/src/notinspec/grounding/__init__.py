@@ -9,13 +9,19 @@ The NLI decision itself and the claim extractor live elsewhere (`notinspec.nli`,
 `notinspec.claims`); this package only takes chunks, strings and the inventory.
 """
 
-from notinspec.grounding.citation import CitationCheck, CitationStatus, check_citation, normalize
+from notinspec.grounding.citation import (
+    ChunkCitations,
+    CitationCheck,
+    CitationStatus,
+    check_citation,
+    normalize,
+)
 from notinspec.grounding.identifiers import (
     inventory_names,
     missing_identifiers,
     section_reference,
 )
-from notinspec.grounding.premise import PREMISE_RULE, Premise, nli_premise
+from notinspec.grounding.premise import PREMISE_RULE, ChunkPremises, Premise, nli_premise
 
 # bump when any result can change for the same input (normalization, premise, identifier rules).
 # Results also depend on chunking's sentence splitter (`prose_sentences`), so a claim stores
@@ -25,6 +31,8 @@ GROUNDING_VERSION = 1
 __all__ = [
     "GROUNDING_VERSION",
     "PREMISE_RULE",
+    "ChunkCitations",
+    "ChunkPremises",
     "CitationCheck",
     "CitationStatus",
     "Premise",

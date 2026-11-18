@@ -15,8 +15,9 @@ so the two checks can be measured separately.
 
 A citation that is in the prose more than once (a docstring repeats sentences across parameter
 entries) has one premise per match. Matches inside a parameter entry whose name the claim uses
-come first; among the rest, NLI decides: the premise with the highest entailment wins (on a tie,
-the earlier one in the chunk). Pairs are scored in one batch.
+come first; among the rest, NLI decides: a premise that entails the claim (argmax) wins over one
+that does not, then the highest entailment (on a tie, the earlier one in the chunk). Pairs are
+scored in one batch.
 """
 
 import re
@@ -25,18 +26,17 @@ from dataclasses import dataclass
 from typing import Literal
 
 from notinspec.chunking import CHUNKER_VERSION, WINDOWS_VERSION, Chunk
-from notinspec.chunking.chunker import BREADCRUMB_SEPARATOR
 from notinspec.claims.extract import extract_claims
 from notinspec.claims.model import ExtractedClaim, ExtractionResult, ExtractorSpec
 from notinspec.claims.store import CallLog, ClaimStore
 from notinspec.grounding import (
     GROUNDING_VERSION,
     PREMISE_RULE,
+    ChunkCitations,
+    ChunkPremises,
     Premise,
-    check_citation,
     inventory_names,
     missing_identifiers,
-    nli_premise,
     section_reference,
 )
 from notinspec.inventory import Inventory
@@ -149,25 +149,39 @@ class _Pending:
 
 def ground_claims(
     results: Sequence[ExtractionResult],
-    chunks: Sequence[Chunk],
+    sections: Sequence[Chunk],
     inventory: Inventory,
     nli: NliModel,
     *,
     project: str,
 ) -> tuple[GroundedClaim, ...]:
-    by_id = {c.id: c for c in chunks}
+    """Grounds every claim of `results`.
+
+    `sections` must be all chunks of the docs, not only the extracted ones: the identifier check
+    reads a section split into parts whole, and every claim's chunk has to be among them.
+    """
+    by_id = {c.id: c for c in sections}
     by_section: dict[str, list[Chunk]] = {}
-    for chunk in chunks:
-        by_section.setdefault(chunk.section_id, []).append(chunk)
+    for part in sections:
+        by_section.setdefault(part.section_id, []).append(part)
     references: dict[str, str] = {}
+    citations: dict[str, ChunkCitations] = {}
+    premises: dict[str, ChunkPremises] = {}
     names = inventory_names(inventory)
 
     out: list[GroundedClaim | _Pending] = []
     for result in results:
         version = result.extractor.prompt_version
         for claim in result.claims:
-            chunk = by_id[claim.chunk_id]
-            check = check_citation(chunk, claim.citation)
+            chunk = by_id.get(claim.chunk_id)
+            if chunk is None:
+                raise ValueError(
+                    f"claim {claim.local_id} of {claim.extractor} is in chunk {claim.chunk_id}, "
+                    "which is not in `sections`"
+                )
+            if chunk.id not in citations:
+                citations[chunk.id] = ChunkCitations(chunk)
+            check = citations[chunk.id].check(claim.citation)
             if check.status != "found":
                 status: GroundingStatus = (
                     "not_checkable" if check.status == "not_checkable" else "citation_not_found"
@@ -181,7 +195,9 @@ def ground_claims(
             missing = missing_identifiers(
                 claim.text, references[chunk.section_id], project=project, known_names=names
             )
-            candidates = _candidates(chunk, claim.text, check.spans)
+            if chunk.id not in premises:
+                premises[chunk.id] = ChunkPremises(chunk, citations[chunk.id].sentences)
+            candidates = _candidates(premises[chunk.id], claim.text, check.spans)
             out.append(_Pending(claim, version, chunk, len(check.spans), candidates, missing))
 
     pairs = list(
@@ -218,40 +234,33 @@ def _unchecked(
 
 
 def _candidates(
-    chunk: Chunk, claim: str, spans: Sequence[tuple[int, int]]
+    chunk: ChunkPremises, claim: str, spans: Sequence[tuple[int, int]]
 ) -> list[tuple[tuple[int, int], Premise]]:
     """One premise per match (the same premise once); parameter entries the claim names first."""
     seen: set[str] = set()
     premises: list[tuple[tuple[int, int], Premise]] = []
     for span in spans:
-        premise = nli_premise(chunk, span)
+        premise = chunk.premise(span)
         if premise.text not in seen:
             seen.add(premise.text)
             premises.append((span, premise))
     named = [
         (span, premise)
         for span, premise in premises
-        if (param := _parameter(chunk, premise)) is not None
-        and re.search(rf"(?<!\w){re.escape(param)}(?!\w)", claim)
+        if premise.parameter is not None
+        and re.search(rf"(?<!\w){re.escape(premise.parameter)}(?!\w)", claim)
     ]
     return named or premises
 
 
-def _parameter(chunk: Chunk, premise: Premise) -> str | None:
-    """The parameter a premise's breadcrumb names (`... > Retry > total: ...`), if any."""
-    head = f"{chunk.breadcrumb}{BREADCRUMB_SEPARATOR}"
-    if not premise.text.startswith(head):
-        return None
-    rest = premise.text[len(head) :]
-    name, sep, _ = rest.partition(": ")
-    return name if sep and name and BREADCRUMB_SEPARATOR not in name else None
-
-
 def _decide(pending: _Pending, scores: dict[tuple[str, str], NliScores]) -> GroundedClaim:
-    best = max(
-        pending.candidates,
-        key=lambda c: scores[(c[1].text, pending.claim.text)].entailment,
-    )  # max keeps the first of equal ones, i.e. the earlier match in the chunk
+    def rank(candidate: tuple[tuple[int, int], Premise]) -> tuple[bool, float]:
+        nli = scores[(candidate[1].text, pending.claim.text)]
+        # argmax decides: a premise labelled entailment beats a higher entailment probability
+        # under a neutral label
+        return nli.label == "entailment", nli.entailment
+
+    best = max(pending.candidates, key=rank)  # max keeps the first of equal ones (earlier match)
     span, premise = best
     nli = scores[(premise.text, pending.claim.text)]
     status: GroundingStatus

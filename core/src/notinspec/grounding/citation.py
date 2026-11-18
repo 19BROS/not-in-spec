@@ -56,26 +56,37 @@ def normalize(text: str) -> str:
 
 def check_citation(chunk: Chunk, citation: str) -> CitationCheck:
     """Where the citation is in the chunk: all matches in prose, or `not_checkable`."""
-    needle = normalize(citation)
-    if not needle:
+    return ChunkCitations(chunk).check(citation)
+
+
+class ChunkCitations:
+    """Checks many citations against one chunk: normalizes it and splits its sentences once."""
+
+    def __init__(self, chunk: Chunk) -> None:
+        self.chunk = chunk
+        self.sentences = prose_sentences(chunk)
+        self._haystack, self._offsets = _normalized(chunk.text)
+
+    def check(self, citation: str) -> CitationCheck:
+        needle = normalize(citation)
+        if not needle:
+            return CitationCheck("not_found", None)
+        text, haystack, offsets = self.chunk.text, self._haystack, self._offsets
+        prose: list[tuple[int, int]] = []
+        first: tuple[int, int] | None = None
+        at = haystack.find(needle)
+        while at >= 0:
+            span = _widen(text, offsets[at], offsets[at + len(needle) - 1] + 1)
+            if any(s.start < span[1] and span[0] < s.end for s in self.sentences):
+                prose.append(span)
+            elif first is None:
+                first = span
+            at = haystack.find(needle, at + 1)
+        if prose:
+            return CitationCheck("found", prose[0], tuple(prose))
+        if first is not None:
+            return CitationCheck("not_checkable", first, (first,))
         return CitationCheck("not_found", None)
-    haystack, offsets = _normalized(chunk.text)
-    sentences = prose_sentences(chunk)
-    prose: list[tuple[int, int]] = []
-    first: tuple[int, int] | None = None
-    at = haystack.find(needle)
-    while at >= 0:
-        span = _widen(chunk.text, offsets[at], offsets[at + len(needle) - 1] + 1)
-        if any(s.start < span[1] and span[0] < s.end for s in sentences):
-            prose.append(span)
-        elif first is None:
-            first = span
-        at = haystack.find(needle, at + 1)
-    if prose:
-        return CitationCheck("found", prose[0], tuple(prose))
-    if first is not None:
-        return CitationCheck("not_checkable", first, (first,))
-    return CitationCheck("not_found", None)
 
 
 def _widen(text: str, start: int, end: int) -> tuple[int, int]:

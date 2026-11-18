@@ -14,6 +14,10 @@ class Message:
     content: str
 
 
+# the fields ChatRequest had when the first recordings were made: always hashed, None included
+_HASHED_ALWAYS = frozenset({"model", "messages", "temperature", "max_tokens", "response_schema"})
+
+
 @dataclass(frozen=True)
 class ChatRequest:
     """Everything sent to the model. Recorded with every result (SPEC §3)."""
@@ -30,12 +34,11 @@ class ChatRequest:
     def prompt_hash(self) -> str:
         """sha256 over the whole request, so any change to prompt or parameters is a new prompt.
 
-        A parameter added after recordings existed is left out while it is unset, so the
-        requests of those recordings keep their hash.
+        A parameter added after recordings existed (not in `_HASHED_ALWAYS`) is left out while
+        it is None, so the requests of those recordings keep their hash. A new parameter must
+        default to None for that to hold.
         """
-        data = asdict(self)
-        if data["reasoning_effort"] is None:
-            del data["reasoning_effort"]
+        data = {k: v for k, v in asdict(self).items() if k in _HASHED_ALWAYS or v is not None}
         canonical = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode()).hexdigest()
 

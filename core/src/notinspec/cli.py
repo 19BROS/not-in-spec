@@ -278,8 +278,11 @@ def _live_provider(name: str) -> Provider:
 
 
 def _nli_model() -> NliModel:
-    """Seam for tests: CI replays recorded NLI scores and never loads the real model."""
-    return TransformersNli()
+    """The NLI model, already loaded, so a missing extra or model stops a run before any LLM
+    call. Seam for tests: CI replays recorded NLI scores and never loads the real model."""
+    model = TransformersNli()
+    model.load()
+    return model
 
 
 class _ClaimsInput:
@@ -371,9 +374,7 @@ def _extract_claims(args: argparse.Namespace) -> int:
 
 def _run_claims(args: argparse.Namespace) -> int:
     run = _ClaimsInput(args)
-    nli: NliModel = _nli_model()
-    if isinstance(nli, TransformersNli):
-        nli.load()  # before any LLM call: a missing extra or model stops the run here
+    nli = _nli_model()
     recording = RecordingNli(nli) if args.record_nli is not None else None
     print(f"Claims from {len(run.chunks)} chunks with {len(run.specs)} extractors.", flush=True)
     try:
@@ -391,12 +392,12 @@ def _run_claims(args: argparse.Namespace) -> int:
             reuse=run.reuse,
             on_extracted=_print_extraction,
         )
-    finally:
+    finally:  # recordings of the answers and scores so far are worth keeping on a failure
         if run.record is not None:
             run.live.save(run.record)
-    if recording is not None:
-        recording.save(args.record_nli)
-    counts = claim_counts(result.claims)
+        if recording is not None:
+            recording.save(args.record_nli)
+    counts = claim_counts(result)
     output = {
         "schema_version": GROUNDED_SCHEMA_VERSION,
         **run.header(),
