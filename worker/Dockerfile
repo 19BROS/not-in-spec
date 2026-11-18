@@ -12,8 +12,8 @@ COPY api/pyproject.toml api/
 COPY worker/pyproject.toml worker/
 RUN uv sync --locked --no-dev --package notinspec-worker --extra nli --no-install-workspace
 COPY . .
-# /models owned by app: a named volume copies this owner on first use
+# /models and /runs owned by app: a named volume copies this owner on first use
 RUN uv sync --locked --no-dev --package notinspec-worker --extra nli && useradd --system app \
-    && mkdir /models && chown app /models
+    && mkdir /models /runs && chown app /models /runs
 USER app
 CMD ["notinspec-worker"]

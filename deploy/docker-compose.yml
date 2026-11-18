@@ -42,6 +42,10 @@ services:
       <<: *app-env
       GROQ_API_KEY: ${GROQ_API_KEY:-} # read by notinspec.runner (SPEC §8)
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      OMP_NUM_THREADS: "3" # torch ignores the cpus limit and would start 4 threads
+    # NLI peaks at ~3.1 GB on all cores (SPEC §6.4); 1 vCPU stays for postgres, api, proxy
+    mem_limit: 6g
+    cpus: 3
     volumes:
       # NLI model weights (HF_HOME); the image runs with HF_HUB_OFFLINE=1, the deploy fetches once
       - hf-models:/models
