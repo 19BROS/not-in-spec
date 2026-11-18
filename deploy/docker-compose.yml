@@ -26,8 +26,11 @@ services:
       # results.json pushed by the GitHub Action (POST /api/runs); empty = ingest disabled
       INGEST_TOKEN: ${INGEST_TOKEN:-}
       RESULTS_DIR: /results
+      # shortcut: demo runs (`notinspec demo`) are folders on a volume, not in Postgres (SPEC §18)
+      NOTINSPEC_RUNS_DIR: /runs
     volumes:
       - results:/results
+      - demo-runs:/runs:ro
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -42,6 +45,8 @@ services:
     volumes:
       # NLI model weights (HF_HOME); the image runs with HF_HUB_OFFLINE=1, the deploy fetches once
       - hf-models:/models
+      # written by `notinspec demo --runs-dir /runs` run in this container (docs/DEPLOY.md)
+      - demo-runs:/runs
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -122,3 +127,4 @@ volumes:
   results:
   caddy-data:
   hf-models:
+  demo-runs:

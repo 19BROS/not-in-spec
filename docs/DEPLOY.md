@@ -76,6 +76,42 @@ sudo docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env 
 
 Old revisions stay on the volume after a bump. Free the space with `sudo docker volume rm notinspec_hf-models` (the next deploy fetches again).
 
+## Demo runs (docs/plans/demo-cli-web.md)
+
+The site's run list (`/api/demo/runs`) reads folders on the volume `demo-runs`: read-only in `api`, writable at `/runs` in `worker`. Shortcut: files, not Postgres, until the DB models are settled (SPEC §18).
+
+**Make a run on the VM** (in the running worker; `-u root` because the volume is root-owned, the files stay readable for `api`):
+
+```sh
+TAG=$(sudo docker inspect -f '{{.Config.Image}}' notinspec-worker-1 | cut -d: -f2)   # deployed commit
+sudo docker exec -u root -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
+  notinspec demo --config core/examples/sphinx/trio/notinspec.yaml --runs-dir /runs --no-claims
+```
+
+With claims (urllib3, reuses the stored answers; needs `GROQ_API_KEY` in `/opt/notinspec/.env` for chunks not in the store; NLI takes minutes on the CPU):
+
+```sh
+sudo docker exec -u root -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
+  notinspec demo --config core/examples/sphinx/urllib3/notinspec.yaml --runs-dir /runs \
+  --source user-guide --source reference/urllib3.util --source v2-migration-guide \
+  --claims-store experiments/nli/runs/008-core-pipeline-urllib3-demo/claims-store.jsonl
+```
+
+**Copy runs made on a laptop** (the API needs only `run.json` in each folder):
+
+```powershell
+# on the laptop, from the repo root
+ssh notinspec 'mkdir -p /tmp/demo-runs'
+Get-ChildItem tmp/runs -Directory | ForEach-Object { ssh notinspec "mkdir -p /tmp/demo-runs/$($_.Name)"; scp "$($_.FullName)/run.json" "notinspec:/tmp/demo-runs/$($_.Name)/" }
+```
+
+```sh
+# on the VM
+sudo docker cp /tmp/demo-runs/. notinspec-worker-1:/runs/ && rm -rf /tmp/demo-runs
+```
+
+**List or delete runs:** `sudo docker exec notinspec-worker-1 ls /runs`, `sudo docker exec -u root notinspec-worker-1 rm -rf /runs/<run id>`.
+
 ## Backups (SPEC §6)
 
 The `backup` service (in [deploy/docker-compose.yml](../deploy/docker-compose.yml)) runs `pg_dump` on start and every 24 h after that. It writes to `/data/backups/notinspec-<UTC time>.dump` and deletes dumps older than 14 days.
