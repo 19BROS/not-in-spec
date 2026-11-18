@@ -38,8 +38,7 @@ web  #/                    runs list
 
 ## Contract: `run.json` v0
 
-Reference converter: `docs/plans/demo-run-reference.py` (scratch script that made the
-sample). A ports it into core and deletes it. Field names below are binding for both sides.
+Builder: `core/src/notinspec/demo.py` (`build_demo_run`). Field names below are binding for both sides.
 
 ```jsonc
 {

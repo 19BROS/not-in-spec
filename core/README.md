@@ -40,6 +40,24 @@ uv run notinspec ci --config core/examples/cli/notinspec.yaml --out tmp/cli-demo
 lists the selected files (a Sphinx XML folder with its XML file count). It creates no files and preserves existing output. It does **not**
 parse document content or validate OpenAPI schemas; run the normal command for those checks.
 
+### Demo
+
+`notinspec demo` runs `ci` and `claims run` into one folder `tmp/runs/<run id>/` and writes
+`run.json` (contract: `docs/plans/demo-cli-web.md`) last. The API serves it
+(`GET /api/demo/runs`, `GET /api/demo/runs/<id>`) and the web shows it. Shortcut: folders on
+disk, no Postgres. Claims need `GROQ_API_KEY` (only for chunks not in the claims store) and the
+`nli` extra; `--no-claims` needs neither.
+
+```sh
+uv sync --all-packages --extra nli
+uv run notinspec demo --config core/examples/sphinx/urllib3/notinspec.yaml   --source user-guide --source reference/urllib3.util --source v2-migration-guide   --claims-store experiments/nli/runs/008-core-pipeline-urllib3-demo/claims-store.jsonl
+uv run notinspec demo --config core/examples/sphinx/trio/notinspec.yaml --no-claims
+uv run notinspec demo --config core/examples/sphinx/hydra-zen/notinspec.yaml --no-claims
+
+uv run uvicorn notinspec_api.main:app --reload     # :8000, from the repo root
+cd web && npm run dev                              # http://localhost:5173
+```
+
 ## Configuration
 
 Paths are relative to the configuration file, regardless of the current working directory.
