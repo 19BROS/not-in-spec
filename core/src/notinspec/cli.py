@@ -35,6 +35,7 @@ from notinspec.config import load_config
 from notinspec.demo import build_demo_run, new_run_id
 from notinspec.ingestion import ingest, plan_ingestion
 from notinspec.nli import NliModel, RecordingNli, TransformersNli
+from notinspec.pack import pack_inputs
 from notinspec.report import build_results, claim_counts, render_claims, write_artifacts
 from notinspec.runner import (
     GROQ,
@@ -145,6 +146,15 @@ def main(argv: list[str] | None = None) -> int:
         "--record-nli", type=Path, help="also save the NLI scores as a recorded-NLI fixture"
     )
 
+    pack = commands.add_parser(
+        "pack",
+        help="pack the configured inputs into the upload archive (SPEC 11.1)",
+        description="Writes the tar.gz the GitHub Action uploads to our service. Selects "
+        "inputs like `ci --dry-run`; the same inputs always give the same bytes.",
+    )
+    pack.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
+    pack.add_argument("--out", type=Path, default=Path("inputs.tar.gz"))
+
     demo = commands.add_parser(
         "demo",
         help="ingest and (optionally) run claims into one run folder for the web demo",
@@ -182,6 +192,11 @@ def main(argv: list[str] | None = None) -> int:
             return _demo(args)
         if args.command in ("ci", "ingest"):
             return _ingest(args)
+        if args.command == "pack":
+            names = pack_inputs(args.config, args.out)
+            print("\n".join(names))
+            print(f"Packed {len(names)} files, {args.out.stat().st_size} bytes: {args.out}")
+            return 0
         if args.command == "ask":
             config = PROVIDERS[args.provider]
             model = args.model or config.default_model

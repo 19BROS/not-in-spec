@@ -2,59 +2,33 @@
 
 Tests how well LLMs can use your software from its documentation, on every PR that changes the docs ([SPEC §11](../docs/SPEC.md#11-github-action)).
 
-> **Old design.** This Action runs the pipeline in your CI with your own `LLM_API_KEY` and a shared server token. The MVP moves to a thin client that uploads inputs with a GitHub OIDC token ([SPEC §11](../docs/SPEC.md#11-github-action)); this README is rewritten together with the Action.
+The Action is a **thin client of our service**. It computes nothing and needs no model key. It packs your docs, uploads them with a GitHub OIDC token, waits for the run, and then writes one PR comment and the status check.
 
-> **Mock.** The image runs [`mock.py`](mock.py): real inputs, outputs and exit codes, fake numbers. It is replaced by the real CLI from `core` without changing this interface.
+> **Not live yet.** Our upload API ([SPEC §11.1](../docs/SPEC.md#111-upload-api)) is still being built, and CI tests this Action against [`stub.py`](stub.py). Don't tag a release until the API is deployed: `@v0` still points to the old mock Action.
 
 ## Usage
 
-Add `notinspec.yaml` to your repo ([example](../deploy/fixtures/notinspec.yaml), paths are relative to it) and this workflow:
+Your repo must be **public** and **registered** as a project with us: its repository ID, default branch and workflow path. Add `notinspec.yaml` ([SPEC §2.3](../docs/SPEC.md#23-what-the-tool-needs-from-the-user), paths are relative to it) and this workflow:
 
 ```yaml
-# .github/workflows/notinspec.yml
+# .github/workflows/notinspec.yml  (this path is registered with your project)
 on:
   pull_request:
-    paths: ["docs/**", "openapi.yaml", "notinspec.yaml"]
+    types: [opened, synchronize, reopened, closed] # closed: drops the PR's candidate tests
   push:
-    branches: [main]
-    paths: ["docs/**", "openapi.yaml", "notinspec.yaml"]
+    branches: [main] # main runs: the baseline for later PRs
+  workflow_dispatch: # the first main run of a new project
 
-permissions:
-  contents: read
-  pull-requests: write # PR comment
+concurrency:
+  group: notinspec-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  notinspec:
+  # runs your project's code (conf.py, autodoc imports), so it gets no secrets and no OIDC token
+  build:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with: { fetch-depth: 0 } # git history, to find the changed docs
-      - uses: 19BROS/not-in-spec/action@v0
-        with:
-          api-key: ${{ secrets.LLM_API_KEY }}
-          server-url: https://147-175-151-17.sslip.io # optional: send results to our server
-          server-token: ${{ secrets.NOTINSPEC_TOKEN }}
-```
-
-### Sphinx docs
-
-> **Sphinx 9.x only.** The reader reads XML built by Sphinx 9 and checks the first line of `build-env.txt` (`sphinx-build 9.1.0`). Without `build-env.txt`, or with another Sphinx major version, the run fails with exit 2. Other versions are future work ([SPEC §16.3](../docs/SPEC.md#163-future-development)).
-
-The Action **never builds Sphinx** ([SPEC §1.1](../docs/SPEC.md#11-what-we-are-not-building)): `sphinx-build` runs your project's code (`conf.py`, autodoc imports the library, `pip install` runs build hooks), and the NOT-IN-SPEC job has your `LLM_API_KEY`. So build the XML in a **separate job without secrets** and pass it on as an artifact. A separate job runs on a separate VM, so build code cannot reach the key.
-
-```yaml
-# notinspec.yaml
-project: "mylib"                 # root of every breadcrumb; default: the repo name
-docs:
-  sphinx_xml: "build/xml/"       # where the next job puts the artifact
-```
-
-```yaml
-# .github/workflows/notinspec.yml
-jobs:
-  sphinx-xml:
-    runs-on: ubuntu-latest
-    permissions: { contents: read }   # no secrets in this job
+    permissions: { contents: read }
     steps:
       - uses: actions/checkout@v7
       - run: |
@@ -62,63 +36,85 @@ jobs:
           pip install -e . -r docs/requirements.txt   # whatever your docs build needs
           sphinx-build -b xml docs build/xml
           { sphinx-build --version; python --version; pip freeze; } > build/xml/build-env.txt
+      # only with an OpenAPI spec: one file without external $refs (SPEC §11)
+      - run: npx --yes @redocly/cli@2 bundle openapi.yaml -o build/openapi.yaml
       - uses: actions/upload-artifact@v7
-        with: { name: sphinx-xml, path: build/xml/ }
+        with: { name: notinspec-inputs, path: build/ }
 
-  notinspec:
-    needs: sphinx-xml
+  upload:
+    needs: build
+    # also on closed, when build is skipped
+    if: ${{ !cancelled() && (needs.build.result == 'success' || github.event.action == 'closed') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # the OIDC token proves to us which repo and workflow sent the docs
+      pull-requests: write # the PR comment
     steps:
       - uses: actions/checkout@v7
-        with: { fetch-depth: 0 }
-      - uses: actions/download-artifact@v7
-        with: { name: sphinx-xml, path: build/xml/ }
+        with: { fetch-depth: 2 } # the merge commit's first parent finds the baseline
+      - if: github.event.action != 'closed'
+        uses: actions/download-artifact@v7
+        with: { name: notinspec-inputs, path: build/ }
       - uses: 19BROS/not-in-spec/action@v0
-        with:
-          api-key: ${{ secrets.LLM_API_KEY }}
 ```
 
-- `build-env.txt` is **required**, and `sphinx-build --version` must be its first line. It records the build environment: autodoc output depends on the Sphinx version, its extensions and the installed library, so the same docs commit can build to different XML ([SPEC §6.1](../docs/SPEC.md#61-reading-and-chunking)).
-- Keep the `sphinx-build` command your project already uses (extensions, `-D` options); only the builder changes to `xml`. Don't add napoleon or other extensions just for NOT-IN-SPEC.
-- The XML is treated as untrusted input by the reader.
+```yaml
+# notinspec.yaml
+project: "mylib"               # root of every breadcrumb; default: the repo name
+docs:
+  sphinx_xml: "build/xml/"     # from the build job
+  paths: ["README.md"]         # Markdown outside Sphinx, optional
+  openapi: "build/openapi.yaml"  # bundled in the build job, optional
+```
+
+### Sphinx docs
+
+> **Sphinx 9.x only.** The reader reads XML built by Sphinx 9 and checks the first line of `build-env.txt` (`sphinx-build 9.1.0`). Without `build-env.txt`, or with another Sphinx major version, the upload fails. Other versions are future work ([SPEC §16.3](../docs/SPEC.md#163-future-development)).
+
+- **We never build Sphinx** ([SPEC §1.1](../docs/SPEC.md#11-what-we-are-not-building)). `sphinx-build` runs your project's code, so it runs in your `build` job. That job has no secrets and no OIDC token. It is a separate VM, so build code cannot reach the token of the `upload` job.
+- `build-env.txt` is **required**, and the output of `sphinx-build --version` must be its first line. Autodoc output depends on the Sphinx version, the extensions and the installed library, so the same docs commit can build to different XML ([SPEC §6.1](../docs/SPEC.md#61-reading-and-chunking)).
+- Keep the `sphinx-build` command your project already uses (extensions, `-D` options) and change only the builder to `xml`.
 
 ## What it does
 
-1. Skips pull requests from forks (they get no secrets) with a warning.
-2. Runs the `notinspec-cli` image: `notinspec ci --config <config> --out notinspec-out`.
-3. Uploads `notinspec-out/` as the artifact `notinspec-results`: `results.json`, `report.html`, `comment.md`.
-4. On a PR, creates or updates **one** comment (found by `<!-- notinspec -->`). On exit 2 the comment shows the CLI's error instead, so an older verdict never stays up.
-5. If `server-url` is set, POSTs `results.json` to `<server-url>/api/runs` with the token. Only `https://` (or localhost). A failure is a warning, never a red PR.
-6. Fails the job when the CLI exits non-zero, which is the PR's status check.
+1. **Skips** fork PRs, which get no OIDC token, with a warning. It also skips merged PRs on `closed`, because the next main run takes over their candidates.
+2. **Closed PR:** sends a `closed` event and stops. A closed PR has no build and no comment.
+3. **Packs** the inputs with `notinspec pack` from `core/` at the Action's own ref. The server selects inputs with the same code, so both sides always agree on what the inputs are. The archive is uploaded as an artifact with the run's status.
+4. **Uploads** the archive to `POST /api/uploads` with an OIDC token whose audience is `server-url`. On a PR it also sends the head commit and the merge commit's first parent.
+5. **Polls** the run every 15 s, without a token, because results are public.
+6. **Comments:** writes **one** comment per PR (found by `<!-- notinspec -->`) and updates it on every push. On `push` and `workflow_dispatch` the result goes to the job summary.
+7. **Fails the job**, which is the status check, as the table below shows.
 
-| Exit code | Meaning |
-|---|---|
-| 0 | pass |
-| 1 | documentation change lowers usage (or a new finding), see the comment |
-| 2 | bad config, or the CLI crashed |
+| What happened | Job | Comment |
+|---|---|---|
+| verdict `pass` | ✓ | the run's comment |
+| verdict `fail` | ✗ | the run's comment |
+| run `error` (bad inputs) or a bad setup (config, no `id-token: write`, upload rejected with `4xx`) | ✗ | the error |
+| our service is down, answers `5xx`, or the run takes longer than `timeout-minutes` | ✓ with a warning | "no result" |
 
-To demo a red PR with the mock, add `<!-- notinspec-mock: fail -->` to a changed docs file.
+An outage on our side never blocks your merges.
 
-## Inputs
+## Inputs and outputs
 
 | Input | Default | |
 |---|---|---|
 | `config` | `notinspec.yaml` | path to the config |
-| `api-key`, `base-url` | – | model API (unused by the mock) |
-| `server-url`, `server-token` | – | where to send results |
-| `image` | `ghcr.io/19bros/notinspec-cli:<this release>` | |
+| `server-url` | `https://147-175-151-17.sslip.io` | our service. It is also the OIDC audience, so it must match what we expect |
+| `timeout-minutes` | `60` | how long to wait for the run |
 | `github-token` | `github.token` | for the PR comment |
 
-Output `verdict`: `pass` or `fail`.
+Outputs: `verdict` (`pass`, `fail`, or empty when there is no result) and `run-url`.
 
-## `results.json` (schema v0)
+## Development
 
-Example: [example-results.json](example-results.json). One row per **level × model × mode**, never averaged into one score. `baseline_passed` is the same row on `main`. `verdict` and `reasons` say why the check failed.
+- [`client.sh`](client.sh) holds the logic, and [`action.yml`](action.yml) wires it into the job.
+- [`stub.py`](stub.py) fakes the upload API (standard library only). It does not check the token. A run is `done` on the second poll, and its verdict is `fail` when an input contains `<!-- notinspec-mock: fail -->`.
+- The CI job `action` in [ci.yml](../.github/workflows/ci.yml) runs the Action against the stub and checks the archive and the exit codes. Its last step shows how to run `client.sh` without the Action.
 
 ## Releases
 
-1. In a PR, set the `image` default in [action.yml](action.yml) to `notinspec-cli:X.Y.Z` and merge it.
-2. Tag that commit on `main` with `vX.Y.Z` and push the tag.
-3. The [release workflow](../.github/workflows/release.yml) checks the pinned version, pushes `ghcr.io/19bros/notinspec-cli:X.Y.Z` and moves the git tag `vX`.
+1. Tag a commit on `main` with `vX.Y.Z` and push the tag.
+2. The [release workflow](../.github/workflows/release.yml) moves `vX` to that commit.
 
-Pinning the exact image keeps `@vX.Y.Z` and its image together: an old `action.yml` never runs a newer CLI with other arguments.
+The Action has no image of its own: it runs `core/` from the same commit, so `@vX.Y.Z` always runs the code of its own release.

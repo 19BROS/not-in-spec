@@ -129,14 +129,10 @@ settings are unused. Warnings are not labelled as K1-K7 findings.
 
 ## GitHub Action integration boundary
 
-The command flags and three report filenames follow `action/mock.py`, but **the current
-Action image still runs that mock**. This branch does not change its Dockerfile, workflow,
-server, database or deploy anything.
-
-`not-evaluated` is a proposed extension of the v0 envelope. Before replacing the mock, agree
-this status with the backend and DevOps: the current Action maps exit 0 to `verdict=pass` and
-must distinguish successful ingestion from an evaluated pass. The full detail is a separate
-artifact; the current server receives only `results.json`.
+The Action is a thin client ([SPEC §11.1](../docs/SPEC.md#111-upload-api)): it runs only
+`notinspec pack`, which writes the upload archive with the inputs `ci --dry-run` would select,
+so the Action and our service always agree on what the inputs are. The verdict comes from the
+service, never from the CLI.
 
 ## Verification
 
