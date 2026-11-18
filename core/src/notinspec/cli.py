@@ -1,6 +1,8 @@
 import argparse
 import fnmatch
 import json
+import os
+import shutil
 import statistics
 import sys
 import uuid
@@ -21,6 +23,7 @@ from notinspec.chunking import (
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
     PROMPT_VERSION,
+    ClaimsRun,
     ExtractionResult,
     JsonlCallLog,
     JsonlClaimStore,
@@ -29,6 +32,7 @@ from notinspec.claims import (
     run_claims,
 )
 from notinspec.config import load_config
+from notinspec.demo import build_demo_run, new_run_id
 from notinspec.ingestion import ingest, plan_ingestion
 from notinspec.nli import NliModel, RecordingNli, TransformersNli
 from notinspec.report import build_results, claim_counts, render_claims, write_artifacts
@@ -141,6 +145,27 @@ def main(argv: list[str] | None = None) -> int:
         "--record-nli", type=Path, help="also save the NLI scores as a recorded-NLI fixture"
     )
 
+    demo = commands.add_parser(
+        "demo",
+        help="ingest and (optionally) run claims into one run folder for the web demo",
+        description="Runs `ci` and `claims run` into <runs-dir>/<run id>/ and writes run.json "
+        "last (the API lists only folders with it). Claims need GROQ_API_KEY for chunks not "
+        "in the claims store and notinspec[nli].",
+    )
+    demo.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
+    demo.add_argument("--runs-dir", type=Path, default=Path("tmp/runs"))
+    demo.add_argument(
+        "--source", action="append", help="claims only from chunks matching this glob; repeatable"
+    )
+    demo.add_argument("--extractor", action="append", metavar="MODEL", help="repeatable")
+    demo.add_argument("--no-claims", action="store_true", help="ingestion only, no LLM or NLI")
+    demo.add_argument(
+        "--claims-store",
+        type=Path,
+        help="claims-store.jsonl copied into the run first, so stored answers are reused",
+    )
+    _provider_option(demo)
+
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
     try:
@@ -153,6 +178,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "chunk":
             return _chunk(args)
+        if args.command == "demo":
+            return _demo(args)
         if args.command in ("ci", "ingest"):
             return _ingest(args)
         if args.command == "ask":
@@ -373,6 +400,11 @@ def _extract_claims(args: argparse.Namespace) -> int:
 
 
 def _run_claims(args: argparse.Namespace) -> int:
+    return _stopped(_claims_run(args).results)
+
+
+def _claims_run(args: argparse.Namespace) -> ClaimsRun:
+    """`claims run` without its exit code: writes claims.json and claims.html."""
     run = _ClaimsInput(args)
     nli = _nli_model()
     recording = RecordingNli(nli) if args.record_nli is not None else None
@@ -416,7 +448,55 @@ def _run_claims(args: argparse.Namespace) -> int:
         print(f"  {name}: " + ", ".join(f"{n} {status}" for status, n in by_status.items()))
     print(f"Claims: {path.resolve()}")
     print(f"Report: {page.resolve()}")
-    return _stopped(result.results)
+    return result
+
+
+def _demo(args: argparse.Namespace) -> int:
+    """`ci` + `claims run` into one fresh run folder, then run.json (docs/plans/demo-cli-web.md).
+
+    shortcut: a folder on disk instead of Postgres; the API only reads run.json.
+    """
+    config = load_config(args.config)
+    run_id = new_run_id(config.project)
+    out = args.runs_dir / run_id
+    out.mkdir(parents=True)
+    common = {"config": args.config, "out": out, "soft_limit": DEFAULT_SOFT_LIMIT}
+    code = _ingest(argparse.Namespace(**common, dry_run=False))
+    if code:
+        return code
+    stopped: list[str] = []
+    if not args.no_claims:
+        if args.claims_store is not None:
+            shutil.copyfile(args.claims_store, out / "claims-store.jsonl")
+        result = _claims_run(
+            argparse.Namespace(
+                **common,
+                source=args.source,
+                extractor=args.extractor,
+                no_reuse=False,
+                run_id=run_id,
+                record=None,
+                record_nli=None,
+                provider=args.provider,
+            )
+        )
+        code = _stopped(result.results)
+        stopped = [f"{r.extractor.name}: {r.stopped}" for r in result.results if r.stopped]
+    claims = None if args.no_claims else json.loads((out / "claims.json").read_bytes())
+    run = build_demo_run(
+        json.loads((out / "ingestion.json").read_bytes()),
+        json.loads((out / "results.json").read_bytes()),
+        claims,
+        run_id,
+        stopped=stopped,
+    )
+    # last, and atomic: a run.json that exists is complete (the API lists only those)
+    partial = out / "run.json.tmp"
+    partial.write_bytes(canonical_json(run, pretty=True))
+    os.replace(partial, out / "run.json")
+    print(f"Run: {out.resolve()}")
+    print(f"Web: http://localhost:5173/#/runs/{run_id}")
+    return code
 
 
 def _chunk(args: argparse.Namespace) -> int:
