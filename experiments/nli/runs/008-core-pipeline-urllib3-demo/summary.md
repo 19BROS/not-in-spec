@@ -1,6 +1,6 @@
 # Run 008-core-pipeline-urllib3-demo
 
-- note: first run of the claim pipeline in `core/` (`notinspec claims run`) on real docs with real models; human labels pending
+- note: first run of the claim pipeline in `core/` (`notinspec claims run`) on real docs with real models; not human-labelled
 - date: 2026-11-17 22:52 UTC (extraction) to 2026-11-18 07:50 UTC (retries + grounding; the PC slept in between)
 - docs: urllib3 Sphinx XML in `core/examples/sphinx/urllib3`, pages `user-guide`, `reference/urllib3.util`, `v2-migration-guide` (81 prose chunks)
 - command: `notinspec claims extract` (run ID `urllib3-demo-1`), then `notinspec claims run` (`urllib3-demo-2`, reuses the stored answers and asks again only for failed chunks), both with `--source user-guide --source reference/urllib3.util --source v2-migration-guide`
@@ -32,9 +32,9 @@
 - `id_missing` (6): 3 look like false drops. The claim uses the full path, but the section uses only the short name (`urllib3.util.resolve_cert_reqs` vs `resolve_cert_reqs`, `urllib3.util.parse_url` vs `parse_url()`, `urllib3.PoolManager.request` vs `request()`). The project prefix rule strips only `urllib3.`. The other 3 name `urllib3.request` on "Files & Binary Data", a section that never names it. The rule is not changed here, because the human labels should decide (it was tuned on run 007's sample).
 - NLI drops only 10 of 808 claims, far fewer than in runs 006/007. Those runs had hand-made negatives and outside claims, and this run has only real extractor claims. Whether the 677 kept ones are right is what the labels measure.
 
-## Human labels (pending)
+## Human labels (not done)
 
-Blind sample of 180 claims, seed `20261117`, built by `../../labeling/build_008.py` from `claims.json`. It holds every claim NLI or the identifier check dropped (16), every `citation_not_found` claim (27), 10 random `not_checkable` claims, and 127 random kept ones (63 from the guides, 64 from the API reference). Same labelling rules as run 007 (`../../labeling/template.html`). When `labels-human-008.csv` is in, run:
+No labels yet: there was no time for a new labelling round. The page builder is ready for when there is. Blind sample of 180 claims, seed `20261117`, built by `../../labeling/build_008.py` from `claims.json`. It holds every claim NLI or the identifier check dropped (16), every `citation_not_found` claim (27), 10 random `not_checkable` claims, and 127 random kept ones (63 from the guides, 64 from the API reference). Same labelling rules as run 007 (`../../labeling/template.html`). When `labels-human-008.csv` is in, run:
 
 ```sh
 uv run python -I -X utf8 experiments/nli/runs/008-core-pipeline-urllib3-demo/posthoc/eval_labels.py \
