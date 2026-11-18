@@ -4,6 +4,7 @@ import re
 import secrets
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException, Request
 
@@ -57,3 +58,41 @@ async def ingest_run(request: Request, authorization: str = Header("")) -> dict[
     with path.open("xb") as f:  # append-only: never overwrite an earlier run
         f.write(body)
     return {"stored": f"{repo}/{path.name}"}
+
+
+# shortcut: demo runs are folders written by `notinspec demo` (docs/plans/demo-cli-web.md),
+# read straight from disk; they move to Postgres once the DB models are settled (SPEC §18).
+_SUMMARY_FIELDS = ("id", "project", "created_at", "commit", "counts")
+
+
+def _runs_dir() -> Path:
+    return Path(os.environ.get("NOTINSPEC_RUNS_DIR", "tmp/runs"))
+
+
+def _read_run(path: Path) -> dict[str, Any] | None:
+    """None for a missing or unreadable run.json, so one broken run never breaks the list."""
+    try:
+        data = json.loads(path.read_bytes())
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+@app.get("/demo/runs")
+def demo_runs() -> list[dict[str, Any]]:
+    root = _runs_dir()
+    folders = root.iterdir() if root.is_dir() else iter(())
+    runs = [r for p in folders if (r := _read_run(p / "run.json")) is not None]
+    runs.sort(key=lambda r: (r.get("created_at", ""), r.get("id", "")), reverse=True)
+    return [{k: r.get(k) for k in _SUMMARY_FIELDS} for r in runs]
+
+
+@app.get("/demo/runs/{run_id}")
+def demo_run(run_id: str) -> dict[str, Any]:
+    # run_id becomes a path part, so ".." or slashes must never get through
+    if not _REPO_PART.fullmatch(run_id) or run_id in (".", ".."):
+        raise HTTPException(422, "bad run id")
+    run = _read_run(_runs_dir() / run_id / "run.json")
+    if run is None:
+        raise HTTPException(404, "run not found")
+    return run
