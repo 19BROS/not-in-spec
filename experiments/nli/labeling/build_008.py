@@ -17,6 +17,7 @@ import json
 import random
 import re
 import sys
+import tempfile
 from collections import Counter
 from pathlib import Path
 
@@ -67,7 +68,7 @@ def blocks(chunk) -> list[dict[str, str]]:
 
 
 data = json.loads(CLAIMS.read_text(encoding="utf-8"))
-ingestion = ingest(load_config(CONFIG), output=OUT / "_ingest")
+ingestion = ingest(load_config(CONFIG), output=Path(tempfile.mkdtemp()))
 chunks = {c.id: c for c in ingestion.chunks}
 claims = data["claims"]
 for n, c in enumerate(claims):

@@ -377,3 +377,7 @@ With the section as reference, large + local-block + the check keeps 86/92 good 
 - The perturbation operator (§6.7) uses the claim's citation as reference, not the section.
 
 Then: put it into grounding in `core/` (after the citation check, section prose as reference, built on `prose_sentences`).
+
+## 008-core-pipeline-urllib3-demo: the pipeline in `core/` on real docs (2026-11-18)
+
+First `notinspec claims run`: real Groq extractors (`qwen/qwen3.8-27b`, `openai/gpt-oss-20b` at reasoning effort `low`) on 3 urllib3 pages (81 prose chunks), grounded with large wanli + local-block + the identifier check. 808 claims: 677 kept, 27 citation not found, 88 not checkable, 9 neutral, 1 contradiction, 6 identifier drops. Details and observations are in the run's `summary.md`. The blind human labels (180 claims, guide vs. API reference) are pending, so there is no precision or recall yet.
