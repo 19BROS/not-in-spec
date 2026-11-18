@@ -44,7 +44,7 @@ def test_extract_writes_claims_and_calls(
     data = json.loads((out / OUTPUT).read_text(encoding="utf-8"))
     assert data["chunks"] == 8 and data["sources"] == ["guide"]
     assert [e["name"] for e in data["extractors"]] == ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]
-    assert len(data["claims"]) == 26 and data["failures"] == []
+    assert len(data["claims"]) == 24 and data["failures"] == []
     calls = [json.loads(line) for line in _lines(out / "llm-calls.jsonl")]
     assert len(calls) == 16
     # every claim points at the call that produced it

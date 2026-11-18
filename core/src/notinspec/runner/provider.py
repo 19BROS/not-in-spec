@@ -14,6 +14,10 @@ class Message:
     content: str
 
 
+# the fields ChatRequest had when the first recordings were made: always hashed, None included
+_HASHED_ALWAYS = frozenset({"model", "messages", "temperature", "max_tokens", "response_schema"})
+
+
 @dataclass(frozen=True)
 class ChatRequest:
     """Everything sent to the model. Recorded with every result (SPEC §3)."""
@@ -23,10 +27,19 @@ class ChatRequest:
     temperature: float = 0.0
     max_tokens: int | None = None
     response_schema: dict[str, Any] | None = None  # JSON Schema for structured output
+    # how much a reasoning model thinks before it answers (Groq: "low" / "medium" / "high" for
+    # gpt-oss); None = the provider's default, and the parameter is not sent
+    reasoning_effort: str | None = None
 
     def prompt_hash(self) -> str:
-        """sha256 over the whole request, so any change to prompt or parameters is a new prompt."""
-        canonical = json.dumps(asdict(self), sort_keys=True, separators=(",", ":"))
+        """sha256 over the whole request, so any change to prompt or parameters is a new prompt.
+
+        A parameter added after recordings existed (not in `_HASHED_ALWAYS`) is left out while
+        it is None, so the requests of those recordings keep their hash. A new parameter must
+        default to None for that to hold.
+        """
+        data = {k: v for k, v in asdict(self).items() if k in _HASHED_ALWAYS or v is not None}
+        canonical = json.dumps(data, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(canonical.encode()).hexdigest()
 
 

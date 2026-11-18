@@ -62,6 +62,7 @@ def test_sends_request_and_parses_answer(
     assert payload["response_format"]["json_schema"]["schema"] == ANSWER_SCHEMA
     assert "strict" not in payload["response_format"]["json_schema"]  # best effort
     assert "max_tokens" not in payload
+    assert "reasoning_effort" not in payload
 
     assert completion.content == '{"method": "GET", "path": "/pets/1"}'
     assert completion.refusal is None
@@ -77,9 +78,12 @@ def test_no_schema_means_no_response_format(request_: ChatRequest, body: dict[st
         sent.append(json.loads(request.content))
         return httpx2.Response(200, json=body)
 
-    provider(handler).complete(ChatRequest(request_.model, request_.messages, max_tokens=50))
+    provider(handler).complete(
+        ChatRequest(request_.model, request_.messages, max_tokens=50, reasoning_effort="low")
+    )
     assert "response_format" not in sent[0]
     assert sent[0]["max_tokens"] == 50
+    assert sent[0]["reasoning_effort"] == "low"
 
 
 def test_refusal_field(request_: ChatRequest, body: dict[str, Any]) -> None:

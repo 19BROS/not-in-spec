@@ -175,6 +175,8 @@ def chat_payload(request: ChatRequest) -> dict[str, Any]:
     }
     if request.max_tokens is not None:
         payload["max_tokens"] = request.max_tokens
+    if request.reasoning_effort is not None:
+        payload["reasoning_effort"] = request.reasoning_effort
     if request.response_schema is not None:
         # best effort, not strict: strict needs every property required, and the answer's aren't
         payload["response_format"] = {

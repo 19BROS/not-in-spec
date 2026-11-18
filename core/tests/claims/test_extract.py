@@ -45,7 +45,7 @@ def test_recorded_guide_both_extractors(guide_chunks: list[Chunk]) -> None:
     qwen, gpt = results
     assert (qwen.asked, qwen.reused, qwen.without_prose) == (8, 0, 0)
     assert not qwen.failures and not gpt.failures
-    assert len(qwen.claims) == 6 and len(gpt.claims) == 20
+    assert len(qwen.claims) == 6 and len(gpt.claims) == 18
     limit = next(c for c in qwen.claims if "100" in c.text)
     assert limit.citation == "At most `100` connections."
     assert limit.extractor == "qwen/qwen3.8-27b"

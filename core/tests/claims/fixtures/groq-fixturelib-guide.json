@@ -2173,5 +2173,765 @@
         "seed": 564029920
       }
     }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "3a4fbfaf637df150ffdc64b710ac320d26d7feeabd87a329741426f9796b1f04",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide\n\n<section>\n# User Guide\n\nConnections are cheap. Call `fixturelib.connect()` with a `host`; see the footnote [1] for limits.\n\nNote: Notes are prose.\n\nWarning: Warnings too, even with a list and code:\n\n- one\n- two\n\n```python\nconn.close()\n```\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"Connections are cheap.\",\"citation\":\"Connections are cheap.\",\"type\":\"fact\"},{\"id\":\"c2\",\"claim\":\"Call fixturelib.connect() with a host.\",\"citation\":\"Call `fixturelib.connect()` with a `host`\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"Notes are prose.\",\"citation\":\"Note: Notes are prose.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need to extract claims from given section. Text: \"Connections are cheap. Call `fixturelib.connect()` with a `host`; see the footnote [1] for limits.\n\nNote: Notes are prose.\n\nWarning: Warnings too, even with a list and code:\n\n- one\n- two\n\n```python\nconn.close()\n```\"\n\nClaims: 1) Connections are cheap. That's a claim about connections. 2) Call fixturelib.connect() with a host. That's a claim about function usage. 3) see footnote [1] for limits - not a claim. Note: Notes are prose - claim about notes? maybe \"Notes are prose.\" 4) Warning: Warnings too, even with a list and code: claim about warnings? maybe \"Warnings too, even with a list and code:\" not a fact. The list items \"one\" \"two\" not claims. The code block not claim.\n\nThus claims: \"Connections are cheap.\" \"Call fixturelib.connect() with a host.\" \"Notes are prose.\" Maybe also \"Warnings too, even with a list and code:\"? unclear. Probably only first three.\n\nProvide citations exactly. Let's capture spans.\n\nCitation for first: \"Connections are cheap.\" exactly.\n\nSecond: \"Call `fixturelib.connect()` with a `host`\" exactly.\n\nThird: \"Note: Notes are prose.\" exactly.\n\nReturn JSON.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952103,
+      "id": "chatcmpl-3ae88995-4de8-4f57-94b5-a188fc004587",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_92d51d08e5",
+      "usage": {
+        "completion_time": 0.418843616,
+        "completion_tokens": 380,
+        "completion_tokens_details": {
+          "reasoning_tokens": 285
+        },
+        "prompt_time": 0.189606545,
+        "prompt_tokens": 1010,
+        "queue_time": 0.204324248,
+        "total_time": 0.608450161,
+        "total_tokens": 1390
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqq187ewcrrpy6asytmjsx",
+        "seed": 1986936663
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "82f7b0ff4eb17cbfc0e2270a6c5567e44625c3a2d12a9c1858889ebdd542209c",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Timeouts\n\n<section>\n## Timeouts\n\nAdded in version 1.1: The `timeout` parameter.\n\nA timeout is in seconds.\n\n**Example**\n\nConnecting with a timeout\n```python\nconn = connect(\"example.com\", timeout=2.5)\n```\n\n```default\n    def close(self) -> None:\n        \"\"\"Close the connection.\n\n        .. versionadded:: 1.1\n\n        .. warning:: Closing twice raises :exc:`RuntimeError`.\n        \"\"\"\n```\n\nLimits\n| Setting | Default |\n| --- | --- |\n| `timeout` | `None` (wait forever) |\n\nDefinitions:\n\n- term: A word with its definition.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The timeout parameter was added in version 1.1.\",\"citation\":\"Added in version 1.1: The `timeout` parameter.\",\"type\":\"change\"},{\"id\":\"c2\",\"claim\":\"A timeout is in seconds.\",\"citation\":\"A timeout is in seconds.\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"The default value of timeout is None (wait forever).\",\"citation\":\"| `timeout` | `None` (wait forever) |\",\"type\":\"fact\"},{\"id\":\"c4\",\"claim\":\"The close method was added in version 1.1.\",\"citation\":\".. versionadded:: 1.1\",\"type\":\"change\"},{\"id\":\"c5\",\"claim\":\"Closing twice raises RuntimeError.\",\"citation\":\".. warning:: Closing twice raises :exc:`RuntimeError`.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need claims from section. Facts: timeout parameter added in 1.1. timeout is in seconds. Example shows connect(..., timeout=2.5). close method has versionadded 1.1 and warning about closing twice raises RuntimeError. Limits table: timeout default None. Definitions section irrelevant. So claims:\n\n1. The timeout parameter was added in version 1.1. citation: \"Added in version 1.1: The `timeout` parameter.\" type change.\n\n2. A timeout is in seconds. citation: \"A timeout is in seconds.\" type fact.\n\n3. The default value of timeout is None (wait forever). citation: table row: \"`timeout` | `None` (wait forever)\". type fact.\n\n4. The close method was added in version 1.1. citation: \".. versionadded:: 1.1\" inside docstring. type change.\n\n5. Closing twice raises RuntimeError. citation: \".. warning:: Closing twice raises :exc:`RuntimeError`.\" type fact.\n\nAlso maybe example shows connect with timeout=2.5 but that's code not claim. So 5 claims. IDs c1..c5.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952104,
+      "id": "chatcmpl-a8ab18f1-1749-4cfb-9391-bd8e189a6a59",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_ce54c53bd5",
+      "usage": {
+        "completion_time": 0.465009976,
+        "completion_tokens": 426,
+        "completion_tokens_details": {
+          "reasoning_tokens": 240
+        },
+        "prompt_time": 0.055396077,
+        "prompt_tokens": 1081,
+        "queue_time": 0.206650736,
+        "total_time": 0.520406053,
+        "total_tokens": 1507
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqq22vexgv9qkq19fyqaa6",
+        "seed": 757455463
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "59c310a373c7bdadd6847b35d57a7242e75c839c7c230bae9782470dd79df063",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API\n\n<section>\n## Low-level API\n\nProse after the function stays in the section’s own chunk.\n\nSee also: The API Reference.\n\n**Footnotes**\n\n[1] At most `100` connections.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The library allows at most 100 connections.\",\"citation\":\"[1] At most `100` connections.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need to extract claims from the given section. The section text:\n\n```\n<section>\n## Low-level API\n\nProse after the function stays in the section’s own chunk.\n\nSee also: The API Reference.\n\n**Footnotes**\n\n[1] At most `100` connections.\n</section>\n```\n\nSo claims: footnote says \"At most `100` connections.\" That's a fact about the library? It refers to something unspecified but likely about connections. It's a claim: \"The library allows at most 100 connections.\" Citation: \"[1] At most `100` connections.\" Also maybe \"Prose after the function stays in the section’s own chunk.\" That's a statement about documentation structure, not software. So only claim is the footnote. Also \"See also: The API Reference.\" not a claim. So one claim.\n\nCitation must be the shortest contiguous span: \"[1] At most `100` connections.\" That includes footnote marker. Use exactly.\n\nType: fact.\n\nID: c1.\n\nReturn JSON.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952105,
+      "id": "chatcmpl-c5eb8261-4aad-49fd-8d6d-3b2ae1529c78",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_bb6a356524",
+      "usage": {
+        "completion_time": 0.286582616,
+        "completion_tokens": 256,
+        "completion_tokens_details": {
+          "reasoning_tokens": 210
+        },
+        "prompt_time": 0.050203526,
+        "prompt_tokens": 991,
+        "queue_time": 0.207488029,
+        "total_time": 0.336786142,
+        "total_tokens": 1247
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqq2twe8nb5j72rd3yb0va",
+        "seed": 1783156790
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "eb191236b1a31b0bc5a33eaa3690dc8fcd3aed5cb51ae6c0e3df3fb5ee7ef8aa",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API > ping()\n\n<section>\n### ping()\n\n`ping(host, count=1)`\n\nSend pings.\n\n**Parameters:**\n\n- `host` (str) – Server name.\n\n- `count` (int) – How many.\n\n**Returns:**\n\n- Round-trip times in seconds.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The ping() function sends pings.\",\"citation\":\"Send pings.\",\"type\":\"fact\"},{\"id\":\"c2\",\"claim\":\"The host parameter of ping() is a string representing a server name.\",\"citation\":\"`host` (str) – Server name.\",\"type\":\"fact\"},{\"id\":\"c3\",\"claim\":\"The count parameter of ping() is an integer representing how many pings to send.\",\"citation\":\"`count` (int) – How many.\",\"type\":\"fact\"},{\"id\":\"c4\",\"claim\":\"The default value of the count parameter of ping() is 1.\",\"citation\":\"`count=1`\",\"type\":\"fact\"},{\"id\":\"c5\",\"claim\":\"The ping() function returns round-trip times in seconds.\",\"citation\":\"Round-trip times in seconds.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need claims from section. Facts: ping(host, count=1) sends pings. Parameters: host is str server name. count is int how many. Returns round-trip times in seconds. Also default count=1. So claims: 1) ping() sends pings. 2) ping() has parameter host of type str. 3) ping() has parameter count of type int. 4) ping() default count is 1. 5) ping() returns round-trip times in seconds. Provide citations. Use shortest contiguous span. Let's craft.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952115,
+      "id": "chatcmpl-eb705b39-41fc-4209-8c0f-56bfcd8f0370",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_e189667b30",
+      "usage": {
+        "completion_time": 0.302759706,
+        "completion_tokens": 299,
+        "completion_tokens_details": {
+          "reasoning_tokens": 117
+        },
+        "prompt_time": 0.049964905,
+        "prompt_tokens": 1007,
+        "queue_time": 0.042873098,
+        "total_time": 0.352724611,
+        "total_tokens": 1306
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqqdaceshbjdk65xta6jwj",
+        "seed": 695449305
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "b1f4d1a4607c3e4e1d8efda1ba33dc10d38f2f2151ed1fc13dfd1197e6ca0d45",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API > Pool\n\n<section>\n### Pool\n\n`class Pool(size)`\n\nA pool of connections.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The class Pool(size) is a pool of connections.\",\"citation\":\"`class Pool(size)`\\n\\nA pool of connections.\",\"type\":\"fact\"}]}",
+            "reasoning": "Only claim: class Pool(size) is a pool of connections.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952116,
+      "id": "chatcmpl-308c1759-a655-48fd-b235-5181f4652d78",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_75c733514d",
+      "usage": {
+        "completion_time": 0.071723636,
+        "completion_tokens": 68,
+        "completion_tokens_details": {
+          "reasoning_tokens": 14
+        },
+        "prompt_time": 0.060337394,
+        "prompt_tokens": 968,
+        "queue_time": 0.277742859,
+        "total_time": 0.13206103,
+        "total_tokens": 1036
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqqdqyev88krzr19ke7mx0",
+        "seed": 1832548996
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "a23ba770a602576af1afa7a50cf2bdc94e19358a5812a5ed373bb43423686db1",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API > Pool > acquire()\n\n<section>\n#### acquire()\n\n`acquire()`\n\nTake a connection.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The acquire() method of the Pool class takes a connection.\",\"citation\":\"Take a connection.\",\"type\":\"fact\"}]}",
+            "reasoning": "Only claim: acquire() takes a connection.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952116,
+      "id": "chatcmpl-cad3bdc4-b1ea-404a-b0ca-4f921e6d0067",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_9b8528b477",
+      "usage": {
+        "completion_time": 0.059208154,
+        "completion_tokens": 56,
+        "completion_tokens_details": {
+          "reasoning_tokens": 10
+        },
+        "prompt_time": 0.051722164,
+        "prompt_tokens": 968,
+        "queue_time": 0.017356253,
+        "total_time": 0.110930318,
+        "total_tokens": 1024
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqqe5ze7gsm8xzeexwhy91",
+        "seed": 877622970
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "b6513bd497f4c18095c079fd6085b15af51d673d137af3df1948843cde2ad8de",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API > Pool > release()\n\n<section>\n#### release()\n\n`release(conn)`\n\nGive it back.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The release() function of the fixturelib low-level API pool returns a connection to the pool.\",\"citation\":\"`release(conn)`\",\"type\":\"fact\"}]}",
+            "reasoning": "Only claim: release(conn) gives it back.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952116,
+      "id": "chatcmpl-3fc41bb2-43b4-4778-ab8c-aa5898b273d7",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_8d13edce1d",
+      "usage": {
+        "completion_time": 0.070801582,
+        "completion_tokens": 65,
+        "completion_tokens_details": {
+          "reasoning_tokens": 11
+        },
+        "prompt_time": 0.048343697,
+        "prompt_tokens": 968,
+        "queue_time": 0.015893153,
+        "total_time": 0.119145279,
+        "total_tokens": 1033
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqqebee60vgcjabr6pgxb4",
+        "seed": 1795265801
+      }
+    }
+  },
+  {
+    "model": "openai/gpt-oss-20b",
+    "prompt_hash": "72593d7767ce217d9e2e01b9b17fd951bab27f5f6ce11108ea8dd221fe2645b5",
+    "request": {
+      "max_tokens": 8192,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: fixturelib\nLocation in the docs: fixturelib > User Guide > Low-level API > Pool > size\n\n<section>\n#### size\n\n`size`\n\nNumber of connections.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "openai/gpt-oss-20b",
+      "reasoning_effort": "low",
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\"claims\":[{\"id\":\"c1\",\"claim\":\"The size attribute of the Pool class returns the number of connections.\",\"citation\":\"Number of connections.\",\"type\":\"fact\"}]}",
+            "reasoning": "We need claim: size property returns number of connections. Citation: \"Number of connections.\" So claim: \"The size attribute of the Pool class returns the number of connections.\" id c1. type fact.",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1794952125,
+      "id": "chatcmpl-d489a332-bae7-4730-982b-74fab64017d2",
+      "model": "openai/gpt-oss-20b",
+      "object": "chat.completion",
+      "service_tier": "on_demand",
+      "system_fingerprint": "fp_9340e7d14d",
+      "usage": {
+        "completion_time": 0.100772537,
+        "completion_tokens": 90,
+        "completion_tokens_details": {
+          "reasoning_tokens": 43
+        },
+        "prompt_time": 0.048148582,
+        "prompt_tokens": 966,
+        "queue_time": 0.017361157,
+        "total_time": 0.148921119,
+        "total_tokens": 1056
+      },
+      "usage_breakdown": null,
+      "x_groq": {
+        "id": "req_01m7nqqpdgey8v21wqe0asnpjz",
+        "seed": 12407945
+      }
+    }
   }
 ]

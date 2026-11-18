@@ -5,10 +5,12 @@ The recordings in fixtures/ are real Groq answers, recorded with `RecordingProvi
 
 - `groq-fixturelib-guide.json`: the `guide` page of the Sphinx fixture project
   (`core/tests/fixtures/sphinx/xml-napoleon`, project `fixturelib`), 8 prose chunks, both
-  default extractors. gpt-oss-20b is in it twice: without a completion limit (2 of 8 chunks
-  failed with `json_validate_failed`) and with the default 8192.
+  default extractors. gpt-oss-20b is in it three times: without a completion limit (2 of 8
+  chunks failed with `json_validate_failed`), with 8192 at Groq's default reasoning effort,
+  and as the default extractor (8192, effort "low", recorded later the same day).
 - `groq-urllib3-demo.json`: 3 chunks of the urllib3 demo pages (`Retry.sleep()`,
-  `Timeout.read_timeout`, User Guide > Using Timeouts), same extractors and limits.
+  `Timeout.read_timeout`, User Guide > Using Timeouts), same extractors and limits; gpt-oss-20b
+  at the default effort and at "low".
 """
 
 import shutil
@@ -48,3 +50,10 @@ def urllib3_chunks(tmp_path_factory: pytest.TempPathFactory) -> list[Chunk]:
     ingestion = ingest(config, output=tmp_path_factory.mktemp("urllib3"))
     by_id = {c.id: c for c in ingestion.chunks}
     return [by_id[i] for i in URLLIB3_CHUNKS]
+
+
+# real NLI scores (notinspec.nli.TransformersNli, pinned revision) of every premise / claim pair
+# the pipeline builds from the two recordings above: `guide` through `claims run --record-nli`,
+# the urllib3 chunks through run_claims. Re-record after changing the extractor recordings or
+# any grounding rule that changes a premise.
+NLI_RECORDING = FIXTURES / "nli-claims.json"
