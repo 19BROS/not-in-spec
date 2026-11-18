@@ -110,7 +110,7 @@ Get-ChildItem tmp/runs -Directory | ForEach-Object { ssh notinspec "mkdir -p /tm
 sudo docker cp /tmp/demo-runs/. notinspec-worker-1:/runs/ && rm -rf /tmp/demo-runs
 ```
 
-**List or delete runs:** `sudo docker exec notinspec-worker-1 ls /runs`, `sudo docker exec -u root notinspec-worker-1 rm -rf /runs/<run id>`. `-u root` because `docker cp` writes as root.
+**List or delete runs:** `sudo docker exec notinspec-worker-1 ls /runs`, `sudo docker exec -u root notinspec-worker-1 rm -rf /runs/<run id>`. `-u root` because `docker cp` writes as root. Every deploy runs `chown -R app /runs`, so copied runs belong to `app` again after the next one.
 
 ## Backups (SPEC §6)
 
