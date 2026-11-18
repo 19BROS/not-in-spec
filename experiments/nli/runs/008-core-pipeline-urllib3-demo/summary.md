@@ -7,7 +7,7 @@
 - extractors: `qwen/qwen3.8-27b` (provider defaults), `openai/gpt-oss-20b` (max tokens 8192, reasoning effort `low`), prompt v1
 - NLI: `MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli` @ `b3546ea6b034`, fp32, argmax; grounding v1, premise `cited±1-in-block+lead-in`, sentences v1, chunker v3
 - git: `57fdabb` on `core/claims-pipeline`; Python 3.12.6, torch 2.15.0+cpu, transformers 5.23.0, Windows laptop
-- files: `claims.json` (every claim with status, premise, scores, missing identifiers), `claims-store.jsonl` (the extractor answers: `notinspec claims run` with this file as `claims-store.jsonl` in its output folder reproduces `claims.json` without Groq). The raw `llm-calls.jsonl` (178 records: 165 answers, 13 errors; 1.3 MB) is not committed.
+- files: `claims.json` (every claim with status, premise, scores, missing identifiers), `claims-store.jsonl` (the extractor answers: with this file in its output folder, `notinspec claims run` reuses every answer and asks Groq only for the one chunk that failed). The raw `llm-calls.jsonl` (178 records: 165 answers, 13 errors; 1.3 MB) is not committed.
 
 ## Extraction
 
