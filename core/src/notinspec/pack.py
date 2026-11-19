@@ -19,9 +19,12 @@ _SPHINX_FILES = ("*.xml", "build-env.txt")
 def pack_inputs(config_path: Path, archive: Path) -> tuple[str, ...]:
     """Write `archive` (tar.gz) and return its paths; the same inputs give the same bytes."""
     config = load_config(config_path)
-    # the archive itself is the output: it may sit in the config folder but is never an input
-    archive.unlink(missing_ok=True)
-    plan, _ = plan_ingestion(config, output=archive.resolve())
+    target = archive.resolve()
+    # written next to the target and renamed at the end, so a failure never touches `archive`;
+    # as the output it is never an input
+    partial = target.with_name(f".{target.name}.partial")
+    partial.unlink(missing_ok=True)
+    plan, _ = plan_ingestion(config, output=partial)
     files: dict[str, Path] = {}
     for item in plan:
         if item.kind != "sphinx":
@@ -37,17 +40,23 @@ def pack_inputs(config_path: Path, archive: Path) -> tuple[str, ...]:
     if CONFIG_NAME in files:
         raise ConfigError(f"an input must not be {CONFIG_NAME} in the config folder")
     files[CONFIG_NAME] = config_path.resolve()
+    if target in files.values():
+        raise ConfigError(f"the archive must not be the config or an input: {archive}")
 
     # mtime 0 and owner 0 (TarInfo defaults), sorted names: no build-specific bytes
-    with (
-        archive.open("wb") as raw,
-        gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as compressed,
-        tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as tar,
-    ):
-        for name in sorted(files):
-            data = files[name].read_bytes()
-            info = tarfile.TarInfo(name)
-            info.size = len(data)
-            info.mode = 0o644
-            tar.addfile(info, io.BytesIO(data))
+    try:
+        with (
+            partial.open("wb") as raw,
+            gzip.GzipFile(filename="", fileobj=raw, mode="wb", mtime=0) as compressed,
+            tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as tar,
+        ):
+            for name in sorted(files):
+                data = files[name].read_bytes()
+                info = tarfile.TarInfo(name)
+                info.size = len(data)
+                info.mode = 0o644
+                tar.addfile(info, io.BytesIO(data))
+        partial.replace(target)
+    finally:
+        partial.unlink(missing_ok=True)
     return tuple(sorted(files))

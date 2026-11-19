@@ -76,6 +76,16 @@ def test_link_out_of_the_config_folder_is_rejected(tmp_path: Path) -> None:
         pack_inputs(root / "notinspec.yaml", tmp_path / "inputs.tar.gz")
 
 
+def test_out_that_is_an_input_or_the_config_is_kept(tmp_path: Path) -> None:
+    shutil.copytree(EXAMPLES, tmp_path, dirs_exist_ok=True)
+    for name in ("openapi.yaml", "docs/guide.md", "notinspec.yaml"):
+        before = (tmp_path / name).read_bytes()
+        with pytest.raises(ConfigError, match="must not be the config or an input"):
+            pack_inputs(tmp_path / "notinspec.yaml", tmp_path / name)
+        assert (tmp_path / name).read_bytes() == before
+    assert not list(tmp_path.glob(".*.partial"))
+
+
 def test_config_error_exits_2(tmp_path: Path) -> None:
     (tmp_path / "notinspec.yaml").write_text('docs: {paths: ["missing/*.md"]}\n')
     out = tmp_path / "out" / "inputs.tar.gz"
