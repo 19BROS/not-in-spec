@@ -3,12 +3,14 @@
     python3 action/stub.py [port] [archive-dir]
 
 Checks the request shape, not the OIDC token. A run is `running` on the first poll and `done`
-on the next one; its verdict is `fail` when an input contains `<!-- notinspec-mock: fail -->`.
+on the next one. An input containing `<!-- notinspec-mock: fail -->` gives the verdict `fail`;
+`input-error` or `internal-error` instead of `fail` ends the run as `error` of that kind.
 Standard library only, so CI runs it with the runner's python3.
 """
 
 import io
 import json
+import re
 import sys
 import tarfile
 from email.parser import BytesParser
@@ -17,7 +19,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-FAIL_MARKER = b"<!-- notinspec-mock: fail -->"
+MARKER = re.compile(rb"<!-- notinspec-mock: (fail|input-error|internal-error) -->")
 runs: dict[str, dict[str, Any]] = {}
 
 
@@ -54,8 +56,8 @@ class Stub(BaseHTTPRequestHandler):
         run_id = f"stub-{len(runs) + 1}"
         if len(sys.argv) > 2:  # CI checks what the Action packed
             Path(sys.argv[2], f"{run_id}.tar.gz").write_bytes(parts["archive"])
-        failed = any(FAIL_MARKER in data for data in files.values())
-        runs[run_id] = {"polls": 0, "verdict": "fail" if failed else "pass"}
+        marks = {m.decode() for data in files.values() for m in MARKER.findall(data)}
+        runs[run_id] = {"polls": 0, "outcome": marks.pop() if marks else "pass"}
         base = f"http://{self.headers['Host']}"
         self.reply(
             202,
@@ -71,17 +73,20 @@ class Stub(BaseHTTPRequestHandler):
         if run is None:
             return self.reply(404, {"detail": "run not found"})
         run["polls"] += 1
-        done = run["polls"] > 1
-        verdict = run["verdict"] if done else None
+        outcome = run["outcome"] if run["polls"] > 1 else None
+        kind = outcome.removesuffix("-error") if outcome and outcome.endswith("-error") else None
+        status = "running" if outcome is None else "error" if kind else "done"
+        verdict = outcome if status == "done" else None
         self.reply(
             200,
             {
                 "schema_version": 0,
                 "run_id": self.path.removeprefix("/api/runs/"),
-                "status": "done" if done else "running",
+                "status": status,
                 "verdict": verdict,
-                "comment_md": f"**NOT-IN-SPEC (stub)** {verdict}" if done else None,
-                "error": None,
+                "comment_md": f"**NOT-IN-SPEC (stub)** {verdict}" if verdict else None,
+                "error": f"stub {kind} error" if kind else None,
+                "error_kind": kind,
                 "web_url": "http://stub/",
             },
         )

@@ -648,7 +648,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
   - `409`: replay with another archive;
   - `413`: archive over the size limit;
   - `422`: bad archive or config (the `ConfigError` message);
-  - `429`: rate limit;
+  - `429`: our rate limit (not the caller's setup);
   - `503`: uploads switched off.
 
 **`GET /api/runs/{run_id}`**: no token, because results are public.
@@ -657,7 +657,8 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
   "status": "queued" | "running" | "done" | "error",
   "verdict": "pass" | "fail" | null,   // set when status = done
   "comment_md": "…" | null,            // the whole PR comment without our marker; set when done or error
-  "error": "…" | null,                 // set when status = error (bad inputs or our failure)
+  "error": "…" | null,                 // set when status = error
+  "error_kind": "input" | "internal" | null, // set when status = error: the caller's inputs, or our failure
   "web_url": "https://…/#/runs/<run_id>" }
 ```
 `404` for an unknown run.
@@ -667,8 +668,8 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 **The Action's side** (*proposal* for the open item in [§18](#18-open-items)):
 - It polls `status_url` every 15 s, for at most `timeout-minutes` (default 60).
 - A problem on our side does not fail the caller's job, so our outage never blocks their merges. This covers our service being unreachable, a `5xx`, and a timeout. The Action posts a warning and a "no result" comment instead.
-- A `4xx` on upload means the caller's setup is wrong, so the job fails and shows `detail`.
-- `verdict: fail` and `status: error` fail the job, and that failure is the status check.
+- A `4xx` on upload except `429` means the caller's setup is wrong, so the job fails and shows `detail`. A `429` is our limit, so it is "no result".
+- `verdict: fail` and `status: error` with `error_kind: input` fail the job, and that failure is the status check. `error_kind: internal` (an LLM provider down, the worker out of memory) and `done` with `verdict: null` (a run without an evaluation, e.g. ingestion only) are "no result".
 
 ## 12. DevOps
 

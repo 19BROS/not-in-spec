@@ -80,18 +80,22 @@ jobs:
       - run: test "${{ steps.notinspec.outputs.verdict }}" = pass
       # the archive has exactly the inputs core selects, and the config under its fixed name
       - run: test "$(tar tzf "$RUNNER_TEMP"/archives/stub-1.tar.gz | xargs)" = "docs/index.md docs/pets.md notinspec.yaml openapi.yaml"
-      # the client alone: a fail verdict exits 1, a broken config exits 2 (never 1)
+      # the client alone: a fail verdict exits 1, bad inputs or config exit 2 (never 1), our crash passes
       - run: |
-          cp -r deploy/fixtures "$RUNNER_TEMP/failing" && echo '<!-- notinspec-mock: fail -->' >> "$RUNNER_TEMP/failing/docs/pets.md"
-          echo 'docs: {paths: "docs/*.md"}' > "$RUNNER_TEMP/failing/broken.yaml"
+          for m in fail input-error internal-error; do
+            cp -r deploy/fixtures "$RUNNER_TEMP/$m" && echo "<!-- notinspec-mock: $m -->" >> "$RUNNER_TEMP/$m/docs/pets.md"
+          done
+          echo 'docs: {paths: "docs/*.md"}' > "$RUNNER_TEMP/fail/broken.yaml"
           client() {
             local out; out=$(mktemp)
             GITHUB_OUTPUT=$out GITHUB_ACTION_PATH=$PWD/action CONFIG=$1 SERVER_URL=http://127.0.0.1:8765 \
               TIMEOUT_MINUTES=1 HEAD_SHA= EVENT_ACTION= GITHUB_STEP_SUMMARY=/dev/null bash action/client.sh > /dev/null
             grep '^code=' "$out"
           }
-          test "$(client "$RUNNER_TEMP/failing/notinspec.yaml")" = code=1
-          test "$(client "$RUNNER_TEMP/failing/broken.yaml")" = code=2
+          test "$(client "$RUNNER_TEMP/fail/notinspec.yaml")" = code=1
+          test "$(client "$RUNNER_TEMP/input-error/notinspec.yaml")" = code=2
+          test "$(client "$RUNNER_TEMP/internal-error/notinspec.yaml")" = code=0
+          test "$(client "$RUNNER_TEMP/fail/broken.yaml")" = code=2
 
   images:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

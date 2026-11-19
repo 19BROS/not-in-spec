@@ -80,7 +80,7 @@ docs:
 
 1. **Skips** fork PRs, which get no OIDC token, with a warning. It also skips merged PRs on `closed`, because the next main run takes over their candidates.
 2. **Closed PR:** sends a `closed` event and stops. A closed PR has no build and no comment.
-3. **Packs** the inputs with `notinspec pack` from `core/` at the Action's own ref. The server selects inputs with the same code, so both sides always agree on what the inputs are. The archive is uploaded as an artifact with the run's status.
+3. **Packs** the inputs with `notinspec pack` from `core/` at the Action's own ref, with the dependency versions in our `uv.lock`. The server selects inputs with the same code, so both sides always agree on what the inputs are. The archive is uploaded as an artifact with the run's status.
 4. **Uploads** the archive to `POST /api/uploads` with an OIDC token whose audience is `notinspec`. On a PR it also sends the head commit and the merge commit's first parent.
 5. **Polls** the run every 15 s, without a token, because results are public.
 6. **Comments:** writes **one** comment per PR (found by `<!-- notinspec -->`) and updates it on every push. On `push` and `workflow_dispatch` the result goes to the job summary.
@@ -90,8 +90,8 @@ docs:
 |---|---|---|
 | verdict `pass` | ✓ | the run's comment |
 | verdict `fail` | ✗ | the run's comment |
-| run `error` (bad inputs) or a bad setup (config, no `id-token: write`, upload rejected with `4xx`) | ✗ | the error |
-| our service is down, answers `5xx`, or the run takes longer than `timeout-minutes` | ✓ with a warning | "no result" |
+| run `error` with `error_kind: input` (bad inputs) or a bad setup (config, no `id-token: write`, upload rejected with `4xx` other than `429`) | ✗ | the error |
+| our service is down, answers `5xx` or `429`, the run fails on our side (`error_kind: internal`), has no verdict yet, or takes longer than `timeout-minutes` | ✓ with a warning | "no result" |
 
 An outage on our side never blocks your merges.
 
@@ -109,7 +109,7 @@ Outputs: `verdict` (`pass`, `fail`, or empty when there is no result) and `run-u
 ## Development
 
 - [`client.sh`](client.sh) holds the logic, and [`action.yml`](action.yml) wires it into the job.
-- [`stub.py`](stub.py) fakes the upload API (standard library only). It does not check the token. A run is `done` on the second poll, and its verdict is `fail` when an input contains `<!-- notinspec-mock: fail -->`.
+- [`stub.py`](stub.py) fakes the upload API (standard library only). It does not check the token. A run is `done` on the second poll. An input containing `<!-- notinspec-mock: fail -->` gives the verdict `fail`, and `input-error` or `internal-error` instead of `fail` gives a run `error` of that kind.
 - The CI job `action` in [ci.yml](../.github/workflows/ci.yml) runs the Action against the stub and checks the archive and the exit codes. Its last step shows how to run `client.sh` without the Action.
 
 ## Releases

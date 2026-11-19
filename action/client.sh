@@ -60,9 +60,10 @@ if [ -n "$HEAD_SHA" ]; then
 fi
 printf '{"schema_version": 0, "head_sha": %s, "base_sha": %s}\n' "$head_sha" "$base_sha" > "$out/meta.json"
 
-# input selection is core's, the same code the server runs on the archive
-if ! uvx --from "$GITHUB_ACTION_PATH/../core" notinspec pack \
-  --config "$CONFIG" --out "$out/inputs.tar.gz" 2> "$out/pack-stderr.txt"; then
+# input selection is core's, the same code the server runs on the archive; --frozen: the
+# versions in our uv.lock, so a new release of a dependency never changes the Action
+if ! uv run --frozen --no-dev --project "$GITHUB_ACTION_PATH/.." --package notinspec \
+  notinspec pack --config "$CONFIG" --out "$out/inputs.tar.gz" 2> "$out/pack-stderr.txt"; then
   cat "$out/pack-stderr.txt" >&2
   setup_error "$(tail -n 1 "$out/pack-stderr.txt")"
 fi
@@ -71,6 +72,7 @@ status=$(post /api/uploads -F "archive=@$out/inputs.tar.gz;type=application/gzip
   -F "meta=@$out/meta.json;type=application/json") || status=000
 case "$status" in
   200|202) ;;
+  429) no_result "our service is busy (HTTP 429), try again later" ;;
   4??) setup_error "upload rejected (HTTP $status): $(detail)" ;;
   *) no_result "our service did not accept the upload (HTTP $status)" ;;
 esac
@@ -94,12 +96,16 @@ done
 
 text=$(jq -r '.comment_md // empty' "$out/run.json")
 if [ "$(jq -r .status "$out/run.json")" = error ]; then
-  echo "::error::NOT-IN-SPEC run failed: $(jq -r '.error // "unknown error"' "$out/run.json")"
-  finish 2 "" "${text:-**NOT-IN-SPEC** ✗ error: $(jq -r '.error // "unknown error"' "$out/run.json")}"
+  error=$(jq -r '.error // "unknown error"' "$out/run.json")
+  # only the caller's inputs fail their job; our crash (any other error_kind) never does
+  [ "$(jq -r .error_kind "$out/run.json")" = input ] || no_result "the run failed on our side ($error), see $run_url"
+  echo "::error::NOT-IN-SPEC run failed: $error"
+  finish 2 "" "${text:-**NOT-IN-SPEC** ✗ error: $error}"
 fi
 verdict=$(jq -r .verdict "$out/run.json")
 case "$verdict" in
   pass) finish 0 pass "$text" ;;
   fail) echo "::error::NOT-IN-SPEC: documentation change lowers usage, see $run_url"; finish 1 fail "$text" ;;
+  null) no_result "no verdict yet, see $run_url" ;;
   *) no_result "our service returned an unknown verdict: $verdict" ;;
 esac
