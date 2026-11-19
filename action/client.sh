@@ -28,9 +28,9 @@ esac
 if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
   setup_error "no OIDC token: give the job \`permissions: id-token: write\`"
 fi
-# the audience is our URL, so a token for us is useless anywhere else (SPEC §11)
+# a fixed audience, not our URL: moving the service never breaks registered workflows (SPEC §11.1)
 token=$(curl -fsS --retry 3 -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-  "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$server" | jq -r .value) ||
+  "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=notinspec" | jq -r .value) ||
   setup_error "could not get an OIDC token from GitHub"
 
 post() { # path, then curl args; prints the HTTP status, body in $out/response.json

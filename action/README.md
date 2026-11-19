@@ -81,7 +81,7 @@ docs:
 1. **Skips** fork PRs, which get no OIDC token, with a warning. It also skips merged PRs on `closed`, because the next main run takes over their candidates.
 2. **Closed PR:** sends a `closed` event and stops. A closed PR has no build and no comment.
 3. **Packs** the inputs with `notinspec pack` from `core/` at the Action's own ref. The server selects inputs with the same code, so both sides always agree on what the inputs are. The archive is uploaded as an artifact with the run's status.
-4. **Uploads** the archive to `POST /api/uploads` with an OIDC token whose audience is `server-url`. On a PR it also sends the head commit and the merge commit's first parent.
+4. **Uploads** the archive to `POST /api/uploads` with an OIDC token whose audience is `notinspec`. On a PR it also sends the head commit and the merge commit's first parent.
 5. **Polls** the run every 15 s, without a token, because results are public.
 6. **Comments:** writes **one** comment per PR (found by `<!-- notinspec -->`) and updates it on every push. On `push` and `workflow_dispatch` the result goes to the job summary.
 7. **Fails the job**, which is the status check, as the table below shows.
@@ -100,7 +100,7 @@ An outage on our side never blocks your merges.
 | Input | Default | |
 |---|---|---|
 | `config` | `notinspec.yaml` | path to the config |
-| `server-url` | `https://147-175-151-17.sslip.io` | our service. It is also the OIDC audience, so it must match what we expect |
+| `server-url` | `https://147-175-151-17.sslip.io` | our service |
 | `timeout-minutes` | `60` | how long to wait for the run |
 | `github-token` | `github.token` | for the PR comment |
 

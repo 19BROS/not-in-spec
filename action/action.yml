@@ -6,7 +6,6 @@ inputs:
     description: Path to notinspec.yaml in the caller repo
     default: notinspec.yaml
   server-url:
-    # also the OIDC audience: changing it later breaks every registered workflow
     description: NOT-IN-SPEC service (https)
     default: https://147-175-151-17.sslip.io
   timeout-minutes:
