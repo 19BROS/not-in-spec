@@ -610,7 +610,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
   1. **build** (no secrets, no `id-token`): `sphinx-build -b xml` (Sphinx 9.x) with `build-env.txt` next to the XML ([§2.3](#23-what-the-tool-needs-from-the-user)). An OpenAPI spec is bundled into one file without external `$ref`s (e.g. `redocly bundle`). The output is uploaded as a workflow artifact. **Never built by us** ([§1.1](#11-what-we-are-not-building)). A separate job is a separate VM, so this is a real boundary.
   2. **upload** (`permissions: id-token: write`, checkout with `fetch-depth: 2`): downloads the artifact, packs the XML, the other inputs named in `notinspec.yaml` and the config itself, and sends them to our API with a GitHub OIDC token. On a PR it also sends `head.sha` (for display) and the merge commit's first parent (`git rev-parse HEAD^1`, for the baseline lookup, [§7](#7-ci-behaviour-and-repeated-runs)). It then polls the run, posts the **PR comment** and sets the **status check** with its own `GITHUB_TOKEN`. Our service never gets write access to the caller's repo. On `closed` the job sends only a small "closed" event, with no inputs and no build job.
 - **Authentication (GitHub OIDC)**, checked on every upload. There is no shared upload token.
-  - signature against GitHub's JWKS, `iss`, `exp` and `aud` (our URL);
+  - signature against GitHub's JWKS, `iss`, `exp` and `aud` (`notinspec`, [§11.1](#111-upload-api));
   - the numeric `repository_id` belongs to a registered project (an ID, not the name, which can be renamed and taken again);
   - `repository_visibility` is `public` ([§1.1](#11-what-we-are-not-building)), so a repo that turns private later is rejected too;
   - `event_name` is `pull_request`, `push` or `workflow_dispatch`. Everything else is rejected: `pull_request_target` and `workflow_run` can run for fork PRs with the base repo's identity. A fork PR with `pull_request` gets no OIDC token;
@@ -629,6 +629,47 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - UC2: evaluates only changed chunks and their test items, compares with the baseline, fails on the conditions in [§7](#7-ci-behaviour-and-repeated-runs).
 - The PR comment links to the run in the web UI, where the full results and the report are. Golden-set candidates from the PR ([§10](#10-data)) are listed in the comment; our team reviews them ([§2.5](#25-golden-set-review)).
 - Dogfooded on a small demo repo we own.
+
+### 11.1 Upload API
+
+*Proposal: role 7 (the Action) to role 5 (the API). Binding once role 5 approves it.* Paths are public URLs (nginx strips `/api` before the API). Errors use FastAPI's `{"detail": "<message>"}`. The Action shows `detail` to the repo owner in the PR comment, so it must make sense to them.
+
+**`POST /api/uploads`**: one upload starts one run.
+- `Authorization: Bearer <GitHub OIDC token>`. The token's `aud` is the fixed string `notinspec`, not our URL. A token minted for another service still fails the check. The site's address can change (today `147-175-151-17.sslip.io`, which has the VM's IP in its name) without breaking the workflows of registered projects.
+- `multipart/form-data` with two parts:
+  - `archive`: `inputs.tar.gz`, written by `notinspec pack` in the Action, so the client and the server select inputs with the same `core` code. The archive root is the config's folder: the config is stored as `notinspec.yaml`, and each input keeps its path relative to the config. The Sphinx folder holds only `*.xml` and `build-env.txt`. The archive holds regular files only, sorted, with mtime 0 and owner 0, so the same inputs always give the same bytes and the same archive hash.
+  - `meta`: JSON `{"schema_version": 0, "head_sha": "<40 hex>" | null, "base_sha": "<40 hex>" | null}`. On a PR, `head_sha` is the PR head (display only) and `base_sha` is `git rev-parse HEAD^1` of the merge commit (baseline lookup, [§7](#7-ci-behaviour-and-repeated-runs)). Both are `null` on `push` and `workflow_dispatch`.
+- Everything else comes from the token: repository, event, `ref`, the run's commit (`sha`), `run_id`, `run_attempt`, and the PR number (from `ref` = `refs/pull/<N>/merge`).
+- `202` → `{"run_id": "…", "status_url": "https://…/api/runs/<run_id>", "web_url": "https://…/#/runs/<run_id>"}`.
+- A second upload with the same (`run_id`, `run_attempt`) and the same archive hash returns `200` with the same body (a retried step). With another archive hash it returns `409`.
+- Errors:
+  - `401`: bad signature, expired token, or wrong `aud`;
+  - `403`: project not registered, private repo, forbidden event, another workflow path, or `push` from another branch;
+  - `409`: replay with another archive;
+  - `413`: archive over the size limit;
+  - `422`: bad archive or config (the `ConfigError` message);
+  - `429`: our rate limit (not the caller's setup);
+  - `503`: uploads switched off.
+
+**`GET /api/runs/{run_id}`**: no token, because results are public.
+```jsonc
+{ "schema_version": 0, "run_id": "…",
+  "status": "queued" | "running" | "done" | "error",
+  "verdict": "pass" | "fail" | null,   // set when status = done
+  "comment_md": "…" | null,            // the whole PR comment without our marker; set when done or error
+  "error": "…" | null,                 // set when status = error
+  "error_kind": "input" | "internal" | null, // set when status = error: the caller's inputs, or our failure
+  "web_url": "https://…/#/runs/<run_id>" }
+```
+`404` for an unknown run.
+
+**`POST /api/pr-closed`**: a PR closed without merging ([§10](#10-data)). The token checks are the same, with `event_name` = `pull_request`. The PR number comes from `ref`. No body, `202`. The token does not say whether the PR was merged, so the Action skips this call for merged PRs. Forging the call needs write access to the repo, which is the same trust boundary as uploads.
+
+**The Action's side** (*proposal* for the open item in [§18](#18-open-items)):
+- It polls `status_url` every 15 s, for at most `timeout-minutes` (default 60).
+- A problem on our side does not fail the caller's job, so our outage never blocks their merges. This covers our service being unreachable, a `5xx`, and a timeout. The Action posts a warning and a "no result" comment instead.
+- A `4xx` on upload except `429` means the caller's setup is wrong, so the job fails and shows `detail`. A `429` is our limit, so it is "no result".
+- `verdict: fail` and `status: error` with `error_kind: input` fail the job, and that failure is the status check. `error_kind: internal` (an LLM provider down, the worker out of memory) and `done` with `verdict: null` (a run without an evaluation, e.g. ingestion only) are "no result".
 
 ## 12. DevOps
 
@@ -772,7 +813,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [x] Where the DB models live in code: in `core` as `notinspec.db`, installed with the extra `notinspec[db]` (API and worker), so the CLI does not need SQLAlchemy. Logic around the DB (item reuse by identity key, baselines, superseded items) is logic too, so it stays in `core`. Pipeline code never imports `notinspec.db`: it works on dataclasses, and only `db` maps them to tables. A separate workspace package was rejected: one more package, and logic would drift into it
 - [ ] `deprecated-api` for a **deprecated** symbol or parameter (it still works, but the docs say to use the new one): may it fail the CI gate, or only warn ([§6.10](#610-evaluation))?
 - [ ] Backup of the uploaded-inputs volume (today `pg_dump` only)
-- [ ] Action when our service is down or the run times out: fail the check or skip it
+- [ ] Action when our service is down or the run times out: fail the check or skip it. Proposal in [§11.1](#111-upload-api): a warning and a "no result" comment, and the job passes
 - [ ] Export format of the golden set and results for the published dataset
 - [ ] Candidates' absolute floor: its default value, and whether it may fail the build after the MVP ([§7](#7-ci-behaviour-and-repeated-runs))
 - [ ] Canonical serialization of a reference for the identity key (key order, numbers, units)
