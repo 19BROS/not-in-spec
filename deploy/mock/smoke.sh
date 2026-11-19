@@ -6,7 +6,8 @@ spec=deploy/fixtures/openapi.yaml
 # a relative path, so a Windows `docker compose cp` finds it too
 other=deploy/mock/.smoke-other.yaml
 trap 'rm -f "$other"' EXIT
-{ cat "$spec"; echo "# another spec"; } > "$other"
+# another spec, whose operation defines its own 400
+{ cat "$spec"; echo '        "400": { description: Bad id, content: { application/json: { example: { error: bad id } } } }'; } > "$other"
 # the worker stores uploaded specs by content hash, like this
 for f in "$spec" "$other"; do
   $c cp "$f" "worker:/specs/$(sha256sum "$f" | cut -d' ' -f1).yaml"
@@ -21,19 +22,25 @@ def call(url, body=None):
     request = urllib.request.Request(url, data, {"Content-Type": "application/json"})
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
-            return response.status, response.read()
+            return response.status, response.read(), response.headers
     except urllib.error.HTTPError as error:
-        return error.code, error.read()
+        return error.code, error.read(), error.headers
 
-status, body = call("http://mock:4011/serve", {"spec": sys.argv[1]})
+status, body, _ = call("http://mock:4011/serve", {"spec": sys.argv[1]})
 assert status == 200, body
 base = json.loads(body)["base_url"]
-assert call(f"{base}/pets/1")[0] == 200
-assert call(f"{base}/pets/abc")[0] == 422, "Prism must reject a request the spec forbids"
+status, _, headers = call(f"{base}/pets/1")
+assert status == 200 and "sl-violations" not in headers
+# no 4xx in the spec: Prism's own 422 problem with a validation list (SPEC §12)
+status, body, _ = call(f"{base}/pets/abc")
+assert status == 422 and json.loads(body)["validation"], "Prism must reject a request the spec forbids"
 assert call("http://mock:4011/serve", {"spec": "../../etc/passwd"})[0] == 422
 # another spec gets another port: the old base_url refuses instead of answering for it
-status, body = call("http://mock:4011/serve", {"spec": sys.argv[2]})
+status, body, _ = call("http://mock:4011/serve", {"spec": sys.argv[2]})
 assert status == 200 and json.loads(body)["base_url"] != base, body
+# the spec defines a 400: Prism answers with it and lists the violations in sl-violations
+status, _, headers = call(f"{json.loads(body)['base_url']}/pets/abc")
+assert status == 400 and json.loads(headers["sl-violations"]), (status, dict(headers))
 try:
     call(f"{base}/pets/1")
     raise AssertionError("the replaced Prism still answers")

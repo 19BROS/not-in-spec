@@ -1,6 +1,7 @@
 // Control endpoint of the `mock` service (SPEC §12): the worker asks it to serve one spec,
 // so the worker never needs the Docker socket. Runs in the stoplight/prism image, Node stdlib only.
 //   POST :4011/serve {"spec": "<sha256>.yaml"} -> 200 {"base_url": "http://mock:<port>"} | 4xx {"detail"}
+//     422: Prism rejected the spec (the user's problem); 503: Prism could not run (ours)
 //   GET  :4011/health -> 200 {"serving": "<name>" | null} | 503 when the image has no Prism CLI
 "use strict";
 const http = require("node:http");
@@ -53,14 +54,16 @@ async function serve(name) {
   const keep = (data) => { run.log = (run.log + data).slice(-2000); };
   child.stdout.on("data", keep);
   child.stderr.on("data", (data) => { keep(data); process.stderr.write(data); });
-  child.once("exit", () => { run.exited = true; });
+  // killed by a signal (OOM under mem_limit) is our failure, not the spec's
+  child.once("exit", (code, signal) => { run.exited = true; run.ours ||= signal !== null; });
   // spawn can fail (EAGAIN under the memory limit); without a listener it kills this server
-  child.once("error", (error) => { keep(String(error)); run.exited = true; });
+  child.once("error", (error) => { keep(String(error)); run.exited = true; run.ours = true; });
   current = run;
   for (let waited = 0; waited < 30000; waited += 200) {
     if (run.exited) {
       current = null;
-      throw new Error(`Prism stopped on this spec: ${run.log.trim()}`);
+      if (run.ours) throw failure(503, `Prism could not run: ${run.log.trim()}`);
+      throw failure(422, `Prism stopped on this spec: ${run.log.trim()}`);
     }
     if (await portOpen(port)) {
       run.ready = true;
@@ -69,7 +72,11 @@ async function serve(name) {
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
   await stop();
-  throw new Error("Prism did not start in 30 s");
+  throw failure(503, "Prism did not start in 30 s");
+}
+
+function failure(status, message) {
+  return Object.assign(new Error(message), { status });
 }
 
 function reply(res, status, body) {
@@ -100,7 +107,7 @@ http.createServer((req, res) => {
     if (!fs.existsSync(`${SPECS}/${name}`)) return reply(res, 404, { detail: `no ${name} in ${SPECS}` });
     queue = queue.then(() => serve(name)).then(
       (port) => reply(res, 200, { base_url: `http://mock:${port}` }),
-      (error) => reply(res, 422, { detail: error.message }),
+      (error) => reply(res, error.status || 503, { detail: error.message }),
     );
   });
 }).listen(4011, "0.0.0.0");
