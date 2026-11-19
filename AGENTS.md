@@ -33,7 +33,8 @@ npm run lint && npm run build
 
 cp deploy/.env.example deploy/.env  # once
 docker compose -f deploy/docker-compose.yml up --build            # full stack on :8080
-docker compose -f deploy/docker-compose.yml --profile prism up    # + Prism mock on :4010
+sh deploy/mock/smoke.sh                                           # mock (Prism) service, on a running stack
+docker run --rm -p 4010:4010 -v "$PWD/deploy/fixtures:/s:ro" stoplight/prism:5 mock -h 0.0.0.0 /s/openapi.yaml  # bare Prism on :4010
 ```
 
 Add a dependency to a package: `uv add --package notinspec-api <dep>` (never pip). Commit `uv.lock` and `web/package-lock.json`.
@@ -90,4 +91,4 @@ git worktree list                                                # see what's op
 ```
 
 - `deploy/.env` is gitignored, so copy it into the new worktree if you need Compose there.
-- Two worktrees running Compose at once collide on project name and ports. Give one its own: `COMPOSE_PROJECT_NAME=notinspec-oasdiff WEB_PORT=8081 HTTPS_PORT=8444 docker compose -f deploy/docker-compose.yml up` (Prism's 4010 is fixed, so run it in one worktree only).
+- Two worktrees running Compose at once collide on project name and ports. Give one its own: `COMPOSE_PROJECT_NAME=notinspec-oasdiff WEB_PORT=8081 HTTPS_PORT=8444 docker compose -f deploy/docker-compose.yml up`.

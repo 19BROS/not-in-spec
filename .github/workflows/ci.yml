@@ -46,9 +46,9 @@ jobs:
       BACKUP_DIR: /tmp/notinspec-backups # runner context isn't allowed in job-level env
     steps:
       - uses: actions/checkout@v7
-      - run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup up -d --build --wait
+      - run: docker compose -f deploy/docker-compose.yml --profile backup up -d --build --wait
       - run: curl -fsS localhost:8080/api/health
-      - run: curl -fsS localhost:4010/pets/1
+      - run: sh deploy/mock/smoke.sh
       # what the Action pushes reaches the api through nginx and lands on the results volume
       - run: >-
           curl -fsS -X POST localhost:8080/api/runs -H "Authorization: Bearer ci"
@@ -57,9 +57,9 @@ jobs:
       - run: timeout 60 sh -c 'until ls "$BACKUP_DIR"/*.dump; do sleep 2; done'
       - run: docker run --rm -v "$BACKUP_DIR":/b postgres:17 sh -c 'pg_restore -l /b/*.dump > /dev/null'
       - if: failure()
-        run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup logs
+        run: docker compose -f deploy/docker-compose.yml --profile backup logs
       - if: always()
-        run: docker compose -f deploy/docker-compose.yml --profile prism --profile backup down -v
+        run: docker compose -f deploy/docker-compose.yml --profile backup down -v
 
   # the Action as a caller repo uses it, against the upload API stub (SPEC §11.1)
   action:
