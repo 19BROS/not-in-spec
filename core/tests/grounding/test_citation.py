@@ -150,3 +150,107 @@ def test_a_single_match_has_one_span() -> None:
     assert result.spans == (result.span,)
     code = check_citation(GUIDE, "connect(timeout=2.5)")
     assert code.status == "not_checkable" and code.spans == (code.span,)
+
+
+# --- looser matches (GROUNDING_VERSION 2, issue #42) -------------------------------------
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "you\x02re able to see those warnings",  # run 008: qwen wrote \x02 for ’
+        "we\x00ve added a top-level function",
+        "you're able to see those warnings",
+    ],
+)
+def test_a_control_character_matches_an_apostrophe(citation: str) -> None:
+    chunk = _chunk(
+        "# A\n\nEnsure you’re able to see those warnings: we’ve added a top-level function.\n"
+    )
+    assert check_citation(chunk, citation).status == "found"
+
+
+@pytest.mark.parametrize("dash", ["‐", "‑", "‒", "―", "−"])
+def test_hyphen_variants_and_minus_are_plain_hyphens(dash: str) -> None:
+    chunk = _chunk("# A\n\nWhen you’re sub-classing an interface, pass -1.\n")
+    assert check_citation(chunk, f"you’re sub{dash}classing an interface, pass {dash}1").status == (
+        "found"
+    )
+
+
+def test_a_list_marker_after_a_colon_matches_the_next_line() -> None:
+    xml = read_sphinx_xml(URLLIB3)
+    chunks = [c for d in xml.documents for c in chunk_blocks(d, project="urllib3")]
+    start = next(
+        c for c in chunks if c.breadcrumb == "urllib3 > Utilities > Timeout > start_connect()"
+    )
+    citation = (
+        "Raises: - `urllib3.exceptions.TimeoutStateError` – if you attempt to start a timer"
+        " that has been started already."
+    )
+    result = check_citation(start, citation)
+    assert result.status == "found"
+    assert result.span is not None
+    assert start.text[result.span[0] : result.span[1]].startswith("**Raises:**\n")
+
+
+def test_a_list_marker_after_a_colon_in_the_text_still_matches_exactly() -> None:
+    chunk = _chunk("# A\n\nThree options: - fast, - safe and - small.\n")
+    result = check_citation(chunk, "options: - fast, - safe")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == "options: - fast, - safe"
+
+
+RETRIES = _chunk(
+    "# Retries\n"
+    "\n"
+    "By default, urllib3 will retry requests 3 times and follow up to 3 redirects.\n"
+    "\n"
+    "Set `retries=False` to disable both.\n"
+    "\n"
+    "```python\n"
+    "Url(scheme='http', host='google.com', ...)\n"
+    "```\n"
+)
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "By default, urllib3 will ... follow up to 3 redirects",
+        "By default, urllib3 will…follow up to 3 redirects",
+        "By default, ... retry requests ... up to 3 redirects",
+        "... retry requests 3 times",  # a leading ellipsis leaves one part
+    ],
+)
+def test_an_ellipsis_matches_its_parts_in_order_in_one_block(citation: str) -> None:
+    result = check_citation(RETRIES, citation)
+    assert result.status == "found"
+    assert result.span is not None
+
+
+def test_an_ellipsis_span_runs_from_the_first_part_to_the_last() -> None:
+    result = check_citation(RETRIES, "urllib3 will ... follow up to 3 redirects")
+    assert result.span is not None
+    assert RETRIES.text[result.span[0] : result.span[1]] == (
+        "urllib3 will retry requests 3 times and follow up to 3 redirects"
+    )
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "follow up to 3 redirects ... By default, urllib3",  # parts out of order
+        "follow up to 3 redirects. ... to disable both",  # parts in two blocks
+        "By default ... redirects",  # a one-word part matches too much
+        "By default, urllib3 will ... follow up to 5 redirects",  # a part not in the text
+    ],
+)
+def test_an_ellipsis_is_not_found_otherwise(citation: str) -> None:
+    assert check_citation(RETRIES, citation).status == "not_found"
+
+
+def test_an_ellipsis_in_code_is_matched_exactly() -> None:
+    result = check_citation(RETRIES, "Url(scheme='http', host='google.com', ...)")
+    assert result.status == "not_checkable"

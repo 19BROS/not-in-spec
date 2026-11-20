@@ -26,7 +26,7 @@ from notinspec.grounding.premise import PREMISE_RULE, ChunkPremises, Premise, nl
 # bump when any result can change for the same input (normalization, premise, identifier rules).
 # Results also depend on chunking's sentence splitter (`prose_sentences`), so a claim stores
 # WINDOWS_VERSION and CHUNKER_VERSION next to this one (`notinspec.claims.GroundingVersions`).
-GROUNDING_VERSION = 1
+GROUNDING_VERSION = 2  # 2: hyphen variants, control characters, list marker after a colon, ...
 
 __all__ = [
     "GROUNDING_VERSION",
