@@ -72,7 +72,6 @@ Touch every place below in the same PR, or the service will build but never depl
 | `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `proxy` (Caddy, TLS) |
 | `deploy/nginx.conf` | only if browsers must reach it (route under `/api` or a new prefix) |
 | `.github/workflows/ci.yml` | add to the `images` matrix |
-| `.github/workflows/deploy.yml` | add to both `pull` and `up` lists |
 | `AGENTS.md` layout, `docs/SPEC.md` §12 | one line each |
 
 Non-Python services (like `web/`) skip the workspace row and get their own CI job instead.
