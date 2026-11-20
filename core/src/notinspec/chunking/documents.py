@@ -29,12 +29,20 @@ def load_documents(root: Path, patterns: Sequence[str]) -> tuple[Document, ...]:
 
     Sorted by path, each file once. Bytes that aren't UTF-8 are replaced, not fatal: one bad
     file must not stop the whole run.
+
+    Raises `ValueError` for a match that resolves outside `root`, through `..` in a pattern
+    or a symlink: patterns may come from an uploaded config, and the worker holds secrets.
     """
+    real_root = root.resolve()
     found: dict[str, Path] = {}
     for pattern in patterns:
         for path in root.glob(pattern):
-            if path.is_file():
-                found[path.relative_to(root).as_posix()] = path
+            if not path.is_file():
+                continue
+            source = path.relative_to(root).as_posix()
+            if not path.resolve().is_relative_to(real_root):
+                raise ValueError(f"input resolves outside the docs root: {source}")
+            found[source] = path
     return tuple(
         Document(source, normalize_text(found[source].read_bytes().decode("utf-8", "replace")))
         for source in sorted(found)

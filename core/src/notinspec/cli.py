@@ -518,7 +518,11 @@ def _chunk(args: argparse.Namespace) -> int:
     if not args.root.is_dir():
         print(f"not a directory: {args.root}", file=sys.stderr)
         return 2
-    documents = load_documents(args.root, args.glob or ["**/*.md"])
+    try:
+        documents = load_documents(args.root, args.glob or ["**/*.md"])
+    except ValueError as e:
+        print(e, file=sys.stderr)
+        return 2
     project = args.project or args.root.resolve().name
     chunks = chunk_documents(documents, project=project, soft_limit=args.soft_limit)
     overlap = args.window_tokens // 5 if args.overlap_tokens is None else args.overlap_tokens
