@@ -129,9 +129,10 @@ class OpenAICompatProvider:
         transport: httpx2.BaseTransport | None = None,
     ) -> None:
         self.config = config
+        self._timeout = config.timeout if timeout is None else timeout
         self._http = httpx2.Client(
             base_url=config.base_url,
-            timeout=config.timeout if timeout is None else timeout,
+            timeout=self._timeout,
             transport=transport,
             headers={"Authorization": f"Bearer {api_key}", **config.headers},
         )
@@ -179,7 +180,7 @@ class OpenAICompatProvider:
         try:
             response = self._http.request(method, url, **kwargs)
         except httpx2.ReadTimeout as e:
-            raise RequestTimeout(f"no answer within {self.config.timeout:.0f}s: {e}") from e
+            raise RequestTimeout(f"no answer within {self._timeout:g}s: {e}") from e
         except httpx2.TimeoutException as e:
             raise TransientError(f"timeout: {e}") from e
         except httpx2.TransportError as e:
