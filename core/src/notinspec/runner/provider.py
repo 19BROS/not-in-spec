@@ -65,8 +65,9 @@ class TransientError(ProviderError):
 
 
 class RequestTimeout(TransientError):
-    """No answer within the timeout. The server may still be generating it (a shared server keeps
-    working on a request its client gave up on), so the client retries a timeout only once."""
+    """No answer within the timeout, the client's own or one the server reports (HTTP 408, 504,
+    524). The server may still be generating it (a shared server keeps working on a request its
+    client gave up on), so the client retries a timeout only once."""
 
 
 class RateLimited(TransientError):

@@ -145,6 +145,22 @@ def test_a_read_timeout_is_a_request_timeout(request_: ChatRequest) -> None:
         provider(slow).complete(request_)
 
 
+@pytest.mark.parametrize("status", [408, 504, 524])
+def test_a_server_timeout_is_a_request_timeout(request_: ChatRequest, status: int) -> None:
+    # LiteLLM's own timeout is 408 (an OpenAI-style error), a gateway's 504/524 often HTML
+    error = {"message": "Request timed out", "type": "timeout", "code": str(status)}
+    with pytest.raises(RequestTimeout, match=f"HTTP {status}"):
+        provider(reply(status, {"error": error})).complete(request_)
+    with pytest.raises(RequestTimeout, match=f"HTTP {status}"):
+        provider(lambda _: httpx2.Response(status, text="<html>timeout</html>")).complete(request_)
+
+
+def test_other_server_errors_are_not_timeouts(request_: ChatRequest) -> None:
+    with pytest.raises(TransientError) as caught:
+        provider(reply(502, {"error": {"message": "bad gateway"}})).complete(request_)
+    assert not isinstance(caught.value, RequestTimeout)
+
+
 def test_the_timeout_comes_from_the_provider() -> None:
     assert OpenAICompatProvider(FIIT, "k")._http.timeout.read == 900.0
     assert OpenAICompatProvider(GROQ, "k")._http.timeout.read == 120.0

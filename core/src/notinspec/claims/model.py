@@ -13,6 +13,8 @@ type ExtractionCause = Literal[
     "provider-error",  # no answer after the client's retries
     "model-unavailable",  # the model is gone; the rest of this extractor's chunks are not asked
     "quota-exhausted",  # the budget ran out; the rest is not asked, a later run continues
+    "timed-out",  # no answer in time, twice: the server is stuck or saturated; the rest is not
+    # asked (each request would load it more), a later run continues
 ]
 
 # bump when the prompt text or the answer schema change; parsing rules have their own version

@@ -27,6 +27,7 @@ from notinspec.runner import (
     ModelUnavailable,
     ProviderError,
     QuotaExhausted,
+    RequestTimeout,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -226,6 +227,7 @@ class _Raising:
     [
         (QuotaExhausted("budget"), "quota-exhausted"),
         (ModelUnavailable("gone"), "model-unavailable"),
+        (RequestTimeout("no answer within 900s"), "timed-out"),
     ],
 )
 def test_stop_leaves_the_rest_unasked(
@@ -240,6 +242,40 @@ def test_stop_leaves_the_rest_unasked(
     assert [f.detail for f in result.failures[1:]] == ["not asked"] * 7
     assert len(log.calls) == 1 and log.calls[0].response is None
     assert log.calls[0].error is not None and type(error).__name__ in log.calls[0].error
+
+
+class _HangsAfter:
+    """Answers from the recording, then times out on every request (a stuck shared server)."""
+
+    def __init__(self, answers: int) -> None:
+        self.fake = FakeProvider.load(GUIDE_RECORDING)
+        self.answers = answers
+        self.calls = 0
+
+    def complete(self, request: ChatRequest) -> Completion:
+        self.calls += 1
+        if self.calls > self.answers:
+            raise RequestTimeout("no answer within 900s")
+        return self.fake.complete(request)
+
+
+def test_timeout_after_its_retry_stops_and_a_later_run_continues(
+    guide_chunks: list[Chunk],
+) -> None:
+    store = MemoryClaimStore()
+    provider = _HangsAfter(answers=3)
+    client = ModelClient(provider, max_attempts=5, sleep=lambda _: None)
+    first = extract_claims(guide_chunks, QWEN, client, "r1", MemoryCallLog(), store=store)
+    # 3 chunks answered, the 4th timed out twice (one retry), the other 4 were not asked
+    assert first.stopped == "timed-out" and provider.calls == 5 and first.asked == 4
+    assert [f.detail for f in first.failures[1:]] == ["not asked"] * 4
+
+    again = extract_claims(
+        guide_chunks, QWEN, _client(FakeProvider.load(GUIDE_RECORDING)), "r2", MemoryCallLog(),
+        store=store,
+    )  # fmt: skip
+    assert again.stopped is None and again.reused == 3 and again.asked == 5
+    assert again.failures == ()
 
 
 def test_provider_error_fails_one_chunk_and_goes_on(guide_chunks: list[Chunk]) -> None:

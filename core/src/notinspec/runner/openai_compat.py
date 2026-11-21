@@ -24,6 +24,9 @@ from notinspec.runner.ratelimit import Limiters, RateLimiter
 
 # 498: Groq flex tier over capacity
 _TRANSIENT_STATUS = frozenset({408, 498, 500, 502, 503, 504, 520, 522, 524, 529})
+# a timeout reported by the server (LiteLLM's `Timeout` is 408, a gateway's 504, Cloudflare's
+# 524): the request reached the model, so it is retried only once, like the client's own timeout
+_TIMEOUT_STATUS = frozenset({408, 504, 524})
 _GONE_CODES = frozenset({"model_not_found", "model_decommissioned"})
 # OpenRouter says it only in the message; a bare 404 (wrong base URL) is a config error instead
 # LiteLLM (FIIT proxy) says "Invalid model name passed in model=..." with HTTP 400, checked live
@@ -296,6 +299,8 @@ def _raise_for(status: int, message: str, headers: Mapping[str, str]) -> NoRetur
         raise RateLimited(detail, retry_after=_retry_after(headers))
     if any(m in message.lower() for m in _GONE_MESSAGES):
         raise ModelUnavailable(detail)
+    if status in _TIMEOUT_STATUS:
+        raise RequestTimeout(detail)
     if status in _TRANSIENT_STATUS:
         raise TransientError(detail)
     raise ProviderError(detail)

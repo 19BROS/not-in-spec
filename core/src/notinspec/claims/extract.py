@@ -2,8 +2,9 @@
 
 One request per chunk that has prose; a chunk without prose has nothing to claim and is not
 sent. Each chunk is read whole. A failure of one chunk is recorded and the run goes on, except
-when the model is gone or the budget is used up: then the remaining chunks are recorded as not
-asked, and a later run continues where this one stopped (the store has the finished chunks).
+when the model is gone, the budget is used up or a request timed out again after its one retry:
+then the remaining chunks are recorded as not asked, and a later run continues where this one
+stopped (the store has the finished chunks).
 """
 
 from collections.abc import Callable, Sequence
@@ -28,6 +29,7 @@ from notinspec.runner import (
     ModelUnavailable,
     ProviderError,
     QuotaExhausted,
+    RequestTimeout,
 )
 
 ROLE = "claim-extractor"
@@ -92,6 +94,8 @@ def extract_claims(
                     cause = stopped = "quota-exhausted"
                 elif isinstance(e, ModelUnavailable):
                     cause = stopped = "model-unavailable"
+                elif isinstance(e, RequestTimeout):
+                    cause = stopped = "timed-out"
                 calls.append(
                     _call(run_id, spec, chunk, request, None, f"{type(e).__name__}: {e}", clock)
                 )
