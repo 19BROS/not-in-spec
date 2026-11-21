@@ -7,7 +7,14 @@ import pytest
 
 from notinspec import cli
 from notinspec.cli import main
-from notinspec.runner import FakeProvider, Provider, ProviderError
+from notinspec.runner import (
+    ChatRequest,
+    Completion,
+    FakeProvider,
+    ModelUnavailable,
+    Provider,
+    ProviderError,
+)
 
 GUIDE_RECORDING = Path(__file__).parent / "fixtures" / "groq-fixturelib-guide.json"
 OUTPUT = "extracted-claims.json"
@@ -69,6 +76,42 @@ def test_extract_writes_claims_and_calls(
     assert _extract(fixture_project, out, "--source", "guide", "--run-id", "second", *GROQ) == 0
     assert (out / OUTPUT).read_bytes() == first
     assert len(_lines(out / "llm-calls.jsonl")) == 16
+
+
+def test_default_extractors_follow_the_provider(
+    fixture_project: Path,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    providers: list[str] = []
+    monkeypatch.setattr(cli, "_live_provider", lambda name: providers.append(name) or _fake(name))
+    out = tmp_path / "groq"
+    assert _extract(fixture_project, out, "--source", "guide", "--provider", "groq") == 0
+    data = json.loads((out / OUTPUT).read_text(encoding="utf-8"))
+    assert [e["name"] for e in data["extractors"]] == ["qwen/qwen3.8-27b", "openai/gpt-oss-20b"]
+    assert len(data["claims"]) == 24 and data["failures"] == []
+
+    # FIIT by default; no recording of it here, so both extractors stop on their first chunk
+    monkeypatch.setattr(cli, "_live_provider", lambda name: providers.append(name) or _Gone())
+    capsys.readouterr()
+    assert _extract(fixture_project, tmp_path / "fiit", "--source", "guide") == 2
+    printed = capsys.readouterr().out
+    assert "qwen3.8-flash-next: 0 claims, 1 chunks asked" in printed
+    assert "gemma4-26b-a4b-hpc: 0 claims, 1 chunks asked" in printed
+    assert providers == ["groq", "fiit"]
+
+
+class _Gone:
+    def complete(self, request: ChatRequest) -> Completion:
+        raise ModelUnavailable(request.model)
+
+
+def test_openrouter_has_no_default_extractors(
+    fixture_project: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert _extract(fixture_project, tmp_path / "out", "--provider", "openrouter") == 2
+    assert "name them with --extractor" in capsys.readouterr().err
 
 
 def test_no_reuse_asks_again_and_replaces(

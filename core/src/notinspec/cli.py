@@ -22,9 +22,11 @@ from notinspec.chunking import (
 )
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
+    GROQ_EXTRACTORS,
     PROMPT_VERSION,
     ClaimsRun,
     ExtractionResult,
+    ExtractorSpec,
     JsonlCallLog,
     JsonlClaimStore,
     extract_claims,
@@ -229,7 +231,10 @@ def _claims_options(command: argparse.ArgumentParser) -> None:
         action="append",
         metavar="MODEL",
         help="extractor model ID; repeatable (default: "
-        + ", ".join(s.model for s in DEFAULT_EXTRACTORS)
+        + "; ".join(
+            f"{name}: " + ", ".join(s.model for s in specs)
+            for name, specs in _DEFAULT_EXTRACTORS.items()
+        )
         + ")",
     )
     command.add_argument("--soft-limit", type=_positive_int, default=DEFAULT_SOFT_LIMIT)
@@ -250,6 +255,18 @@ def _provider_option(command: argparse.ArgumentParser, default: str = GROQ.name)
     command.add_argument(
         "--provider", choices=sorted(PROVIDERS), default=default, help="default: %(default)s"
     )
+
+
+# the extractors a provider runs when no `--extractor` is given; OpenRouter has none
+_DEFAULT_EXTRACTORS = {FIIT.name: DEFAULT_EXTRACTORS, GROQ.name: GROQ_EXTRACTORS}
+
+
+def _default_extractors(provider: str) -> tuple[ExtractorSpec, ...]:
+    if provider not in _DEFAULT_EXTRACTORS:
+        raise ValueError(
+            f"--provider {provider} has no default extractors; name them with --extractor"
+        )
+    return _DEFAULT_EXTRACTORS[provider]
 
 
 def _positive_int(value: str) -> int:
@@ -337,7 +354,7 @@ class _ClaimsInput:
         self.specs = (
             tuple(extractor_for(m) for m in args.extractor)
             if args.extractor
-            else DEFAULT_EXTRACTORS
+            else _default_extractors(args.provider)
         )
         self.patterns: list[str] = args.source or []
         self.ingestion = ingest(config, output=args.out, soft_limit=args.soft_limit)
