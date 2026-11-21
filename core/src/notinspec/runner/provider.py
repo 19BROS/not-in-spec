@@ -64,6 +64,11 @@ class TransientError(ProviderError):
     """Network failure, timeout or server error: safe to retry."""
 
 
+class RequestTimeout(TransientError):
+    """No answer within the timeout. The server may still be generating it (a shared server keeps
+    working on a request its client gave up on), so the client retries a timeout only once."""
+
+
 class RateLimited(TransientError):
     def __init__(self, message: str, retry_after: float | None = None) -> None:
         super().__init__(message)

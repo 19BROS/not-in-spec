@@ -21,6 +21,7 @@ from notinspec.runner.provider import (
     ProviderError,
     QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.ratelimit import Limiters, RateLimiter
@@ -46,6 +47,7 @@ __all__ = [
     "ProviderError",
     "QuotaExhausted",
     "RateLimited",
+    "RequestTimeout",
     "RateLimiter",
     "RecordingProvider",
     "ResponseCache",

@@ -11,6 +11,7 @@ from notinspec.runner.provider import (
     Provider,
     QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.ratelimit import Limiters
@@ -70,6 +71,7 @@ class ModelClient:
         key = CacheKey(run_id, request.model, request.prompt_hash())
         if (cached := self._cache.get(key)) is not None:
             return cached
+        timeouts = 0
         for attempt in range(1, self._max_attempts + 1):
             if self._limits is not None:
                 self._limits.for_model(request.model).acquire()
@@ -81,6 +83,11 @@ class ModelClient:
                     raise QuotaExhausted(f"rate limited for {wait:.0f}s: {e}") from e
                 if attempt == self._max_attempts:
                     raise
+            except RequestTimeout:
+                timeouts += 1
+                if timeouts > 1 or attempt == self._max_attempts:
+                    raise
+                wait = self._delay(attempt)
             except TransientError:
                 if attempt == self._max_attempts:
                     raise

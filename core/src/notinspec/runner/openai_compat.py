@@ -15,7 +15,9 @@ from notinspec.runner.provider import (
     Completion,
     ModelUnavailable,
     ProviderError,
+    QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.ratelimit import Limiters, RateLimiter
@@ -24,7 +26,8 @@ from notinspec.runner.ratelimit import Limiters, RateLimiter
 _TRANSIENT_STATUS = frozenset({408, 498, 500, 502, 503, 504, 520, 522, 524, 529})
 _GONE_CODES = frozenset({"model_not_found", "model_decommissioned"})
 # OpenRouter says it only in the message; a bare 404 (wrong base URL) is a config error instead
-_GONE_MESSAGES = ("not a valid model", "no endpoints found")
+# LiteLLM (FIIT proxy) says "Invalid model name passed in model=..." with HTTP 400, checked live
+_GONE_MESSAGES = ("not a valid model", "no endpoints found", "invalid model name")
 # Groq rejects a best-effort json_schema answer that fails the schema with HTTP 400 and this code
 SCHEMA_FAILED = "json_validate_failed"
 
@@ -175,6 +178,8 @@ class OpenAICompatProvider:
     def _send(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
         try:
             response = self._http.request(method, url, **kwargs)
+        except httpx2.ReadTimeout as e:
+            raise RequestTimeout(f"no answer within {self.config.timeout:.0f}s: {e}") from e
         except httpx2.TimeoutException as e:
             raise TransientError(f"timeout: {e}") from e
         except httpx2.TransportError as e:
@@ -269,6 +274,10 @@ def _raise_error(status: int, error: object, headers: Mapping[str, str]) -> NoRe
     message = str(info.get("message") or error or "unknown error")
     if isinstance(code, str) and code in _GONE_CODES:
         raise ModelUnavailable(f"HTTP {status}: {message}")
+    # LiteLLM, once the key's budget is spent: HTTP 400, type `budget_exceeded`. It blocks every
+    # model of the key, the free ones too, so the run pauses
+    if info.get("type") == "budget_exceeded" or "budget has been exceeded" in message.lower():
+        raise QuotaExhausted(f"HTTP {status}: {message}")
     merged = {k.lower(): v for k, v in headers.items()}
     metadata = info.get("metadata")
     if isinstance(metadata, dict):

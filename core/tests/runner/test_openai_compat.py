@@ -16,7 +16,9 @@ from notinspec.runner import (
     OpenAICompatProvider,
     ProviderConfig,
     ProviderError,
+    QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.openai_compat import SCHEMA_FAILED
@@ -115,6 +117,32 @@ def test_fiit_sends_only_the_free_models(request_: ChatRequest, body: dict[str, 
     assert sent == []  # refused before anything was sent
     fiit.complete(ChatRequest("qwen3.8-flash-next", request_.messages))
     assert str(sent[0].url) == "https://litellm.blockfinlab.xyz/v1/chat/completions"
+
+
+def test_litellm_unknown_model_is_unavailable(request_: ChatRequest) -> None:
+    # the FIIT proxy's answer for an alias it doesn't serve (checked live 2026-11-21)
+    message = (
+        "/chat/completions: Invalid model name passed in model=qwen3.7-does-not-exist. "
+        "Call `/v1/models` to view available models for your key."
+    )
+    error = {"message": message, "type": "invalid_request_error", "param": None, "code": "400"}
+    with pytest.raises(ModelUnavailable, match="Invalid model name"):
+        provider(reply(400, {"error": error})).complete(request_)
+
+
+def test_litellm_budget_exceeded_pauses_the_run(request_: ChatRequest) -> None:
+    message = "Budget has been exceeded! Current cost: 100.2, Max budget: 100.0"
+    error = {"message": message, "type": "budget_exceeded", "param": None, "code": "400"}
+    with pytest.raises(QuotaExhausted, match="Budget has been exceeded"):
+        provider(reply(400, {"error": error})).complete(request_)
+
+
+def test_a_read_timeout_is_a_request_timeout(request_: ChatRequest) -> None:
+    def slow(request: httpx2.Request) -> httpx2.Response:
+        raise httpx2.ReadTimeout("read timed out", request=request)
+
+    with pytest.raises(RequestTimeout, match="no answer within 120s"):
+        provider(slow).complete(request_)
 
 
 def test_the_timeout_comes_from_the_provider() -> None:
