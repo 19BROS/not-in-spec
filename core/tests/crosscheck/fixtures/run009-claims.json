@@ -1,0 +1,2106 @@
+[
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+      "citation": "Given a url, return a parsed `Url` namedtuple.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      47,
+      93
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Given a url, return a parsed Url namedtuple. Best-effort is performed to parse incomplete urls.",
+    "premise_span": [
+      47,
+      144
+    ],
+    "nli": {
+      "entailment": 0.9985087513923645,
+      "neutral": 0.0010404991917312145,
+      "contradiction": 0.000450780033133924,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+      "citation": "Best-effort is performed to parse incomplete urls.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      144
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Given a url, return a parsed Url namedtuple. Best-effort is performed to parse incomplete urls. Fields not provided will be None.",
+    "premise_span": [
+      47,
+      178
+    ],
+    "nli": {
+      "entailment": 0.9975499510765076,
+      "neutral": 0.0020831837318837643,
+      "contradiction": 0.00036691175773739815,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+      "citation": "Fields not provided will be None.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      145,
+      178
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Best-effort is performed to parse incomplete urls. Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      94,
+      226
+    ],
+    "nli": {
+      "entailment": 0.9988239407539368,
+      "neutral": 0.0009762227418832481,
+      "contradiction": 0.00019977951887995005,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+      "citation": "This parser is RFC 3986 and RFC 6874 compliant.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      179,
+      226
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      145,
+      226
+    ],
+    "nli": {
+      "entailment": 0.9961269497871399,
+      "neutral": 0.0033089874777942896,
+      "contradiction": 0.0005640080198645592,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+      "citation": "This parser is RFC 3986 and RFC 6874 compliant.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      179,
+      226
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      145,
+      226
+    ],
+    "nli": {
+      "entailment": 0.9929963946342468,
+      "neutral": 0.006147116422653198,
+      "contradiction": 0.0008565442403778434,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "The parser logic and helper functions of urllib3.util.parse_url() are based heavily on work done in the rfc3986 module.",
+      "citation": "The parser logic and helper functions are based heavily on work done in the `rfc3986` module.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      228,
+      321
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): The parser logic and helper functions are based heavily on work done in the rfc3986 module.",
+    "premise_span": [
+      228,
+      321
+    ],
+    "nli": {
+      "entailment": 0.9921718835830688,
+      "neutral": 0.007100175134837627,
+      "contradiction": 0.0007278955890797079,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c7",
+      "text": "The url parameter of urllib3.util.parse_url() is a string.",
+      "citation": "`url` (str) – URL to parse into a `Url` namedtuple.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      342,
+      393
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url() > url: url (str) – URL to parse into a Url namedtuple.",
+    "premise_span": [
+      340,
+      393
+    ],
+    "nli": {
+      "entailment": 0.9979467988014221,
+      "neutral": 0.0016792864771559834,
+      "contradiction": 0.0003739360545296222,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c8",
+      "text": "The url parameter of urllib3.util.parse_url() is parsed into a Url namedtuple.",
+      "citation": "URL to parse into a `Url` namedtuple.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      356,
+      393
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url() > url: url (str) – URL to parse into a Url namedtuple.",
+    "premise_span": [
+      340,
+      393
+    ],
+    "nli": {
+      "entailment": 0.9935091137886047,
+      "neutral": 0.0059922607615590096,
+      "contradiction": 0.0004986378480680287,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c9",
+      "text": "The return type of urllib3.util.parse_url() is Url.",
+      "citation": "Return type: `Url`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      395,
+      413
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c10",
+      "text": "urllib3.util.parse_url() is partly backwards-compatible with urllib.parse.",
+      "citation": "Partly backwards-compatible with `urllib.parse`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "73b6176cb56b36d4bf894484051fef359241b9821ce4283ead24bada1dadc8f7",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      415,
+      463
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Partly backwards-compatible with urllib.parse.",
+    "premise_span": [
+      415,
+      463
+    ],
+    "nli": {
+      "entailment": 0.9841943383216858,
+      "neutral": 0.014283866621553898,
+      "contradiction": 0.001521826023235917,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "A PoolManager instance is required to make requests with urllib3.",
+      "citation": "You’ll need a `PoolManager` instance to make requests.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      98,
+      152
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9992387294769287,
+      "neutral": 0.0006500796298496425,
+      "contradiction": 0.00011123927106382325,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The PoolManager object handles connection pooling details.",
+      "citation": "This object handles all of the details of connection pooling",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      153,
+      213
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9988176226615906,
+      "neutral": 0.0008902533445507288,
+      "contradiction": 0.00029209398780949414,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "The PoolManager object handles thread safety details.",
+      "citation": "and thread safety so that you don’t have to",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      214,
+      257
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9973516464233398,
+      "neutral": 0.0020355822052806616,
+      "contradiction": 0.0006128110107965767,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "The request() method is used to make requests.",
+      "citation": "To make a request use `request()`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      304,
+      337
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: To make a request use request():",
+    "premise_span": [
+      304,
+      338
+    ],
+    "nli": {
+      "entailment": 0.9985358715057373,
+      "neutral": 0.0013286411995068192,
+      "contradiction": 0.00013549154391512275,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "The request() method returns a HTTPResponse object.",
+      "citation": "`request()` returns a `HTTPResponse` object",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      675,
+      718
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: request() returns a HTTPResponse object, the Response Content section explains how to handle various responses.",
+    "premise_span": [
+      675,
+      790
+    ],
+    "nli": {
+      "entailment": 0.998446524143219,
+      "neutral": 0.0013642635894939303,
+      "contradiction": 0.0001892601721920073,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "The request() method can be used to make requests using any HTTP verb.",
+      "citation": "You can use `request()` to make requests using any HTTP verb",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      792,
+      852
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You can use request() to make requests using any HTTP verb:",
+    "premise_span": [
+      792,
+      853
+    ],
+    "nli": {
+      "entailment": 0.9979605674743652,
+      "neutral": 0.001869333442300558,
+      "contradiction": 0.00017006407142616808,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c7",
+      "text": "urllib3.request() can be used for quick scripts and experiments.",
+      "citation": "For quick scripts and experiments you can also use a top-level `urllib3.request()`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1222,
+      1304
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: Note: For quick scripts and experiments you can also use a top-level urllib3.request(). It uses a module-global PoolManager instance.",
+    "premise_span": [
+      1216,
+      1353
+    ],
+    "nli": {
+      "entailment": 0.998897910118103,
+      "neutral": 0.000938191544264555,
+      "contradiction": 0.00016384631453547627,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c8",
+      "text": "urllib3.request() uses a module-global PoolManager instance.",
+      "citation": "It uses a module-global `PoolManager` instance",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1306,
+      1352
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: Note: For quick scripts and experiments you can also use a top-level urllib3.request(). It uses a module-global PoolManager instance. Because of that, its side effects could be shared across dependencies relying on it.",
+    "premise_span": [
+      1216,
+      1438
+    ],
+    "nli": {
+      "entailment": 0.9992077946662903,
+      "neutral": 0.0005978711415082216,
+      "contradiction": 0.00019444548524916172,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c9",
+      "text": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+      "citation": "its side effects could be shared across dependencies relying on it",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1371,
+      1437
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: It uses a module-global PoolManager instance. Because of that, its side effects could be shared across dependencies relying on it. To avoid side effects, create a new PoolManager instance and use it instead.",
+    "premise_span": [
+      1306,
+      1517
+    ],
+    "nli": {
+      "entailment": 0.9657784700393677,
+      "neutral": 0.03383588045835495,
+      "contradiction": 0.00038566385046578944,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c10",
+      "text": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+      "citation": "the method does not accept the low-level `**urlopen_kw` keyword arguments",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1531,
+      1604
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: To avoid side effects, create a new PoolManager instance and use it instead. In addition, the method does not accept the low-level **urlopen_kw keyword arguments. System CA certificates are loaded on default.",
+    "premise_span": [
+      1439,
+      1651
+    ],
+    "nli": {
+      "entailment": 0.9381270408630371,
+      "neutral": 0.06110487878322601,
+      "contradiction": 0.0007680709823034704,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c11",
+      "text": "System CA certificates are loaded on default for urllib3.request().",
+      "citation": "System CA certificates are loaded on default",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c79514ea606cba02486731d08d6d16c2b4ff984378c237efb524d2edf4c4acc6",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1606,
+      1650
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: In addition, the method does not accept the low-level **urlopen_kw keyword arguments. System CA certificates are loaded on default.",
+    "premise_span": [
+      1518,
+      1651
+    ],
+    "nli": {
+      "entailment": 0.6174228191375732,
+      "neutral": 0.3811515271663666,
+      "contradiction": 0.0014256391441449523,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "urllib3 2.x specifically targets CPython 3.10+.",
+      "citation": "urllib3 2.x specifically targets CPython 3.10+",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      33,
+      79
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9982863068580627,
+      "neutral": 0.0011264911154285073,
+      "contradiction": 0.0005872227484360337,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+      "citation": "urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      33,
+      97
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9844515323638916,
+      "neutral": 0.005813700146973133,
+      "contradiction": 0.009734769351780415,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+      "citation": "PyPy v7.3.20+ (compatible with CPython 3.11)",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      84,
+      128
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9994530081748962,
+      "neutral": 0.00038799463072791696,
+      "contradiction": 0.00015891825023572892,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "urllib3 2.x drops support for Python version 2.7.",
+      "citation": "dropping support for Python versions 2.7",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      133,
+      173
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9990569949150085,
+      "neutral": 0.0005256509757600725,
+      "contradiction": 0.00041730518569238484,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+      "citation": "dropping support for Python versions 2.7, and 3.5 to 3.9",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      133,
+      189
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9988635778427124,
+      "neutral": 0.0007062830845825374,
+      "contradiction": 0.00043018267024308443,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to improve performance.",
+      "citation": "optimize the codebase for Python 3.10+ by using new features to improve performance",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      246,
+      329
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: By dropping end-of-life Python versions we’re able to optimize the codebase for Python 3.10+ by using new features to improve performance and reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "premise_span": [
+      192,
+      422
+    ],
+    "nli": {
+      "entailment": 0.9755532741546631,
+      "neutral": 0.023349765688180923,
+      "contradiction": 0.0010969595750793815,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c7",
+      "text": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+      "citation": "reduce the amount of code that needs to be executed in order to support legacy versions",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "8d8e9994ae18b595392f20c659d0a1f8f54dc4883f457efa03846a0b658bffbe",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      334,
+      421
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: By dropping end-of-life Python versions we’re able to optimize the codebase for Python 3.10+ by using new features to improve performance and reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "premise_span": [
+      192,
+      422
+    ],
+    "nli": {
+      "entailment": 0.9716078042984009,
+      "neutral": 0.027257800102233887,
+      "contradiction": 0.0011344196973368526,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+      "citation": "By default certificate verification is handled by urllib3 to support legacy Python versions",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "ec8c714e1f07e2f2da89e51b7ca5d1e78a215b672d84dccb98307b249c533b95",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      45,
+      136
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9995236396789551,
+      "neutral": 0.00026075035566464067,
+      "contradiction": 0.0002156616683350876,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+      "citation": "but now we can rely on Python’s certificate verification instead!",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "ec8c714e1f07e2f2da89e51b7ca5d1e78a215b672d84dccb98307b249c533b95",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      138,
+      203
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9992251396179199,
+      "neutral": 0.0005485862493515015,
+      "contradiction": 0.0002263477217638865,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+      "citation": "This should result in a speedup for verifying certificates",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "ec8c714e1f07e2f2da89e51b7ca5d1e78a215b672d84dccb98307b249c533b95",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      204,
+      262
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9989168643951416,
+      "neutral": 0.0008049660827964544,
+      "contradiction": 0.0002781681250780821,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+      "citation": "means that any improvements made to certificate verification in Python or OpenSSL will be immediately available",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "ec8c714e1f07e2f2da89e51b7ca5d1e78a215b672d84dccb98307b249c533b95",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      267,
+      378
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.998665452003479,
+      "neutral": 0.001093963161110878,
+      "contradiction": 0.00024064748140517622,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+      "citation": "Given a url, return a parsed `Url` namedtuple.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      47,
+      93
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Given a url, return a parsed Url namedtuple. Best-effort is performed to parse incomplete urls.",
+    "premise_span": [
+      47,
+      144
+    ],
+    "nli": {
+      "entailment": 0.9990371465682983,
+      "neutral": 0.0007083649397827685,
+      "contradiction": 0.0002544540911912918,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+      "citation": "Best-effort is performed to parse incomplete urls.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      144
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Given a url, return a parsed Url namedtuple. Best-effort is performed to parse incomplete urls. Fields not provided will be None.",
+    "premise_span": [
+      47,
+      178
+    ],
+    "nli": {
+      "entailment": 0.9978959560394287,
+      "neutral": 0.0017507296288385987,
+      "contradiction": 0.00035335455322638154,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+      "citation": "Fields not provided will be None.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      145,
+      178
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Best-effort is performed to parse incomplete urls. Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      94,
+      226
+    ],
+    "nli": {
+      "entailment": 0.9980858564376831,
+      "neutral": 0.0015745902201160789,
+      "contradiction": 0.0003396073298063129,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+      "citation": "This parser is RFC 3986 and RFC 6874 compliant.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      179,
+      226
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      145,
+      226
+    ],
+    "nli": {
+      "entailment": 0.9962232112884521,
+      "neutral": 0.0031814221292734146,
+      "contradiction": 0.0005953518557362258,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+      "citation": "This parser is RFC 3986 and RFC 6874 compliant.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      179,
+      226
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Fields not provided will be None. This parser is RFC 3986 and RFC 6874 compliant.",
+    "premise_span": [
+      145,
+      226
+    ],
+    "nli": {
+      "entailment": 0.99367356300354,
+      "neutral": 0.005481560714542866,
+      "contradiction": 0.00084490398876369,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c6",
+      "text": "The parser logic and helper functions for `urllib3.util.parse_url()` are based heavily on work done in the `rfc3986` module.",
+      "citation": "The parser logic and helper functions are based heavily on work done in the `rfc3986` module.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      228,
+      321
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): The parser logic and helper functions are based heavily on work done in the rfc3986 module.",
+    "premise_span": [
+      228,
+      321
+    ],
+    "nli": {
+      "entailment": 0.9892742037773132,
+      "neutral": 0.009951977990567684,
+      "contradiction": 0.0007738196291029453,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c7",
+      "text": "The `url` parameter of `urllib3.util.parse_url()` is a string.",
+      "citation": "`url` (str)",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      342,
+      353
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url() > url: url (str) – URL to parse into a Url namedtuple.",
+    "premise_span": [
+      340,
+      393
+    ],
+    "nli": {
+      "entailment": 0.9975302815437317,
+      "neutral": 0.0020333542488515377,
+      "contradiction": 0.00043647244456224144,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "8b3528352f8e48e1",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c8",
+      "text": "`urllib3.util.parse_url()` is partly backwards-compatible with `urllib.parse`.",
+      "citation": "Partly backwards-compatible with `urllib.parse`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "833c4482cc22c005ef02070b1bcf46bd3a73fe2c30cb0dbbdfd78c598d5340ec",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      415,
+      463
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > parse_url(): Partly backwards-compatible with urllib.parse.",
+    "premise_span": [
+      415,
+      463
+    ],
+    "nli": {
+      "entailment": 0.9861859083175659,
+      "neutral": 0.012288441881537437,
+      "contradiction": 0.0015255993930622935,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The urllib3 module must be imported to use the library.",
+      "citation": "import the urllib3 module",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      40,
+      65
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: First things first, import the urllib3 module:",
+    "premise_span": [
+      20,
+      66
+    ],
+    "nli": {
+      "entailment": 0.9743891954421997,
+      "neutral": 0.025186587125062943,
+      "contradiction": 0.0004242162685841322,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "A PoolManager instance is required to make requests.",
+      "citation": "You’ll need a `PoolManager` instance to make requests.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      98,
+      152
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9992350339889526,
+      "neutral": 0.0006010609213262796,
+      "contradiction": 0.0001639180409256369,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "The PoolManager object handles connection pooling details.",
+      "citation": "This object handles all of the details of connection pooling",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      153,
+      213
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9988176226615906,
+      "neutral": 0.0008902533445507288,
+      "contradiction": 0.00029209398780949414,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "The PoolManager object handles thread safety details.",
+      "citation": "and thread safety",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      214,
+      231
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You’ll need a PoolManager instance to make requests. This object handles all of the details of connection pooling and thread safety so that you don’t have to:",
+    "premise_span": [
+      98,
+      258
+    ],
+    "nli": {
+      "entailment": 0.9973516464233398,
+      "neutral": 0.0020355822052806616,
+      "contradiction": 0.0006128110107965767,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "The request() method is used to make a request.",
+      "citation": "To make a request use `request()`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      304,
+      337
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: To make a request use request():",
+    "premise_span": [
+      304,
+      338
+    ],
+    "nli": {
+      "entailment": 0.9988008737564087,
+      "neutral": 0.0010742985177785158,
+      "contradiction": 0.00012482116289902478,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c6",
+      "text": "The request() method returns a HTTPResponse object.",
+      "citation": "`request()` returns a `HTTPResponse` object",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      675,
+      718
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: request() returns a HTTPResponse object, the Response Content section explains how to handle various responses.",
+    "premise_span": [
+      675,
+      790
+    ],
+    "nli": {
+      "entailment": 0.998446524143219,
+      "neutral": 0.0013642635894939303,
+      "contradiction": 0.0001892601721920073,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c7",
+      "text": "The request() method can be used to make requests using any HTTP verb.",
+      "citation": "You can use `request()` to make requests using any HTTP verb",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      792,
+      852
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: You can use request() to make requests using any HTTP verb:",
+    "premise_span": [
+      792,
+      853
+    ],
+    "nli": {
+      "entailment": 0.9979605674743652,
+      "neutral": 0.001869333442300558,
+      "contradiction": 0.00017006407142616808,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c8",
+      "text": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+      "citation": "For quick scripts and experiments you can also use a top-level `urllib3.request()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1222,
+      1305
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: Note: For quick scripts and experiments you can also use a top-level urllib3.request(). It uses a module-global PoolManager instance.",
+    "premise_span": [
+      1216,
+      1353
+    ],
+    "nli": {
+      "entailment": 0.9990856647491455,
+      "neutral": 0.0007697624969296157,
+      "contradiction": 0.00014458685473073274,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c9",
+      "text": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+      "citation": "It uses a module-global `PoolManager` instance.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1306,
+      1353
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: Note: For quick scripts and experiments you can also use a top-level urllib3.request(). It uses a module-global PoolManager instance. Because of that, its side effects could be shared across dependencies relying on it.",
+    "premise_span": [
+      1216,
+      1438
+    ],
+    "nli": {
+      "entailment": 0.9990984201431274,
+      "neutral": 0.0006864799652248621,
+      "contradiction": 0.00021506538905669004,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c10",
+      "text": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+      "citation": "Because of that, its side effects could be shared across dependencies relying on it.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1354,
+      1438
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: It uses a module-global PoolManager instance. Because of that, its side effects could be shared across dependencies relying on it. To avoid side effects, create a new PoolManager instance and use it instead.",
+    "premise_span": [
+      1306,
+      1517
+    ],
+    "nli": {
+      "entailment": 0.9720929265022278,
+      "neutral": 0.02758529968559742,
+      "contradiction": 0.0003217632765881717,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c11",
+      "text": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+      "citation": "To avoid side effects, create a new `PoolManager` instance and use it instead.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1439,
+      1517
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: Because of that, its side effects could be shared across dependencies relying on it. To avoid side effects, create a new PoolManager instance and use it instead. In addition, the method does not accept the low-level **urlopen_kw keyword arguments.",
+    "premise_span": [
+      1354,
+      1605
+    ],
+    "nli": {
+      "entailment": 0.5676960349082947,
+      "neutral": 0.43019211292266846,
+      "contradiction": 0.0021118237636983395,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c12",
+      "text": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+      "citation": "the method does not accept the low-level `**urlopen_kw` keyword arguments.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1531,
+      1605
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: To avoid side effects, create a new PoolManager instance and use it instead. In addition, the method does not accept the low-level **urlopen_kw keyword arguments. System CA certificates are loaded on default.",
+    "premise_span": [
+      1439,
+      1651
+    ],
+    "nli": {
+      "entailment": 0.7839312553405762,
+      "neutral": 0.21528534591197968,
+      "contradiction": 0.0007834046264179051,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "4b106715a267e6e4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c13",
+      "text": "System CA certificates are loaded on default.",
+      "citation": "System CA certificates are loaded on default.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "5c90f93c128204de95a348fa9bb1fb4c4fbe76ee88941417d9b75b3711cb2825",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1606,
+      1651
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > User Guide > Making Requests: In addition, the method does not accept the low-level **urlopen_kw keyword arguments. System CA certificates are loaded on default.",
+    "premise_span": [
+      1518,
+      1651
+    ],
+    "nli": {
+      "entailment": 0.998666524887085,
+      "neutral": 0.0011706225341185927,
+      "contradiction": 0.00016286347818095237,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "urllib3 2.x specifically targets CPython 3.10+.",
+      "citation": "urllib3 2.x specifically targets CPython 3.10+",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      33,
+      79
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9982863068580627,
+      "neutral": 0.0011264911154285073,
+      "contradiction": 0.0005872227484360337,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+      "citation": "specifically targets CPython 3.10+ and PyPy v7.3.20+",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      45,
+      97
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9844515323638916,
+      "neutral": 0.005813700146973133,
+      "contradiction": 0.009734769351780415,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "urllib3 2.x is compatible with CPython 3.11.",
+      "citation": "compatible with CPython 3.11",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      99,
+      127
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9959593415260315,
+      "neutral": 0.0029701811727136374,
+      "contradiction": 0.001070463564246893,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "urllib3 2.x drops support for Python 2.7.",
+      "citation": "dropping support for Python versions 2.7",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      133,
+      173
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9989126920700073,
+      "neutral": 0.0006193980807438493,
+      "contradiction": 0.00046791756176389754,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+      "citation": "dropping support for Python versions 2.7, and 3.5 to 3.9",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      133,
+      189
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: urllib3 2.x specifically targets CPython 3.10+ and PyPy v7.3.20+ (compatible with CPython 3.11) and dropping support for Python versions 2.7, and 3.5 to 3.9.",
+    "premise_span": [
+      33,
+      190
+    ],
+    "nli": {
+      "entailment": 0.9988672733306885,
+      "neutral": 0.000704204139765352,
+      "contradiction": 0.0004285232862457633,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c6",
+      "text": "urllib3 2.x uses new features to improve performance.",
+      "citation": "we’re able to optimize the codebase for Python 3.10+ by using new features to improve performance",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      232,
+      329
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: By dropping end-of-life Python versions we’re able to optimize the codebase for Python 3.10+ by using new features to improve performance and reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "premise_span": [
+      192,
+      422
+    ],
+    "nli": {
+      "entailment": 0.9634462594985962,
+      "neutral": 0.03464578837156296,
+      "contradiction": 0.0019078816985711455,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "42766add097cdb07",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c7",
+      "text": "urllib3 2.x uses new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+      "citation": "using new features to improve performance and reduce the amount of code that needs to be executed in order to support legacy versions",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "6cadc8d3b2124058417c96127444854424cde232e45a5d4746909005069a271a",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      288,
+      421
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > ✨ Optimized for Python 3.10+: By dropping end-of-life Python versions we’re able to optimize the codebase for Python 3.10+ by using new features to improve performance and reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "premise_span": [
+      192,
+      422
+    ],
+    "nli": {
+      "entailment": 0.9670179486274719,
+      "neutral": 0.031739115715026855,
+      "contradiction": 0.0012429271591827273,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+      "citation": "By default certificate verification is handled by urllib3 to support legacy Python versions",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "f1e3b73b4360b3b76ebd8ef485e34984801c0adb835db46eb6098c123c1e053b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      45,
+      136
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9995236396789551,
+      "neutral": 0.00026075035566464067,
+      "contradiction": 0.0002156616683350876,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "urllib3 can now rely on Python’s certificate verification.",
+      "citation": "but now we can rely on Python’s certificate verification instead!",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "f1e3b73b4360b3b76ebd8ef485e34984801c0adb835db46eb6098c123c1e053b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      138,
+      203
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9986211061477661,
+      "neutral": 0.0008495704969391227,
+      "contradiction": 0.0005293320282362401,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+      "citation": "This should result in a speedup for verifying certificates",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "f1e3b73b4360b3b76ebd8ef485e34984801c0adb835db46eb6098c123c1e053b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      204,
+      262
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.9991989731788635,
+      "neutral": 0.00045078221592120826,
+      "contradiction": 0.0003503329062368721,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "639d761e261bdd05",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+      "citation": "means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "f1e3b73b4360b3b76ebd8ef485e34984801c0adb835db46eb6098c123c1e053b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      267,
+      379
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > v2 Migration Guide > 🔐 Modern security by default > Certificate verification via SSLContext: By default certificate verification is handled by urllib3 to support legacy Python versions, but now we can rely on Python’s certificate verification instead! This should result in a speedup for verifying certificates and means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "premise_span": [
+      45,
+      379
+    ],
+    "nli": {
+      "entailment": 0.998615026473999,
+      "neutral": 0.0008486826554872096,
+      "contradiction": 0.0005362905794754624,
+      "truncated": false
+    },
+    "missing": []
+  }
+]

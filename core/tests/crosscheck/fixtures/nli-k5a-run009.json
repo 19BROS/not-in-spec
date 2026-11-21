@@ -1,0 +1,1912 @@
+[
+  {
+    "contradiction": 0.006151988636702299,
+    "entailment": 0.472608357667923,
+    "hypothesis": "A PoolManager instance is required to make requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5212396383285522,
+    "premise": "A PoolManager instance is required to make requests with urllib3.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00026237693964503706,
+    "entailment": 0.0016934869345277548,
+    "hypothesis": "The PoolManager object handles connection pooling details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9980441331863403,
+    "premise": "A PoolManager instance is required to make requests with urllib3.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00020570177002809942,
+    "entailment": 0.00041860633064061403,
+    "hypothesis": "The PoolManager object handles thread safety details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9993756413459778,
+    "premise": "A PoolManager instance is required to make requests with urllib3.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00025686700246296823,
+    "entailment": 0.003955623134970665,
+    "hypothesis": "A PoolManager instance is required to make requests with urllib3.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9957874417304993,
+    "premise": "A PoolManager instance is required to make requests.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005737142055295408,
+    "entailment": 0.0016557552153244615,
+    "hypothesis": "The PoolManager object handles connection pooling details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9977705478668213,
+    "premise": "A PoolManager instance is required to make requests.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005017704097554088,
+    "entailment": 0.0004077958292327821,
+    "hypothesis": "The PoolManager object handles thread safety details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9990904331207275,
+    "premise": "A PoolManager instance is required to make requests.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005075291264802217,
+    "entailment": 0.9937507510185242,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.005741690285503864,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.20615936815738678,
+    "entailment": 0.0018649948760867119,
+    "hypothesis": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.7919756770133972,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.010226135142147541,
+    "entailment": 0.0011909609893336892,
+    "hypothesis": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9885828495025635,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006221042014658451,
+    "entailment": 0.001236415235325694,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9925425052642822,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.016713401302695274,
+    "entailment": 0.0011105381418019533,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9821761250495911,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9988161325454712,
+    "entailment": 0.00020744025823660195,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0009764003334566951,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9986496567726135,
+    "entailment": 0.00020843975653406233,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0011419306974858046,
+    "premise": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00021494532120414078,
+    "entailment": 0.9933783411979675,
+    "hypothesis": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006406726315617561,
+    "premise": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003989498130977154,
+    "entailment": 0.004321305546909571,
+    "hypothesis": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.991689145565033,
+    "premise": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007736291270703077,
+    "entailment": 0.030736718326807022,
+    "hypothesis": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9615270495414734,
+    "premise": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00011982071009697393,
+    "entailment": 0.0007683279109187424,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9991118311882019,
+    "premise": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00015892098599579185,
+    "entailment": 0.00042136848787777126,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9994196891784668,
+    "premise": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003531177353579551,
+    "entailment": 0.986336886882782,
+    "hypothesis": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.013309954665601254,
+    "premise": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00010157511860597879,
+    "entailment": 0.00047836219891905785,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9994200468063354,
+    "premise": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001237333781318739,
+    "entailment": 0.0002770390419755131,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.999599277973175,
+    "premise": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0018886980833485723,
+    "entailment": 0.004588842857629061,
+    "hypothesis": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9935224652290344,
+    "premise": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016486579552292824,
+    "entailment": 0.02476932294666767,
+    "hypothesis": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9735820889472961,
+    "premise": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006975163705646992,
+    "entailment": 0.001518924138508737,
+    "hypothesis": "urllib3 2.x drops support for Python 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9915059208869934,
+    "premise": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.012181865982711315,
+    "entailment": 0.0007677567773498595,
+    "hypothesis": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9870502948760986,
+    "premise": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005761143984273076,
+    "entailment": 0.003593768458813429,
+    "hypothesis": "urllib3 2.x is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9958301186561584,
+    "premise": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000978144584223628,
+    "entailment": 0.0005020209937356412,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9985199570655823,
+    "premise": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004422760976012796,
+    "entailment": 0.00035862167715094984,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9991990923881531,
+    "premise": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.8171461820602417,
+    "entailment": 0.0014490520115941763,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.18140476942062378,
+    "premise": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0013345939805731177,
+    "entailment": 0.0054609160870313644,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9932044744491577,
+    "premise": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003989002201706171,
+    "entailment": 0.0019635839853435755,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9940474033355713,
+    "premise": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00011109840124845505,
+    "entailment": 0.003068487858399749,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9968204498291016,
+    "premise": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005007680505514145,
+    "entailment": 0.0008514506043866277,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9941408038139343,
+    "premise": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006268967990763485,
+    "entailment": 0.0007096636109054089,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9986634254455566,
+    "premise": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00012407098256517202,
+    "entailment": 0.0014837115304544568,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9983922839164734,
+    "premise": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 8.454127237200737e-05,
+    "entailment": 0.0009215742466039956,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9989938139915466,
+    "premise": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006646820111200213,
+    "entailment": 0.0016268497565761209,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9977084398269653,
+    "premise": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000897377438377589,
+    "entailment": 0.9828004837036133,
+    "hypothesis": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.016302181407809258,
+    "premise": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008194688707590103,
+    "entailment": 0.00698411650955677,
+    "hypothesis": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9921964406967163,
+    "premise": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003205218235962093,
+    "entailment": 0.9877839684486389,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.01189552154392004,
+    "premise": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00896573718637228,
+    "entailment": 0.002507257042452693,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9885269403457642,
+    "premise": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009386030142195523,
+    "entailment": 0.0006946924841031432,
+    "hypothesis": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9983667731285095,
+    "premise": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005435605999082327,
+    "entailment": 0.9953254461288452,
+    "hypothesis": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0041310167871415615,
+    "premise": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003452542005106807,
+    "entailment": 0.9788231253623962,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.020831672474741936,
+    "premise": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014958524843677878,
+    "entailment": 0.9821934700012207,
+    "hypothesis": "System CA certificates are loaded on default.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.01631060428917408,
+    "premise": "System CA certificates are loaded on default for urllib3.request().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001851418986916542,
+    "entailment": 0.007081062998622656,
+    "hypothesis": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9910674691200256,
+    "premise": "System CA certificates are loaded on default for urllib3.request().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005641584866680205,
+    "entailment": 0.0004610379983205348,
+    "hypothesis": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9989749193191528,
+    "premise": "System CA certificates are loaded on default for urllib3.request().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005998644046485424,
+    "entailment": 0.004880005959421396,
+    "hypothesis": "System CA certificates are loaded on default for urllib3.request().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9945201277732849,
+    "premise": "System CA certificates are loaded on default.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.017008543014526367,
+    "entailment": 0.013081503100693226,
+    "hypothesis": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9699099659919739,
+    "premise": "System CA certificates are loaded on default.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009349090396426618,
+    "entailment": 0.00047926398110575974,
+    "hypothesis": "A PoolManager instance is required to make requests with urllib3.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9985858201980591,
+    "premise": "The PoolManager object handles connection pooling details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.011346830055117607,
+    "entailment": 0.0015863666776567698,
+    "hypothesis": "A PoolManager instance is required to make requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9870668053627014,
+    "premise": "The PoolManager object handles connection pooling details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00018974636623170227,
+    "entailment": 0.998017430305481,
+    "hypothesis": "The PoolManager object handles connection pooling details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0017927592853084207,
+    "premise": "The PoolManager object handles connection pooling details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.6677281260490417,
+    "entailment": 0.0016505714738741517,
+    "hypothesis": "The PoolManager object handles thread safety details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.3306213319301605,
+    "premise": "The PoolManager object handles connection pooling details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009679425857029855,
+    "entailment": 0.0005526769673451781,
+    "hypothesis": "A PoolManager instance is required to make requests with urllib3.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.998479425907135,
+    "premise": "The PoolManager object handles thread safety details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0038079828955233097,
+    "entailment": 0.0013047136599197984,
+    "hypothesis": "A PoolManager instance is required to make requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9948872923851013,
+    "premise": "The PoolManager object handles thread safety details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9075713157653809,
+    "entailment": 0.0012703589163720608,
+    "hypothesis": "The PoolManager object handles connection pooling details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.09115833789110184,
+    "premise": "The PoolManager object handles thread safety details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002198239235440269,
+    "entailment": 0.9973599314689636,
+    "hypothesis": "The PoolManager object handles thread safety details.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0024202284403145313,
+    "premise": "The PoolManager object handles thread safety details.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003216254699509591,
+    "entailment": 0.9985828399658203,
+    "hypothesis": "The url parameter of urllib3.util.parse_url() is a string.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0010955563047900796,
+    "premise": "The `url` parameter of `urllib3.util.parse_url()` is a string.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00203574332408607,
+    "entailment": 0.007924593053758144,
+    "hypothesis": "The url parameter of urllib3.util.parse_url() is parsed into a Url namedtuple.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9900396466255188,
+    "premise": "The `url` parameter of `urllib3.util.parse_url()` is a string.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0030815941281616688,
+    "entailment": 0.00573390256613493,
+    "hypothesis": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9911845326423645,
+    "premise": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00015095733397174627,
+    "entailment": 0.0010917421896010637,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9987572431564331,
+    "premise": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00017346491222269833,
+    "entailment": 0.0005680361064150929,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9992584586143494,
+    "premise": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004318082064855844,
+    "entailment": 0.9963312745094299,
+    "hypothesis": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003236934542655945,
+    "premise": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003447824565228075,
+    "entailment": 0.01038395706564188,
+    "hypothesis": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9892711639404297,
+    "premise": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000641056161839515,
+    "entailment": 0.0032032672315835953,
+    "hypothesis": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9961556792259216,
+    "premise": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002600463922135532,
+    "entailment": 0.0005469056777656078,
+    "hypothesis": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9991931319236755,
+    "premise": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008944906876422465,
+    "entailment": 0.994390070438385,
+    "hypothesis": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004715376533567905,
+    "premise": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010414090938866138,
+    "entailment": 0.004016265273094177,
+    "hypothesis": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9949423670768738,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000355415279045701,
+    "entailment": 0.9932293891906738,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006415125448256731,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9759107828140259,
+    "entailment": 0.0035061324015259743,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.02058308571577072,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00045838626101613045,
+    "entailment": 0.0021117471624165773,
+    "hypothesis": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9974299073219299,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001133427256718278,
+    "entailment": 0.003489237744361162,
+    "hypothesis": "Fields not provided in the url are None in the result of urllib3.util.parse_url().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953773021697998,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9532569646835327,
+    "entailment": 0.009101234376430511,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.037641819566488266,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003556752926670015,
+    "entailment": 0.992881178855896,
+    "hypothesis": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006763177923858166,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00044580671237781644,
+    "entailment": 0.0016028584213927388,
+    "hypothesis": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9979514479637146,
+    "premise": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0011173331877216697,
+    "entailment": 0.006788987200707197,
+    "hypothesis": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9920936226844788,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004922366351820529,
+    "entailment": 0.0013310137437656522,
+    "hypothesis": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9981766939163208,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004844840441364795,
+    "entailment": 0.9952384233474731,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004277030937373638,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9723621606826782,
+    "entailment": 0.00473403837531805,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.02290385589003563,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 3986 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012276421766728163,
+    "entailment": 0.0057813916355371475,
+    "hypothesis": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9929909706115723,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005320915370248258,
+    "entailment": 0.001206263666972518,
+    "hypothesis": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9982617497444153,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9531915783882141,
+    "entailment": 0.01033945195376873,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.036469049751758575,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004721394507214427,
+    "entailment": 0.9951047897338867,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004423086065798998,
+    "premise": "The parser in urllib3.util.parse_url() is RFC 6874 compliant.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0011315281735733151,
+    "entailment": 0.9913942217826843,
+    "hypothesis": "The parser logic and helper functions of urllib3.util.parse_url() are based heavily on work done in the rfc3986 module.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00747422082349658,
+    "premise": "The parser logic and helper functions for `urllib3.util.parse_url()` are based heavily on work done in the `rfc3986` module.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001070179045200348,
+    "entailment": 0.991349458694458,
+    "hypothesis": "The parser logic and helper functions for `urllib3.util.parse_url()` are based heavily on work done in the `rfc3986` module.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.007580254226922989,
+    "premise": "The parser logic and helper functions of urllib3.util.parse_url() are based heavily on work done in the rfc3986 module.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000406070175813511,
+    "entailment": 0.9963961243629456,
+    "hypothesis": "The request() method can be used to make requests using any HTTP verb.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0031978280749171972,
+    "premise": "The request() method can be used to make requests using any HTTP verb.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004508949932642281,
+    "entailment": 0.9982948899269104,
+    "hypothesis": "The request() method is used to make requests.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.001254212111234665,
+    "premise": "The request() method is used to make a request.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003197258338332176,
+    "entailment": 0.9990023970603943,
+    "hypothesis": "The request() method is used to make a request.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006778748356737196,
+    "premise": "The request() method is used to make requests.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002620696322992444,
+    "entailment": 0.9980118274688721,
+    "hypothesis": "The request() method returns a HTTPResponse object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0017260031308978796,
+    "premise": "The request() method returns a HTTPResponse object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00078036286868155,
+    "entailment": 0.9908512234687805,
+    "hypothesis": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.008368347771465778,
+    "premise": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001467313850298524,
+    "entailment": 0.002083069644868374,
+    "hypothesis": "urllib3.request() can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9977701902389526,
+    "premise": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00857961643487215,
+    "entailment": 0.006329033058136702,
+    "hypothesis": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9850913882255554,
+    "premise": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000266922201262787,
+    "entailment": 0.9971339702606201,
+    "hypothesis": "urllib3.request() uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.002598992083221674,
+    "premise": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0015866600442677736,
+    "entailment": 0.0101598110049963,
+    "hypothesis": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9882534742355347,
+    "premise": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005770737770944834,
+    "entailment": 0.006339910440146923,
+    "hypothesis": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9878893494606018,
+    "premise": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001956208376213908,
+    "entailment": 0.004857884719967842,
+    "hypothesis": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9931859970092773,
+    "premise": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.021518709138035774,
+    "entailment": 0.009012933820486069,
+    "hypothesis": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.969468355178833,
+    "premise": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009296104544773698,
+    "entailment": 0.000770434970036149,
+    "hypothesis": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9983000159263611,
+    "premise": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009746519499458373,
+    "entailment": 0.0005114665254950523,
+    "hypothesis": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9985138773918152,
+    "premise": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00023182079894468188,
+    "entailment": 0.9981525540351868,
+    "hypothesis": "urllib3.request() can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016156644560396671,
+    "premise": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001559992553666234,
+    "entailment": 0.0014476252254098654,
+    "hypothesis": "urllib3.request() uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9969923496246338,
+    "premise": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009294234914705157,
+    "entailment": 0.010864616371691227,
+    "hypothesis": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9882059097290039,
+    "premise": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 8.833574247546494e-05,
+    "entailment": 0.001855240436270833,
+    "hypothesis": "urllib3.request() can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9980564713478088,
+    "premise": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00023272648104466498,
+    "entailment": 0.9979761242866516,
+    "hypothesis": "urllib3.request() uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00179118977393955,
+    "premise": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000417080067563802,
+    "entailment": 0.0015118812443688512,
+    "hypothesis": "System CA certificates are loaded on default for urllib3.request().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9980711340904236,
+    "premise": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0022778029087930918,
+    "entailment": 0.0024318925570696592,
+    "hypothesis": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9952902793884277,
+    "premise": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00023982497805263847,
+    "entailment": 0.9979094862937927,
+    "hypothesis": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0018506725318729877,
+    "premise": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00046314316568896174,
+    "entailment": 0.9976420998573303,
+    "hypothesis": "The `url` parameter of `urllib3.util.parse_url()` is a string.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0018947605276480317,
+    "premise": "The url parameter of urllib3.util.parse_url() is a string.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007430423516780138,
+    "entailment": 0.013631852343678474,
+    "hypothesis": "The `url` parameter of `urllib3.util.parse_url()` is a string.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9789376854896545,
+    "premise": "The url parameter of urllib3.util.parse_url() is parsed into a Url namedtuple.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003659500216599554,
+    "entailment": 0.001024790806695819,
+    "hypothesis": "System CA certificates are loaded on default for urllib3.request().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.998609185218811,
+    "premise": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005603969912044704,
+    "entailment": 0.002375097945332527,
+    "hypothesis": "The side effects of urllib3.request() could be shared across dependencies relying on it.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9970645308494568,
+    "premise": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019993733149021864,
+    "entailment": 0.002798940520733595,
+    "hypothesis": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9952017068862915,
+    "premise": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.016213413327932358,
+    "entailment": 0.07444430887699127,
+    "hypothesis": "urllib3.request() uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9093422889709473,
+    "premise": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007766879862174392,
+    "entailment": 0.9916943907737732,
+    "hypothesis": "urllib3.util.parse_url() is partly backwards-compatible with urllib.parse.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0075289057567715645,
+    "premise": "`urllib3.util.parse_url()` is partly backwards-compatible with `urllib.parse`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0027666487731039524,
+    "entailment": 0.0014528499450534582,
+    "hypothesis": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9957804679870605,
+    "premise": "urllib3 2.x drops support for Python 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000447879487182945,
+    "entailment": 0.9952437281608582,
+    "hypothesis": "urllib3 2.x drops support for Python version 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0043084206990897655,
+    "premise": "urllib3 2.x drops support for Python 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.6546064615249634,
+    "entailment": 0.0008382417727261782,
+    "hypothesis": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.34455519914627075,
+    "premise": "urllib3 2.x drops support for Python 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0029932931065559387,
+    "entailment": 0.001048133010044694,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9959586262702942,
+    "premise": "urllib3 2.x drops support for Python 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004009393509477377,
+    "entailment": 0.0009847895707935095,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9950059056282043,
+    "premise": "urllib3 2.x drops support for Python 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004097870085388422,
+    "entailment": 0.0005526310997083783,
+    "hypothesis": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953495860099792,
+    "premise": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.23073337972164154,
+    "entailment": 0.10954062640666962,
+    "hypothesis": "urllib3 2.x drops support for Python version 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.6597260236740112,
+    "premise": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000649595633149147,
+    "entailment": 0.9940367937088013,
+    "hypothesis": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.005313544999808073,
+    "premise": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.015307862311601639,
+    "entailment": 0.003195737022906542,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9814963936805725,
+    "premise": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.01042653527110815,
+    "entailment": 0.0009109743987210095,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9886625409126282,
+    "premise": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000605305889621377,
+    "entailment": 0.9973875880241394,
+    "hypothesis": "urllib3 2.x drops support for Python 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0020071137696504593,
+    "premise": "urllib3 2.x drops support for Python version 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.8404608964920044,
+    "entailment": 0.000608443224336952,
+    "hypothesis": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.1589307337999344,
+    "premise": "urllib3 2.x drops support for Python version 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005280575715005398,
+    "entailment": 0.001954891486093402,
+    "hypothesis": "urllib3 2.x is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9927645325660706,
+    "premise": "urllib3 2.x drops support for Python version 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0024282140657305717,
+    "entailment": 0.0010751105146482587,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9964967370033264,
+    "premise": "urllib3 2.x drops support for Python version 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0029442475643008947,
+    "entailment": 0.0009141199407167733,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9961416125297546,
+    "premise": "urllib3 2.x drops support for Python version 2.7.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.15323558449745178,
+    "entailment": 0.5304660201072693,
+    "hypothesis": "urllib3 2.x drops support for Python 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.31629839539527893,
+    "premise": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010662301210686564,
+    "entailment": 0.9954811334609985,
+    "hypothesis": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003452604403719306,
+    "premise": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.2506618797779083,
+    "entailment": 0.002702493919059634,
+    "hypothesis": "urllib3 2.x is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.7466356158256531,
+    "premise": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019030063413083553,
+    "entailment": 0.005013737361878157,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9930832386016846,
+    "premise": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0039644865319132805,
+    "entailment": 0.000731992011424154,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953036308288574,
+    "premise": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0023776814341545105,
+    "entailment": 0.0022091956343501806,
+    "hypothesis": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9954132437705994,
+    "premise": "urllib3 2.x is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.021204277873039246,
+    "entailment": 0.002574116224423051,
+    "hypothesis": "urllib3 2.x drops support for Python version 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9762216210365295,
+    "premise": "urllib3 2.x is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.15052936971187592,
+    "entailment": 0.0020533446222543716,
+    "hypothesis": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8474172353744507,
+    "premise": "urllib3 2.x is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016617175424471498,
+    "entailment": 0.0028031941037625074,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.995535135269165,
+    "premise": "urllib3 2.x is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9903906583786011,
+    "entailment": 0.00048168571083806455,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.009127608500421047,
+    "premise": "urllib3 2.x is compatible with CPython 3.11.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009404413285665214,
+    "entailment": 0.9925228953361511,
+    "hypothesis": "urllib3 2.x uses new features to improve performance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006536687724292278,
+    "premise": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to improve performance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.4340760111808777,
+    "entailment": 0.004889524541795254,
+    "hypothesis": "urllib3 2.x uses new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5610344409942627,
+    "premise": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to improve performance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002566918497905135,
+    "entailment": 0.9131109714508057,
+    "hypothesis": "urllib3 2.x uses new features to improve performance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.08432214707136154,
+    "premise": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012091174721717834,
+    "entailment": 0.9937406182289124,
+    "hypothesis": "urllib3 2.x uses new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.005050205625593662,
+    "premise": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003441171022132039,
+    "entailment": 0.0010276123648509383,
+    "hypothesis": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9955312609672546,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.008983432315289974,
+    "entailment": 0.0022317825350910425,
+    "hypothesis": "urllib3 2.x drops support for Python 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9887847900390625,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009520664811134338,
+    "entailment": 0.006526704411953688,
+    "hypothesis": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9839525818824768,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.010009772144258022,
+    "entailment": 0.0027063009329140186,
+    "hypothesis": "urllib3 2.x drops support for Python version 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9872839450836182,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007511051371693611,
+    "entailment": 0.004232996609061956,
+    "hypothesis": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9882559180259705,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.02354234829545021,
+    "entailment": 0.0949491485953331,
+    "hypothesis": "urllib3 2.x is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.881508469581604,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000528684351593256,
+    "entailment": 0.9931734204292297,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006297984626144171,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9852324724197388,
+    "entailment": 0.0004036044410895556,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.014363927766680717,
+    "premise": "urllib3 2.x specifically targets CPython 3.10+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007803120533935726,
+    "entailment": 0.002325277542695403,
+    "hypothesis": "PyPy v7.3.20+ is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.996894359588623,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.059562209993600845,
+    "entailment": 0.001916492939926684,
+    "hypothesis": "urllib3 2.x drops support for Python 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9385212659835815,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.14029748737812042,
+    "entailment": 0.00146379170473665,
+    "hypothesis": "urllib3 2.x drops support for Python 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8582388162612915,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.03486343100667,
+    "entailment": 0.0017798886401578784,
+    "hypothesis": "urllib3 2.x drops support for Python version 2.7.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.963356614112854,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.04876921698451042,
+    "entailment": 0.000854235899168998,
+    "hypothesis": "urllib3 2.x drops support for Python versions 3.5 to 3.9.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.950376570224762,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.019610224291682243,
+    "entailment": 0.001737407990731299,
+    "hypothesis": "urllib3 2.x is compatible with CPython 3.11.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9786524176597595,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.8612803816795349,
+    "entailment": 0.0010160539532080293,
+    "hypothesis": "urllib3 2.x specifically targets CPython 3.10+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.13770364224910736,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005075683002360165,
+    "entailment": 0.9933570027351379,
+    "hypothesis": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0061354972422122955,
+    "premise": "urllib3 2.x specifically targets PyPy v7.3.20+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00031228383886627853,
+    "entailment": 0.000899994804058224,
+    "hypothesis": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to improve performance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9987877011299133,
+    "premise": "urllib3 2.x uses new features to improve performance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014178291894495487,
+    "entailment": 0.0012186475796625018,
+    "hypothesis": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9973635077476501,
+    "premise": "urllib3 2.x uses new features to improve performance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.06239240616559982,
+    "entailment": 0.0021298439241945744,
+    "hypothesis": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to improve performance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9354776740074158,
+    "premise": "urllib3 2.x uses new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007486820104531944,
+    "entailment": 0.0014521166449412704,
+    "hypothesis": "urllib3 2.x optimizes the codebase for Python 3.10+ by using new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9977992177009583,
+    "premise": "urllib3 2.x uses new features to reduce the amount of code that needs to be executed in order to support legacy versions.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.011547744274139404,
+    "entailment": 0.0009662598022259772,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9874860644340515,
+    "premise": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00016618770314380527,
+    "entailment": 0.00019712028733920306,
+    "hypothesis": "Relying on Python's certificate verification means that any improvements made to certificate verification in Python or OpenSSL will be immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9996366500854492,
+    "premise": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001025264136842452,
+    "entailment": 0.0005368383717723191,
+    "hypothesis": "Relying on Python's certificate verification should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9993606209754944,
+    "premise": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00019572273595258594,
+    "entailment": 0.9984897375106812,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.001314616296440363,
+    "premise": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.5934838652610779,
+    "entailment": 0.0028428032528609037,
+    "hypothesis": "By default, urllib3 handles certificate verification to support legacy Python versions.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.4036734104156494,
+    "premise": "urllib3 can now rely on Python’s certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00014029847807250917,
+    "entailment": 0.000593706383369863,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 means that improvements made to certificate verification in Python or OpenSSL are immediately available.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9992659687995911,
+    "premise": "urllib3 can now rely on Python’s certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00010159151133848354,
+    "entailment": 0.000504812051076442,
+    "hypothesis": "Relying on Python’s certificate verification in urllib3 should result in a speedup for verifying certificates.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9993935823440552,
+    "premise": "urllib3 can now rely on Python’s certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003001720178872347,
+    "entailment": 0.5952321290969849,
+    "hypothesis": "urllib3 can now rely on Python’s certificate verification instead of handling it itself.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.40446773171424866,
+    "premise": "urllib3 can now rely on Python’s certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019035035511478782,
+    "entailment": 0.0005263725179247558,
+    "hypothesis": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9975700974464417,
+    "premise": "urllib3.request() can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007115602493286133,
+    "entailment": 0.6527555584907532,
+    "hypothesis": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.3465329110622406,
+    "premise": "urllib3.request() can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0017436064081266522,
+    "entailment": 0.0018268909770995378,
+    "hypothesis": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9964295029640198,
+    "premise": "urllib3.request() can be used for quick scripts and experiments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010299658169969916,
+    "entailment": 0.010467293672263622,
+    "hypothesis": "System CA certificates are loaded on default.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9885028004646301,
+    "premise": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.008805738762021065,
+    "entailment": 0.0023579976987093687,
+    "hypothesis": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9888362288475037,
+    "premise": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010510156862437725,
+    "entailment": 0.9218544363975525,
+    "hypothesis": "The top-level urllib3.request() method does not accept the low-level **urlopen_kw keyword arguments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.07709456980228424,
+    "premise": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019794923719018698,
+    "entailment": 0.0015934318071231246,
+    "hypothesis": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9964269995689392,
+    "premise": "urllib3.request() does not accept the low-level **urlopen_kw keyword arguments.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003075892454944551,
+    "entailment": 0.01839708909392357,
+    "hypothesis": "The side effects of the top-level urllib3.request() function could be shared across dependencies relying on its module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9812953472137451,
+    "premise": "urllib3.request() uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008364429231733084,
+    "entailment": 0.00469373119994998,
+    "hypothesis": "The top-level urllib3.request() function can be used for quick scripts and experiments.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9944697618484497,
+    "premise": "urllib3.request() uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006304335547611117,
+    "entailment": 0.8826195597648621,
+    "hypothesis": "The top-level urllib3.request() function uses a module-global PoolManager instance.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.11675000190734863,
+    "premise": "urllib3.request() uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0021486736368387938,
+    "entailment": 0.0013620047830045223,
+    "hypothesis": "To avoid side effects, a new PoolManager instance should be created and used instead of the top-level urllib3.request() function.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9964892864227295,
+    "premise": "urllib3.request() uses a module-global PoolManager instance.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007695259992033243,
+    "entailment": 0.992396891117096,
+    "hypothesis": "`urllib3.util.parse_url()` is partly backwards-compatible with `urllib.parse`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.006833571009337902,
+    "premise": "urllib3.util.parse_url() is partly backwards-compatible with urllib.parse.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019429741660133004,
+    "entailment": 0.007412707433104515,
+    "hypothesis": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9906442165374756,
+    "premise": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00031364773167297244,
+    "entailment": 0.9957420229911804,
+    "hypothesis": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.003944287076592445,
+    "premise": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000302179716527462,
+    "entailment": 0.009123462252318859,
+    "hypothesis": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9905744194984436,
+    "premise": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00019145272381138057,
+    "entailment": 0.0013166205026209354,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 3986 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9984920024871826,
+    "premise": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002299638872500509,
+    "entailment": 0.0006221793009899557,
+    "hypothesis": "The `urllib3.util.parse_url()` parser is RFC 6874 compliant.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9991477727890015,
+    "premise": "urllib3.util.parse_url() performs best-effort parsing of incomplete urls.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008787904516793787,
+    "entailment": 0.005363105796277523,
+    "hypothesis": "Fields not provided in the url will be None when parsed by `urllib3.util.parse_url()`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9937580823898315,
+    "premise": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00021762277174275368,
+    "entailment": 0.0005340773495845497,
+    "hypothesis": "The `urllib3.util.parse_url()` function performs best-effort parsing for incomplete urls.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.999248206615448,
+    "premise": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003979523607995361,
+    "entailment": 0.9962106943130493,
+    "hypothesis": "The `urllib3.util.parse_url()` function returns a parsed `Url` namedtuple given a url.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0033913953229784966,
+    "premise": "urllib3.util.parse_url() returns a parsed Url namedtuple given a url.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  }
+]
