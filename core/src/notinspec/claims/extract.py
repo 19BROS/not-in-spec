@@ -69,6 +69,7 @@ def extract_claims(
             spec.prompt_version,
             spec.reasoning_effort,
             PARSER_VERSION,
+            spec.thinking,
         )
         if reuse and store is not None and (stored := store.get(key)) is not None:
             claims.extend(_bind(chunk, spec, stored))

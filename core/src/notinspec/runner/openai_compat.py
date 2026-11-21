@@ -42,6 +42,10 @@ class ProviderConfig:
     structured_output_models: frozenset[str] = frozenset()
     default_model: str | None = None  # model under test when none is named
     headers: Mapping[str, str] = field(default_factory=dict)
+    timeout: float = 120.0  # seconds per request
+    # the only models this provider may be asked; None = any. A request for another model fails
+    # before it is sent
+    allowed_models: frozenset[str] | None = None
 
     def limiters(self) -> Limiters:
         """Fresh limiters, keyed the way this provider counts. Share one per API account."""
@@ -83,7 +87,26 @@ OPENROUTER = ProviderConfig(
     headers={"X-Title": "notinspec"},
 )
 
-PROVIDERS = {c.name: c for c in (GROQ, OPENROUTER)}
+# The faculty's LiteLLM proxy (fiit-ba.github.io/docs/litellm-quickstart, read 2026-11-21). One key
+# for the whole team, with a budget the paid models (Claude, GPT, OpenRouter) draw from;
+# `openrouter-free` may log prompts. The local models did not change the key's spend, so only
+# they are allowed (SPEC §8). The proxy publishes no rate limits: the limiter is a guess. A
+# request waited up to 85 s in the queue of the shared server, and a long reasoning answer ran
+# past 10 minutes.
+FIIT = ProviderConfig(
+    name="fiit",
+    base_url="https://litellm.blockfinlab.xyz/v1",
+    api_key_env="FIIT_API_KEY",
+    per_minute=20,
+    per_day=5000,
+    per_model_limits=True,
+    # confirmed live 2026-11-21 (`Retry`, valid JSON from both)
+    structured_output_models=frozenset({"qwen3.8-flash-next", "gemma4-26b-a4b-hpc"}),
+    timeout=900.0,
+    allowed_models=frozenset({"qwen3.8-flash-next", "gemma4-26b-a4b-hpc"}),
+)
+
+PROVIDERS = {c.name: c for c in (GROQ, OPENROUTER, FIIT)}
 
 
 @dataclass(frozen=True)
@@ -99,13 +122,13 @@ class OpenAICompatProvider:
         config: ProviderConfig,
         api_key: str,
         *,
-        timeout: float = 120.0,
+        timeout: float | None = None,
         transport: httpx2.BaseTransport | None = None,
     ) -> None:
         self.config = config
         self._http = httpx2.Client(
             base_url=config.base_url,
-            timeout=timeout,
+            timeout=config.timeout if timeout is None else timeout,
             transport=transport,
             headers={"Authorization": f"Bearer {api_key}", **config.headers},
         )
@@ -118,6 +141,13 @@ class OpenAICompatProvider:
         return cls(config, api_key)
 
     def complete(self, request: ChatRequest) -> Completion:
+        allowed = self.config.allowed_models
+        if allowed is not None and request.model not in allowed:
+            # not served to us: the extractor stops instead of failing chunk by chunk
+            raise ModelUnavailable(
+                f"{self.config.name}: model {request.model!r} is not allowed here; allowed: "
+                f"{', '.join(sorted(allowed))} (paid models share the team's budget, SPEC §8)"
+            )
         body = self._send("POST", "/chat/completions", json=chat_payload(request))
         return parse_completion(body, request.model)
 
@@ -177,6 +207,8 @@ def chat_payload(request: ChatRequest) -> dict[str, Any]:
         payload["max_tokens"] = request.max_tokens
     if request.reasoning_effort is not None:
         payload["reasoning_effort"] = request.reasoning_effort
+    if request.thinking is not None:
+        payload["chat_template_kwargs"] = {"enable_thinking": request.thinking}
     if request.response_schema is not None:
         # best effort, not strict: strict needs every property required, and the answer's aren't
         payload["response_format"] = {

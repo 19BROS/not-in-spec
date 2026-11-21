@@ -1,5 +1,6 @@
 """extract_claims on recorded real Groq answers (conftest.py), plus provider failures."""
 
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
@@ -9,6 +10,7 @@ import pytest
 from notinspec.chunking import Chunk
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
+    GROQ_EXTRACTORS,
     PROMPT_VERSION,
     ExtractorSpec,
     MemoryCallLog,
@@ -30,7 +32,8 @@ from notinspec.runner import (
 FIXTURES = Path(__file__).parent / "fixtures"
 GUIDE_RECORDING = FIXTURES / "groq-fixturelib-guide.json"
 URLLIB3_RECORDING = FIXTURES / "groq-urllib3-demo.json"
-QWEN, GPT_OSS = DEFAULT_EXTRACTORS
+FIIT_RECORDING = FIXTURES / "fiit-urllib3-demo.json"
+QWEN, GPT_OSS = GROQ_EXTRACTORS  # the recordings are from Groq
 # gpt-oss-20b as first recorded, without a completion limit
 GPT_OSS_UNLIMITED = ExtractorSpec("openai/gpt-oss-20b", "openai/gpt-oss-20b")
 
@@ -83,10 +86,28 @@ def test_recorded_urllib3_demo_chunks(
     fake = FakeProvider.load(URLLIB3_RECORDING)
     results = [
         extract_claims(urllib3_chunks, s, _client(fake), "r", MemoryCallLog())
-        for s in DEFAULT_EXTRACTORS
+        for s in GROQ_EXTRACTORS
     ]
     assert not any(r.failures for r in results)
     golden("urllib3-demo-claims", [c for r in results for c in r.claims])
+
+
+def test_recorded_fiit_default_extractors(fiit_chunks: list[Chunk]) -> None:
+    """The default extractors on the FIIT proxy: thinking off, and `Retry` answered whole."""
+    fake = FakeProvider.load(FIIT_RECORDING)
+    results = [
+        extract_claims(fiit_chunks, s, _client(fake), "r", MemoryCallLog())
+        for s in DEFAULT_EXTRACTORS
+    ]
+    assert [r.extractor.model for r in results] == ["qwen3.8-flash-next", "gemma4-26b-a4b-hpc"]
+    assert not any(r.failures or r.problems for r in results)
+    retry = fiit_chunks[-1]
+    assert retry.breadcrumb == "urllib3 > Utilities > Retry"
+    per_chunk = [Counter(c.chunk_id for c in r.claims) for r in results]
+    assert [c[retry.id] for c in per_chunk] == [62, 57]  # Groq's qwen stopped at 2048 tokens
+    assert [sum(c.values()) for c in per_chunk] == [80, 73]
+    # the Retry answer names parameters past `other`, where Groq's qwen answer was cut off
+    assert any("retry_after_max" in c.text for c in results[0].claims)
 
 
 def test_reuse_asks_nothing(guide_chunks: list[Chunk]) -> None:

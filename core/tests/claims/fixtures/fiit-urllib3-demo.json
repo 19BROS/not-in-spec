@@ -1,0 +1,794 @@
+[
+  {
+    "model": "qwen3.8-flash-next",
+    "prompt_hash": "76deef47bb00d3a1367bc0707d1cc37f81c30f40f6e350ae14bed6a8baeb6427",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Retry > sleep()\n\n<section>\n### sleep()\n\n`sleep(response=None)`\n\nSleep between retry attempts.\n\nThis method will respect a server’s `Retry-After` response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.\n\n**Parameters:**\n\n- `response` (BaseHTTPResponse | None)\n\nReturn type: `None`\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "qwen3.8-flash-next",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"The sleep() method of urllib3's Retry utility sleeps between retry attempts.\",\n      \"citation\": \"Sleep between retry attempts.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"The sleep() method of urllib3's Retry utility respects a server’s Retry-After response header.\",\n      \"citation\": \"This method will respect a server’s `Retry-After` response header\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"When a Retry-After header is present, the sleep() method of urllib3's Retry utility sleeps for the duration requested by the header.\",\n      \"citation\": \"sleep the duration of the time requested\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"If a Retry-After header is not present, the sleep() method of urllib3's Retry utility uses an exponential backoff.\",\n      \"citation\": \"If that is not present, it will use an exponential backoff\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"The default backoff factor for the sleep() method of urllib3's Retry utility is 0.\",\n      \"citation\": \"By default, the backoff factor is 0\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"When the backoff factor is 0, the sleep() method of urllib3's Retry utility returns immediately.\",\n      \"citation\": \"this method will return immediately\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "provider_specific_fields": {
+              "reasoning": null
+            },
+            "refusal": null,
+            "role": "assistant"
+          },
+          "provider_specific_fields": {
+            "routed_experts": null,
+            "stop_reason": null,
+            "token_ids": null
+          },
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ],
+      "created": 1795272808,
+      "id": "chatcmpl-bdd2901408dbc967",
+      "model": "qwen3.8-flash-next",
+      "object": "chat.completion",
+      "system_fingerprint": "vllm-0.1.1.dev50+geed1f3d0c-tp4-ep-e71c4643",
+      "usage": {
+        "completion_tokens": 413,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 890,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        },
+        "total_tokens": 1303
+      }
+    }
+  },
+  {
+    "model": "qwen3.8-flash-next",
+    "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Timeout > read_timeout\n\n<section>\n### read_timeout\n\n`property read_timeout: float | None`\n\nGet the value for the read timeout.\n\nThis assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\n\nIf self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a `TimeoutStateError` will be raised.\n\n**Returns:**\n\n- Value to use for the read timeout.\n\nReturn type: `int, float or None`\n\n**Raises:**\n\n- `urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "qwen3.8-flash-next",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"The read_timeout property of urllib3's Timeout class returns the value for the read timeout.\",\n      \"citation\": \"Get the value for the read timeout.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"The read_timeout property assumes some time has elapsed in the connection timeout.\",\n      \"citation\": \"This assumes some time has elapsed in the connection timeout\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"The read_timeout property computes the read timeout appropriately.\",\n      \"citation\": \"computes the read timeout appropriately\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\n      \"citation\": \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"If the connection time has not been established, a TimeoutStateError will be raised.\",\n      \"citation\": \"If the connection time has not been established, a `TimeoutStateError` will be raised.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"The read_timeout property raises urllib3.exceptions.TimeoutStateError if start_connect() has not yet been called on the object.\",\n      \"citation\": \"`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "provider_specific_fields": {
+              "reasoning": null
+            },
+            "refusal": null,
+            "role": "assistant"
+          },
+          "provider_specific_fields": {
+            "routed_experts": null,
+            "stop_reason": null,
+            "token_ids": null
+          },
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ],
+      "created": 1795272814,
+      "id": "chatcmpl-80d5ff0062ba8c48",
+      "model": "qwen3.8-flash-next",
+      "object": "chat.completion",
+      "system_fingerprint": "vllm-0.1.1.dev50+geed1f3d0c-tp4-ep-e71c4643",
+      "usage": {
+        "completion_tokens": 418,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 934,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        },
+        "total_tokens": 1352
+      }
+    }
+  },
+  {
+    "model": "qwen3.8-flash-next",
+    "prompt_hash": "c13d8af0ed9cdadf42b471c3ac75ff01662f05b073f038a6f948cd72673f3842",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > User Guide > Using Timeouts\n\n<section>\n## Using Timeouts\n\nTimeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a `float` to `request()`:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=4.0\n)\n\nprint(type(resp))\n# <class \"urllib3.response.HTTPResponse\">\n\n# This request will take more time to process than timeout.\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=2.5\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nFor more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0)\n)\n\nprint(type(resp))\n# <urllib3.response.HTTPResponse>\n\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nIf you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(timeout=3.0)\n\nhttp = urllib3.PoolManager(\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n```\n\nYou still override this pool-level timeout by specifying `timeout` to `request()`.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "qwen3.8-flash-next",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"Timeouts in urllib3 control how long requests are allowed to run before being aborted.\",\n      \"citation\": \"Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"Timeouts in urllib3 are specified in seconds.\",\n      \"citation\": \"how long (in seconds) requests are allowed to run\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"In simple cases, a timeout can be specified as a float to the request() function.\",\n      \"citation\": \"In simple cases, you can specify a timeout as a `float` to `request()`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"A Timeout instance allows specifying separate connect and read timeouts.\",\n      \"citation\": \"a `Timeout` instance which lets you specify separate connect and read timeouts\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"A timeout can be specified at the PoolManager level to apply to all requests.\",\n      \"citation\": \"If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"A pool-level timeout can be overridden by specifying a timeout to the request() function.\",\n      \"citation\": \"You still override this pool-level timeout by specifying `timeout` to `request()`\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "provider_specific_fields": {
+              "reasoning": null
+            },
+            "refusal": null,
+            "role": "assistant"
+          },
+          "provider_specific_fields": {
+            "routed_experts": null,
+            "stop_reason": null,
+            "token_ids": null
+          },
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ],
+      "created": 1795272817,
+      "id": "chatcmpl-9fb6f03c4b734378",
+      "model": "qwen3.8-flash-next",
+      "object": "chat.completion",
+      "system_fingerprint": "vllm-0.1.1.dev50+geed1f3d0c-tp4-ep-e71c4643",
+      "usage": {
+        "completion_tokens": 422,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 1200,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        },
+        "total_tokens": 1622
+      }
+    }
+  },
+  {
+    "model": "qwen3.8-flash-next",
+    "prompt_hash": "766369df0390048d05f4902f69fc5d60dad5eb208c3f96be75bbad507149f358",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Retry\n\n<section>\n## Retry\n\n`class urllib3.util.Retry(total=10, connect=None, read=None, redirect=None, status=None, other=None, allowed_methods=frozenset({'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE'}), status_forcelist=None, backoff_factor=0, backoff_max=120, raise_on_redirect=True, raise_on_status=True, history=None, respect_retry_after_header=True, remove_headers_on_redirect=frozenset({'Authorization', 'Cookie', 'Proxy-Authorization'}), backoff_jitter=0.0, retry_after_max=21600)`\n\nBases: `object`\n\nRetry configuration.\n\nEach retry attempt will create a new Retry object with updated values, so they can be safely reused.\n\nRetries can be defined as a default for a pool:\n\n```python\nretries = Retry(connect=5, read=2, redirect=5)\nhttp = PoolManager(retries=retries)\nresponse = http.request(\"GET\", \"https://example.com/\")\n```\n\nOr per-request (which overrides the default for the pool):\n\n```python\nresponse = http.request(\"GET\", \"https://example.com/\", retries=Retry(10))\n```\n\nRetries can be disabled by passing `False`:\n\n```python\nresponse = http.request(\"GET\", \"https://example.com/\", retries=False)\n```\n\nErrors will be wrapped in `MaxRetryError` unless retries are disabled, in which case the causing exception will be raised.\n\n**Parameters:**\n\n- `total` (int) – Total number of retries to allow. Takes precedence over other counts.\n\n  Set to `None` to remove this constraint and fall back on other counts.\n\n  Set to `0` to fail on the first retry.\n\n  Set to `False` to disable and imply `raise_on_redirect=False`.\n\n- `connect` (int) – How many connection-related errors to retry on.\n\n  These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `read` (int) – How many times to retry on read errors.\n\n  These errors are raised after the request was sent to the server, so the request may have side-effects.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `redirect` (int) – How many redirects to perform. Limit this to avoid infinite redirect loops.\n\n  A redirect is a HTTP response with a status code 301, 302, 303, 307 or 308.\n\n  Set to `0` to fail on the first retry of this type.\n\n  Set to `False` to disable and imply `raise_on_redirect=False`.\n\n- `status` (int) – How many times to retry on bad status codes.\n\n  These are retries made on responses, where status code matches `status_forcelist`.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `other` (int) – How many times to retry on other errors.\n\n  Other errors are errors that are not connect, read, redirect or status errors. These errors might be raised after the request was sent to the server, so the request might have side-effects.\n\n  Set to `0` to fail on the first retry of this type.\n\n  If `total` is not set, it’s a good idea to set this to 0 to account for unexpected edge cases and avoid infinite retry loops.\n\n- `allowed_methods` (Collection) – Set of uppercased HTTP method verbs that we should retry on.\n\n  By default, we only retry on methods which are considered to be idempotent (multiple requests with the same parameters end with the same state). See `Retry.DEFAULT_ALLOWED_METHODS`.\n\n  Set to a `None` value to retry on any verb.\n\n- `status_forcelist` (Collection) – A set of integer HTTP status codes that we should force a retry on. A retry is initiated if the request method is in `allowed_methods` and the response status code is in `status_forcelist`.\n\n  By default, this is disabled with `None`.\n\n- `backoff_factor` (float) – A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). urllib3 will sleep for:\n\n  ```default\n  {backoff factor} * (2 ** ({number of previous retries}))\n  ```\n\n  seconds. If backoff_jitter is non-zero, this sleep is extended by:\n\n  ```default\n  random.uniform(0, {backoff jitter})\n  ```\n\n  seconds. For example, if the backoff_factor is 0.1, then `Retry.sleep()` will sleep for [0.0s, 0.2s, 0.4s, 0.8s, …] between retries. No backoff will ever be longer than backoff_max.\n\n  By default, backoff is disabled (factor set to 0).\n\n- `backoff_max` (float) – The maximum backoff time (in seconds) between retry attempts. This value caps the computed backoff from backoff_factor.\n\n- `backoff_jitter` (float) – Random jitter amount (in seconds) added to the computed backoff. Jitter is sampled uniformly from 0 to backoff_jitter.\n\n- `raise_on_redirect` (bool) – Whether, if the number of redirects is exhausted, to raise a MaxRetryError, or to return a response with a response code in the 3xx range.\n\n- `raise_on_status` (bool) – Similar meaning to `raise_on_redirect`: whether we should raise an exception, or return a response, if status falls in `status_forcelist` range and retries have been exhausted.\n\n- `history` (tuple) – The history of the request encountered during each call to `increment()`. The list is in the order the requests occurred. Each list item is of class `RequestHistory`.\n\n- `respect_retry_after_header` (bool) – Whether to respect Retry-After header on status codes defined as `Retry.RETRY_AFTER_STATUS_CODES` or not.\n\n- `remove_headers_on_redirect` (Collection) – Sequence of headers to remove from the request when a response indicating a redirect is returned before firing off the redirected request.\n\n- `retry_after_max` (int) – Number of seconds to allow as the maximum for Retry-After headers. Defaults to `Retry.DEFAULT_RETRY_AFTER_MAX`. Any Retry-After headers larger than this value will be limited to this value.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "qwen3.8-flash-next",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"urllib3.util.Retry is a class that serves as a retry configuration.\",\n      \"citation\": \"Retry configuration.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"Each retry attempt creates a new urllib3.util.Retry object with updated values.\",\n      \"citation\": \"Each retry attempt will create a new Retry object with updated values\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"urllib3.util.Retry objects can be safely reused.\",\n      \"citation\": \"so they can be safely reused\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"Retries can be defined as a default for a pool in urllib3.\",\n      \"citation\": \"Retries can be defined as a default for a pool\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"Per-request retries in urllib3 override the default retries for the pool.\",\n      \"citation\": \"Or per-request (which overrides the default for the pool)\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"Retries in urllib3 can be disabled by passing False.\",\n      \"citation\": \"Retries can be disabled by passing `False`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c7\",\n      \"claim\": \"In urllib3, errors are wrapped in MaxRetryError unless retries are disabled.\",\n      \"citation\": \"Errors will be wrapped in `MaxRetryError` unless retries are disabled\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c8\",\n      \"claim\": \"In urllib3, if retries are disabled, the causing exception is raised instead of MaxRetryError.\",\n      \"citation\": \"in which case the causing exception will be raised\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c9\",\n      \"claim\": \"The total parameter of urllib3.util.Retry specifies the total number of retries to allow.\",\n      \"citation\": \"`total` (int) – Total number of retries to allow\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c10\",\n      \"claim\": \"The total parameter of urllib3.util.Retry takes precedence over other counts.\",\n      \"citation\": \"Takes precedence over other counts\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c11\",\n      \"claim\": \"Setting the total parameter of urllib3.util.Retry to None removes the total retry constraint and falls back on other counts.\",\n      \"citation\": \"Set to `None` to remove this constraint and fall back on other counts\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c12\",\n      \"claim\": \"Setting the total parameter of urllib3.util.Retry to 0 causes failure on the first retry.\",\n      \"citation\": \"Set to `0` to fail on the first retry\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c13\",\n      \"claim\": \"Setting the total parameter of urllib3.util.Retry to False disables retries and implies raise_on_redirect=False.\",\n      \"citation\": \"Set to `False` to disable and imply `raise_on_redirect=False`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c14\",\n      \"claim\": \"The connect parameter of urllib3.util.Retry specifies how many connection-related errors to retry on.\",\n      \"citation\": \"`connect` (int) – How many connection-related errors to retry on\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c15\",\n      \"claim\": \"Connection-related errors in urllib3 are raised before the request is sent to the remote server.\",\n      \"citation\": \"These are errors raised before the request is sent to the remote server\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c16\",\n      \"claim\": \"urllib3 assumes that connection-related errors have not triggered the server to process the request.\",\n      \"citation\": \"which we assume has not triggered the server to process the request\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c17\",\n      \"claim\": \"Setting the connect parameter of urllib3.util.Retry to 0 causes failure on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c18\",\n      \"claim\": \"The read parameter of urllib3.util.Retry specifies how many times to retry on read errors.\",\n      \"citation\": \"`read` (int) – How many times to retry on read errors\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c19\",\n      \"claim\": \"Read errors in urllib3 are raised after the request was sent to the server.\",\n      \"citation\": \"These errors are raised after the request was sent to the server\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c20\",\n      \"claim\": \"Read errors in urllib3 may have side-effects because the request was sent to the server.\",\n      \"citation\": \"so the request may have side-effects\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c21\",\n      \"claim\": \"Setting the read parameter of urllib3.util.Retry to 0 causes failure on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c22\",\n      \"claim\": \"The redirect parameter of urllib3.util.Retry specifies how many redirects to perform.\",\n      \"citation\": \"`redirect` (int) – How many redirects to perform\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c23\",\n      \"claim\": \"The redirect parameter of urllib3.util.Retry should be limited to avoid infinite redirect loops.\",\n      \"citation\": \"Limit this to avoid infinite redirect loops\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c24\",\n      \"claim\": \"In urllib3, a redirect is a HTTP response with a status code 301, 302, 303, 307 or 308.\",\n      \"citation\": \"A redirect is a HTTP response with a status code 301, 302, 303, 307 or 308\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c25\",\n      \"claim\": \"Setting the redirect parameter of urllib3.util.Retry to 0 causes failure on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c26\",\n      \"claim\": \"Setting the redirect parameter of urllib3.util.Retry to False disables redirects and implies raise_on_redirect=False.\",\n      \"citation\": \"Set to `False` to disable and imply `raise_on_redirect=False`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c27\",\n      \"claim\": \"The status parameter of urllib3.util.Retry specifies how many times to retry on bad status codes.\",\n      \"citation\": \"`status` (int) – How many times to retry on bad status codes\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c28\",\n      \"claim\": \"Status retries in urllib3 are made on responses where the status code matches status_forcelist.\",\n      \"citation\": \"These are retries made on responses, where status code matches `status_forcelist`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c29\",\n      \"claim\": \"Setting the status parameter of urllib3.util.Retry to 0 causes failure on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c30\",\n      \"claim\": \"The other parameter of urllib3.util.Retry specifies how many times to retry on other errors.\",\n      \"citation\": \"`other` (int) – How many times to retry on other errors\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c31\",\n      \"claim\": \"Other errors in urllib3 are errors that are not connect, read, redirect or status errors.\",\n      \"citation\": \"Other errors are errors that are not connect, read, redirect or status errors\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c32\",\n      \"claim\": \"Other errors in urllib3 might be raised after the request was sent to the server.\",\n      \"citation\": \"These errors might be raised after the request was sent to the server\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c33\",\n      \"claim\": \"Other errors in urllib3 might have side-effects because the request might have been sent to the server.\",\n      \"citation\": \"so the request might have side-effects\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c34\",\n      \"claim\": \"Setting the other parameter of urllib3.util.Retry to 0 causes failure on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c35\",\n      \"claim\": \"If the total parameter of urllib3.util.Retry is not set, it is a good idea to set the other parameter to 0 to account for unexpected edge cases and avoid infinite retry loops.\",\n      \"citation\": \"If `total` is not set, it’s a good idea to set this to 0 to account for unexpected edge cases and avoid infinite retry loops\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c36\",\n      \"claim\": \"The allowed_methods parameter of urllib3.util.Retry is a set of uppercased HTTP method verbs that urllib3 should retry on.\",\n      \"citation\": \"`allowed_methods` (Collection) – Set of uppercased HTTP method verbs that we should retry on\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c37\",\n      \"claim\": \"By default, urllib3 only retries on methods which are considered to be idempotent.\",\n      \"citation\": \"By default, we only retry on methods which are considered to be idempotent\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c38\",\n      \"claim\": \"Idempotent methods in urllib3 are those where multiple requests with the same parameters end with the same state.\",\n      \"citation\": \"multiple requests with the same parameters end with the same state\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c39\",\n      \"claim\": \"Setting the allowed_methods parameter of urllib3.util.Retry to None causes urllib3 to retry on any verb.\",\n      \"citation\": \"Set to a `None` value to retry on any verb\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c40\",\n      \"claim\": \"The status_forcelist parameter of urllib3.util.Retry is a set of integer HTTP status codes that urllib3 should force a retry on.\",\n      \"citation\": \"`status_forcelist` (Collection) – A set of integer HTTP status codes that we should force a retry on\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c41\",\n      \"claim\": \"In urllib3, a retry is initiated if the request method is in allowed_methods and the response status code is in status_forcelist.\",\n      \"citation\": \"A retry is initiated if the request method is in `allowed_methods` and the response status code is in `status_forcelist`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c42\",\n      \"claim\": \"By default, the status_forcelist parameter of urllib3.util.Retry is disabled with None.\",\n      \"citation\": \"By default, this is disabled with `None`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c43\",\n      \"claim\": \"The backoff_factor parameter of urllib3.util.Retry is a backoff factor to apply between attempts after the second try.\",\n      \"citation\": \"`backoff_factor` (float) – A backoff factor to apply between attempts after the second try\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c44\",\n      \"claim\": \"In urllib3, most errors are resolved immediately by a second try without a delay.\",\n      \"citation\": \"most errors are resolved immediately by a second try without a delay\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c45\",\n      \"claim\": \"urllib3 sleeps for {backoff factor} * (2 ** ({number of previous retries})) seconds between retries.\",\n      \"citation\": \"urllib3 will sleep for:\\n\\n  ```default\\n  {backoff factor} * (2 ** ({number of previous retries}))\\n  ```\\n\\n  seconds\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c46\",\n      \"claim\": \"If backoff_jitter is non-zero in urllib3, the sleep is extended by random.uniform(0, {backoff jitter}) seconds.\",\n      \"citation\": \"If backoff_jitter is non-zero, this sleep is extended by:\\n\\n  ```default\\n  random.uniform(0, {backoff jitter})\\n  ```\\n\\n  seconds\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c47\",\n      \"claim\": \"In urllib3, no backoff will ever be longer than backoff_max.\",\n      \"citation\": \"No backoff will ever be longer than backoff_max\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c48\",\n      \"claim\": \"By default, backoff is disabled in urllib3 (factor set to 0).\",\n      \"citation\": \"By default, backoff is disabled (factor set to 0)\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c49\",\n      \"claim\": \"The backoff_max parameter of urllib3.util.Retry is the maximum backoff time (in seconds) between retry attempts.\",\n      \"citation\": \"`backoff_max` (float) – The maximum backoff time (in seconds) between retry attempts\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c50\",\n      \"claim\": \"The backoff_max parameter of urllib3.util.Retry caps the computed backoff from backoff_factor.\",\n      \"citation\": \"This value caps the computed backoff from backoff_factor\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c51\",\n      \"claim\": \"The backoff_jitter parameter of urllib3.util.Retry is a random jitter amount (in seconds) added to the computed backoff.\",\n      \"citation\": \"`backoff_jitter` (float) – Random jitter amount (in seconds) added to the computed backoff\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c52\",\n      \"claim\": \"In urllib3, jitter is sampled uniformly from 0 to backoff_jitter.\",\n      \"citation\": \"Jitter is sampled uniformly from 0 to backoff_jitter\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c53\",\n      \"claim\": \"The raise_on_redirect parameter of urllib3.util.Retry determines whether to raise a MaxRetryError or return a response with a 3xx status code if the number of redirects is exhausted.\",\n      \"citation\": \"`raise_on_redirect` (bool) – Whether, if the number of redirects is exhausted, to raise a MaxRetryError, or to return a response with a response code in the 3xx range\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c54\",\n      \"claim\": \"The raise_on_status parameter of urllib3.util.Retry determines whether to raise an exception or return a response if status falls in status_forcelist range and retries have been exhausted.\",\n      \"citation\": \"`raise_on_status` (bool) – Similar meaning to `raise_on_redirect`: whether we should raise an exception, or return a response, if status falls in `status_forcelist` range and retries have been exhausted\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c55\",\n      \"claim\": \"The history parameter of urllib3.util.Retry is the history of the request encountered during each call to increment().\",\n      \"citation\": \"`history` (tuple) – The history of the request encountered during each call to `increment()`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c56\",\n      \"claim\": \"The history list in urllib3.util.Retry is in the order the requests occurred.\",\n      \"citation\": \"The list is in the order the requests occurred\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c57\",\n      \"claim\": \"Each list item in the history parameter of urllib3.util.Retry is of class RequestHistory.\",\n      \"citation\": \"Each list item is of class `RequestHistory`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c58\",\n      \"claim\": \"The respect_retry_after_header parameter of urllib3.util.Retry determines whether to respect Retry-After header on status codes defined as Retry.RETRY_AFTER_STATUS_CODES.\",\n      \"citation\": \"`respect_retry_after_header` (bool) – Whether to respect Retry-After header on status codes defined as `Retry.RETRY_AFTER_STATUS_CODES` or not\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c59\",\n      \"claim\": \"The remove_headers_on_redirect parameter of urllib3.util.Retry is a sequence of headers to remove from the request when a response indicating a redirect is returned before firing off the redirected request.\",\n      \"citation\": \"`remove_headers_on_redirect` (Collection) – Sequence of headers to remove from the request when a response indicating a redirect is returned before firing off the redirected request\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c60\",\n      \"claim\": \"The retry_after_max parameter of urllib3.util.Retry is the number of seconds to allow as the maximum for Retry-After headers.\",\n      \"citation\": \"`retry_after_max` (int) – Number of seconds to allow as the maximum for Retry-After headers\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c61\",\n      \"claim\": \"The retry_after_max parameter of urllib3.util.Retry defaults to Retry.DEFAULT_RETRY_AFTER_MAX.\",\n      \"citation\": \"Defaults to `Retry.DEFAULT_RETRY_AFTER_MAX`\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c62\",\n      \"claim\": \"In urllib3, any Retry-After headers larger than retry_after_max will be limited to this value.\",\n      \"citation\": \"Any Retry-After headers larger than this value will be limited to this value\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "provider_specific_fields": {
+              "reasoning": null
+            },
+            "refusal": null,
+            "role": "assistant"
+          },
+          "provider_specific_fields": {
+            "routed_experts": null,
+            "stop_reason": null,
+            "token_ids": null
+          },
+          "stop_reason": null,
+          "token_ids": null
+        }
+      ],
+      "created": 1795272820,
+      "id": "chatcmpl-9df49134ae8fbbfd",
+      "model": "qwen3.8-flash-next",
+      "object": "chat.completion",
+      "system_fingerprint": "vllm-0.1.1.dev50+geed1f3d0c-tp4-ep-e71c4643",
+      "usage": {
+        "completion_tokens": 4643,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "prompt_tokens": 2233,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0
+        },
+        "total_tokens": 6876
+      }
+    }
+  },
+  {
+    "model": "gemma4-26b-a4b-hpc",
+    "prompt_hash": "6cb82dac43b6bb0e5dc195bf14c912b4b2b05978c94f24da5fd379800f68cf34",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Retry > sleep()\n\n<section>\n### sleep()\n\n`sleep(response=None)`\n\nSleep between retry attempts.\n\nThis method will respect a server’s `Retry-After` response header and sleep the duration of the time requested. If that is not present, it will use an exponential backoff. By default, the backoff factor is 0 and this method will return immediately.\n\n**Parameters:**\n\n- `response` (BaseHTTPResponse | None)\n\nReturn type: `None`\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "gemma4-26b-a4b-hpc",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The sleep() method sleeps between retry attempts.\", \"citation\": \"Sleep between retry attempts.\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The sleep() method respects a server's `Retry-After` response header and sleeps the duration of the time requested.\", \"citation\": \"This method will respect a server’s `Retry-After` response header and sleep the duration of the time requested.\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"If the `Retry-After` response header is not present, the sleep() method uses an exponential backoff.\", \"citation\": \"If that is not present, it will use an exponential backoff.\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"By default, the backoff factor for the sleep() method is 0.\", \"citation\": \"By default, the backoff factor is 0\", \"type\": \"fact\"},\n  {\"id\": \"c5\", \"claim\": \"By default, the sleep() method returns immediately.\", \"citation\": \"and this method will return immediately.\", \"type\": \"fact\"}\n]}",
+            "role": "assistant"
+          },
+          "provider_specific_fields": {}
+        }
+      ],
+      "created": 1795272991,
+      "id": "chatcmpl-D5d6LAKqrxocpEiZKAZueSrNykJWh0N5",
+      "model": "gemma4-26b-a4b-hpc",
+      "object": "chat.completion",
+      "system_fingerprint": "b10582-e85caa81e",
+      "timings": {
+        "cache_n": 1,
+        "draft_n": 222,
+        "draft_n_accepted": 199,
+        "predicted_ms": 12317.268,
+        "predicted_n": 271,
+        "predicted_per_second": 21.92044534551006,
+        "predicted_per_token_ms": 45.61951111111111,
+        "prompt_ms": 1688.648,
+        "prompt_n": 902,
+        "prompt_per_second": 534.1551347586945,
+        "prompt_per_token_ms": 1.8721152993348114
+      },
+      "usage": {
+        "completion_tokens": 271,
+        "prompt_tokens": 903,
+        "prompt_tokens_details": {
+          "cached_tokens": 1
+        },
+        "total_tokens": 1174
+      }
+    }
+  },
+  {
+    "model": "gemma4-26b-a4b-hpc",
+    "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Timeout > read_timeout\n\n<section>\n### read_timeout\n\n`property read_timeout: float | None`\n\nGet the value for the read timeout.\n\nThis assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\n\nIf self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a `TimeoutStateError` will be raised.\n\n**Returns:**\n\n- Value to use for the read timeout.\n\nReturn type: `int, float or None`\n\n**Raises:**\n\n- `urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "gemma4-26b-a4b-hpc",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"The read_timeout property gets the value for the read timeout.\",\n      \"citation\": \"Get the value for the read timeout.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"The read_timeout property assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\",\n      \"citation\": \"This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\n      \"citation\": \"If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"If the connection time has not been established, a `TimeoutStateError` will be raised.\",\n      \"citation\": \"If the connection time has not been established, a `TimeoutStateError` will be raised.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"The read_timeout property returns the value to use for the read timeout.\",\n      \"citation\": \"Value to use for the read timeout.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"The read_timeout property raises `urllib3.exceptions.TimeoutStateError` if `start_connect()` has not yet been called on the object.\",\n      \"citation\": \"`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "role": "assistant"
+          },
+          "provider_specific_fields": {}
+        }
+      ],
+      "created": 1795273033,
+      "id": "chatcmpl-bpn6UwRZPsGPvSpPNm71vxLmX7wcaiJv",
+      "model": "gemma4-26b-a4b-hpc",
+      "object": "chat.completion",
+      "system_fingerprint": "b10582-e85caa81e",
+      "timings": {
+        "cache_n": 1,
+        "draft_n": 354,
+        "draft_n_accepted": 334,
+        "predicted_ms": 21501.175,
+        "predicted_n": 452,
+        "predicted_per_second": 20.975597845234038,
+        "predicted_per_token_ms": 47.67444567627494,
+        "prompt_ms": 1693.69,
+        "prompt_n": 950,
+        "prompt_per_second": 560.9054785704586,
+        "prompt_per_token_ms": 1.7828315789473685
+      },
+      "usage": {
+        "completion_tokens": 452,
+        "prompt_tokens": 951,
+        "prompt_tokens_details": {
+          "cached_tokens": 1
+        },
+        "total_tokens": 1403
+      }
+    }
+  },
+  {
+    "model": "gemma4-26b-a4b-hpc",
+    "prompt_hash": "730386d38f94bb1cddc789caa97a05e89eff266d19cd090bbdf972f14d8e0c22",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > User Guide > Using Timeouts\n\n<section>\n## Using Timeouts\n\nTimeouts allow you to control how long (in seconds) requests are allowed to run before being aborted. In simple cases, you can specify a timeout as a `float` to `request()`:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=4.0\n)\n\nprint(type(resp))\n# <class \"urllib3.response.HTTPResponse\">\n\n# This request will take more time to process than timeout.\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=2.5\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nFor more granular control you can use a `Timeout` instance which lets you specify separate connect and read timeouts:\n\n```python\nimport urllib3\n\nresp = urllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0)\n)\n\nprint(type(resp))\n# <urllib3.response.HTTPResponse>\n\nurllib3.request(\n    \"GET\",\n    \"https://httpbin.org/delay/3\",\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n# MaxRetryError caused by ReadTimeoutError\n```\n\nIf you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level:\n\n```python\nimport urllib3\n\nhttp = urllib3.PoolManager(timeout=3.0)\n\nhttp = urllib3.PoolManager(\n    timeout=urllib3.Timeout(connect=1.0, read=2.0)\n)\n```\n\nYou still override this pool-level timeout by specifying `timeout` to `request()`.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "gemma4-26b-a4b-hpc",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.\", \"citation\": \"Timeouts allow you to control how long (in seconds) requests are allowed to run before being aborted.\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"In simple cases, you can specify a timeout as a `float` to `request()`.\", \"citation\": \"In simple cases, you can specify a timeout as a `float` to `request()`\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"A `Timeout` instance allows you to specify separate connect and read timeouts.\", \"citation\": \"you can use a `Timeout` instance which lets you specify separate connect and read timeouts\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"You can specify the timeout at the `PoolManager` level so that all requests are subject to the same timeout.\", \"citation\": \"If you want all requests to be subject to the same timeout, you can specify the timeout at the `PoolManager` level\", \"type\": \"fact\"},\n  {\"id\": \"c5\", \"claim\": \"Specifying a `timeout` to `request()` overrides the pool-level timeout.\", \"citation\": \"You still override this pool-level timeout by specifying `timeout` to `request()`\", \"type\": \"fact\"}\n]}",
+            "role": "assistant"
+          },
+          "provider_specific_fields": {}
+        }
+      ],
+      "created": 1795273075,
+      "id": "chatcmpl-O6MD4iskljh9CMmfqq8wJrmZbvLQ3AWd",
+      "model": "gemma4-26b-a4b-hpc",
+      "object": "chat.completion",
+      "system_fingerprint": "b10582-e85caa81e",
+      "timings": {
+        "cache_n": 1,
+        "draft_n": 258,
+        "draft_n_accepted": 237,
+        "predicted_ms": 10760.976,
+        "predicted_n": 324,
+        "predicted_per_second": 30.015864731972265,
+        "predicted_per_token_ms": 33.31571517027864,
+        "prompt_ms": 2251.424,
+        "prompt_n": 1234,
+        "prompt_per_second": 548.0975595889536,
+        "prompt_per_token_ms": 1.8244927066450567
+      },
+      "usage": {
+        "completion_tokens": 324,
+        "prompt_tokens": 1235,
+        "prompt_tokens_details": {
+          "cached_tokens": 1
+        },
+        "total_tokens": 1559
+      }
+    }
+  },
+  {
+    "model": "gemma4-26b-a4b-hpc",
+    "prompt_hash": "53a655d13912a2bf39c70dd7ca7cd2766704bf0384691abc12afe73dd069beca",
+    "request": {
+      "max_tokens": 16384,
+      "messages": [
+        {
+          "content": "You are a claim extractor for a documentation-quality tool. You read one section of software documentation and list the atomic facts its prose states about the software.\n\n## Section\n\nProject: urllib3\nLocation in the docs: urllib3 > Utilities > Retry\n\n<section>\n## Retry\n\n`class urllib3.util.Retry(total=10, connect=None, read=None, redirect=None, status=None, other=None, allowed_methods=frozenset({'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE'}), status_forcelist=None, backoff_factor=0, backoff_max=120, raise_on_redirect=True, raise_on_status=True, history=None, respect_retry_after_header=True, remove_headers_on_redirect=frozenset({'Authorization', 'Cookie', 'Proxy-Authorization'}), backoff_jitter=0.0, retry_after_max=21600)`\n\nBases: `object`\n\nRetry configuration.\n\nEach retry attempt will create a new Retry object with updated values, so they can be safely reused.\n\nRetries can be defined as a default for a pool:\n\n```python\nretries = Retry(connect=5, read=2, redirect=5)\nhttp = PoolManager(retries=retries)\nresponse = http.request(\"GET\", \"https://example.com/\")\n```\n\nOr per-request (which overrides the default for the pool):\n\n```python\nresponse = http.request(\"GET\", \"https://example.com/\", retries=Retry(10))\n```\n\nRetries can be disabled by passing `False`:\n\n```python\nresponse = http.request(\"GET\", \"https://example.com/\", retries=False)\n```\n\nErrors will be wrapped in `MaxRetryError` unless retries are disabled, in which case the causing exception will be raised.\n\n**Parameters:**\n\n- `total` (int) – Total number of retries to allow. Takes precedence over other counts.\n\n  Set to `None` to remove this constraint and fall back on other counts.\n\n  Set to `0` to fail on the first retry.\n\n  Set to `False` to disable and imply `raise_on_redirect=False`.\n\n- `connect` (int) – How many connection-related errors to retry on.\n\n  These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `read` (int) – How many times to retry on read errors.\n\n  These errors are raised after the request was sent to the server, so the request may have side-effects.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `redirect` (int) – How many redirects to perform. Limit this to avoid infinite redirect loops.\n\n  A redirect is a HTTP response with a status code 301, 302, 303, 307 or 308.\n\n  Set to `0` to fail on the first retry of this type.\n\n  Set to `False` to disable and imply `raise_on_redirect=False`.\n\n- `status` (int) – How many times to retry on bad status codes.\n\n  These are retries made on responses, where status code matches `status_forcelist`.\n\n  Set to `0` to fail on the first retry of this type.\n\n- `other` (int) – How many times to retry on other errors.\n\n  Other errors are errors that are not connect, read, redirect or status errors. These errors might be raised after the request was sent to the server, so the request might have side-effects.\n\n  Set to `0` to fail on the first retry of this type.\n\n  If `total` is not set, it’s a good idea to set this to 0 to account for unexpected edge cases and avoid infinite retry loops.\n\n- `allowed_methods` (Collection) – Set of uppercased HTTP method verbs that we should retry on.\n\n  By default, we only retry on methods which are considered to be idempotent (multiple requests with the same parameters end with the same state). See `Retry.DEFAULT_ALLOWED_METHODS`.\n\n  Set to a `None` value to retry on any verb.\n\n- `status_forcelist` (Collection) – A set of integer HTTP status codes that we should force a retry on. A retry is initiated if the request method is in `allowed_methods` and the response status code is in `status_forcelist`.\n\n  By default, this is disabled with `None`.\n\n- `backoff_factor` (float) – A backoff factor to apply between attempts after the second try (most errors are resolved immediately by a second try without a delay). urllib3 will sleep for:\n\n  ```default\n  {backoff factor} * (2 ** ({number of previous retries}))\n  ```\n\n  seconds. If backoff_jitter is non-zero, this sleep is extended by:\n\n  ```default\n  random.uniform(0, {backoff jitter})\n  ```\n\n  seconds. For example, if the backoff_factor is 0.1, then `Retry.sleep()` will sleep for [0.0s, 0.2s, 0.4s, 0.8s, …] between retries. No backoff will ever be longer than backoff_max.\n\n  By default, backoff is disabled (factor set to 0).\n\n- `backoff_max` (float) – The maximum backoff time (in seconds) between retry attempts. This value caps the computed backoff from backoff_factor.\n\n- `backoff_jitter` (float) – Random jitter amount (in seconds) added to the computed backoff. Jitter is sampled uniformly from 0 to backoff_jitter.\n\n- `raise_on_redirect` (bool) – Whether, if the number of redirects is exhausted, to raise a MaxRetryError, or to return a response with a response code in the 3xx range.\n\n- `raise_on_status` (bool) – Similar meaning to `raise_on_redirect`: whether we should raise an exception, or return a response, if status falls in `status_forcelist` range and retries have been exhausted.\n\n- `history` (tuple) – The history of the request encountered during each call to `increment()`. The list is in the order the requests occurred. Each list item is of class `RequestHistory`.\n\n- `respect_retry_after_header` (bool) – Whether to respect Retry-After header on status codes defined as `Retry.RETRY_AFTER_STATUS_CODES` or not.\n\n- `remove_headers_on_redirect` (Collection) – Sequence of headers to remove from the request when a response indicating a redirect is returned before firing off the redirected request.\n\n- `retry_after_max` (int) – Number of seconds to allow as the maximum for Retry-After headers. Defaults to `Retry.DEFAULT_RETRY_AFTER_MAX`. Any Retry-After headers larger than this value will be limited to this value.\n</section>\n\n## What a claim is\n\nA claim is one atomic, self-contained statement of fact that the **prose** of the section makes about the software: behaviour, defaults, units, value ranges, allowed values, what a parameter or option does, when an error is raised, what changed between versions.\n\n## Rules\n\n1. **Atomic.** One fact per claim. \"retries 3 times and follows up to 3 redirects\" is two claims.\n2. **Self-contained.** A claim must be understandable without the section. Name the subject explicitly (library, class, function, parameter). No \"it\", \"this\", \"the class\", \"the parameter\". Use the location in the docs to resolve what the section is about.\n3. **Faithful.** State only what the prose says. Add nothing from your own knowledge of the software, do not generalise, and do not weaken or strengthen the statement. Keep qualifiers (\"can\", \"by default\", \"up to\", \"only\"), negations, numbers and units exactly.\n4. **Prose only.** Code blocks, signatures and tables are shown for context only. A fact that appears only in code, a code comment, a signature or a table is not a claim.\n5. **Citation.** For every claim, copy the shortest contiguous span of the section's prose that supports it, character for character: keep backticks, punctuation and spelling, fix nothing, no \"...\". It may be part of a sentence but must contain the evidence.\n6. **Type.** `change` if the claim says something was added, removed, renamed, replaced or deprecated in some version; otherwise `fact`.\n7. **Skip** navigation and lead-ins (\"see X\", \"for example:\", \"the following code\"), opinions and marketing. An instruction that implies a fact *is* a claim: \"To disable redirects, specify `redirect=False`\" → \"Passing redirect=False disables redirects.\"\n8. No duplicates.\n\n## Example (a different project)\n\nSection prose: \"`connect()` accepts an optional `timeout` parameter in seconds, default 30. Since 2.0, `retries` is replaced by the new `retry_policy`.\"\n\n```json\n{\"claims\": [\n  {\"id\": \"c1\", \"claim\": \"The timeout parameter of connect() is optional.\", \"citation\": \"`connect()` accepts an optional `timeout` parameter\", \"type\": \"fact\"},\n  {\"id\": \"c2\", \"claim\": \"The timeout parameter of connect() is given in seconds.\", \"citation\": \"`timeout` parameter in seconds\", \"type\": \"fact\"},\n  {\"id\": \"c3\", \"claim\": \"The default value of the timeout parameter of connect() is 30 seconds.\", \"citation\": \"in seconds, default 30\", \"type\": \"fact\"},\n  {\"id\": \"c4\", \"claim\": \"Since version 2.0, the retries parameter is replaced by the retry_policy parameter.\", \"citation\": \"Since 2.0, `retries` is replaced by the new `retry_policy`\", \"type\": \"change\"}\n]}\n```\n\n## Output\n\nReturn only one JSON object of this shape, with no text before or after it. If the prose states no facts, return {\"claims\": []}.\n\n{\"claims\": [{\"id\": \"c1\", \"claim\": \"...\", \"citation\": \"...\", \"type\": \"fact\"}]}\n",
+          "role": "user"
+        }
+      ],
+      "model": "gemma4-26b-a4b-hpc",
+      "reasoning_effort": null,
+      "response_schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "additionalProperties": false,
+        "properties": {
+          "claims": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "citation": {
+                  "type": "string"
+                },
+                "claim": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "fact",
+                    "change"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "claim",
+                "citation",
+                "type"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "claims"
+        ],
+        "title": "ExtractedClaims",
+        "type": "object"
+      },
+      "temperature": 0.0,
+      "thinking": false
+    },
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\n  \"claims\": [\n    {\n      \"id\": \"c1\",\n      \"claim\": \"The urllib3.util.Retry class is used for retry configuration.\",\n      \"citation\": \"Retry configuration.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c2\",\n      \"claim\": \"Each retry attempt creates a new Retry object with updated values.\",\n      \"citation\": \"Each retry attempt will create a new Retry object with updated values\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c3\",\n      \"claim\": \"Retry objects can be safely reused because each retry attempt creates a new Retry object with updated values.\",\n      \"citation\": \"Each retry attempt will create a new Retry object with updated values, so they can be safely reused.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c4\",\n      \"claim\": \"Retries can be defined as a default for a pool.\",\n      \"citation\": \"Retries can be defined as a default for a pool:\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c5\",\n      \"claim\": \"Retries can be defined per-request, which overrides the default for the pool.\",\n      \"citation\": \"Or per-request (which overrides the default for the pool):\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c6\",\n      \"claim\": \"Passing False to retries disables retries.\",\n      \"citation\": \"Retries can be disabled by passing `False`:\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c7\",\n      \"claim\": \"Errors will be wrapped in MaxRetryError unless retries are disabled.\",\n      \"citation\": \"Errors will be wrapped in `MaxRetryError` unless retries are disabled\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c8\",\n      \"claim\": \"If retries are disabled, the causing exception will be raised.\",\n      \"citation\": \"in which case the causing exception will be raised.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c9\",\n      \"claim\": \"The total parameter of Retry specifies the total number of retries to allow.\",\n      \"citation\": \"`total` (int) – Total number of retries to allow.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c10\",\n      \"claim\": \"The total parameter takes precedence over other counts.\",\n      \"citation\": \"Takes precedence over other counts.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c11\",\n      \"claim\": \"Setting the total parameter to None removes this constraint and falls back on other counts.\",\n      \"citation\": \"Set to `None` to remove this constraint and fall back on other counts.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c12\",\n      \"claim\": \"Setting the total parameter to 0 causes it to fail on the first retry.\",\n      \"citation\": \"Set to `0` to fail on the first retry.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c13\",\n      \"claim\": \"Setting the total parameter to False disables it and implies raise_on_redirect=False.\",\n      \"citation\": \"Set to `False` to disable and imply `raise_on_redirect=False`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c14\",\n      \"claim\": \"The connect parameter specifies how many connection-related errors to retry on.\",\n      \"citation\": \"`connect` (int) – How many connection-related errors to retry on.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c15\",\n      \"claim\": \"Connection-related errors are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request.\",\n      \"citation\": \"These are errors raised before the request is sent to the remote server, which we assume has not triggered the server to process the request.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c16\",\n      \"claim\": \"Setting the connect parameter to 0 causes it to fail on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c17\",\n      \"claim\": \"The read parameter specifies how many times to retry on read errors.\",\n      \"citation\": \"`read` (int) – How many times to retry on read errors.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c18\",\n      \"claim\": \"Read errors are raised after the request was sent to the server, so the request may have side-effects.\",\n      \"citation\": \"These errors are raised after the request was sent to the server, so the request may have side-effects.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c19\",\n      \"claim\": \"Setting the read parameter to 0 causes it to fail on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c20\",\n      \"claim\": \"The redirect parameter specifies how many redirects to perform.\",\n      \"citation\": \"`redirect` (int) – How many redirects to perform.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c21\",\n      \"claim\": \"The redirect parameter should be limited to avoid infinite redirect loops.\",\n      \"citation\": \"Limit this to avoid infinite redirect loops.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c22\",\n      \"claim\": \"A redirect is an HTTP response with a status code 301, 302, 303, 307 or 308.\",\n      \"citation\": \"A redirect is a HTTP response with a status code 301, 302, 303, 307 or 308.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c23\",\n      \"claim\": \"Setting the redirect parameter to 0 causes it to fail on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c24\",\n      \"claim\": \"Setting the redirect parameter to False disables it and implies raise_on_redirect=False.\",\n      \"citation\": \"Set to `False` to disable and imply `raise_on_redirect=False`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c25\",\n      \"claim\": \"The status parameter specifies how many times to retry on bad status codes.\",\n      \"citation\": \"`status` (int) – How many times to retry on bad status codes.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c26\",\n      \"claim\": \"Status retries are made on responses where the status code matches status_forcelist.\",\n      \"citation\": \"These are retries made on responses, where status code matches `status_forcelist`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c27\",\n      \"claim\": \"Setting the status parameter to 0 causes it to fail on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c28\",\n      \"claim\": \"The other parameter specifies how many times to retry on other errors.\",\n      \"citation\": \"`other` (int) – How many times to retry on other errors.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c29\",\n      \"claim\": \"Other errors are errors that are not connect, read, redirect or status errors.\",\n      \"citation\": \"Other errors are errors that are not connect, read, redirect or status errors.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c30\",\n      \"claim\": \"Other errors might be raised after the request was sent to the server, so the request might have side-effects.\",\n      \"citation\": \"These errors might be raised after the request was sent to the server, so the request might have side-effects.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c31\",\n      \"claim\": \"Setting the other parameter to 0 causes it to fail on the first retry of this type.\",\n      \"citation\": \"Set to `0` to fail on the first retry of this type.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c32\",\n      \"claim\": \"If total is not set, it is recommended to set other to 0 to account for unexpected edge cases and avoid infinite retry loops.\",\n      \"citation\": \"If `total` is not set, it’s a good idea to set this to 0 to account for unexpected edge cases and avoid infinite retry loops.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c33\",\n      \"claim\": \"The allowed_methods parameter is a Collection of uppercased HTTP method verbs to retry on.\",\n      \"citation\": \"`allowed_methods` (Collection) – Set of uppercased HTTP method verbs that we should retry on.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c34\",\n      \"claim\": \"By default, urllib3 only retries on methods considered to be idempotent.\",\n      \"citation\": \"By default, we only retry on methods which are considered to be idempotent (multiple requests with the same parameters end with the same state).\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c35\",\n      \"claim\": \"Setting the allowed_methods parameter to None causes it to retry on any verb.\",\n      \"citation\": \"Set to a `None` value to retry on any verb.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c36\",\n      \"claim\": \"The status_forcelist parameter is a Collection of integer HTTP status codes to force a retry on.\",\n      \"citation\": \"`status_forcelist` (Collection) – A set of integer HTTP status codes that we should force a retry on.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c37\",\n      \"claim\": \"A retry is initiated if the request method is in allowed_methods and the response status code is in status_forcelist.\",\n      \"citation\": \"A retry is initiated if the request method is in `allowed_methods` and the response status code is in `status_forcelist`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c38\",\n      \"claim\": \"By default, status_forcelist is disabled with None.\",\n      \"citation\": \"By default, this is disabled with `None`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c39\",\n      \"claim\": \"The backoff_factor parameter is a float applied between attempts after the second try.\",\n      \"citation\": \"`backoff_factor` (float) – A backoff factor to apply between attempts after the second try\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c40\",\n      \"claim\": \"urllib3 will sleep for {backoff factor} * (2 ** ({number of previous retries})) seconds.\",\n      \"citation\": \"urllib3 will sleep for: \\n  ```default\\n  {backoff factor} * (2 ** ({number of previous retries}))\\n  ```\\n  seconds.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c41\",\n      \"claim\": \"If backoff_jitter is non-zero, the sleep is extended by a random uniform value between 0 and backoff_jitter seconds.\",\n      \"citation\": \"If backoff_jitter is non-zero, this sleep is extended by: \\n  ```default\\n  random.uniform(0, {backoff jitter})\\n  ```\\n  seconds.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c42\",\n      \"claim\": \"No backoff will ever be longer than backoff_max.\",\n      \"citation\": \"No backoff will ever be longer than `backoff_max`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c43\",\n      \"claim\": \"By default, backoff is disabled (factor set to 0).\",\n      \"citation\": \"By default, backoff is disabled (factor set to 0).\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c44\",\n      \"claim\": \"The backoff_max parameter is a float representing the maximum backoff time in seconds between retry attempts.\",\n      \"citation\": \"`backoff_max` (float) – The maximum backoff time (in seconds) between retry attempts.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c45\",\n      \"claim\": \"The backoff_max value caps the computed backoff from backoff_factor.\",\n      \"citation\": \"This value caps the computed backoff from `backoff_factor`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c46\",\n      \"claim\": \"The backoff_jitter parameter is a float representing the random jitter amount in seconds added to the computed backoff.\",\n      \"citation\": \"`backoff_jitter` (float) – Random jitter amount (in seconds) added to the computed backoff.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c47\",\n      \"claim\": \"Jitter is sampled uniformly from 0 to backoff_jitter.\",\n      \"citation\": \"Jitter is sampled uniformly from 0 to `backoff_jitter`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c48\",\n      \"claim\": \"The raise_on_redirect parameter is a bool that determines whether to raise a MaxRetryError or return a response with a 3xx status code if the number of redirects is exhausted.\",\n      \"citation\": \"`raise_on_redirect` (bool) – Whether, if the number of redirects is exhausted, to raise a MaxRetryError, or to return a response with a response code in the 3xx range.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c49\",\n      \"claim\": \"The raise_on_status parameter determines whether to raise an exception or return a response if status falls in status_forcelist range and retries are exhausted.\",\n      \"citation\": \"`raise_on_status` (bool) – Similar meaning to `raise_on_redirect`: whether we should raise an exception, or return a response, if status falls in `status_forcelist` range and retries have been exhausted.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c50\",\n      \"claim\": \"The history parameter is a tuple containing the history of the request encountered during each call to increment().\",\n      \"citation\": \"`history` (tuple) – The history of the request encountered during each call to `increment()`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c51\",\n      \"claim\": \"Each item in the history list is of class RequestHistory.\",\n      \"citation\": \"Each list item is of class `RequestHistory`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c52\",\n      \"claim\": \"The history list is in the order the requests occurred.\",\n      \"citation\": \"The list is in the order the requests occurred.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c53\",\n      \"claim\": \"The respect_retry_after_header parameter is a bool that determines whether to respect the Retry-After header on status codes defined as Retry.RETRY_AFTER_STATUS_CODES.\",\n      \"citation\": \"`respect_retry_after_header` (bool) – Whether to respect Retry-After header on status codes defined as `Retry.RETRY_AFTER_STATUS_CODES` or not.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c54\",\n      \"claim\": \"The remove_headers_on_redirect parameter is a Collection of headers to remove from the request when a redirect response is returned before firing the redirected request.\",\n      \"citation\": \"`remove_headers_on_redirect` (Collection) – Sequence of headers to remove from the request when a response indicating a redirect is returned before firing off the redirected request.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c55\",\n      \"claim\": \"The retry_after_max parameter is an int representing the maximum number of seconds to allow for Retry-After headers.\",\n      \"citation\": \"`retry_after_max` (int) – Number of seconds to allow as the maximum for Retry-After headers.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c56\",\n      \"claim\": \"The default value for retry_after_max is Retry.DEFAULT_RETRY_AFTER_MAX.\",\n      \"citation\": \"Defaults to `Retry.DEFAULT_RETRY_AFTER_MAX`.\",\n      \"type\": \"fact\"\n    },\n    {\n      \"id\": \"c57\",\n      \"claim\": \"Any Retry-After headers larger than retry_after_max will be limited to this value.\",\n      \"citation\": \"Any Retry-After headers larger than this value will be limited to this value.\",\n      \"type\": \"fact\"\n    }\n  ]\n}",
+            "role": "assistant"
+          },
+          "provider_specific_fields": {}
+        }
+      ],
+      "created": 1795273259,
+      "id": "chatcmpl-fCo5VLSPOcUqoe7JSLWbJBh9IJlLeQ6o",
+      "model": "gemma4-26b-a4b-hpc",
+      "object": "chat.completion",
+      "system_fingerprint": "b10582-e85caa81e",
+      "timings": {
+        "cache_n": 2332,
+        "draft_n": 3312,
+        "draft_n_accepted": 3151,
+        "predicted_ms": 160451.267,
+        "predicted_n": 4256,
+        "predicted_per_second": 26.518955440844227,
+        "predicted_per_token_ms": 37.7088759106933,
+        "prompt_ms": 202.395,
+        "prompt_n": 5,
+        "prompt_per_second": 24.70416759307295,
+        "prompt_per_token_ms": 40.479
+      },
+      "usage": {
+        "completion_tokens": 4256,
+        "prompt_tokens": 2337,
+        "prompt_tokens_details": {
+          "cached_tokens": 2332
+        },
+        "total_tokens": 6593
+      }
+    }
+  }
+]

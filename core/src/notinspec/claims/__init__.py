@@ -8,6 +8,7 @@ check, NLI premise, NLI, identifier check, from `notinspec.grounding` and `notin
 from notinspec.claims.extract import ROLE, extract_claims
 from notinspec.claims.model import (
     DEFAULT_EXTRACTORS,
+    GROQ_EXTRACTORS,
     PROMPT_VERSION,
     ClaimType,
     ExtractedClaim,
@@ -45,6 +46,7 @@ from notinspec.claims.store import (
 __all__ = [
     "CLAIMS_SCHEMA",
     "DEFAULT_EXTRACTORS",
+    "GROQ_EXTRACTORS",
     "PROMPT_VERSION",
     "ROLE",
     "STATUSES",

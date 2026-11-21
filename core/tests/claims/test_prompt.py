@@ -6,6 +6,7 @@ from notinspec.chunking import Chunk
 from notinspec.claims import (
     CLAIMS_SCHEMA,
     DEFAULT_EXTRACTORS,
+    GROQ_EXTRACTORS,
     ExtractorSpec,
     build_request,
     extractor_for,
@@ -44,6 +45,9 @@ def test_unknown_prompt_version(guide_chunks: list[Chunk]) -> None:
 
 
 def test_extractors_from_model_ids() -> None:
-    assert extractor_for("openai/gpt-oss-20b") == DEFAULT_EXTRACTORS[1]
-    assert extractor_for("qwen/qwen3.8-27b") == DEFAULT_EXTRACTORS[0]
-    assert extractor_for("acme/other").max_tokens is None
+    assert extractor_for("qwen3.8-flash-next") == DEFAULT_EXTRACTORS[0]
+    assert extractor_for("gemma4-26b-a4b-hpc") == DEFAULT_EXTRACTORS[1]
+    assert all(s.thinking is False and s.max_tokens == 16384 for s in DEFAULT_EXTRACTORS)
+    assert extractor_for("openai/gpt-oss-20b") == GROQ_EXTRACTORS[1]
+    assert extractor_for("qwen/qwen3.8-27b") == GROQ_EXTRACTORS[0]
+    assert extractor_for("acme/other") == ExtractorSpec("acme/other", "acme/other")

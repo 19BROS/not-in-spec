@@ -45,7 +45,7 @@ parse document content or validate OpenAPI schemas; run the normal command for t
 `notinspec demo` runs `ci` and `claims run` into one folder `tmp/runs/<run id>/` and writes
 `run.json` (contract: `docs/plans/demo-cli-web.md`) last. The API serves it
 (`GET /api/demo/runs`, `GET /api/demo/runs/<id>`) and the web shows it. Shortcut: folders on
-disk, no Postgres. Claims need `GROQ_API_KEY` (only for chunks not in the claims store) and the
+disk, no Postgres. Claims need `FIIT_API_KEY` (only for chunks not in the claims store) and the
 `nli` extra; `--no-claims` needs neither.
 
 ```sh

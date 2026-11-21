@@ -30,6 +30,10 @@ class ChatRequest:
     # how much a reasoning model thinks before it answers (Groq: "low" / "medium" / "high" for
     # gpt-oss); None = the provider's default, and the parameter is not sent
     reasoning_effort: str | None = None
+    # False turns a reasoning model's thinking off, sent as `chat_template_kwargs`
+    # {"enable_thinking": false} (vLLM, llama.cpp; the FIIT proxy passes it on). None = the
+    # model's default, and nothing is sent
+    thinking: bool | None = None
 
     def prompt_hash(self) -> str:
         """sha256 over the whole request, so any change to prompt or parameters is a new prompt.

@@ -9,7 +9,7 @@ import pytest
 
 from notinspec import cli
 from notinspec.chunking import Chunk
-from notinspec.claims import DEFAULT_EXTRACTORS, MemoryCallLog, pipeline, run_claims
+from notinspec.claims import GROQ_EXTRACTORS, MemoryCallLog, pipeline, run_claims
 from notinspec.config import load_config
 from notinspec.ingestion import ingest
 from notinspec.nli import MODEL_ID, REVISION, NliModel, NliUnavailable, RecordedNli
@@ -18,6 +18,15 @@ from notinspec.runner import FakeProvider, ModelClient, Provider, ProviderError
 CORE = Path(__file__).parents[2]
 FIXTURES = Path(__file__).parent / "fixtures"
 GUIDE_RECORDING = FIXTURES / "groq-fixturelib-guide.json"
+# the guide recording is from Groq, so these tests name its provider and extractors
+GROQ = (
+    "--provider",
+    "groq",
+    "--extractor",
+    "qwen/qwen3.8-27b",
+    "--extractor",
+    "openai/gpt-oss-20b",
+)
 URLLIB3_RECORDING = FIXTURES / "groq-urllib3-demo.json"
 NLI_RECORDING = FIXTURES / "nli-claims.json"  # see conftest.py
 URLLIB3_CHUNKS = ("567cff0c95e2e342", "0f1fe6bd0dcdec3d", "00fb7285ec99b133")
@@ -50,7 +59,7 @@ def test_run_writes_grounded_claims_and_a_report(
     out = tmp_path / "out"
     monkeypatch.setattr(cli, "_live_provider", _fake)
     monkeypatch.setattr(cli, "_nli_model", _recorded)
-    assert _run(fixture_project, out, "--source", "guide") == 0
+    assert _run(fixture_project, out, "--source", "guide", *GROQ) == 0
     data = json.loads((out / "claims.json").read_text(encoding="utf-8"))
     assert data["chunks"] == 8 and data["sources"] == ["guide"]
     assert data["versions"]["nli_model"] == MODEL_ID
@@ -88,7 +97,7 @@ def test_run_writes_grounded_claims_and_a_report(
     # a second run reuses every answer and gives the same bytes
     first = (out / "claims.json").read_bytes()
     monkeypatch.setattr(cli, "_live_provider", _no_provider)
-    assert _run(fixture_project, out, "--source", "guide", "--run-id", "second") == 0
+    assert _run(fixture_project, out, "--source", "guide", "--run-id", "second", *GROQ) == 0
     assert (out / "claims.json").read_bytes() == first
 
 
@@ -151,7 +160,7 @@ def test_run_claims_on_urllib3_demo_chunks(
     by_id: dict[str, Chunk] = {c.id: c for c in ingestion.chunks}
     result = run_claims(
         [by_id[i] for i in URLLIB3_CHUNKS],
-        DEFAULT_EXTRACTORS,
+        GROQ_EXTRACTORS,
         ModelClient(FakeProvider.load(URLLIB3_RECORDING), max_attempts=1),
         RecordedNli.load(NLI_RECORDING),
         "r",

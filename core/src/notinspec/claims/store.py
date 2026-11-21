@@ -69,6 +69,7 @@ class ReuseKey:
     # `claims.parse.PARSER_VERSION` that parsed the stored answer; entries stored before this
     # field have None, so they are asked again (version 1 stored some cut-off answers)
     parser_version: int | None = None
+    thinking: bool | None = None  # entries stored before this field have None
     # not `max_tokens`: it only decides whether an answer is cut off, and cut-off answers are
     # never stored
 

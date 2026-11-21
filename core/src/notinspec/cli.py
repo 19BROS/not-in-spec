@@ -38,6 +38,7 @@ from notinspec.nli import NliModel, RecordingNli, TransformersNli
 from notinspec.pack import pack_inputs
 from notinspec.report import build_results, claim_counts, render_claims, write_artifacts
 from notinspec.runner import (
+    FIIT,
     GROQ,
     PROVIDERS,
     ChatRequest,
@@ -127,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
     claims_commands = claims.add_subparsers(dest="claims_command")
     extract = claims_commands.add_parser(
         "extract",
-        help="extract claims with the LLM extractors (Groq: needs GROQ_API_KEY); no grounding",
+        help="extract claims with the LLM extractors (FIIT: needs FIIT_API_KEY); no grounding",
         description="Reads the configured docs, sends every prose chunk to each extractor and "
         "writes extracted-claims.json (not grounded yet). Every request is appended to "
         "llm-calls.jsonl; claims of unchanged chunks are reused from claims-store.jsonl in the "
@@ -136,7 +137,7 @@ def main(argv: list[str] | None = None) -> int:
     _claims_options(extract)
     run = claims_commands.add_parser(
         "run",
-        help="extract and ground claims (Groq: needs GROQ_API_KEY; NLI: needs notinspec[nli])",
+        help="extract and ground claims (FIIT: needs FIIT_API_KEY; NLI: needs notinspec[nli])",
         description="Extracts claims like `claims extract`, then grounds each one: citation "
         "check, NLI premise, NLI with the local model, identifier check. Writes claims.json "
         "(every claim with its status, dropped ones too) and claims.html.",
@@ -159,7 +160,7 @@ def main(argv: list[str] | None = None) -> int:
         "demo",
         help="ingest and (optionally) run claims into one run folder for the web demo",
         description="Runs `ci` and `claims run` into <runs-dir>/<run id>/ and writes run.json "
-        "last (the API lists only folders with it). Claims need GROQ_API_KEY for chunks not "
+        "last (the API lists only folders with it). Claims need FIIT_API_KEY for chunks not "
         "in the claims store and notinspec[nli].",
     )
     demo.add_argument("--config", type=Path, default=Path("notinspec.yaml"))
@@ -174,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="claims-store.jsonl copied into the run first, so stored answers are reused",
     )
-    _provider_option(demo)
+    _provider_option(demo, FIIT.name)
 
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
@@ -241,12 +242,13 @@ def _claims_options(command: argparse.ArgumentParser) -> None:
     command.add_argument(
         "--record", type=Path, help="also save the raw responses as a fake-provider fixture"
     )
-    _provider_option(command)
+    _provider_option(command, FIIT.name)
 
 
-def _provider_option(command: argparse.ArgumentParser) -> None:
+def _provider_option(command: argparse.ArgumentParser, default: str = GROQ.name) -> None:
+    """Models under test run on Groq for now; the claim extractors on the FIIT proxy (SPEC §8)."""
     command.add_argument(
-        "--provider", choices=sorted(PROVIDERS), default=GROQ.name, help="default: %(default)s"
+        "--provider", choices=sorted(PROVIDERS), default=default, help="default: %(default)s"
     )
 
 

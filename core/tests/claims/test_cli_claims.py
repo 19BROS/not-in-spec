@@ -11,6 +11,15 @@ from notinspec.runner import FakeProvider, Provider, ProviderError
 
 GUIDE_RECORDING = Path(__file__).parent / "fixtures" / "groq-fixturelib-guide.json"
 OUTPUT = "extracted-claims.json"
+# the guide recording is from Groq, so these tests name its provider and extractors
+GROQ = (
+    "--provider",
+    "groq",
+    "--extractor",
+    "qwen/qwen3.8-27b",
+    "--extractor",
+    "openai/gpt-oss-20b",
+)
 
 
 def _fake(_: str) -> Provider:
@@ -39,7 +48,7 @@ def test_extract_writes_claims_and_calls(
 ) -> None:
     out = tmp_path / "out"
     monkeypatch.setattr(cli, "_live_provider", _fake)
-    assert _extract(fixture_project, out, "--source", "guide") == 0
+    assert _extract(fixture_project, out, "--source", "guide", *GROQ) == 0
     assert not (out / "claims.json").exists()  # the grounded claims come from a later step
     data = json.loads((out / OUTPUT).read_text(encoding="utf-8"))
     assert data["chunks"] == 8 and data["sources"] == ["guide"]
@@ -57,7 +66,7 @@ def test_extract_writes_claims_and_calls(
     # run ID stays on the claims), no new calls
     first = (out / OUTPUT).read_bytes()
     monkeypatch.setattr(cli, "_live_provider", _no_provider)
-    assert _extract(fixture_project, out, "--source", "guide", "--run-id", "second") == 0
+    assert _extract(fixture_project, out, "--source", "guide", "--run-id", "second", *GROQ) == 0
     assert (out / OUTPUT).read_bytes() == first
     assert len(_lines(out / "llm-calls.jsonl")) == 16
 
@@ -109,7 +118,7 @@ def test_without_key_the_run_stops(
 ) -> None:
     monkeypatch.setattr(cli, "_live_provider", _no_provider)
     out = tmp_path / "out"
-    assert _extract(fixture_project, out, "--source", "guide", "--no-reuse") == 2
+    assert _extract(fixture_project, out, "--source", "guide", "--no-reuse", *GROQ) == 2
     assert "GROQ_API_KEY is not set" in capsys.readouterr().err
     assert not (out / OUTPUT).exists()
 

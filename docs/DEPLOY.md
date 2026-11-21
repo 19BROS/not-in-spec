@@ -97,7 +97,7 @@ sudo docker exec -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
   notinspec demo --config core/examples/sphinx/trio/notinspec.yaml --runs-dir /runs --no-claims
 ```
 
-With claims (urllib3, reuses the stored answers; needs `GROQ_API_KEY` in `/opt/notinspec/.env` for chunks not in the store; NLI takes minutes on the CPU):
+With claims (urllib3, reuses the stored answers; needs `FIIT_API_KEY` in `/opt/notinspec/.env` for chunks not in the store, and answers stored from the Groq extractors are not reused by the FIIT ones; NLI takes minutes on the CPU):
 
 ```sh
 sudo docker exec -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
@@ -189,6 +189,7 @@ Only if the instance is lost. Then restore the database from your off-machine du
    WEB_PORT=80
    HTTPS_PORT=443
    SITE_ADDRESS=147-175-151-17.sslip.io
+   FIIT_API_KEY=
    GROQ_API_KEY=
    SLACK_WEBHOOK_URL=
    INGEST_TOKEN=$(openssl rand -hex 24)

@@ -8,6 +8,7 @@ import httpx2
 import pytest
 
 from notinspec.runner import (
+    FIIT,
     GROQ,
     OPENROUTER,
     ChatRequest,
@@ -63,6 +64,7 @@ def test_sends_request_and_parses_answer(
     assert "strict" not in payload["response_format"]["json_schema"]  # best effort
     assert "max_tokens" not in payload
     assert "reasoning_effort" not in payload
+    assert "chat_template_kwargs" not in payload
 
     assert completion.content == '{"method": "GET", "path": "/pets/1"}'
     assert completion.refusal is None
@@ -84,6 +86,41 @@ def test_no_schema_means_no_response_format(request_: ChatRequest, body: dict[st
     assert "response_format" not in sent[0]
     assert sent[0]["max_tokens"] == 50
     assert sent[0]["reasoning_effort"] == "low"
+
+
+def test_thinking_off_is_sent_as_chat_template_kwargs(
+    request_: ChatRequest, body: dict[str, Any]
+) -> None:
+    sent: list[dict[str, Any]] = []
+
+    def handler(request: httpx2.Request) -> httpx2.Response:
+        sent.append(json.loads(request.content))
+        return httpx2.Response(200, json=body)
+
+    provider(handler).complete(ChatRequest(request_.model, request_.messages, thinking=False))
+    assert sent[0]["chat_template_kwargs"] == {"enable_thinking": False}
+
+
+def test_fiit_sends_only_the_free_models(request_: ChatRequest, body: dict[str, Any]) -> None:
+    sent: list[httpx2.Request] = []
+
+    def handler(request: httpx2.Request) -> httpx2.Response:
+        sent.append(request)
+        return httpx2.Response(200, json=body)
+
+    fiit = provider(handler, FIIT)
+    for model in ("claude-haiku-5.5-fiit", "gpt-6-luna-fiit", "openrouter-free"):
+        with pytest.raises(ModelUnavailable, match="not allowed"):
+            fiit.complete(ChatRequest(model, request_.messages))
+    assert sent == []  # refused before anything was sent
+    fiit.complete(ChatRequest("qwen3.8-flash-next", request_.messages))
+    assert str(sent[0].url) == "https://litellm.blockfinlab.xyz/v1/chat/completions"
+
+
+def test_the_timeout_comes_from_the_provider() -> None:
+    assert OpenAICompatProvider(FIIT, "k")._http.timeout.read == 900.0
+    assert OpenAICompatProvider(GROQ, "k")._http.timeout.read == 120.0
+    assert OpenAICompatProvider(GROQ, "k", timeout=5)._http.timeout.read == 5
 
 
 def test_refusal_field(request_: ChatRequest, body: dict[str, Any]) -> None:
@@ -302,7 +339,8 @@ def test_schema_failure_is_an_answer(
 
 
 @pytest.mark.parametrize(
-    ("config", "env"), [(GROQ, "GROQ_API_KEY"), (OPENROUTER, "OPENROUTER_API_KEY")]
+    ("config", "env"),
+    [(GROQ, "GROQ_API_KEY"), (OPENROUTER, "OPENROUTER_API_KEY"), (FIIT, "FIIT_API_KEY")],
 )
 def test_from_env(monkeypatch: pytest.MonkeyPatch, config: ProviderConfig, env: str) -> None:
     monkeypatch.setenv(env, "sk-env")
