@@ -2,7 +2,7 @@
 
 One request per chunk that has prose; a chunk without prose has nothing to claim and is not
 sent. Each chunk is read whole. A failure of one chunk is recorded and the run goes on, except
-when the model is gone, the budget is used up or a request timed out again after its one retry:
+when the model is gone, the budget is used up or `TIMEOUTS_TO_STOP` chunks in a row timed out:
 then the remaining chunks are recorded as not asked, and a later run continues where this one
 stopped (the store has the finished chunks).
 """
@@ -33,6 +33,10 @@ from notinspec.runner import (
 )
 
 ROLE = "claim-extractor"
+# Chunks in a row whose request timed out (after its one retry) before the extractor stops. Not
+# 1: a chunk that always times out would then stop every later run at the same chunk. Not more:
+# a stuck shared server costs 2 x timeout per chunk (FIIT: 30 min) and may keep generating.
+TIMEOUTS_TO_STOP = 2
 
 
 def _now() -> str:
@@ -56,6 +60,7 @@ def extract_claims(
     problems: list[ExtractionProblem] = []
     asked = reused = without_prose = 0
     stopped: ExtractionCause | None = None
+    timeouts_in_a_row = 0
     # two chunks with the same prompt get one answer, logged once
     answers: dict[str, tuple[ParsedClaims, StoredAnswer]] = {}
 
@@ -89,18 +94,21 @@ def extract_claims(
             try:
                 completion = client.ask(run_id, request)
             except ProviderError as e:
-                cause: ExtractionCause = "provider-error"
+                timed_out = isinstance(e, RequestTimeout)
+                timeouts_in_a_row = timeouts_in_a_row + 1 if timed_out else 0
+                cause: ExtractionCause = "timed-out" if timed_out else "provider-error"
                 if isinstance(e, QuotaExhausted):
                     cause = stopped = "quota-exhausted"
                 elif isinstance(e, ModelUnavailable):
                     cause = stopped = "model-unavailable"
-                elif isinstance(e, RequestTimeout):
-                    cause = stopped = "timed-out"
+                elif timeouts_in_a_row >= TIMEOUTS_TO_STOP:
+                    stopped = "timed-out"
                 calls.append(
                     _call(run_id, spec, chunk, request, None, f"{type(e).__name__}: {e}", clock)
                 )
                 failures.append(ExtractionFailure(chunk.id, spec.name, cause, str(e)[:300]))
                 continue
+            timeouts_in_a_row = 0
             calls.append(_call(run_id, spec, chunk, request, completion.raw, None, clock))
             parsed = parse_claims(
                 completion.content,

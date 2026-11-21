@@ -1,7 +1,7 @@
 """extract_claims on recorded real Groq answers (conftest.py), plus provider failures."""
 
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import replace
 from pathlib import Path
 
@@ -19,6 +19,7 @@ from notinspec.claims import (
     extract_claims,
 )
 from notinspec.claims.parse import PARSER_VERSION
+from notinspec.claims.prompt import build_request
 from notinspec.runner import (
     ChatRequest,
     Completion,
@@ -227,7 +228,6 @@ class _Raising:
     [
         (QuotaExhausted("budget"), "quota-exhausted"),
         (ModelUnavailable("gone"), "model-unavailable"),
-        (RequestTimeout("no answer within 900s"), "timed-out"),
     ],
 )
 def test_stop_leaves_the_rest_unasked(
@@ -244,31 +244,51 @@ def test_stop_leaves_the_rest_unasked(
     assert log.calls[0].error is not None and type(error).__name__ in log.calls[0].error
 
 
-class _HangsAfter:
-    """Answers from the recording, then times out on every request (a stuck shared server)."""
+class _TimesOut:
+    """Answers from the recording, except for the chunks given: those time out every time."""
 
-    def __init__(self, answers: int) -> None:
+    def __init__(self, chunks: Sequence[Chunk]) -> None:
         self.fake = FakeProvider.load(GUIDE_RECORDING)
-        self.answers = answers
+        self.hanging = {build_request(c, QWEN).prompt_hash() for c in chunks}
         self.calls = 0
 
     def complete(self, request: ChatRequest) -> Completion:
         self.calls += 1
-        if self.calls > self.answers:
+        if request.prompt_hash() in self.hanging:
             raise RequestTimeout("no answer within 900s")
         return self.fake.complete(request)
 
 
-def test_timeout_after_its_retry_stops_and_a_later_run_continues(
+def _retrying(provider: object) -> ModelClient:
+    return ModelClient(provider, max_attempts=5, sleep=lambda _: None)  # type: ignore[arg-type]
+
+
+def test_one_chunk_that_times_out_does_not_stop_the_extractor(
+    guide_chunks: list[Chunk],
+) -> None:
+    # chunks 2 and 5 time out, but never two in a row: each fails, the run goes on
+    provider = _TimesOut([guide_chunks[1], guide_chunks[4]])
+    result = extract_claims(guide_chunks, QWEN, _retrying(provider), "r", MemoryCallLog())
+    assert result.stopped is None and result.asked == 8
+    assert provider.calls == 10  # each hanging chunk: one retry
+    assert [(f.chunk_id, f.cause) for f in result.failures] == [
+        (guide_chunks[1].id, "timed-out"),
+        (guide_chunks[4].id, "timed-out"),
+    ]
+
+
+def test_two_chunks_in_a_row_timing_out_stop_and_a_later_run_continues(
     guide_chunks: list[Chunk],
 ) -> None:
     store = MemoryClaimStore()
-    provider = _HangsAfter(answers=3)
-    client = ModelClient(provider, max_attempts=5, sleep=lambda _: None)
-    first = extract_claims(guide_chunks, QWEN, client, "r1", MemoryCallLog(), store=store)
-    # 3 chunks answered, the 4th timed out twice (one retry), the other 4 were not asked
-    assert first.stopped == "timed-out" and provider.calls == 5 and first.asked == 4
-    assert [f.detail for f in first.failures[1:]] == ["not asked"] * 4
+    provider = _TimesOut(guide_chunks[3:])  # a stuck server after 3 answers
+    first = extract_claims(
+        guide_chunks, QWEN, _retrying(provider), "r1", MemoryCallLog(), store=store
+    )
+    # chunks 4 and 5 timed out twice each, the other 3 were not asked
+    assert first.stopped == "timed-out" and provider.calls == 7 and first.asked == 5
+    assert [f.cause for f in first.failures] == ["timed-out"] * 5
+    assert [f.detail for f in first.failures[2:]] == ["not asked"] * 3
 
     again = extract_claims(
         guide_chunks, QWEN, _client(FakeProvider.load(GUIDE_RECORDING)), "r2", MemoryCallLog(),
