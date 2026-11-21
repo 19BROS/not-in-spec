@@ -12,6 +12,7 @@ span alone, so it needs no storage.
 """
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from notinspec.chunking import Block, Chunk, Sentence, prose_sentences
@@ -33,7 +34,9 @@ class Premise:
 
 
 @dataclass(frozen=True)
-class _Unit:
+class ProseUnit:
+    """Where a sentence sits: a prose block, or one item of a list in it."""
+
     block: int  # index into chunk.blocks
     item: int | None  # line number where the list item starts; None outside lists
     list_start: int | None  # line number of the list's first item
@@ -50,8 +53,7 @@ class ChunkPremises:
     def __init__(self, chunk: Chunk, sentences: tuple[Sentence, ...] | None = None) -> None:
         self.chunk = chunk
         self.sentences = prose_sentences(chunk) if sentences is None else sentences
-        lines = chunk.text.split("\n")
-        self.units = [_unit(chunk, lines, s) for s in self.sentences]
+        self.units = prose_units(chunk, self.sentences)
 
     def premise(self, span: tuple[int, int]) -> Premise:
         chunk, sentences, units = self.chunk, self.sentences, self.units
@@ -83,8 +85,14 @@ class ChunkPremises:
         return Premise(text, (used[0].start, max(s.end for s in used)), PREMISE_RULE, parameter)
 
 
+def prose_units(chunk: Chunk, sentences: Sequence[Sentence]) -> list[ProseUnit]:
+    """The unit of each sentence. The premise and the citation check never leave one unit."""
+    lines = chunk.text.split("\n")
+    return [_unit(chunk, lines, s) for s in sentences]
+
+
 def _lead_in(
-    chunk: Chunk, sentences: tuple[Sentence, ...], units: list[_Unit], first: _Unit
+    chunk: Chunk, sentences: tuple[Sentence, ...], units: list[ProseUnit], first: ProseUnit
 ) -> int | None:
     """Index of the sentence that introduces the list of `first`, if there is one.
 
@@ -113,7 +121,7 @@ def _previous_block(blocks: tuple[Block, ...], index: int) -> int | None:
     return None
 
 
-def _unit(chunk: Chunk, lines: list[str], sentence: Sentence) -> _Unit:
+def _unit(chunk: Chunk, lines: list[str], sentence: Sentence) -> ProseUnit:
     line = _line(chunk, sentence.start)
     for index, block in enumerate(chunk.blocks):
         if block.nested or block.kind not in _PROSE_KINDS:
@@ -125,8 +133,8 @@ def _unit(chunk: Chunk, lines: list[str], sentence: Sentence) -> _Unit:
                 if _LIST_ITEM.match(lines[n - chunk.start_line])
             ]
             if not items or items[0] > line:
-                return _Unit(index, None, None)
-            return _Unit(index, max(n for n in items if n <= line), items[0])
+                return ProseUnit(index, None, None)
+            return ProseUnit(index, max(n for n in items if n <= line), items[0])
     raise AssertionError(f"sentence at {sentence.start} is in no prose block")
 
 

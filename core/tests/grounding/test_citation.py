@@ -254,3 +254,75 @@ def test_an_ellipsis_is_not_found_otherwise(citation: str) -> None:
 def test_an_ellipsis_in_code_is_matched_exactly() -> None:
     result = check_citation(RETRIES, "Url(scheme='http', host='google.com', ...)")
     assert result.status == "not_checkable"
+
+
+# from the review of #46: the parts of an ellipsis stay inside one prose unit
+NESTED_CODE = _chunk(
+    "# A\n"
+    "\n"
+    "- First item says hello.\n"
+    "\n"
+    "  ```python\n"
+    "  pool = PoolManager(retries=3)\n"
+    "  resp = pool.request('GET', url)\n"
+    "  ```\n"
+    "\n"
+    "- Second item says goodbye.\n"
+)
+
+
+def test_an_ellipsis_in_code_nested_in_a_list_item_is_not_checkable() -> None:
+    result = check_citation(
+        NESTED_CODE, "pool = PoolManager(retries=3) ... resp = pool.request('GET', url)"
+    )
+    assert result.status == "not_checkable"
+    assert result.span is not None
+    assert NESTED_CODE.text[result.span[0] : result.span[1]] == (
+        "pool = PoolManager(retries=3)\n  resp = pool.request('GET', url)"
+    )
+
+
+def test_an_ellipsis_in_a_list_item_gives_a_premise() -> None:
+    result = check_citation(NESTED_CODE, "First item ... says hello")
+    assert result.status == "found"
+    assert result.span is not None
+    assert nli_premise(NESTED_CODE, result.span).text == "acme > A: First item says hello."
+
+
+def test_an_ellipsis_across_two_list_items_is_not_found() -> None:
+    chunk = _chunk("# A\n\n- `connect` is given in seconds.\n- `read` is given in minutes.\n")
+    assert check_citation(chunk, "connect is given in ... in minutes").status == "not_found"
+
+
+def test_an_ellipsis_span_is_the_shortest_window() -> None:
+    chunk = _chunk(
+        "# A\n\nThe pool is created. The pool is reused. "
+        "The pool is closed when the manager is cleared.\n"
+    )
+    result = check_citation(chunk, "The pool is ... when the manager is cleared")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == (
+        "The pool is closed when the manager is cleared"
+    )
+
+
+def test_an_ellipsis_part_in_nested_code_is_skipped_for_the_one_in_prose() -> None:
+    chunk = _chunk(
+        "# A\n"
+        "\n"
+        "- It runs `fast` today.\n"
+        "\n"
+        "  ```text\n"
+        "  It runs fast and says hello world\n"
+        "  ```\n"
+        "\n"
+        "  Later it stops and says hello world.\n"
+    )
+    result = check_citation(chunk, "It runs fast ... says hello world")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == (
+        "It runs `fast` today.\n\n  ```text\n  It runs fast and says hello world\n  ```\n\n"
+        "  Later it stops and says hello world"
+    )
