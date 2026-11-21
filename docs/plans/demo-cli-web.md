@@ -150,13 +150,13 @@ and on a real run from A.
 ## Demo commands (after both are merged)
 
 Prepare the runs before the meeting: NLI takes ~3 min per extractor on a laptop CPU.
-`GROQ_API_KEY` must be in the environment (needed only for chunks not in the store).
+The store from run 009 has the FIIT extractors' answers for these pages, so no LLM is called; `FIIT_API_KEY` is needed only for chunks not in the store.
 
 ```sh
 uv sync --all-packages --extra nli
 uv run notinspec demo --config core/examples/sphinx/urllib3/notinspec.yaml \
   --source user-guide --source reference/urllib3.util --source v2-migration-guide \
-  --claims-store experiments/nli/runs/008-core-pipeline-urllib3-demo/claims-store.jsonl
+  --claims-store experiments/nli/runs/009-fiit-urllib3-demo/claims-store.jsonl
 uv run notinspec demo --config core/examples/sphinx/trio/notinspec.yaml --no-claims
 uv run notinspec demo --config core/examples/sphinx/hydra-zen/notinspec.yaml --no-claims
 

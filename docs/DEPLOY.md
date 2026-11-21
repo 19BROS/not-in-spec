@@ -97,13 +97,13 @@ sudo docker exec -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
   notinspec demo --config core/examples/sphinx/trio/notinspec.yaml --runs-dir /runs --no-claims
 ```
 
-With claims (urllib3, reuses the stored answers; needs `FIIT_API_KEY` in `/opt/notinspec/.env` for chunks not in the store, and answers stored from the Groq extractors are not reused by the FIIT ones; NLI takes minutes on the CPU):
+With claims (urllib3, reuses the answers of the FIIT extractors stored in run 009, so these pages need no LLM call; `FIIT_API_KEY` in `/opt/notinspec/.env` is needed only for chunks not in the store, e.g. after the pages or the prompt changed; NLI takes minutes on the CPU):
 
 ```sh
 sudo docker exec -e NOTINSPEC_COMMIT=$TAG notinspec-worker-1 \
   notinspec demo --config core/examples/sphinx/urllib3/notinspec.yaml --runs-dir /runs \
   --source user-guide --source reference/urllib3.util --source v2-migration-guide \
-  --claims-store experiments/nli/runs/008-core-pipeline-urllib3-demo/claims-store.jsonl
+  --claims-store experiments/nli/runs/009-fiit-urllib3-demo/claims-store.jsonl
 ```
 
 **Copy runs made on a laptop** (the API needs only `run.json` in each folder):
