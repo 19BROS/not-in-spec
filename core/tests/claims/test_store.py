@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -11,6 +12,7 @@ from notinspec.claims import (
     ReuseKey,
     StoredAnswer,
 )
+from notinspec.claims.parse import PARSER_VERSION
 
 KEY = ReuseKey("abc", "p > Guide", "x", "acme/model", 1)
 OTHER = ReuseKey("def", "p", "x", "acme/model", 1)
@@ -119,3 +121,20 @@ def test_reasoning_effort_is_part_of_the_key(tmp_path: Path) -> None:
     store = JsonlClaimStore(path)
     assert store.get(KEY) is not None
     assert store.get(ReuseKey("abc", "p > Guide", "x", "acme/model", 1, "low")) is None
+
+
+def test_an_answer_parsed_by_an_older_parser_is_not_reused(tmp_path: Path) -> None:
+    path = tmp_path / "claims-store.jsonl"
+    # an entry written before the key had `parser_version`: parser 1 stored cut-off answers
+    old = {"key": {k: v for k, v in vars(KEY).items() if k != "parser_version"}}
+    old["answer"] = {
+        "claims": [vars(CLAIM)],
+        "problems": [],
+        "run_id": "r1",
+        "prompt_hash": "h1",
+        "model": "acme/model-1",
+    }
+    path.write_text(json.dumps(old) + "\n", encoding="utf-8")
+    store = JsonlClaimStore(path)
+    assert store.get(KEY) is not None  # KEY has no parser version either
+    assert store.get(replace(KEY, parser_version=PARSER_VERSION)) is None

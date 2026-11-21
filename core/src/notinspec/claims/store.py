@@ -6,9 +6,9 @@ The DB stores the same records later.
 
 **Claim store**: extraction is generation, not a model under test, so the claims of a chunk are
 reused while the chunk's text, its breadcrumb (which is in the prompt), the extractor, its model,
-its reasoning effort and the prompt version stay the same. Only parsed answers are stored, with
-their skipped claims and the call that produced them; a failed chunk is asked again by the next
-run.
+its reasoning effort, the prompt version and the parser version stay the same. Only parsed
+answers are stored, with their skipped claims and the call that produced them; a failed chunk is
+asked again by the next run.
 """
 
 import json
@@ -66,6 +66,9 @@ class ReuseKey:
     prompt_version: int
     # how much the model reasons changes its answer; entries stored before this field have None
     reasoning_effort: str | None = None
+    # `claims.parse.PARSER_VERSION` that parsed the stored answer; entries stored before this
+    # field have None, so they are asked again (version 1 stored some cut-off answers)
+    parser_version: int | None = None
     # not `max_tokens`: it only decides whether an answer is cut off, and cut-off answers are
     # never stored
 

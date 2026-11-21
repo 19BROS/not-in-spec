@@ -19,7 +19,7 @@ from notinspec.claims.model import (
     ExtractionResult,
     ExtractorSpec,
 )
-from notinspec.claims.parse import ParsedClaims, parse_claims
+from notinspec.claims.parse import PARSER_VERSION, ParsedClaims, parse_claims
 from notinspec.claims.prompt import build_request
 from notinspec.claims.store import CallLog, ClaimStore, LlmCall, ReuseKey, StoredAnswer
 from notinspec.runner import (
@@ -68,6 +68,7 @@ def extract_claims(
             spec.model,
             spec.prompt_version,
             spec.reasoning_effort,
+            PARSER_VERSION,
         )
         if reuse and store is not None and (stored := store.get(key)) is not None:
             claims.extend(_bind(chunk, spec, stored))

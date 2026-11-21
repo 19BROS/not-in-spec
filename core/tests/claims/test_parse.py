@@ -28,6 +28,11 @@ def test_one_fence_is_stripped() -> None:
     assert parsed.cause is None and len(parsed.claims) == 1
 
 
+def test_a_fence_with_crlf_line_endings_is_stripped() -> None:
+    parsed = parse_claims(f"```json\r\n{_answer(C1)}\r\n```")
+    assert parsed.cause is None and len(parsed.claims) == 1
+
+
 def test_not_json_fails_the_chunk() -> None:
     assert parse_claims("Here are the claims: c1").cause == "malformed-output"
     assert parse_claims('{"items": []}').cause == "malformed-output"
@@ -37,6 +42,13 @@ def test_not_json_fails_the_chunk() -> None:
 def test_cut_off_answer_is_truncated() -> None:
     assert parse_claims('{"claims": [{"id": "c1"', finish_reason="length").cause == "truncated"
     assert parse_claims(None, finish_reason="length").cause == "truncated"
+
+
+def test_cut_off_answer_with_valid_json_is_truncated() -> None:
+    # run 008: qwen stopped at 2048 completion tokens on `Retry`, and the JSON still parsed
+    parsed = parse_claims(_answer(C1), finish_reason="length")
+    assert parsed.cause == "truncated" and parsed.claims == ()
+    assert parse_claims(_answer(C1), finish_reason="stop").cause is None
 
 
 def test_refusal() -> None:
@@ -73,6 +85,13 @@ def test_invalid_claims_are_skipped_with_a_problem() -> None:
         "claim 3: unknown type 'opinion'",
         "claim 4: repeated id 'c1'",
     )
+
+
+def test_a_missing_id_is_the_claims_position() -> None:
+    no_id = {k: v for k, v in C1.items() if k != "id"}
+    parsed = parse_claims(_answer(C1, no_id, {**no_id, "id": "  "}, {**no_id, "id": 7}))
+    assert parsed.problems == ()
+    assert [c.local_id for c in parsed.claims] == ["c1", "#2", "#3", "#4"]
 
 
 def test_a_claim_that_is_not_an_object() -> None:

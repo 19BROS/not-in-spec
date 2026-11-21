@@ -16,6 +16,7 @@ from notinspec.claims import (
     ReuseKey,
     extract_claims,
 )
+from notinspec.claims.parse import PARSER_VERSION
 from notinspec.runner import (
     ChatRequest,
     Completion,
@@ -125,7 +126,15 @@ def test_problems_are_reused_with_the_claims(guide_chunks: list[Chunk]) -> None:
         store=store,
     )
     chunk = guide_chunks[0]
-    key = ReuseKey(chunk.content_hash, chunk.breadcrumb, QWEN.name, QWEN.model, PROMPT_VERSION)
+    key = ReuseKey(
+        chunk.content_hash,
+        chunk.breadcrumb,
+        QWEN.name,
+        QWEN.model,
+        PROMPT_VERSION,
+        QWEN.reasoning_effort,
+        PARSER_VERSION,
+    )
     stored = store.get(key)
     assert stored is not None
     store.put(key, replace(stored, problems=("claim 3: unknown type 'opinion'",)))
