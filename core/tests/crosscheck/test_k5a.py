@@ -133,6 +133,26 @@ def test_contradiction_blocks_both_claims_and_is_a_finding() -> None:
     assert dict(finding.versions)["k5a"] == str(K5A_VERSION)
 
 
+def test_parts_of_one_section_keep_their_own_chunk_in_a_merged_finding() -> None:
+    """A long section is split into parts with one section_id; a docstring sentence repeated in
+    both parts gives two contradiction pairs with one key, so one finding. Each claim's
+    evidence keeps the chunk its citation span is in."""
+    part = replace(CHUNK, id=CHUNK.id + "-part2")
+    a = _claim("qwen", "c1", "Retries default to 3.")
+    b = _claim("gemma", "c1", "Retries default to 5.")
+    c = _claim("qwen", "c1", "Retries default to 3.", chunk=part)
+    d = _claim("gemma", "c1", "Retries default to 5.", chunk=part)
+    result = check_claims_within_chunks(
+        [a, b, c, d], [CHUNK, part], _nli(_both(a.claim.text, b.claim.text, C, C))
+    )
+    (finding,) = result.findings
+    assert {(e.ref.split("/", 1)[0], e.chunk_id) for e in finding.evidence} == {
+        (CHUNK.id, CHUNK.id),
+        (part.id, part.id),
+    }
+    assert finding.subject == CHUNK.breadcrumb
+
+
 def test_a_contradicted_claim_is_never_a_representative() -> None:
     # qwen/c1 is a duplicate of gemma/c1 but contradicts gemma/c2: gemma/c1 stays kept alone
     q = _claim("qwen", "c1", "Retries default to 3.")

@@ -314,12 +314,13 @@ def _findings(
             parent[max(a, b)] = min(a, b)
 
     by_key: dict[str, int] = {}
+
+    def evidence(k: int) -> Evidence:
+        return _evidence(kept[k], refs[k], by_id[kept[k].claim.chunk_id])
+
     for i, j, _ in contradictions:
         union(i, j)
-        chunk = by_id[kept[i].claim.chunk_id]
-        key = finding_key(
-            "K5a", "contradiction", tuple(_evidence(kept[k], refs[k], chunk) for k in (i, j))
-        )
+        key = finding_key("K5a", "contradiction", (evidence(i), evidence(j)))
         union(i, by_key.setdefault(key, i))
     for (i, j), p in zip(candidates, pairs, strict=True):
         if p.relation == "duplicate" and i in involved and j in involved:
@@ -330,6 +331,7 @@ def _findings(
         components[find(i)].append((i, j, p))
     findings = []
     for root, members in components.items():
+        # parts of one section share its breadcrumb, so the root's chunk names the subject
         chunk = by_id[kept[root].claim.chunk_id]
         claims = sorted(k for k in involved if find(k) == root)
         first = members[0][2]
@@ -345,7 +347,7 @@ def _findings(
                     f"“{texts[first.b]}”" + (f" (+{more} more claims)" if more > 0 else "")
                 ),
                 confidence="low",
-                evidence=tuple(_evidence(kept[k], refs[k], chunk) for k in claims),
+                evidence=tuple(evidence(k) for k in claims),
                 nli=tuple(
                     n
                     for _, _, p in members
