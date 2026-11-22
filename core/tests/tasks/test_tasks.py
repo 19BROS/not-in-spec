@@ -34,7 +34,7 @@ from notinspec.tasks.serialization import reference_from_json, reference_json
 CHUNKS = chunk_document(Document("api.md", "# API\nDocumentation."), project="pkg")
 SOURCES = (Source("signature", CHUNKS[0].section_id),)
 CONTEXT = GenerationContext("pkg", "2.0", content_hash("snapshot"))
-SUBJECT = Subject("pkg.connect", "2.0")
+SUBJECT = Subject("pkg.connect")
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "sphinx"
 
 
@@ -68,7 +68,9 @@ def answers(result):
 
 def item():
     return next(
-        i for i in run(Inventory((symbol(),))).items if i.reference.subject.parameter is None
+        i
+        for i in run(Inventory((symbol(),), (removal("pkg.old1"), removal("pkg.old2")))).items
+        if i.reference.subject == SUBJECT
     )
 
 
@@ -100,7 +102,6 @@ def test_models_are_frozen_and_validate_compatibility():
         {"generator_version": 0},
         {"operator_version": True},
         {"project": ""},
-        {"docs_version": "3.0"},
         {"operator": "copy"},
         {"status": "approved"},
     ):
@@ -109,7 +110,7 @@ def test_models_are_frozen_and_validate_compatibility():
     with pytest.raises(ValueError):
         ExistsReference(SUBJECT, 1)
     with pytest.raises(ValueError):
-        Subject("pkg.connect", "next")
+        ExistsReference(SUBJECT, False, tested_version="next")
     with pytest.raises(ValueError):
         DefaultReference(SUBJECT, "None")
     with pytest.raises(ValueError):
@@ -143,7 +144,7 @@ def test_mcq_structure_and_position_independence():
     ],
 )
 def test_removal_version_boundary(target, expected):
-    inv = Inventory((), (removal("pkg.old"),))
+    inv = Inventory((symbol(parameters=()),), (removal("pkg.old"),))
     result = run(inv, context=replace(CONTEXT, docs_version=target))
     assert answers(result).get(("pkg.old", None)) is expected
 
@@ -155,7 +156,7 @@ def test_pep440_is_not_lexicographic():
 
 def test_deprecated_still_exists_and_planned_removal_is_not_removal():
     change = replace(removal("pkg.connect", kind="deprecated"), removal_planned="2.0")
-    result = run(Inventory((symbol(),), (change,)))
+    result = run(Inventory((symbol(parameters=()),), (change, removal("pkg.old"))))
     assert answers(result)[("pkg.connect", None)] is True
     assert not any(isinstance(i.reference, ChoiceReference) for i in result.items)
 
@@ -184,7 +185,8 @@ def test_readded_name_and_future_removal_do_not_make_distractors():
         removal("pkg.connect", "1.5", kind="added"),
         removal("pkg.connect", "3"),
     )
-    assert answers(run(Inventory((symbol(),), changes)))[("pkg.connect", None)] is True
+    inv = Inventory((symbol(parameters=()),), (*changes, removal("pkg.old")))
+    assert answers(run(inv))[("pkg.connect", None)] is True
 
 
 def test_mcq_uses_only_three_proven_removals_for_the_same_scope():
@@ -270,12 +272,12 @@ def test_identity_ignores_wording_generator_and_snapshot_but_not_answers_or_oper
         == replace(
             original,
             wording=TaskText("New?", ("Another?", "Third?")),
-            generator_version=2,
+            generator_version=3,
             input_snapshot_hash=content_hash("typo"),
             docs_version="2.0.0",
         ).id
     )
-    assert original.id != replace(original, operator_version=2).id
+    assert original.id != replace(original, operator_version=3).id
     assert original.id != replace(original, reference=replace(original.reference, exists=False)).id
     assert (
         original.id
@@ -313,20 +315,21 @@ def test_reuse_preserves_whole_frozen_item_and_never_calls_writer():
             pytest.fail("writer must not be called on reuse")
 
     inv = Inventory((symbol(),))
-    original = run(inv)
+    original = run(inv, "L1")
     updated = run(
         inv,
+        "L1",
         existing=original.items,
         writer=NoWriter(),
         context=replace(
-            CONTEXT, generator_version=2, input_snapshot_hash=content_hash("new snapshot")
+            CONTEXT, generator_version=3, input_snapshot_hash=content_hash("new snapshot")
         ),
     )
     assert updated == original
 
 
 def test_export_import_rejects_tampering_duplicates_and_overwrites(tmp_path):
-    result = run(Inventory((symbol(),)))
+    result = run(Inventory((symbol(),), (removal("pkg.old1"), removal("pkg.old2"))))
     path = tmp_path / "tasks.json"
     save(path, result)
     assert load(path) == result
@@ -361,13 +364,14 @@ def test_existing_sphinx_ingestion_to_tasks_and_local_entrypoint(tmp_path):
         for generate in (generate_l0, generate_l1)
     ]
     result = GenerationResult(tuple(i for r in results for i in r.items), ())
-    assert answers(results[0])[("fixturelib.connect", None)] is True
+    assert results[0].items == ()
+    assert any("need both classes" in s.reason for s in results[0].skipped)
     defaults = [i.reference for i in result.items if isinstance(i.reference, DefaultReference)]
-    assert DefaultReference(Subject("fixturelib.connect", "2", "timeout"), "None") in defaults
+    assert DefaultReference(Subject("fixturelib.connect", "timeout"), "None") in defaults
     required = [
         i.reference for i in result.items if isinstance(i.reference, RequiredParametersReference)
     ]
-    assert RequiredParametersReference(Subject("fixturelib.connect", "2"), ("host",)) in required
+    assert RequiredParametersReference(Subject("fixturelib.connect"), ("host",)) in required
     out = tmp_path / "tasks.json"
     assert (
         main(
@@ -384,7 +388,7 @@ def test_existing_sphinx_ingestion_to_tasks_and_local_entrypoint(tmp_path):
         == 0
     )
     assert {i.id for i in load(out).items} == {i.id for i in result.items}
-    assert all(i.status == "candidate" and i.wording.writer == "template-v1" for i in result.items)
+    assert all(i.status == "candidate" and i.wording.writer == "template-v2" for i in result.items)
 
 
 def test_mcq_writer_and_model_only_receive_neutral_scope_and_options():
@@ -405,7 +409,9 @@ def test_mcq_writer_and_model_only_receive_neutral_scope_and_options():
     payload = json.loads(canonical_json(task.model_prompt()))
     assert "correct_id" not in payload and "reference" not in payload
     assert len(payload["options"]) == 4
-    assert payload["answer_format"] == "option-id"
+    assert payload["answer_format"] == "choice-label"
+    assert [o["label"] for o in payload["options"]] == list("ABCD")
+    assert all(set(o) == {"label", "text"} for o in payload["options"])
 
 
 def test_low_confidence_parameter_cannot_become_positive_or_removed_distractor():
@@ -436,14 +442,14 @@ def test_reference_decoder_rejects_wrong_tags_fields_and_types():
         {"kind": "unknown"},
         {
             "kind": "exists",
-            "subject": {"symbol": "x", "version": "2", "parameter": None},
+            "subject": {"symbol": "x", "parameter": None},
             "exists": "false",
+            "tested_version": None,
         },
         {
             "kind": "required-parameters",
             "subject": {
                 "symbol": "x",
-                "version": "2",
                 "parameter": None,
             },
             "names": "host",
@@ -452,7 +458,7 @@ def test_reference_decoder_rejects_wrong_tags_fields_and_types():
     for value in invalid:
         with pytest.raises(ValueError):
             reference_from_json(json.dumps(value))
-    result = json.loads(dumps(run(Inventory((symbol(),)))))
+    result = json.loads(dumps(run(Inventory((symbol(),)), "L1")))
     result["items"][0]["sources"][0]["type"] = "unknown"
     with pytest.raises(ValueError):
         loads(json.dumps(result))

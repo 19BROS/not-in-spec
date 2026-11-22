@@ -22,13 +22,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("sphinx_xml", type=Path)
     parser.add_argument("--project", required=True)
     parser.add_argument("--docs-version", required=True)
+    parser.add_argument(
+        "--api-version", help="PEP 440 version for Change evidence when label is main/latest"
+    )
     parser.add_argument("--out", type=Path, required=True, help="new candidate JSON file")
     parser.add_argument("--reuse", type=Path, help="reuse frozen candidates from an earlier export")
     args = parser.parse_args(argv)
     xml = read_sphinx_xml(args.sphinx_xml)
     chunks = tuple(c for d in xml.documents for c in chunk_blocks(d, project=args.project))
     built = build_inventory(chunks)
-    context = GenerationContext(args.project, args.docs_version, content_hash(dict(xml.files)))
+    context = GenerationContext(
+        args.project, args.docs_version, content_hash(dict(xml.files)), api_version=args.api_version
+    )
     existing = load(args.reuse).items if args.reuse else ()
     results = [
         generate(

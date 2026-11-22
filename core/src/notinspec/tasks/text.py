@@ -6,7 +6,11 @@ from notinspec.tasks.models import Question, TaskText
 class TemplateWriter:
     def write(self, question: Question) -> TaskText:
         s = question.subject
-        at = f"in version {s.version}"
+        at = (
+            f"in version {question.tested_version}"
+            if question.tested_version is not None
+            else "according to the supplied documentation"
+        )
         if question.kind == "exists":
             target = (
                 f"parameter `{s.parameter}` of `{s.symbol}`" if s.parameter else f"`{s.symbol}`"
@@ -14,7 +18,7 @@ class TemplateWriter:
             text = f"Does {target} exist {at}? Answer yes or no."
         elif question.kind == "choice":
             target = f"parameter of `{s.symbol}`" if s.parameter else "symbol"
-            text = f"Which listed {target} exists {at}? Answer with its option ID."
+            text = f"Which listed {target} exists {at}? Answer A, B, C or D."
         elif question.kind == "required-parameters":
             text = (
                 f"List the required parameters of `{s.symbol}` {at}, excluding *args and **kwargs."

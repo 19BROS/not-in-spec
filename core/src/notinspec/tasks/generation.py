@@ -13,6 +13,7 @@ from notinspec.tasks.identity import identity_key
 from notinspec.tasks.models import (
     ChoiceReference,
     GenerationResult,
+    PathReference,
     Question,
     Reference,
     SkippedTask,
@@ -32,16 +33,24 @@ class GenerationContext:
     project: str
     docs_version: str
     input_snapshot_hash: str
-    generator_version: int = 1
-    operator_version: int = 1
+    generator_version: int = 2
+    operator_version: int = 2
+    api_version: str | None = None
 
     def __post_init__(self) -> None:
         for value in (self.project, self.docs_version, self.input_snapshot_hash):
             nonempty(value)
-        if parse_version(self.docs_version) is None:
-            raise ValueError("docs_version must be PEP 440 for versioned L0/L1 generation")
+        if self.api_version is not None and parse_version(self.api_version) is None:
+            raise ValueError("api_version must be PEP 440")
         positive(self.generator_version)
         positive(self.operator_version)
+
+    @property
+    def comparison_version(self) -> str | None:
+        """Explicit API version, or a parseable label; needed only for Change evidence."""
+        if self.api_version is not None:
+            return self.api_version
+        return self.docs_version if parse_version(self.docs_version) is not None else None
 
 
 def trusted(sources: tuple[Source, ...]) -> bool:
@@ -53,20 +62,29 @@ class Evidence:
     exists: bool | None
     sources: tuple[Source, ...]
     reason: str = ""
+    tested_version: str | None = None
 
 
 def existence(
     inventory: Inventory,
     symbol: str,
     parameter: str | None,
-    version: str,
+    version: str | None,
     present: bool,
     sources: tuple[Source, ...],
 ) -> Evidence:
     """An absent entry alone never proves absence. Only an effective explicit removal does."""
-    target = parse_version(version)
-    assert target is not None
     changes = [c for c in inventory.changes if (c.symbol, c.parameter) == (symbol, parameter)]
+    # Deprecation does not affect current-snapshot existence. In particular, a display
+    # label like "main" must not block current inventory tasks because of a directive.
+    status_changes = [c for c in changes if c.kind in ("added", "removed")]
+    if not status_changes:
+        if present and trusted(sources):
+            return Evidence(True, sources)
+        return Evidence(None, (), "no reliable snapshot entry or effective removal")
+    target = parse_version(version) if version is not None else None
+    if target is None:
+        return Evidence(None, (), "Change evidence needs a comparable API version")
     dated: list[tuple[Version, Change]] = []
     for change in changes:
         parsed = parse_version(change.version)
@@ -87,7 +105,7 @@ def existence(
     if "removed" in kinds:
         if present:
             return Evidence(None, (), "removed name still appears in snapshot")
-        return Evidence(False, proof)
+        return Evidence(False, proof, tested_version=version)
     # A snapshot with a future addition is inconsistent; don't invent historic signatures.
     if present and not effective and any(c.kind == "added" for c in changes):
         return Evidence(None, (), "snapshot predates the documented addition")
@@ -129,13 +147,12 @@ class Builder:
             for c in self.conflicts
         )
 
-    def add(
-        self, reference: Reference, sources: tuple[Source, ...], display_name: str = ""
-    ) -> None:
+    def source_chunks(self, reference: Reference, sources: tuple[Source, ...]) -> tuple[Chunk, ...]:
+        """Eligibility before text writing, also used to gate the L0 class distribution."""
         s = reference.subject
         if self.conflicted(s.symbol, sources):
             self.skip(s.symbol, reference.kind, "conflicting inventory evidence")
-            return
+            return ()
         sections = {source.section_id for source in sources if source.section_id}
         matched = sorted(
             (c for c in self.chunks if c.section_id in sections),
@@ -143,7 +160,16 @@ class Builder:
         )
         if not matched or sections - {c.section_id for c in matched}:
             self.skip(s.symbol, reference.kind, "source sections are missing from chunks")
+            return ()
+        return tuple(matched)
+
+    def add(
+        self, reference: Reference, sources: tuple[Source, ...], display_name: str = ""
+    ) -> None:
+        matched = self.source_chunks(reference, sources)
+        if not matched:
             return
+        s = reference.subject
         level: Literal["L0", "L1"] = "L0" if reference.kind in ("exists", "choice") else "L1"
         ctx = self.context
         key = content_hash(
@@ -160,15 +186,19 @@ class Builder:
         if isinstance(reference, ChoiceReference):
             question_subject = Subject(
                 s.symbol if s.parameter else ctx.project,
-                s.version,
                 "*" if s.parameter else None,
             )
             question_display = question_subject.symbol
+        elif isinstance(reference, PathReference):
+            # Do not rely on a writer ignoring the answer hidden in another field.
+            question_subject = Subject(display_name)
+        version = getattr(reference, "tested_version", None)
         question = Question(
             reference.kind,
             question_subject,
             question_display,
-            reference.options if isinstance(reference, ChoiceReference) else (),
+            reference.model_options() if isinstance(reference, ChoiceReference) else (),
+            version,
         )
         item = TestItem(
             project=ctx.project,

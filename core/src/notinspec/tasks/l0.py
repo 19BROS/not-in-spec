@@ -16,6 +16,8 @@ from notinspec.tasks.models import (
     TestItem,
 )
 
+type Candidate = tuple[ExistsReference, tuple[Source, ...]]
+
 
 def generate_l0(
     inventory: Inventory,
@@ -27,6 +29,7 @@ def generate_l0(
     conflicts: Sequence[Conflict] = (),
 ) -> GenerationResult:
     build = Builder(context, chunks, writer, existing, conflicts)
+    candidates: list[Candidate] = []
     symbols = {s.path: s for s in inventory.symbols}
     names = set(symbols) | {c.symbol for c in inventory.changes if c.parameter is None}
     symbol_facts: dict[str, Evidence] = {}
@@ -41,7 +44,9 @@ def generate_l0(
             continue
         signatures = [sig for sig in symbol.signatures if trusted(sig.sources)] if symbol else []
         # §6.6: no signature means no inventory-based recognition in this implementation.
-        proof = existence(inventory, name, None, context.docs_version, symbol is not None, sources)
+        proof = existence(
+            inventory, name, None, context.comparison_version, symbol is not None, sources
+        )
         if proof.exists is True and not signatures:
             proof = Evidence(
                 None, (), "no reliable signature; call-record fallback not implemented"
@@ -49,7 +54,7 @@ def generate_l0(
         if build.conflicted(name, sources + proof.sources):
             proof = Evidence(None, (), "conflicting inventory evidence")
         symbol_facts[name] = proof
-        _yes_no(build, Subject(name, context.docs_version), proof)
+        _yes_no(build, Subject(name), proof, candidates)
         if symbol is None or proof.exists is not True:
             continue
         params: dict[str, tuple[Source, ...]] = {}
@@ -64,25 +69,58 @@ def generate_l0(
                 inventory,
                 name,
                 param,
-                context.docs_version,
+                context.comparison_version,
                 param in all_param_names,
                 params.get(param, ()),
             )
             if build.conflicted(name, evidence.sources):
                 evidence = Evidence(None, (), "conflicting inventory evidence")
             facts[param] = evidence
-            _yes_no(build, Subject(name, context.docs_version, param), evidence)
+            _yes_no(build, Subject(name, param), evidence, candidates)
         _choices(build, name, facts)
     # One question per known positive, with three proven removed symbols.
     _choices(build, None, symbol_facts)
+    _balanced_yes_no(build, candidates)
     return build.result()
 
 
-def _yes_no(build: Builder, subject: Subject, evidence: Evidence) -> None:
+def _yes_no(
+    build: Builder, subject: Subject, evidence: Evidence, candidates: list[Candidate]
+) -> None:
     if evidence.exists is None:
         build.skip(subject.symbol, "exists", f"{subject.parameter or 'symbol'}: {evidence.reason}")
     else:
-        build.add(ExistsReference(subject, evidence.exists), evidence.sources)
+        reference = ExistsReference(subject, evidence.exists, evidence.tested_version)
+        if build.source_chunks(reference, evidence.sources):
+            candidates.append((reference, evidence.sources))
+
+
+def _balanced_yes_no(build: Builder, candidates: list[Candidate]) -> None:
+    """Do not emit a trivially solvable or heavily skewed yes/no test; never invent negatives.
+
+    Check eligibility BEFORE balancing/writing so missing evidence cannot erase one class.
+    Selection is deterministic and independent of input order and of the display version.
+    """
+    positive = sorted((c for c in candidates if c[0].exists), key=lambda c: content_hash(c[0]))
+    negative = sorted((c for c in candidates if not c[0].exists), key=lambda c: content_hash(c[0]))
+    count = min(len(positive), len(negative))
+    if not count:
+        build.skip(
+            build.context.project,
+            "exists",
+            "yes/no disabled: need both classes "
+            f"(eligible yes={len(positive)}, no={len(negative)})",
+        )
+        return
+    for reference, sources in positive[:count] + negative[:count]:
+        build.add(reference, sources)
+    if len(positive) != len(negative):
+        build.skip(
+            build.context.project,
+            "exists",
+            f"balanced yes/no to {count} per class; "
+            f"omitted {abs(len(positive) - len(negative))} items",
+        )
 
 
 def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> None:
@@ -99,7 +137,8 @@ def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> 
         names = [correct, *negatives[:3]]
         options = tuple(Option(content_hash({"name": name}), name) for name in names)
         sources = tuple(s for name in names for s in facts[name].sources)
-        subject = Subject(
-            symbol or correct, build.context.docs_version, correct if symbol else None
+        subject = Subject(symbol or correct, correct if symbol else None)
+        build.add(
+            ChoiceReference(subject, options, options[0].id, build.context.comparison_version),
+            sources,
         )
-        build.add(ChoiceReference(subject, options, options[0].id), sources)

@@ -30,7 +30,7 @@ def generate_l1(
     short_names = Counter(s.path.rsplit(".", 1)[-1] for s in inventory.symbols)
     for symbol in inventory.symbols:
         name = symbol.path
-        proof = existence(inventory, name, None, context.docs_version, True, symbol.sources)
+        proof = existence(inventory, name, None, context.comparison_version, True, symbol.sources)
         if proof.exists is not True:
             build.skip(name, "L1", proof.reason)
             continue
@@ -48,14 +48,14 @@ def generate_l1(
             build.skip(name, "L1", "OpenAPI mapping is not supported yet")
             continue
         if any(
-            existence(inventory, name, p.name, context.docs_version, True, p.sources).exists
+            existence(inventory, name, p.name, context.comparison_version, True, p.sources).exists
             is not True
             for p in sig.parameters
         ):
             build.skip(name, "L1", "parameter changes disagree with snapshot or need review")
             continue
         sources = symbol.sources + sig.sources + tuple(s for p in sig.parameters for s in p.sources)
-        subject = Subject(name, context.docs_version)
+        subject = Subject(name)
         short = name.rsplit(".", 1)[-1]
         if short_names[short] == 1 and short != name:
             build.add(PathReference(subject, name), sources, short)
@@ -73,7 +73,5 @@ def generate_l1(
             if p.default is None:
                 build.skip(name, "default", f"{p.name}: default is not documented")
                 continue
-            build.add(
-                DefaultReference(Subject(name, context.docs_version, p.name), p.default), sources
-            )
+            build.add(DefaultReference(Subject(name, p.name), p.default), sources)
     return build.result()

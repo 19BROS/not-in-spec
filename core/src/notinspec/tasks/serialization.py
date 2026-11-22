@@ -22,7 +22,7 @@ from notinspec.tasks.models import (
     TestItem,
 )
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 _REFERENCES: dict[str, type[Reference]] = {
     "exists": ExistsReference,
     "choice": ChoiceReference,
