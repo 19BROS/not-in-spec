@@ -65,8 +65,13 @@ def test_key_counts_claims_that_quote_the_same_text_once() -> None:
     # qwen and gemma both make a claim from one sentence; in the next run only qwen does
     gemma = replace(A, ref="c/z/c2", text="There are 3 retries by default.")
     assert _finding(A, gemma, B).key == _finding(A, B).key
-    # the same sentence quoted without its full stop
-    assert _finding(replace(A, quote="The default is 3 retries"), B).key == _finding(A, B).key
+    # the same sentence quoted without its full stop, or cut at a comma or a colon
+    for quote in (
+        "The default is 3 retries",
+        "The default is 3 retries, ",
+        "The default is 3 retries:",
+    ):
+        assert _finding(replace(A, quote=quote), B).key == _finding(A, B).key
 
 
 def test_key_changes_with_the_docs_text_the_section_or_the_check() -> None:

@@ -105,8 +105,9 @@ def finding_key(check: Check, kind: FindingKind, evidence: tuple[Evidence, ...])
     A quote is compared as the citation check normalizes it (whitespace, markup, typographic
     quotes), so reformatting the docs keeps the key. Evidence without a quote uses its ref.
     Two findings with one key are the same problem in the docs. Sides that quote the same text
-    count once, and so does a quote with or without its final full stop: whether one extractor
-    or both made a claim from that sentence does not change the key.
+    count once: whether one extractor or both made a claim from that sentence does not change
+    the key. Full stops, commas, semicolons, colons and spaces at the end of a quote are
+    ignored, so a sentence quoted with or without its final punctuation is the same side.
     """
     sides = sorted(
         {
