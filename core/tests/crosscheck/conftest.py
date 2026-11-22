@@ -13,6 +13,19 @@ FIIT extractors `qwen3.8-flash-next` and `gemma4-26b-a4b-hpc` on three urllib3 p
   threads, 2026-11-21) of every claim pair K5a compares in those chunks, both directions. They
   were cut out of a recording of all 13 548 pairs of run 009 (`RecordingNli`). Re-record after
   changing the prefilter or the claims.
+- `fixtures/run009-k2-claims.json`: every grounded claim of 6 API descriptions, for K2:
+  - `e1726e8f38d96ea4` Utilities > is_connection_dropped() (prose `HTTPConnection`, parameter
+    entry `BaseHTTPConnection`: an error in the docs, issue #42);
+  - `aa0b73129092fb4b` Utilities > Timeout > connect_timeout and `0f1fe6bd0dcdec3d`
+    ... > read_timeout (annotation `float | None`, `Return type` with `int`);
+  - `acea3ace92f50446` Utilities > Timeout > get_connect_duration();
+  - `7a897b7b860d7108` Utilities > create_urllib3_context() (defaults `None` in the signature,
+    the effective defaults in the prose);
+  - `eefc47cfde210dc9` Utilities > ssl_wrap_socket() (two overloads).
+- `fixtures/nli-k2-run009.json`: the real NLI scores (same model, revision and machine,
+  2026-11-22) of every fact-claim pair K2 compares in those chunks, both directions, cut out
+  of a recording of all 432 pairs of run 009. Re-record after changing the facts, their
+  sentences, the prefilter or the claims.
 """
 
 import json
@@ -25,12 +38,15 @@ from notinspec.chunking import Chunk
 from notinspec.claims import ExtractedClaim, GroundedClaim
 from notinspec.config import load_config
 from notinspec.ingestion import ingest
+from notinspec.inventory import Inventory, build_inventory
 from notinspec.nli import NliScores, RecordedNli
 
 CORE = Path(__file__).parents[2]
 FIXTURES = Path(__file__).parent / "fixtures"
 RUN009_CLAIMS = FIXTURES / "run009-claims.json"
 RUN009_NLI = FIXTURES / "nli-k5a-run009.json"
+RUN009_K2_CLAIMS = FIXTURES / "run009-k2-claims.json"
+RUN009_K2_NLI = FIXTURES / "nli-k2-run009.json"
 
 
 def grounded_claim(row: dict[str, Any]) -> GroundedClaim:
@@ -69,3 +85,19 @@ def urllib3_chunks(tmp_path_factory: pytest.TempPathFactory) -> list[Chunk]:
 @pytest.fixture
 def run009_nli() -> RecordedNli:
     return RecordedNli.load(RUN009_NLI)
+
+
+@pytest.fixture(scope="session")
+def run009_k2_claims() -> list[GroundedClaim]:
+    rows = json.loads(RUN009_K2_CLAIMS.read_text(encoding="utf-8"))
+    return [grounded_claim(r) for r in rows]
+
+
+@pytest.fixture(scope="session")
+def urllib3_inventory(urllib3_chunks: list[Chunk]) -> Inventory:
+    return build_inventory(urllib3_chunks).inventory
+
+
+@pytest.fixture
+def run009_k2_nli() -> RecordedNli:
+    return RecordedNli.load(RUN009_K2_NLI)

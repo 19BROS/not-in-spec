@@ -1,0 +1,2923 @@
+[
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "The connect_timeout property of urllib3's Timeout class returns the value to use when setting a connection timeout.",
+      "citation": "Get the value to use when setting a connection timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "1b63f03ad7c3aa056c5acbc0689a49070ac88e8d2586e576d2b7bfb782604dc8",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      79,
+      134
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: Get the value to use when setting a connection timeout.",
+    "premise_span": [
+      79,
+      134
+    ],
+    "nli": {
+      "entailment": 0.9970454573631287,
+      "neutral": 0.002738537732511759,
+      "contradiction": 0.00021595266298390925,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The connect_timeout property of urllib3's Timeout class returns a positive float or integer, the value None (never timeout), or the default system timeout.",
+      "citation": "This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "1b63f03ad7c3aa056c5acbc0689a49070ac88e8d2586e576d2b7bfb782604dc8",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      136,
+      240
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "premise_span": [
+      136,
+      240
+    ],
+    "nli": {
+      "entailment": 0.995108425617218,
+      "neutral": 0.004435904324054718,
+      "contradiction": 0.0004555992200039327,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "urllib3's get_connect_duration() function returns the time elapsed since the call to start_connect().",
+      "citation": "Gets the time elapsed since the call to `start_connect()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "e93204ab38741dab8f1ea8c440d21c254c59ea92a632bf58467ec244c30a3c2a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      54,
+      112
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): Gets the time elapsed since the call to start_connect().",
+    "premise_span": [
+      54,
+      112
+    ],
+    "nli": {
+      "entailment": 0.9979228377342224,
+      "neutral": 0.0018144689965993166,
+      "contradiction": 0.00026268954388797283,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "urllib3's get_connect_duration() function returns the elapsed time in seconds.",
+      "citation": "Elapsed time in seconds.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "e93204ab38741dab8f1ea8c440d21c254c59ea92a632bf58467ec244c30a3c2a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      130,
+      154
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): Elapsed time in seconds.",
+    "premise_span": [
+      128,
+      154
+    ],
+    "nli": {
+      "entailment": 0.9982553124427795,
+      "neutral": 0.0015722517855465412,
+      "contradiction": 0.00017242776812054217,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "urllib3's get_connect_duration() function returns a value of type float.",
+      "citation": "Return type: `float`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "e93204ab38741dab8f1ea8c440d21c254c59ea92a632bf58467ec244c30a3c2a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      156,
+      176
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "urllib3's get_connect_duration() function raises urllib3.exceptions.TimeoutStateError if called for a timer that hasn't been started.",
+      "citation": "`urllib3.exceptions.TimeoutStateError` – if you attempt to get duration for a timer that hasn’t been started.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "e93204ab38741dab8f1ea8c440d21c254c59ea92a632bf58467ec244c30a3c2a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      193,
+      302
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): urllib3.exceptions.TimeoutStateError – if you attempt to get duration for a timer that hasn’t been started.",
+    "premise_span": [
+      191,
+      302
+    ],
+    "nli": {
+      "entailment": 0.9993888139724731,
+      "neutral": 0.0005330835119821131,
+      "contradiction": 7.804102642694488e-05,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "The read_timeout property of urllib3's Timeout class returns the value for the read timeout.",
+      "citation": "Get the value for the read timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      57,
+      92
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "premise_span": [
+      57,
+      92
+    ],
+    "nli": {
+      "entailment": 0.9966799020767212,
+      "neutral": 0.0030980792362242937,
+      "contradiction": 0.0002221145259682089,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The read_timeout property assumes some time has elapsed in the connection timeout.",
+      "citation": "This assumes some time has elapsed in the connection timeout",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      154
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "premise_span": [
+      94,
+      199
+    ],
+    "nli": {
+      "entailment": 0.9841262102127075,
+      "neutral": 0.014674775302410126,
+      "contradiction": 0.0011989738559350371,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "The read_timeout property computes the read timeout appropriately.",
+      "citation": "computes the read timeout appropriately",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      159,
+      198
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "premise_span": [
+      94,
+      199
+    ],
+    "nli": {
+      "entailment": 0.9446951746940613,
+      "neutral": 0.052950527518987656,
+      "contradiction": 0.0023542181588709354,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "citation": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      304
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9970472455024719,
+      "neutral": 0.0020086353179067373,
+      "contradiction": 0.0009440500871278346,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "If the connection time has not been established, a TimeoutStateError will be raised.",
+      "citation": "If the connection time has not been established, a `TimeoutStateError` will be raised.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      305,
+      391
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9975945353507996,
+      "neutral": 0.001593042747117579,
+      "contradiction": 0.0008124172454699874,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "The read_timeout property raises urllib3.exceptions.TimeoutStateError if start_connect() has not yet been called on the object.",
+      "citation": "`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "678cd6d6ed55d7c5d9315f7b310827aa4fe89775f47e65f6d635546de7490c9a",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      495,
+      596
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "premise_span": [
+      493,
+      596
+    ],
+    "nli": {
+      "entailment": 0.9938951134681702,
+      "neutral": 0.005811720155179501,
+      "contradiction": 0.00029307714430615306,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "urllib3.util.create_urllib3_context() creates and configures an ssl.SSLContext instance for use with urllib3.",
+      "citation": "Creates and configures an `ssl.SSLContext` instance for use with urllib3.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      274
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context(): Creates and configures an ssl.SSLContext instance for use with urllib3.",
+    "premise_span": [
+      201,
+      274
+    ],
+    "nli": {
+      "entailment": 0.9648494124412537,
+      "neutral": 0.031221119686961174,
+      "contradiction": 0.0039295596070587635,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The ssl_version parameter of urllib3.util.create_urllib3_context() specifies the desired protocol version to use.",
+      "citation": "The desired protocol version to use.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      324,
+      360
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: ssl_version (int | None) – The desired protocol version to use. This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+    "premise_span": [
+      293,
+      502
+    ],
+    "nli": {
+      "entailment": 0.9977261424064636,
+      "neutral": 0.001614261302165687,
+      "contradiction": 0.000659626442939043,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "The ssl_version parameter of urllib3.util.create_urllib3_context() defaults to PROTOCOL_SSLv23.",
+      "citation": "This will default to PROTOCOL_SSLv23",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      361,
+      397
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: ssl_version (int | None) – The desired protocol version to use. This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support. This parameter is deprecated instead use ‘ssl_minimum_version’.",
+    "premise_span": [
+      293,
+      569
+    ],
+    "nli": {
+      "entailment": 0.9986211061477661,
+      "neutral": 0.0004996549105271697,
+      "contradiction": 0.000879216066095978,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "The PROTOCOL_SSLv23 default for ssl_version negotiates the highest protocol that both the server and the OpenSSL installation support.",
+      "citation": "which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      398,
+      502
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: ssl_version (int | None) – The desired protocol version to use. This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support. This parameter is deprecated instead use ‘ssl_minimum_version’.",
+    "premise_span": [
+      293,
+      569
+    ],
+    "nli": {
+      "entailment": 0.9995940327644348,
+      "neutral": 0.00021027082402724773,
+      "contradiction": 0.00019570351287256926,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "The ssl_version parameter of urllib3.util.create_urllib3_context() is deprecated.",
+      "citation": "This parameter is deprecated",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      506,
+      534
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support. This parameter is deprecated instead use ‘ssl_minimum_version’.",
+    "premise_span": [
+      361,
+      569
+    ],
+    "nli": {
+      "entailment": 0.9986987113952637,
+      "neutral": 0.0008288338431157172,
+      "contradiction": 0.0004724607279058546,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() specifies the minimum version of TLS to be used.",
+      "citation": "The minimum version of TLS to be used.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      610,
+      648
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_minimum_version: ssl_minimum_version (int | None) – The minimum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      571,
+      704
+    ],
+    "nli": {
+      "entailment": 0.9979519248008728,
+      "neutral": 0.0014768708497285843,
+      "contradiction": 0.0005713162245228887,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c7",
+      "text": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+      "citation": "Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      649,
+      704
+    ],
+    "citation_matches": 2,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_minimum_version: ssl_minimum_version (int | None) – The minimum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      571,
+      704
+    ],
+    "nli": {
+      "entailment": 0.9972261786460876,
+      "neutral": 0.002311993855983019,
+      "contradiction": 0.0004618132661562413,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c8",
+      "text": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() specifies the maximum version of TLS to be used.",
+      "citation": "The maximum version of TLS to be used.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      745,
+      783
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: ssl_maximum_version (int | None) – The maximum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      706,
+      839
+    ],
+    "nli": {
+      "entailment": 0.998126208782196,
+      "neutral": 0.0013473918661475182,
+      "contradiction": 0.0005263465573079884,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c9",
+      "text": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+      "citation": "Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      784,
+      839
+    ],
+    "citation_matches": 2,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: ssl_maximum_version (int | None) – The maximum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      706,
+      948
+    ],
+    "nli": {
+      "entailment": 0.9985889792442322,
+      "neutral": 0.000834799138829112,
+      "contradiction": 0.000576190825086087,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c10",
+      "text": "It is not recommended to set ssl_maximum_version to anything other than ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+      "citation": "Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      840,
+      920
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      784,
+      948
+    ],
+    "nli": {
+      "entailment": 0.9989031553268433,
+      "neutral": 0.0006707044085487723,
+      "contradiction": 0.000426192709710449,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c11",
+      "text": "The default value for ssl_maximum_version is ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+      "citation": "which is the default value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      921,
+      948
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      784,
+      948
+    ],
+    "nli": {
+      "entailment": 0.9995777010917664,
+      "neutral": 0.00020573334768414497,
+      "contradiction": 0.00021646109235007316,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c12",
+      "text": "The cert_reqs parameter of urllib3.util.create_urllib3_context() determines whether to require certificate verification.",
+      "citation": "Whether to require the certificate verification.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      979,
+      1027
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > cert_reqs: cert_reqs (int | None) – Whether to require the certificate verification. This defaults to ssl.CERT_REQUIRED.",
+    "premise_span": [
+      950,
+      1065
+    ],
+    "nli": {
+      "entailment": 0.9987882971763611,
+      "neutral": 0.0009831679053604603,
+      "contradiction": 0.00022861050092615187,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c13",
+      "text": "The cert_reqs parameter of urllib3.util.create_urllib3_context() defaults to ssl.CERT_REQUIRED.",
+      "citation": "This defaults to `ssl.CERT_REQUIRED`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1028,
+      1065
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > cert_reqs: cert_reqs (int | None) – Whether to require the certificate verification. This defaults to ssl.CERT_REQUIRED.",
+    "premise_span": [
+      950,
+      1065
+    ],
+    "nli": {
+      "entailment": 0.9983888864517212,
+      "neutral": 0.0011634045513346791,
+      "contradiction": 0.0004477955517359078,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c14",
+      "text": "The options parameter of urllib3.util.create_urllib3_context() specifies specific OpenSSL options.",
+      "citation": "Specific OpenSSL options.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1094,
+      1119
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > options: options (int | None) – Specific OpenSSL options. These default to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "premise_span": [
+      1067,
+      1223
+    ],
+    "nli": {
+      "entailment": 0.9973249435424805,
+      "neutral": 0.0020103284623473883,
+      "contradiction": 0.0006646597175858915,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c15",
+      "text": "The options parameter of urllib3.util.create_urllib3_context() defaults to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+      "citation": "These default to `ssl.OP_NO_SSLv2`, `ssl.OP_NO_SSLv3`, `ssl.OP_NO_COMPRESSION`, and `ssl.OP_NO_TICKET`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1120,
+      1223
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > options: options (int | None) – Specific OpenSSL options. These default to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "premise_span": [
+      1067,
+      1223
+    ],
+    "nli": {
+      "entailment": 0.9965638518333435,
+      "neutral": 0.002356521086767316,
+      "contradiction": 0.001079642795957625,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c16",
+      "text": "The ciphers parameter of urllib3.util.create_urllib3_context() specifies which cipher suites to allow the server to select.",
+      "citation": "Which cipher suites to allow the server to select.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1252,
+      1302
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ciphers: ciphers (str | None) – Which cipher suites to allow the server to select. Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+    "premise_span": [
+      1225,
+      1414
+    ],
+    "nli": {
+      "entailment": 0.998315691947937,
+      "neutral": 0.0011202340247109532,
+      "contradiction": 0.0005640692543238401,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c17",
+      "text": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to system configured ciphers if OpenSSL 1.1.1+ is used.",
+      "citation": "Defaults to either system configured ciphers if OpenSSL 1.1.1+",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1303,
+      1365
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ciphers: ciphers (str | None) – Which cipher suites to allow the server to select. Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+    "premise_span": [
+      1225,
+      1414
+    ],
+    "nli": {
+      "entailment": 0.9984643459320068,
+      "neutral": 0.0009324411512352526,
+      "contradiction": 0.0006032626261003315,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c18",
+      "text": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to a secure default set of ciphers if OpenSSL 1.1.1+ is not used.",
+      "citation": "otherwise uses a secure default set of ciphers.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1367,
+      1414
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ciphers: ciphers (str | None) – Which cipher suites to allow the server to select. Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+    "premise_span": [
+      1225,
+      1414
+    ],
+    "nli": {
+      "entailment": 0.9990265369415283,
+      "neutral": 0.0006474842666648328,
+      "contradiction": 0.00032596822711639106,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c19",
+      "text": "The verify_flags parameter of urllib3.util.create_urllib3_context() specifies the flags for certificate verification operations.",
+      "citation": "The flags for certificate verification operations.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1448,
+      1498
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > verify_flags: verify_flags (int | None) – The flags for certificate verification operations. These default to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "premise_span": [
+      1416,
+      1594
+    ],
+    "nli": {
+      "entailment": 0.9982290863990784,
+      "neutral": 0.0012137097073718905,
+      "contradiction": 0.0005572683876380324,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c20",
+      "text": "The verify_flags parameter of urllib3.util.create_urllib3_context() defaults to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+      "citation": "These default to `ssl.VERIFY_X509_PARTIAL_CHAIN` and `ssl.VERIFY_X509_STRICT` for Python 3.13+.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1499,
+      1594
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > verify_flags: verify_flags (int | None) – The flags for certificate verification operations. These default to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "premise_span": [
+      1416,
+      1594
+    ],
+    "nli": {
+      "entailment": 0.9972783923149109,
+      "neutral": 0.001776453573256731,
+      "contradiction": 0.0009451420046389103,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c21",
+      "text": "urllib3.util.create_urllib3_context() returns a constructed SSLContext object with specified options.",
+      "citation": "Constructed SSLContext object with specified options",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "2fb8dc096ef88f1001edf27a3c5a055bdbc35b0d439497a9bb7cd33745f5e9d4",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1612,
+      1664
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context(): Constructed SSLContext object with specified options",
+    "premise_span": [
+      1610,
+      1664
+    ],
+    "nli": {
+      "entailment": 0.9915924072265625,
+      "neutral": 0.00788639672100544,
+      "contradiction": 0.0005212081014178693,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "e1726e8f38d96ea4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "urllib3.util.is_connection_dropped() returns True if the connection is dropped and should be closed.",
+      "citation": "Returns True if the connection is dropped and should be closed.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "77c4c4a88ca5a661e848a95d7d2984799017beeec49b5d930eb7fbc19d3e3678",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      72,
+      135
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "premise_span": [
+      72,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9956485629081726,
+      "neutral": 0.0035817292518913746,
+      "contradiction": 0.0007696743705309927,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "e1726e8f38d96ea4",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The conn parameter of urllib3.util.is_connection_dropped() is a urllib3.connection.HTTPConnection object.",
+      "citation": ":param conn: `urllib3.connection.HTTPConnection` object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "77c4c4a88ca5a661e848a95d7d2984799017beeec49b5d930eb7fbc19d3e3678",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      136,
+      192
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "premise_span": [
+      72,
+      192
+    ],
+    "nli": {
+      "entailment": 0.999447762966156,
+      "neutral": 0.0004205837904009968,
+      "contradiction": 0.00013163288531359285,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c1",
+      "text": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+      "citation": "All arguments except for server_hostname, ssl_context, tls_in_tls, ca_cert_data and ca_cert_dir have the same meaning as they do when using `ssl.create_default_context()`, `ssl.SSLContext.load_cert_chain()`, `ssl.SSLContext.set_ciphers()` and `ssl.SSLContext.wrap_socket()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      939,
+      1213
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket(): All arguments except for server_hostname, ssl_context, tls_in_tls, ca_cert_data and ca_cert_dir have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers() and ssl.SSLContext.wrap_socket().",
+    "premise_span": [
+      939,
+      1213
+    ],
+    "nli": {
+      "entailment": 0.9966287016868591,
+      "neutral": 0.0026941662654280663,
+      "contradiction": 0.0006771272164769471,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c2",
+      "text": "The server_hostname parameter of urllib3.util.ssl_wrap_socket() specifies the expected hostname of the certificate when SNI is supported.",
+      "citation": "`server_hostname` (str | None) – When SNI is supported, the expected hostname of the certificate",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1234,
+      1330
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > server_hostname: server_hostname (str | None) – When SNI is supported, the expected hostname of the certificate",
+    "premise_span": [
+      1232,
+      1330
+    ],
+    "nli": {
+      "entailment": 0.99378901720047,
+      "neutral": 0.0057839746586978436,
+      "contradiction": 0.0004269281344022602,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c3",
+      "text": "The ssl_context parameter of urllib3.util.ssl_wrap_socket() accepts a pre-made SSLContext object.",
+      "citation": "`ssl_context` (ssl.SSLContext | None) – A pre-made `SSLContext` object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1334,
+      1405
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ssl_context: ssl_context (ssl.SSLContext | None) – A pre-made SSLContext object. If none is provided, one will be created using create_urllib3_context().",
+    "premise_span": [
+      1332,
+      1480
+    ],
+    "nli": {
+      "entailment": 0.9982221722602844,
+      "neutral": 0.0011734688887372613,
+      "contradiction": 0.0006043516332283616,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c4",
+      "text": "If no ssl_context is provided to urllib3.util.ssl_wrap_socket(), one will be created using create_urllib3_context().",
+      "citation": "If none is provided, one will be created using `create_urllib3_context()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1406,
+      1480
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ssl_context: ssl_context (ssl.SSLContext | None) – A pre-made SSLContext object. If none is provided, one will be created using create_urllib3_context().",
+    "premise_span": [
+      1332,
+      1480
+    ],
+    "nli": {
+      "entailment": 0.9873720407485962,
+      "neutral": 0.011493018828332424,
+      "contradiction": 0.001135029480792582,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c5",
+      "text": "The ciphers parameter of urllib3.util.ssl_wrap_socket() is a string of ciphers the client should support.",
+      "citation": "`ciphers` (str | None) – A string of ciphers we wish the client to support.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1484,
+      1559
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ciphers: ciphers (str | None) – A string of ciphers we wish the client to support.",
+    "premise_span": [
+      1482,
+      1559
+    ],
+    "nli": {
+      "entailment": 0.9965808987617493,
+      "neutral": 0.0031488898675888777,
+      "contradiction": 0.00027027528267353773,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c6",
+      "text": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is a directory containing CA certificates in multiple separate files.",
+      "citation": "`ca_cert_dir` (str | None) – A directory containing CA certificates in multiple separate files",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1563,
+      1657
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_dir: ca_cert_dir (str | None) – A directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "premise_span": [
+      1561,
+      1759
+    ],
+    "nli": {
+      "entailment": 0.9892416596412659,
+      "neutral": 0.009870651178061962,
+      "contradiction": 0.000887639238499105,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c7",
+      "text": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+      "citation": "as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1659,
+      1759
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_dir: ca_cert_dir (str | None) – A directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "premise_span": [
+      1561,
+      1759
+    ],
+    "nli": {
+      "entailment": 0.9937378168106079,
+      "neutral": 0.005275522358715534,
+      "contradiction": 0.00098668213468045,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c8",
+      "text": "The key_password parameter of urllib3.util.ssl_wrap_socket() is an optional password if the keyfile is encrypted.",
+      "citation": "`key_password` (str | None) – Optional password if the keyfile is encrypted.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1763,
+      1839
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > key_password: key_password (str | None) – Optional password if the keyfile is encrypted.",
+    "premise_span": [
+      1761,
+      1839
+    ],
+    "nli": {
+      "entailment": 0.9973043203353882,
+      "neutral": 0.002369245747104287,
+      "contradiction": 0.0003264855477027595,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c9",
+      "text": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is an optional string containing CA certificates in PEM format.",
+      "citation": "`ca_cert_data` (None | str | bytes) – Optional string containing CA certificates in PEM format",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1843,
+      1937
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_data: ca_cert_data (None | str | bytes) – Optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations()",
+    "premise_span": [
+      1841,
+      2020
+    ],
+    "nli": {
+      "entailment": 0.9949277639389038,
+      "neutral": 0.00427644420415163,
+      "contradiction": 0.0007958681089803576,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c10",
+      "text": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+      "citation": "suitable for passing as the cadata parameter to SSLContext.load_verify_locations()",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1938,
+      2020
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_data: ca_cert_data (None | str | bytes) – Optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations()",
+    "premise_span": [
+      1841,
+      2020
+    ],
+    "nli": {
+      "entailment": 0.9940640330314636,
+      "neutral": 0.00525844469666481,
+      "contradiction": 0.0006775937508791685,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "qwen3.8-flash-next",
+      "local_id": "c11",
+      "text": "The tls_in_tls parameter of urllib3.util.ssl_wrap_socket() uses SSLTransport to wrap the existing socket.",
+      "citation": "`tls_in_tls` (bool) – Use SSLTransport to wrap the existing socket.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d85f96dbee93585c549fcb83ddf33344acb2a0fdabb5053c99122a8e8f47953e",
+      "model": "qwen3.8-flash-next"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      2024,
+      2091
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > tls_in_tls: tls_in_tls (bool) – Use SSLTransport to wrap the existing socket.",
+    "premise_span": [
+      2022,
+      2091
+    ],
+    "nli": {
+      "entailment": 0.9922342300415039,
+      "neutral": 0.007116861641407013,
+      "contradiction": 0.0006489452789537609,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The connect_timeout property gets the value to use when setting a connection timeout.",
+      "citation": "Get the value to use when setting a connection timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "7317ae3d4445baf276988437e5237b15730b47cc1e2680cf43f7211c9df22631",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      79,
+      134
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: Get the value to use when setting a connection timeout.",
+    "premise_span": [
+      79,
+      134
+    ],
+    "nli": {
+      "entailment": 0.985314130783081,
+      "neutral": 0.013729900121688843,
+      "contradiction": 0.0009559618192724884,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The connect_timeout value can be a positive float.",
+      "citation": "This will be a positive float",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "7317ae3d4445baf276988437e5237b15730b47cc1e2680cf43f7211c9df22631",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      136,
+      165
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "premise_span": [
+      136,
+      240
+    ],
+    "nli": {
+      "entailment": 0.998847484588623,
+      "neutral": 0.0007911354186944664,
+      "contradiction": 0.00036142076714895666,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "The connect_timeout value can be a positive integer.",
+      "citation": "or integer",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "7317ae3d4445baf276988437e5237b15730b47cc1e2680cf43f7211c9df22631",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      166,
+      176
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "premise_span": [
+      136,
+      240
+    ],
+    "nli": {
+      "entailment": 0.9988052845001221,
+      "neutral": 0.000815636885818094,
+      "contradiction": 0.0003791380440816283,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "The connect_timeout value can be None, which means it will never timeout.",
+      "citation": "the value None (never timeout)",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "7317ae3d4445baf276988437e5237b15730b47cc1e2680cf43f7211c9df22631",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      178,
+      208
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "premise_span": [
+      136,
+      240
+    ],
+    "nli": {
+      "entailment": 0.998933732509613,
+      "neutral": 0.0008956992533057928,
+      "contradiction": 0.0001705270988168195,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "aa0b73129092fb4b",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "The connect_timeout value can be the default system timeout.",
+      "citation": "or the default system timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "7317ae3d4445baf276988437e5237b15730b47cc1e2680cf43f7211c9df22631",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      210,
+      240
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > connect_timeout: This will be a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "premise_span": [
+      136,
+      240
+    ],
+    "nli": {
+      "entailment": 0.9991490840911865,
+      "neutral": 0.0006745443097315729,
+      "contradiction": 0.00017644884064793587,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The get_connect_duration() function gets the time elapsed since the call to start_connect().",
+      "citation": "Gets the time elapsed since the call to `start_connect()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "082cc884dd9d3fa5403c9ce2656250fadea472e0c301da4c44f1092b935b61be",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      54,
+      112
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): Gets the time elapsed since the call to start_connect().",
+    "premise_span": [
+      54,
+      112
+    ],
+    "nli": {
+      "entailment": 0.9983739852905273,
+      "neutral": 0.0013407908845692873,
+      "contradiction": 0.0002851609024219215,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The get_connect_duration() function returns the elapsed time in seconds.",
+      "citation": "Elapsed time in seconds.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "082cc884dd9d3fa5403c9ce2656250fadea472e0c301da4c44f1092b935b61be",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      130,
+      154
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): Elapsed time in seconds.",
+    "premise_span": [
+      128,
+      154
+    ],
+    "nli": {
+      "entailment": 0.9977420568466187,
+      "neutral": 0.0020206915214657784,
+      "contradiction": 0.0002372557355556637,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "The return type of get_connect_duration() is float.",
+      "citation": "Return type: `float`",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "082cc884dd9d3fa5403c9ce2656250fadea472e0c301da4c44f1092b935b61be",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "not_checkable",
+    "citation_span": [
+      156,
+      176
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 0,
+    "premise": null,
+    "premise_span": null,
+    "nli": null,
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "acea3ace92f50446",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "get_connect_duration() raises urllib3.exceptions.TimeoutStateError if you attempt to get duration for a timer that hasn’t been started.",
+      "citation": "`urllib3.exceptions.TimeoutStateError` – if you attempt to get duration for a timer that hasn’t been started.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "082cc884dd9d3fa5403c9ce2656250fadea472e0c301da4c44f1092b935b61be",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      193,
+      302
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > get_connect_duration(): urllib3.exceptions.TimeoutStateError – if you attempt to get duration for a timer that hasn’t been started.",
+    "premise_span": [
+      191,
+      302
+    ],
+    "nli": {
+      "entailment": 0.9986949563026428,
+      "neutral": 0.0010723024606704712,
+      "contradiction": 0.00023279196466319263,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The read_timeout property returns the value for the read timeout.",
+      "citation": "Get the value for the read timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      57,
+      92
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: Get the value for the read timeout.",
+    "premise_span": [
+      57,
+      92
+    ],
+    "nli": {
+      "entailment": 0.9888471364974976,
+      "neutral": 0.010485989972949028,
+      "contradiction": 0.00066690071253106,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The read_timeout property assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "citation": "This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      94,
+      199
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: This assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "premise_span": [
+      94,
+      199
+    ],
+    "nli": {
+      "entailment": 0.9758710265159607,
+      "neutral": 0.023047709837555885,
+      "contradiction": 0.001081224880181253,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "citation": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      304
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9970472455024719,
+      "neutral": 0.0020086353179067373,
+      "contradiction": 0.0009440500871278346,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "If the connection time has not been established, a `TimeoutStateError` is raised when accessing read_timeout.",
+      "citation": "If the connection time has not been established, a `TimeoutStateError` will be raised.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      305,
+      391
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout. If the connection time has not been established, a TimeoutStateError will be raised.",
+    "premise_span": [
+      201,
+      391
+    ],
+    "nli": {
+      "entailment": 0.9947177767753601,
+      "neutral": 0.004841470159590244,
+      "contradiction": 0.00044080952648073435,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "0f1fe6bd0dcdec3d",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "A `urllib3.exceptions.TimeoutStateError` is raised if `start_connect()` has not yet been called on the object.",
+      "citation": "`urllib3.exceptions.TimeoutStateError` – If `start_connect()` has not yet been called on this object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "c1990ce2837e36c17b159c5ce45b87e58d2c5a1ed201facd87a107068be85bff",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      495,
+      596
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > Timeout > read_timeout: urllib3.exceptions.TimeoutStateError – If start_connect() has not yet been called on this object.",
+    "premise_span": [
+      493,
+      596
+    ],
+    "nli": {
+      "entailment": 0.9990435242652893,
+      "neutral": 0.0008389254217036068,
+      "contradiction": 0.00011759243352571502,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The create_urllib3_context() function creates and configures an `ssl.SSLContext` instance for use with urllib3.",
+      "citation": "Creates and configures an `ssl.SSLContext` instance for use with urllib3.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      201,
+      274
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context(): Creates and configures an ssl.SSLContext instance for use with urllib3.",
+    "premise_span": [
+      201,
+      274
+    ],
+    "nli": {
+      "entailment": 0.9983991980552673,
+      "neutral": 0.0013809077208861709,
+      "contradiction": 0.00021997367730364203,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The ssl_version parameter is deprecated; instead use ‘ssl_minimum_version’.",
+      "citation": "This parameter is deprecated instead use ‘ssl_minimum_version’.",
+      "type": "change",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      506,
+      569
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support. This parameter is deprecated instead use ‘ssl_minimum_version’.",
+    "premise_span": [
+      361,
+      569
+    ],
+    "nli": {
+      "entailment": 0.9992449283599854,
+      "neutral": 0.0005550410132855177,
+      "contradiction": 0.0001999462692765519,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "The ssl_version parameter defaults to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+      "citation": "This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      361,
+      502
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_version: ssl_version (int | None) – The desired protocol version to use. This will default to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support. This parameter is deprecated instead use ‘ssl_minimum_version’.",
+    "premise_span": [
+      293,
+      569
+    ],
+    "nli": {
+      "entailment": 0.9990917444229126,
+      "neutral": 0.0005033236229792237,
+      "contradiction": 0.00040499347960576415,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "The ssl_minimum_version parameter specifies the minimum version of TLS to be used.",
+      "citation": "The minimum version of TLS to be used.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      610,
+      648
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_minimum_version: ssl_minimum_version (int | None) – The minimum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      571,
+      704
+    ],
+    "nli": {
+      "entailment": 0.9988553524017334,
+      "neutral": 0.0007755014812573791,
+      "contradiction": 0.000369145127478987,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "The ssl_minimum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "citation": "Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      649,
+      704
+    ],
+    "citation_matches": 2,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_minimum_version: ssl_minimum_version (int | None) – The minimum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      571,
+      704
+    ],
+    "nli": {
+      "entailment": 0.9972902536392212,
+      "neutral": 0.0022503577638417482,
+      "contradiction": 0.00045937951654195786,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c6",
+      "text": "The ssl_maximum_version parameter specifies the maximum version of TLS to be used.",
+      "citation": "The maximum version of TLS to be used.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      745,
+      783
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: ssl_maximum_version (int | None) – The maximum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "premise_span": [
+      706,
+      839
+    ],
+    "nli": {
+      "entailment": 0.9988859295845032,
+      "neutral": 0.0007585640414617956,
+      "contradiction": 0.0003555470902938396,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c7",
+      "text": "The ssl_maximum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "citation": "Use the ‘ssl.TLSVersion’ enum for specifying the value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      784,
+      839
+    ],
+    "citation_matches": 2,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: ssl_maximum_version (int | None) – The maximum version of TLS to be used. Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      706,
+      948
+    ],
+    "nli": {
+      "entailment": 0.9991288781166077,
+      "neutral": 0.0005407985881902277,
+      "contradiction": 0.0003303207049611956,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c8",
+      "text": "It is not recommended to set the ssl_maximum_version parameter to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+      "citation": "Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      840,
+      920
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      784,
+      948
+    ],
+    "nli": {
+      "entailment": 0.9988061189651489,
+      "neutral": 0.0007690401980653405,
+      "contradiction": 0.00042480722186155617,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c9",
+      "text": "The default value of the ssl_maximum_version parameter is ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+      "citation": "which is the default value.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      921,
+      948
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ssl_maximum_version: Use the ‘ssl.TLSVersion’ enum for specifying the value. Not recommended to set to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’ which is the default value.",
+    "premise_span": [
+      784,
+      948
+    ],
+    "nli": {
+      "entailment": 0.999530553817749,
+      "neutral": 0.00024051323998719454,
+      "contradiction": 0.00022885981888975948,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c10",
+      "text": "The cert_reqs parameter determines whether to require the certificate verification.",
+      "citation": "Whether to require the certificate verification.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      979,
+      1027
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > cert_reqs: cert_reqs (int | None) – Whether to require the certificate verification. This defaults to ssl.CERT_REQUIRED.",
+    "premise_span": [
+      950,
+      1065
+    ],
+    "nli": {
+      "entailment": 0.9992365837097168,
+      "neutral": 0.000575222191400826,
+      "contradiction": 0.00018819887191057205,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c11",
+      "text": "The default value of the cert_reqs parameter is `ssl.CERT_REQUIRED`.",
+      "citation": "This defaults to `ssl.CERT_REQUIRED`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1028,
+      1065
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > cert_reqs: cert_reqs (int | None) – Whether to require the certificate verification. This defaults to ssl.CERT_REQUIRED.",
+    "premise_span": [
+      950,
+      1065
+    ],
+    "nli": {
+      "entailment": 0.9992478489875793,
+      "neutral": 0.00052118010353297,
+      "contradiction": 0.0002309170231455937,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c12",
+      "text": "The options parameter specifies specific OpenSSL options.",
+      "citation": "Specific OpenSSL options.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1094,
+      1119
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > options: options (int | None) – Specific OpenSSL options. These default to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "premise_span": [
+      1067,
+      1223
+    ],
+    "nli": {
+      "entailment": 0.9990079998970032,
+      "neutral": 0.0006690038717351854,
+      "contradiction": 0.0003229625872336328,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c13",
+      "text": "The default values for the options parameter are `ssl.OP_NO_SSLv2`, `ssl.OP_NO_SSLv3`, `ssl.OP_NO_COMPRESSION`, and `ssl.OP_NO_TICKET`.",
+      "citation": "These default to `ssl.OP_NO_SSLv2`, `ssl.OP_NO_SSLv3`, `ssl.OP_NO_COMPRESSION`, and `ssl.OP_NO_TICKET`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1120,
+      1223
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > options: options (int | None) – Specific OpenSSL options. These default to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "premise_span": [
+      1067,
+      1223
+    ],
+    "nli": {
+      "entailment": 0.9991995692253113,
+      "neutral": 0.0004990373272448778,
+      "contradiction": 0.00030140913440845907,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c14",
+      "text": "The ciphers parameter specifies which cipher suites to allow the server to select.",
+      "citation": "Which cipher suites to allow the server to select.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1252,
+      1302
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ciphers: ciphers (str | None) – Which cipher suites to allow the server to select. Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+    "premise_span": [
+      1225,
+      1414
+    ],
+    "nli": {
+      "entailment": 0.999292254447937,
+      "neutral": 0.000422265671659261,
+      "contradiction": 0.0002854667545761913,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c15",
+      "text": "The default value for the ciphers parameter is either system configured ciphers if OpenSSL 1.1.1+, otherwise it uses a secure default set of ciphers.",
+      "citation": "Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1303,
+      1414
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > ciphers: ciphers (str | None) – Which cipher suites to allow the server to select. Defaults to either system configured ciphers if OpenSSL 1.1.1+, otherwise uses a secure default set of ciphers.",
+    "premise_span": [
+      1225,
+      1414
+    ],
+    "nli": {
+      "entailment": 0.9995265007019043,
+      "neutral": 0.0002682601916603744,
+      "contradiction": 0.00020528594905044883,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c16",
+      "text": "The verify_flags parameter specifies the flags for certificate verification operations.",
+      "citation": "The flags for certificate verification operations.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1448,
+      1498
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > verify_flags: verify_flags (int | None) – The flags for certificate verification operations. These default to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "premise_span": [
+      1416,
+      1594
+    ],
+    "nli": {
+      "entailment": 0.9991233944892883,
+      "neutral": 0.0005487893358804286,
+      "contradiction": 0.0003277667856309563,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c17",
+      "text": "For Python 3.13+, the default values for the verify_flags parameter are `ssl.VERIFY_X509_PARTIAL_CHAIN` and `ssl.VERIFY_X509_STRICT`.",
+      "citation": "These default to `ssl.VERIFY_X509_PARTIAL_CHAIN` and `ssl.VERIFY_X509_STRICT` for Python 3.13+.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1499,
+      1594
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context() > verify_flags: verify_flags (int | None) – The flags for certificate verification operations. These default to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "premise_span": [
+      1416,
+      1594
+    ],
+    "nli": {
+      "entailment": 0.9993932247161865,
+      "neutral": 0.00043625684338621795,
+      "contradiction": 0.0001705074537312612,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "7a897b7b860d7108",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c18",
+      "text": "The create_urllib3_context() function returns a constructed SSLContext object with specified options.",
+      "citation": "Constructed SSLContext object with specified options",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "cde7492fec4e75a9428a2b3483336b0946a81cab31c3adb59ee4c3c4e5abb141",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1612,
+      1664
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > create_urllib3_context(): Constructed SSLContext object with specified options",
+    "premise_span": [
+      1610,
+      1664
+    ],
+    "nli": {
+      "entailment": 0.9931024312973022,
+      "neutral": 0.006578733213245869,
+      "contradiction": 0.00031884797499515116,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "e1726e8f38d96ea4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The function urllib3.util.is_connection_dropped(conn) returns True if the connection is dropped and should be closed.",
+      "citation": "Returns True if the connection is dropped and should be closed.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d797cfa59574c546e4d5e67e3d5170f1bf24f3f3f1f88e3b4eb317db49d8089b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      72,
+      135
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "premise_span": [
+      72,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9981514811515808,
+      "neutral": 0.0015950147062540054,
+      "contradiction": 0.00025339002604596317,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "e1726e8f38d96ea4",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "The parameter conn for urllib3.util.is_connection_dropped(conn) is a urllib3.connection.HTTPConnection object.",
+      "citation": "`param conn: `urllib3.connection.HTTPConnection` object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "d797cfa59574c546e4d5e67e3d5170f1bf24f3f3f1f88e3b4eb317db49d8089b",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      137,
+      192
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "premise_span": [
+      72,
+      192
+    ],
+    "nli": {
+      "entailment": 0.9992190599441528,
+      "neutral": 0.0006006748299114406,
+      "contradiction": 0.00018022462609224021,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c1",
+      "text": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+      "citation": "All arguments except for server_hostname, ssl_context, tls_in_tls, ca_cert_data and ca_cert_dir have the same meaning as they do when using `ssl.create_default_context()`, `ssl.SSLContext.load_cert_chain()`, `ssl.SSLContext.set_ciphers()` and `ssl.SSLContext.wrap_socket()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      939,
+      1213
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket(): All arguments except for server_hostname, ssl_context, tls_in_tls, ca_cert_data and ca_cert_dir have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers() and ssl.SSLContext.wrap_socket().",
+    "premise_span": [
+      939,
+      1213
+    ],
+    "nli": {
+      "entailment": 0.9754294157028198,
+      "neutral": 0.009783471934497356,
+      "contradiction": 0.014787162654101849,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c2",
+      "text": "When SNI is supported, the server_hostname parameter is the expected hostname of the certificate.",
+      "citation": "`server_hostname` (str | None) – When SNI is supported, the expected hostname of the certificate",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1234,
+      1330
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > server_hostname: server_hostname (str | None) – When SNI is supported, the expected hostname of the certificate",
+    "premise_span": [
+      1232,
+      1330
+    ],
+    "nli": {
+      "entailment": 0.9912329316139221,
+      "neutral": 0.00841519981622696,
+      "contradiction": 0.00035191638744436204,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c3",
+      "text": "The ssl_context parameter accepts a pre-made SSLContext object.",
+      "citation": "`ssl_context` (ssl.SSLContext | None) – A pre-made `SSLContext` object.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1334,
+      1405
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ssl_context: ssl_context (ssl.SSLContext | None) – A pre-made SSLContext object. If none is provided, one will be created using create_urllib3_context().",
+    "premise_span": [
+      1332,
+      1480
+    ],
+    "nli": {
+      "entailment": 0.999221920967102,
+      "neutral": 0.0004972020396962762,
+      "contradiction": 0.0002809078723657876,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c4",
+      "text": "If no ssl_context is provided to ssl_wrap_socket(), one will be created using create_urllib3_context().",
+      "citation": "If none is provided, one will be created using `create_urllib3_context()`.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1406,
+      1480
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ssl_context: ssl_context (ssl.SSLContext | None) – A pre-made SSLContext object. If none is provided, one will be created using create_urllib3_context().",
+    "premise_span": [
+      1332,
+      1480
+    ],
+    "nli": {
+      "entailment": 0.9990034699440002,
+      "neutral": 0.0008421124657616019,
+      "contradiction": 0.00015449053898919374,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c5",
+      "text": "The ciphers parameter is a string of ciphers the client wishes to support.",
+      "citation": "`ciphers` (str | None) – A string of ciphers we wish the client to support.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1484,
+      1559
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ciphers: ciphers (str | None) – A string of ciphers we wish the client to support.",
+    "premise_span": [
+      1482,
+      1559
+    ],
+    "nli": {
+      "entailment": 0.9544083476066589,
+      "neutral": 0.022788668051362038,
+      "contradiction": 0.02280302159488201,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c6",
+      "text": "The ca_cert_dir parameter is a directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+      "citation": "`ca_cert_dir` (str | None) – A directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1563,
+      1759
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_dir: ca_cert_dir (str | None) – A directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "premise_span": [
+      1561,
+      1759
+    ],
+    "nli": {
+      "entailment": 0.993155300617218,
+      "neutral": 0.006398105528205633,
+      "contradiction": 0.000446529797045514,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c7",
+      "text": "The key_password parameter is an optional password if the keyfile is encrypted.",
+      "citation": "`key_password` (str | None) – Optional password if the keyfile is encrypted.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1763,
+      1839
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > key_password: key_password (str | None) – Optional password if the keyfile is encrypted.",
+    "premise_span": [
+      1761,
+      1839
+    ],
+    "nli": {
+      "entailment": 0.9975511431694031,
+      "neutral": 0.0021961417514830828,
+      "contradiction": 0.00025266059674322605,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c8",
+      "text": "The ca_cert_data parameter is an optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+      "citation": "`ca_cert_data` (None | str | bytes) – Optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations()",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      1843,
+      2020
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > ca_cert_data: ca_cert_data (None | str | bytes) – Optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations()",
+    "premise_span": [
+      1841,
+      2020
+    ],
+    "nli": {
+      "entailment": 0.9948033690452576,
+      "neutral": 0.004716861993074417,
+      "contradiction": 0.000479657988762483,
+      "truncated": false
+    },
+    "missing": []
+  },
+  {
+    "claim": {
+      "chunk_id": "eefc47cfde210dc9",
+      "extractor": "gemma4-26b-a4b-hpc",
+      "local_id": "c9",
+      "text": "The tls_in_tls parameter uses SSLTransport to wrap the existing socket.",
+      "citation": "`tls_in_tls` (bool) – Use SSLTransport to wrap the existing socket.",
+      "type": "fact",
+      "run_id": "fiit-demo-1",
+      "prompt_hash": "4bbb1176486a520d0f2a7f739631dfe7af4cf2671f277e43128d7d3111355f44",
+      "model": "gemma4-26b-a4b-hpc"
+    },
+    "prompt_version": 1,
+    "status": "kept",
+    "citation_span": [
+      2024,
+      2091
+    ],
+    "citation_matches": 1,
+    "premise_candidates": 1,
+    "premise": "urllib3 > Utilities > ssl_wrap_socket() > tls_in_tls: tls_in_tls (bool) – Use SSLTransport to wrap the existing socket.",
+    "premise_span": [
+      2022,
+      2091
+    ],
+    "nli": {
+      "entailment": 0.9918791055679321,
+      "neutral": 0.007437748368829489,
+      "contradiction": 0.0006831600912846625,
+      "truncated": false
+    },
+    "missing": []
+  }
+]
