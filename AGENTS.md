@@ -25,6 +25,9 @@ uv run ruff check && uv run ruff format --check
 uv run mypy                         # strict, core only
 uv run pytest --cov=notinspec       # all Python tests, coverage gate on core
 uv run notinspec --help             # CLI
+uv run notinspec db upgrade        # migrations on DATABASE_URL (notinspec[db])
+uv run notinspec db import-runs tmp/runs   # old run folders into the DB
+TEST_DATABASE_URL=postgresql://… uv run pytest core/tests/db   # DB tests; skipped without it
 uv run uvicorn notinspec_api.main:app --reload    # API on :8000
 uv run pre-commit install           # once per clone
 

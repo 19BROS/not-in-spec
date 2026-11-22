@@ -586,7 +586,16 @@ The report says what a result pattern means. It does not recommend a fix: findin
 ## 10. Data
 
 - **Raw LLM responses are append-only** (models under test, extractors, task-text writer, judge): stored as JSONB, never updated or deleted. They cannot be reconstructed retroactively. The same holds for test items and review decisions; the application's DB role has no `UPDATE` / `DELETE` on these tables.
-- **Everything lives in PostgreSQL on our VM** ([§3](#3-architecture)): projects and their limits, runs (with the OIDC claims of the upload, [§11](#11-github-action)), uploaded inputs (hash and metadata; the files themselves on a volume, addressed by hash), the inventory and the out-of-inventory models (`Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`), the golden set and its reviews, raw LLM calls and results. Model attributes: TBD.
+- **Everything lives in PostgreSQL on our VM** ([§3](#3-architecture)): projects and their limits, runs (with the OIDC claims of the upload, [§11](#11-github-action)), uploaded inputs (hash and metadata; the files themselves on a volume, addressed by hash), the inventory and the out-of-inventory models (`Chunk`, `Example`, `CallRecord`, `Claim`, `Finding`, `TestItem`, `Reference`), the golden set and its reviews, raw LLM calls and results. There is no model table: every LLM call and every result stores the model ID and its parameters.
+- **Schema** (`core/src/notinspec/db/models.py`, migrations in `notinspec/db/migrations`, `notinspec db upgrade`):
+  - projects and inputs: `project` (registration and limits, no secrets), `input_snapshot` (the inputs' hash, the archive by hash), `source_file`, `ingestion` (what one version of readers, chunker and inventory builder made of a snapshot);
+  - runs: `run`, `upload` (the verified OIDC claims, one per GitHub run and attempt), `pr_closed`, `run_step`, `run_log`, `run_artifact` (files a run wrote, as written);
+  - docs and inventory: `chunk`, `example`, `example_calls`, `symbol`, `signature`, `parameter`, `change`;
+  - claims and LLM calls: `claim` (with its grounding, dropped claims too), `extraction_issue`, `claim_answer` (the claim store), `llm_call` (every role of [§8](#8-models));
+  - golden set and results: `test_item`, `golden_set_version`, `golden_set_commit`, `golden_set_item`, `review_decision`, `run_test_item` (stable / superseded / candidate per run, [§7](#7-ci-behaviour-and-repeated-runs)), `result`, `finding`.
+  - The pipeline's stable IDs (chunk, example, finding key, item identity key) are unique columns next to `bigint` keys. Closed value sets are `text` with a CHECK.
+  - **Append-only** in the database: `upload`, `pr_closed`, `llm_call`, `claim_answer`, `test_item`, the three golden-set tables, `review_decision`, `run_test_item` and `result`. A trigger refuses `UPDATE`, `DELETE` and `TRUNCATE` for every role, and the application role `notinspec_app` gets only `SELECT` and `INSERT` on them.
+  - **Derived, never stored:** an item's review state (its latest decision), whether a finding is open (its key is in the latest main run), stale candidates. No fix recommendations ([§6.11](#611-diagnosis)), no averaged level, no overall score.
 - Every result row records: input snapshot hash, commit, docs version, generator version, test item ID, golden-set version, mode, model ID + params, raw response, evaluation result, error category, cost, timestamps.
 - The **golden set** lives in our database and is as frozen as files in git would be:
   - a `TestItem` is **never updated or deleted**; a change is a new item.
@@ -820,7 +829,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [x] NLI speed on our VM: 0.88 pairs/s under the worker limit of 3 CPU, 1.1 pairs/s on all 4 vCPU (`python -m notinspec.nli bench --pairs 64`, 2026-11-18), in [§6.4](#64-prose-and-changelog--claim)
 - [ ] Perturbation: share of "not in the documentation" items in L2, *k* (how many prefilter chunks the unsupported check uses), the recall window size, and how to detect "the docs don't say" in an answer (phrase list, NLI or the judge). Measure the rate of answerable questions that pass the check (false `neutral`) on the reviewed items
 - [ ] Models under test: `qwen/qwen3.8-27b` alone for now; at least one more later (small vs. large), and the per-run budget. Qwen is a preview model, which Groq may withdraw at short notice
-- [ ] Attributes of the DB models
+- [x] Attributes of the DB models: see the schema in [§10](#10-data). Still open there: per-run and per-month budgets of a project (with "Project limits" below)
 - [ ] Golden-set review: which items are auto-approved, how much our team can review for the pilot in UC1, and whether and how docs owners review later (GitHub accounts, [§2.5](#25-golden-set-review))
 - [ ] Project limits: allowed models, budget per run / per month, upload size
 - [x] Where the DB models live in code: in `core` as `notinspec.db`, installed with the extra `notinspec[db]` (API and worker), so the CLI does not need SQLAlchemy. Logic around the DB (item reuse by identity key, baselines, superseded items) is logic too, so it stays in `core`. Pipeline code never imports `notinspec.db`: it works on dataclasses, and only `db` maps them to tables. A separate workspace package was rejected: one more package, and logic would drift into it
