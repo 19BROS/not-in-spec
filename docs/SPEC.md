@@ -183,7 +183,7 @@ These exact terms are used in code, diagrams and text.
 | **Test item** | `TestItem` | question or task at level L0–L4 + reference + metadata. Identity key: [§10](#10-data). |
 | **Golden set** | – | approved and frozen set of test items, versioned in our database ([§10](#10-data)) |
 | **Symbol profile** | – | which levels L0–L4 can be tested for a symbol, and the results |
-| **Finding** | `Finding` | a problem in the documentation, reported to the author |
+| **Finding** | `Finding` | a problem in the documentation, reported to the author. One shape for every cross-check: the check (K1–K7), the kind (`contradiction`, …), the subject (symbol path or section), the evidence (each compared side with its section, chunk, text and the docs text it quotes), the NLI scores behind it, the versions it depends on, a confidence and a key. The key is built from the check, the kind and the quoted docs text (not claim IDs or wording), so a PR can tell a new finding from one its baseline already has. `notinspec.findings` |
 
 ## 5. Test levels
 
@@ -369,7 +369,11 @@ Source  – attached to every object above
    - citation not found in the chunk → drop the claim;
    - citation found only outside prose (code block, table, signature or type) → `not_checkable`, dropped. Facts in code and signatures are covered by components B and C.
 2. **Grounding via NLI:** premise = the **NLI premise** around the citation ([§6.1](#61-reading-and-chunking)), hypothesis = claim, decision by argmax. `entailment` → keep. `neutral` / `contradiction` → drop. A citation found more than once in the prose (a docstring repeats sentences across parameter entries) has one premise per match: the entries of a parameter the claim names come first, and among the rest a premise that entails the claim wins over one that does not, then the highest entailment. Then the **identifier check** ([§18](#18-open-items)): a claim NLI keeps is still dropped (`id_missing`) if its section never names one of its identifiers, numbers or versions. It runs on every claim with a premise, so both checks can be measured on their own. Dropped claims are recorded but **not reused as test material automatically**: NLI also drops some true claims. "Not in the documentation" questions come from the perturbation operator instead ([§6.7](#67-tasks-and-operators)).
-3. **K5a · claim vs. claim within a chunk:** extractor A ⇄ B, NLI in both directions. A whole section can yield many claims, so K5a uses the same prefilter as K5b.
+3. **K5a · claim vs. claim within a chunk:** the kept claims of different extractors in one chunk, NLI in both directions (premise = one claim), decision by argmax, then the table below. A whole section can yield 60 claims per extractor (3 600 pairs), so K5a compares only claims whose NLI premises overlap. On run 009 (`experiments/nli/runs/009-fiit-urllib3-demo`, 853 kept claims) that is 1 385 of 6 835 pairs, and it misses 8 of 135 duplicates. K5b needs embeddings instead; K5a may move to them when they exist. In code: `notinspec.crosscheck.check_claims_within_chunks`.
+   - Duplicates group transitively, and so does a cycle of one-way entailments (equivalent claims). The group keeps the claim of the first extractor (then the earliest one); the others are `merged` into it and the kept claim records which extractors confirmed it.
+   - A claim that another claim entails one way only is `covered` by the more specific one. The top of every such chain is kept, so no fact is lost.
+   - A claim in a contradiction is `contradicted`. Contradiction pairs that share a claim, are duplicates of each other or quote the same text are one `Finding`.
+   - Only `kept` claims become test material. On run 009, 462 of 853 kept claims stay `kept` (81 of them from gemma; 99 confirmed by both extractors), 245 are `covered`, 109 `merged` and 37 `contradicted`, in 10 findings.
 4. **K5b · claim vs. claim across chunks:** embedding prefilter so not all pairs are compared, then NLI in both directions.
 
 | A ⇒ B | B ⇒ A | Relation | Action |
@@ -377,7 +381,7 @@ Source  – attached to every object above
 | entailment | entailment | duplicate | merge into one claim |
 | neutral | entailment | B is more specific | keep B |
 | neutral | neutral | different claims | keep both |
-| contradiction | – | contradiction | `Finding`, no tasks from these claims |
+| contradiction | contradiction | contradiction | `Finding` (confidence low), no tasks from these claims |
 
 5. A *change* claim yields a `Change` (low confidence → review by our team, [§2.5](#25-golden-set-review)). If it matches a `Change` from a version directive, only its key skips the review; its attributes are checked as described in [§6.3](#63-inventory).
 
@@ -401,7 +405,7 @@ NLI = local cross-encoder classifying (premise, hypothesis) → entailment / con
 | **K6** | format ↔ format | does the model manage the task in one format (REST) but not another (SDK)? | comparing model results |
 | **K7** | curl `Example` ↔ OpenAPI | is the request from the example valid per the spec? | Prism validation |
 
-Every contradiction is a `Finding`.
+Every contradiction is a `Finding`. A deterministic check (K1, K4, K7) gives `high` confidence. An NLI check (K2, K5) gives `low`: such findings go to review by our team ([§2.5](#25-golden-set-review)) and are not reported to the author or used to fail CI until then. On run 009, NLI labelled 264 of 6 835 claim pairs a contradiction in at least one direction and 34 in both. One reader went through all 34 and about 60 of the one-way ones (not labels), and none was a contradiction in the docs: they were items of one list ("targets CPython 3.10+" vs "targets PyPy v7.3.20+") or before and after ("Previously … a PoolManager" vs "added a top-level function"). The only real error among them was an extraction error, one way (gemma's "compatible with CPython 3.11", which the docs say of PyPy). So K5 needs a contradiction in both directions.
 
 ### 6.6 Per-symbol decisions
 
