@@ -11,8 +11,10 @@ worker/   APScheduler worker        (thin wrapper over core)
 web/      React + Vite + TS SPA
 action/   reusable GitHub Action
 deploy/   docker-compose, nginx, env template, fixtures
-docs/     SPEC, assignment, DEPLOY (production runbook)
+docs/     SPEC, assignment, DEPLOY (production runbook), design (UI screens)
 ```
+
+The web UI design is in [docs/design/](docs/design/README.md). Follow those screens when working on the UI.
 
 Python packages form one **uv workspace** (root `pyproject.toml`). Each lives in `<dir>/src/<module>` with tests in `<dir>/tests`.
 

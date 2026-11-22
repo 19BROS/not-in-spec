@@ -575,7 +575,7 @@ The report says what a result pattern means. It does not recommend a fix: findin
 | Database | PostgreSQL, SQLAlchemy 2, Alembic |
 | Scheduler | APScheduler in a dedicated `worker` container, job state and the run queue in Postgres (no Redis/Celery) |
 | Auth | GitHub Actions OIDC tokens checked against GitHub's JWKS (PyJWT, *candidate*); no user accounts in the MVP |
-| Web UI | React + Vite + TypeScript SPA, ECharts or Recharts, served by nginx |
+| Web UI | React + Vite + TypeScript SPA, ECharts or Recharts, served by nginx; screens in [docs/design/](design/README.md) |
 | Alerts | Slack incoming webhook |
 | Agent formats | `AGENTS.md` in our repo, our own `llms.txt`; MCP server (stretch) |
 
