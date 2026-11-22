@@ -104,13 +104,21 @@ def finding_key(check: Check, kind: FindingKind, evidence: tuple[Evidence, ...])
 
     A quote is compared as the citation check normalizes it (whitespace, markup, typographic
     quotes), so reformatting the docs keeps the key. Evidence without a quote uses its ref.
-    Two findings with one key are the same problem in the docs.
+    Two findings with one key are the same problem in the docs. Sides that quote the same text
+    count once, and so does a quote with or without its final full stop: whether one extractor
+    or both made a claim from that sentence does not change the key.
     """
     sides = sorted(
-        (e.section_id or "", e.pointer or "", e.kind, normalize(e.quote) if e.quote else e.ref)
-        for e in evidence
+        {
+            (e.section_id or "", e.pointer or "", e.kind, _quoted(e.quote) if e.quote else e.ref)
+            for e in evidence
+        }
     )
     return content_hash({"check": check, "kind": kind, "sides": sides})
+
+
+def _quoted(quote: str) -> str:
+    return normalize(quote).rstrip(" .,;:")
 
 
 def _place(e: Evidence) -> tuple[str, str, str, tuple[int, int], str]:
