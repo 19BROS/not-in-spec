@@ -150,3 +150,179 @@ def test_a_single_match_has_one_span() -> None:
     assert result.spans == (result.span,)
     code = check_citation(GUIDE, "connect(timeout=2.5)")
     assert code.status == "not_checkable" and code.spans == (code.span,)
+
+
+# --- looser matches (GROUNDING_VERSION 2, issue #42) -------------------------------------
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "you\x02re able to see those warnings",  # run 008: qwen wrote \x02 for ’
+        "we\x00ve added a top-level function",
+        "you're able to see those warnings",
+    ],
+)
+def test_a_control_character_matches_an_apostrophe(citation: str) -> None:
+    chunk = _chunk(
+        "# A\n\nEnsure you’re able to see those warnings: we’ve added a top-level function.\n"
+    )
+    assert check_citation(chunk, citation).status == "found"
+
+
+@pytest.mark.parametrize("dash", ["‐", "‑", "‒", "―", "−"])
+def test_hyphen_variants_and_minus_are_plain_hyphens(dash: str) -> None:
+    chunk = _chunk("# A\n\nWhen you’re sub-classing an interface, pass -1.\n")
+    assert check_citation(chunk, f"you’re sub{dash}classing an interface, pass {dash}1").status == (
+        "found"
+    )
+
+
+def test_a_list_marker_after_a_colon_matches_the_next_line() -> None:
+    xml = read_sphinx_xml(URLLIB3)
+    chunks = [c for d in xml.documents for c in chunk_blocks(d, project="urllib3")]
+    start = next(
+        c for c in chunks if c.breadcrumb == "urllib3 > Utilities > Timeout > start_connect()"
+    )
+    citation = (
+        "Raises: - `urllib3.exceptions.TimeoutStateError` – if you attempt to start a timer"
+        " that has been started already."
+    )
+    result = check_citation(start, citation)
+    assert result.status == "found"
+    assert result.span is not None
+    assert start.text[result.span[0] : result.span[1]].startswith("**Raises:**\n")
+
+
+def test_a_list_marker_after_a_colon_in_the_text_still_matches_exactly() -> None:
+    chunk = _chunk("# A\n\nThree options: - fast, - safe and - small.\n")
+    result = check_citation(chunk, "options: - fast, - safe")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == "options: - fast, - safe"
+
+
+RETRIES = _chunk(
+    "# Retries\n"
+    "\n"
+    "By default, urllib3 will retry requests 3 times and follow up to 3 redirects.\n"
+    "\n"
+    "Set `retries=False` to disable both.\n"
+    "\n"
+    "```python\n"
+    "Url(scheme='http', host='google.com', ...)\n"
+    "```\n"
+)
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "By default, urllib3 will ... follow up to 3 redirects",
+        "By default, urllib3 will…follow up to 3 redirects",
+        "By default, ... retry requests ... up to 3 redirects",
+        "... retry requests 3 times",  # a leading ellipsis leaves one part
+    ],
+)
+def test_an_ellipsis_matches_its_parts_in_order_in_one_block(citation: str) -> None:
+    result = check_citation(RETRIES, citation)
+    assert result.status == "found"
+    assert result.span is not None
+
+
+def test_an_ellipsis_span_runs_from_the_first_part_to_the_last() -> None:
+    result = check_citation(RETRIES, "urllib3 will ... follow up to 3 redirects")
+    assert result.span is not None
+    assert RETRIES.text[result.span[0] : result.span[1]] == (
+        "urllib3 will retry requests 3 times and follow up to 3 redirects"
+    )
+
+
+@pytest.mark.parametrize(
+    "citation",
+    [
+        "follow up to 3 redirects ... By default, urllib3",  # parts out of order
+        "follow up to 3 redirects. ... to disable both",  # parts in two blocks
+        "By default ... redirects",  # a one-word part matches too much
+        "By default, urllib3 will ... follow up to 5 redirects",  # a part not in the text
+    ],
+)
+def test_an_ellipsis_is_not_found_otherwise(citation: str) -> None:
+    assert check_citation(RETRIES, citation).status == "not_found"
+
+
+def test_an_ellipsis_in_code_is_matched_exactly() -> None:
+    result = check_citation(RETRIES, "Url(scheme='http', host='google.com', ...)")
+    assert result.status == "not_checkable"
+
+
+# from the review of #46: the parts of an ellipsis stay inside one prose unit
+NESTED_CODE = _chunk(
+    "# A\n"
+    "\n"
+    "- First item says hello.\n"
+    "\n"
+    "  ```python\n"
+    "  pool = PoolManager(retries=3)\n"
+    "  resp = pool.request('GET', url)\n"
+    "  ```\n"
+    "\n"
+    "- Second item says goodbye.\n"
+)
+
+
+def test_an_ellipsis_in_code_nested_in_a_list_item_is_not_checkable() -> None:
+    result = check_citation(
+        NESTED_CODE, "pool = PoolManager(retries=3) ... resp = pool.request('GET', url)"
+    )
+    assert result.status == "not_checkable"
+    assert result.span is not None
+    assert NESTED_CODE.text[result.span[0] : result.span[1]] == (
+        "pool = PoolManager(retries=3)\n  resp = pool.request('GET', url)"
+    )
+
+
+def test_an_ellipsis_in_a_list_item_gives_a_premise() -> None:
+    result = check_citation(NESTED_CODE, "First item ... says hello")
+    assert result.status == "found"
+    assert result.span is not None
+    assert nli_premise(NESTED_CODE, result.span).text == "acme > A: First item says hello."
+
+
+def test_an_ellipsis_across_two_list_items_is_not_found() -> None:
+    chunk = _chunk("# A\n\n- `connect` is given in seconds.\n- `read` is given in minutes.\n")
+    assert check_citation(chunk, "connect is given in ... in minutes").status == "not_found"
+
+
+def test_an_ellipsis_span_is_the_shortest_window() -> None:
+    chunk = _chunk(
+        "# A\n\nThe pool is created. The pool is reused. "
+        "The pool is closed when the manager is cleared.\n"
+    )
+    result = check_citation(chunk, "The pool is ... when the manager is cleared")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == (
+        "The pool is closed when the manager is cleared"
+    )
+
+
+def test_an_ellipsis_part_in_nested_code_is_skipped_for_the_one_in_prose() -> None:
+    chunk = _chunk(
+        "# A\n"
+        "\n"
+        "- It runs `fast` today.\n"
+        "\n"
+        "  ```text\n"
+        "  It runs fast and says hello world\n"
+        "  ```\n"
+        "\n"
+        "  Later it stops and says hello world.\n"
+    )
+    result = check_citation(chunk, "It runs fast ... says hello world")
+    assert result.status == "found"
+    assert result.span is not None
+    assert chunk.text[result.span[0] : result.span[1]] == (
+        "It runs `fast` today.\n\n  ```text\n  It runs fast and says hello world\n  ```\n\n"
+        "  Later it stops and says hello world"
+    )
