@@ -8,6 +8,8 @@ Target screens for the web UI (`web/`). Follow them when working on the UI. The 
 
 The entry page. The user uploads documentation (Sphinx zip, Markdown, `openapi.yaml`, `CHANGELOG.md`, `llms.txt`) or connects a GitHub repository by URL, branch and docs path, then starts the analysis with **Run analysis**.
 
+*Future state, not MVP.* In the MVP the web UI is read-only and runs start only from the GitHub Action ([SPEC §1.1](../SPEC.md#11-what-we-are-not-building), [§11.1](../SPEC.md#111-upload-api)).
+
 ## 2. Run progress
 
 ![Run progress](02-run-progress.jpg)
