@@ -26,7 +26,7 @@ Results of one run compared with `main`. It shows L0, L1 and L3 separately (neve
 
 ![Test item detail](04-test-item.jpg)
 
-One test item opened from the dashboard. It shows the task text (written by an LLM), the reference (computed by code), the source section, the model's answer with its verdict, an argument-by-argument comparison, and a diagnosis with a suggested fix to the docs.
+One test item opened from the dashboard. It shows the task text (written by an LLM), the reference (computed by code), the source section, the model's answer with its verdict, an argument-by-argument comparison, and a diagnosis that says what the failure means. It never recommends a fix ([SPEC §6.11](../SPEC.md#611-diagnosis)); the docs author decides how to fix it.
 
 ## 5. Findings
 
