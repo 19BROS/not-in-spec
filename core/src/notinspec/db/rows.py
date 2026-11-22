@@ -230,3 +230,19 @@ def claim_answer(key: Doc, answer: Doc) -> models.ClaimAnswer:
         prompt_hash=answer["prompt_hash"],
         answered_model=answer["model"],
     )
+
+
+def finding(f: Doc, run_id: int) -> models.Finding:
+    """One `findings.Finding`; its `versions` pairs become an object."""
+    return models.Finding(
+        run_id=run_id,
+        key=f["key"],
+        check_code=f["check"],
+        kind=f["kind"],
+        subject=f["subject"],
+        message=f["message"],
+        confidence=f["confidence"],
+        evidence=list(f["evidence"]),
+        nli=list(f.get("nli", [])),
+        versions={name: value for name, value in f.get("versions", [])},
+    )

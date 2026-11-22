@@ -11,6 +11,7 @@ from notinspec.claims.store import LlmCall, ReuseKey, StoredAnswer
 from notinspec.cli import main
 from notinspec.db import DatabaseUrlError, database_url, models, rows, sqlalchemy_url
 from notinspec.db.save import Registration
+from notinspec.findings import Evidence, Finding
 
 CALL = LlmCall(
     run_id="r1",
@@ -155,3 +156,16 @@ def test_registration_gives_the_oidc_workflow_path() -> None:
 def test_registration_rejects_bad_values(changes: dict[str, Any], message: str) -> None:
     with pytest.raises(ValueError, match=message):
         _registration(**changes)
+
+
+def test_finding_from_the_findings_dataclass() -> None:
+    evidence = (
+        Evidence("claim", "a", "x is 1", "s1", quote="x is 1"),
+        Evidence("claim", "b", "x is 2", "s2", quote="x is 2"),
+    )
+    found = Finding("K5a", "contradiction", "lib > X", "m", "high", evidence,
+                    versions=(("k5a", "1"), ("nli_model", "m")))  # fmt: skip
+    row = rows.finding(rows.plain(found), run_id=3)
+    assert (row.key, row.check_code, row.confidence) == (found.key, "K5a", "high")
+    assert row.versions == {"k5a": "1", "nli_model": "m"}
+    assert [e["ref"] for e in row.evidence] == ["a", "b"]
