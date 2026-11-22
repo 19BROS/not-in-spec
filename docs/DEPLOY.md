@@ -29,7 +29,7 @@ Nobody deploys by hand. Merging a PR into `main` does it:
 
 1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web`, `cli` images to GHCR tagged with the commit SHA.
 2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`).
-3. It checks out that commit, pulls the images for that SHA, makes sure the NLI model is on its volume (see *NLI model* below) and runs `docker compose up -d` with `/opt/notinspec/.env`.
+3. It checks out that commit, pulls the images for that SHA, makes sure the NLI model is on its volume (see *NLI model* below) and runs `docker compose up -d --remove-orphans` with `/opt/notinspec/.env`: every service of that commit's compose file starts (plus the `backup` profile), and services it no longer has are stopped.
 
 Pull requests, forks included, never run on the VM.
 

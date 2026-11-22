@@ -27,17 +27,20 @@ jobs:
     environment: production
     env:
       TAG: ${{ github.event.workflow_run.head_sha }}
-      COMPOSE: docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env
+      # every service of this commit's compose file, backup included: a hard-coded list comes from
+      # the newest deploy.yml and breaks when an older commit is deployed (#45 added mock after #43)
+      COMPOSE: docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env --profile backup
     steps:
       - uses: actions/checkout@v7
         with: { ref: "${{ github.event.workflow_run.head_sha }}" }
       - run: echo "IMAGE_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - run: $COMPOSE pull postgres api worker web proxy backup mock
+      - run: $COMPOSE pull
       # NLI model weights onto the hf-models volume (SPEC §12); offline no-op once they are there
       - run: $COMPOSE run --rm --no-deps -e HF_HUB_OFFLINE=0 worker python -m notinspec.nli fetch
       # a named volume takes the image's owner only when first mounted empty: demo-runs predates `chown app /runs`, and `docker cp` writes as root
       - run: $COMPOSE run --rm --no-deps -u root worker chown -R app /runs
-      - run: $COMPOSE up -d --no-build --wait postgres api worker web proxy backup mock
+      # --remove-orphans stops services this commit's compose file no longer has (one-off `run --rm` containers are not orphans)
+      - run: $COMPOSE up -d --no-build --wait --remove-orphans
       # tagged images of past deploys are not "dangling"; drop unused ones after a week (rollback re-pulls from GHCR)
       - run: docker image prune -af --filter until=168h
