@@ -179,9 +179,33 @@ def main(argv: list[str] | None = None) -> int:
     )
     _provider_option(demo, FIIT.name)
 
+    db = commands.add_parser(
+        "db",
+        help="Postgres at DATABASE_URL: migrations, import of old run folders (notinspec[db])",
+    )
+    db_commands = db.add_subparsers(dest="db_command")
+    db_commands.add_parser("upgrade", help="apply every migration not applied yet")
+    db_commands.add_parser("current", help="show the migration the database is at")
+    revision = db_commands.add_parser(
+        "revision", help="write a new migration from models.py (read and fix it before committing)"
+    )
+    revision.add_argument("-m", "--message", required=True)
+    import_runs = db_commands.add_parser(
+        "import-runs",
+        help="import run folders (notinspec demo, uploads) into the database",
+        description="Imports every folder with run.json below RUNS_DIR. Runs already in the "
+        "database are skipped, so it can run again.",
+    )
+    import_runs.add_argument("runs_dir", type=Path, metavar="RUNS_DIR")
+
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
     try:
+        if args.command == "db":
+            if args.db_command is None:
+                db.print_help()
+                return 0
+            return _db(args)
         if args.command == "claims":
             if args.claims_command == "extract":
                 return _extract_claims(args)
@@ -214,6 +238,36 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     parser.print_help()
+    return 0
+
+
+def _db(args: argparse.Namespace) -> int:
+    """`notinspec db …`; imported here, so the rest of the CLI works without notinspec[db]."""
+    try:
+        from notinspec.db import database_url, make_engine, migrate
+        from notinspec.db.importer import import_runs
+    except ImportError as e:
+        print(f"error: {e.name} is missing: install notinspec[db]", file=sys.stderr)
+        return 2
+    url = database_url()
+    if args.db_command == "import-runs":
+        engine = make_engine(url)
+        try:
+            outcomes = import_runs(engine, args.runs_dir)
+        finally:
+            engine.dispose()
+        for o in outcomes:
+            print(f"{o.status:<8}  {o.folder}  {o.detail}")
+        failed = sum(o.status == "failed" for o in outcomes)
+        print(f"{len(outcomes)} folders, {failed} failed")
+        return 2 if failed else 0
+    config = migrate.alembic_config(url)
+    if args.db_command == "upgrade":
+        migrate.upgrade(config)
+    elif args.db_command == "current":
+        migrate.current(config)
+    elif args.db_command == "revision":
+        migrate.revision(config, args.message)
     return 0
 
 

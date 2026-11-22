@@ -1,0 +1,120 @@
+"""Mapping to rows, URLs and the CLI without a database: these run everywhere, CI included."""
+
+from datetime import UTC, datetime
+
+import pytest
+
+from notinspec.claims.model import RawClaim
+from notinspec.claims.store import LlmCall, ReuseKey, StoredAnswer
+from notinspec.cli import main
+from notinspec.db import DatabaseUrlError, database_url, models, rows, sqlalchemy_url
+
+CALL = LlmCall(
+    run_id="r1",
+    role="claim-extractor",
+    extractor="qwen",
+    chunk_id="k1",
+    model="qwen3.8-flash-next",
+    prompt_hash="ph",
+    request={"model": "qwen3.8-flash-next", "messages": []},
+    response={
+        "model": "qwen3.8-flash-next",
+        "usage": {"prompt_tokens": 12, "completion_tokens": 3},
+    },
+    error=None,
+    time="2026-11-21T10:00:00+00:00",
+)
+
+
+def test_postgres_urls_get_the_psycopg_driver() -> None:
+    assert sqlalchemy_url("postgresql://u:p@h:5432/d") == "postgresql+psycopg://u:p@h:5432/d"
+    assert sqlalchemy_url("postgres://u@h/d") == "postgresql+psycopg://u@h/d"
+    assert sqlalchemy_url("postgresql+psycopg://h/d") == "postgresql+psycopg://h/d"
+    with pytest.raises(DatabaseUrlError, match="postgresql://"):
+        sqlalchemy_url("sqlite:///x.db")
+
+
+def test_database_url_must_be_set(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    with pytest.raises(DatabaseUrlError, match="set DATABASE_URL"):
+        database_url()
+    monkeypatch.setenv("DATABASE_URL", " postgresql://h/d ")
+    assert database_url() == "postgresql://h/d"
+
+
+def test_cli_db_without_url_fails_with_a_message(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    assert main(["db", "upgrade"]) == 2
+    assert "set DATABASE_URL" in capsys.readouterr().err
+    assert main(["db"]) == 0  # help only
+
+
+def test_llm_call_keeps_the_raw_response_and_reads_usage() -> None:
+    row = rows.llm_call(rows.plain(CALL), run_id=7)
+    assert (row.run_id, row.run_ref, row.role, row.actor, row.chunk_key) == (
+        7,
+        "r1",
+        "claim-extractor",
+        "qwen",
+        "k1",
+    )
+    assert row.response == CALL.response
+    assert (row.answered_model, row.tokens_in, row.tokens_out) == ("qwen3.8-flash-next", 12, 3)
+    assert row.created_at == datetime(2026, 11, 21, 10, tzinfo=UTC)
+
+
+def test_llm_call_without_an_answer() -> None:
+    call = rows.plain(CALL) | {"response": None, "error": "timed-out"}
+    row = rows.llm_call(call, run_id=None)
+    assert (row.response, row.answered_model, row.tokens_in, row.error) == (
+        None,
+        None,
+        None,
+        "timed-out",
+    )
+
+
+def test_claim_answer_from_the_store_types() -> None:
+    key = ReuseKey("h", "lib > A", "qwen", "m", 1, None, 2, False)
+    answer = StoredAnswer((RawClaim("c1", "t", "c", "fact"),), ("p",), "r1", "ph", "m-exact")
+    row = rows.claim_answer(rows.plain(key), rows.plain(answer))
+    assert (row.parser_version, row.thinking, row.reasoning_effort) == (2, False, None)
+    assert row.claims == [{"local_id": "c1", "text": "t", "citation": "c", "type": "fact"}]
+    assert (row.run_ref, row.answered_model, row.problems) == ("r1", "m-exact", ["p"])
+
+
+def test_claim_spans_become_start_and_end() -> None:
+    grounded = {
+        "claim": {"extractor": "e", "local_id": "c1", "text": "t", "citation": "c",
+                  "type": "fact", "prompt_hash": "ph", "model": "m", "run_id": "r0",
+                  "chunk_id": "k1"},
+        "prompt_version": 1, "status": "kept", "citation_span": [3, 9], "citation_matches": 1,
+        "premise_candidates": 1, "premise": "p", "premise_span": None, "nli": None,
+        "missing": [],
+    }  # fmt: skip
+    row = rows.claim(grounded, run_id=1, chunk_id=2, versions={"grounding": 1})
+    assert (row.citation_start, row.citation_end) == (3, 9)
+    assert (row.premise_start, row.premise_end) == (None, None)
+    assert (row.extraction_run, row.versions) == ("r0", {"grounding": 1})
+
+
+def test_ingestion_versions_hash_changes_with_the_chunker() -> None:
+    doc = {"schema_version": 4, "chunker_version": 3, "soft_limit": 2000,
+           "sphinx": {"version": "9.1.0", "reader_version": 2},
+           "inventory_builder_version": 1}  # fmt: skip
+    versions = rows.ingestion_versions(doc)
+    assert versions["sphinx_reader_version"] == 2
+    assert rows.ingestion_versions(doc | {"sphinx": None})["sphinx_version"] is None
+    newer = rows.ingestion_versions(doc | {"chunker_version": 4})
+    assert rows.versions_hash(versions) != rows.versions_hash(newer)
+
+
+def test_no_mutable_state_on_append_only_tables() -> None:
+    """SPEC §10: review state and finding status are derived, never stored as a column."""
+    columns = {t: set(models.Base.metadata.tables[t].columns.keys()) for t in models.APPEND_ONLY}
+    assert not {"status", "review_status", "is_frozen"} & columns["test_item"]
+    assert "status" not in models.Base.metadata.tables["finding"].columns
+    every = {c for t in models.Base.metadata.tables.values() for c in t.columns.keys()}
+    assert not {"recommended_fix", "overall_score", "slack_webhook"} & every
