@@ -1,6 +1,7 @@
 """extract_claims on recorded real Groq answers (conftest.py), plus provider failures."""
 
-from collections.abc import Callable
+from collections import Counter
+from collections.abc import Callable, Sequence
 from dataclasses import replace
 from pathlib import Path
 
@@ -9,6 +10,7 @@ import pytest
 from notinspec.chunking import Chunk
 from notinspec.claims import (
     DEFAULT_EXTRACTORS,
+    GROQ_EXTRACTORS,
     PROMPT_VERSION,
     ExtractorSpec,
     MemoryCallLog,
@@ -16,6 +18,8 @@ from notinspec.claims import (
     ReuseKey,
     extract_claims,
 )
+from notinspec.claims.parse import PARSER_VERSION
+from notinspec.claims.prompt import build_request
 from notinspec.runner import (
     ChatRequest,
     Completion,
@@ -24,12 +28,14 @@ from notinspec.runner import (
     ModelUnavailable,
     ProviderError,
     QuotaExhausted,
+    RequestTimeout,
 )
 
 FIXTURES = Path(__file__).parent / "fixtures"
 GUIDE_RECORDING = FIXTURES / "groq-fixturelib-guide.json"
 URLLIB3_RECORDING = FIXTURES / "groq-urllib3-demo.json"
-QWEN, GPT_OSS = DEFAULT_EXTRACTORS
+FIIT_RECORDING = FIXTURES / "fiit-urllib3-demo.json"
+QWEN, GPT_OSS = GROQ_EXTRACTORS  # the recordings are from Groq
 # gpt-oss-20b as first recorded, without a completion limit
 GPT_OSS_UNLIMITED = ExtractorSpec("openai/gpt-oss-20b", "openai/gpt-oss-20b")
 
@@ -82,10 +88,28 @@ def test_recorded_urllib3_demo_chunks(
     fake = FakeProvider.load(URLLIB3_RECORDING)
     results = [
         extract_claims(urllib3_chunks, s, _client(fake), "r", MemoryCallLog())
-        for s in DEFAULT_EXTRACTORS
+        for s in GROQ_EXTRACTORS
     ]
     assert not any(r.failures for r in results)
     golden("urllib3-demo-claims", [c for r in results for c in r.claims])
+
+
+def test_recorded_fiit_default_extractors(fiit_chunks: list[Chunk]) -> None:
+    """The default extractors on the FIIT proxy: thinking off, and `Retry` answered whole."""
+    fake = FakeProvider.load(FIIT_RECORDING)
+    results = [
+        extract_claims(fiit_chunks, s, _client(fake), "r", MemoryCallLog())
+        for s in DEFAULT_EXTRACTORS
+    ]
+    assert [r.extractor.model for r in results] == ["qwen3.8-flash-next", "gemma4-26b-a4b-hpc"]
+    assert not any(r.failures or r.problems for r in results)
+    retry = fiit_chunks[-1]
+    assert retry.breadcrumb == "urllib3 > Utilities > Retry"
+    per_chunk = [Counter(c.chunk_id for c in r.claims) for r in results]
+    assert [c[retry.id] for c in per_chunk] == [62, 57]  # Groq's qwen stopped at 2048 tokens
+    assert [sum(c.values()) for c in per_chunk] == [80, 73]
+    # the Retry answer names parameters past `other`, where Groq's qwen answer was cut off
+    assert any("retry_after_max" in c.text for c in results[0].claims)
 
 
 def test_reuse_asks_nothing(guide_chunks: list[Chunk]) -> None:
@@ -125,7 +149,15 @@ def test_problems_are_reused_with_the_claims(guide_chunks: list[Chunk]) -> None:
         store=store,
     )
     chunk = guide_chunks[0]
-    key = ReuseKey(chunk.content_hash, chunk.breadcrumb, QWEN.name, QWEN.model, PROMPT_VERSION)
+    key = ReuseKey(
+        chunk.content_hash,
+        chunk.breadcrumb,
+        QWEN.name,
+        QWEN.model,
+        PROMPT_VERSION,
+        QWEN.reasoning_effort,
+        PARSER_VERSION,
+    )
     stored = store.get(key)
     assert stored is not None
     store.put(key, replace(stored, problems=("claim 3: unknown type 'opinion'",)))
@@ -210,6 +242,60 @@ def test_stop_leaves_the_rest_unasked(
     assert [f.detail for f in result.failures[1:]] == ["not asked"] * 7
     assert len(log.calls) == 1 and log.calls[0].response is None
     assert log.calls[0].error is not None and type(error).__name__ in log.calls[0].error
+
+
+class _TimesOut:
+    """Answers from the recording, except for the chunks given: those time out every time."""
+
+    def __init__(self, chunks: Sequence[Chunk]) -> None:
+        self.fake = FakeProvider.load(GUIDE_RECORDING)
+        self.hanging = {build_request(c, QWEN).prompt_hash() for c in chunks}
+        self.calls = 0
+
+    def complete(self, request: ChatRequest) -> Completion:
+        self.calls += 1
+        if request.prompt_hash() in self.hanging:
+            raise RequestTimeout("no answer within 900s")
+        return self.fake.complete(request)
+
+
+def _retrying(provider: object) -> ModelClient:
+    return ModelClient(provider, max_attempts=5, sleep=lambda _: None)  # type: ignore[arg-type]
+
+
+def test_one_chunk_that_times_out_does_not_stop_the_extractor(
+    guide_chunks: list[Chunk],
+) -> None:
+    # chunks 2 and 5 time out, but never two in a row: each fails, the run goes on
+    provider = _TimesOut([guide_chunks[1], guide_chunks[4]])
+    result = extract_claims(guide_chunks, QWEN, _retrying(provider), "r", MemoryCallLog())
+    assert result.stopped is None and result.asked == 8
+    assert provider.calls == 10  # each hanging chunk: one retry
+    assert [(f.chunk_id, f.cause) for f in result.failures] == [
+        (guide_chunks[1].id, "timed-out"),
+        (guide_chunks[4].id, "timed-out"),
+    ]
+
+
+def test_two_chunks_in_a_row_timing_out_stop_and_a_later_run_continues(
+    guide_chunks: list[Chunk],
+) -> None:
+    store = MemoryClaimStore()
+    provider = _TimesOut(guide_chunks[3:])  # a stuck server after 3 answers
+    first = extract_claims(
+        guide_chunks, QWEN, _retrying(provider), "r1", MemoryCallLog(), store=store
+    )
+    # chunks 4 and 5 timed out twice each, the other 3 were not asked
+    assert first.stopped == "timed-out" and provider.calls == 7 and first.asked == 5
+    assert [f.cause for f in first.failures] == ["timed-out"] * 5
+    assert [f.detail for f in first.failures[2:]] == ["not asked"] * 3
+
+    again = extract_claims(
+        guide_chunks, QWEN, _client(FakeProvider.load(GUIDE_RECORDING)), "r2", MemoryCallLog(),
+        store=store,
+    )  # fmt: skip
+    assert again.stopped is None and again.reused == 3 and again.asked == 5
+    assert again.failures == ()
 
 
 def test_provider_error_fails_one_chunk_and_goes_on(guide_chunks: list[Chunk]) -> None:

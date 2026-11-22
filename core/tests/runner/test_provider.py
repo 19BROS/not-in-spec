@@ -24,6 +24,7 @@ def test_prompt_hash_covers_everything_sent(request_: ChatRequest) -> None:
         replace(request_, max_tokens=100),
         replace(request_, response_schema=ANSWER_SCHEMA),
         replace(request_, reasoning_effort="low"),
+        replace(request_, thinking=False),
     ]
     hashes = {request_.prompt_hash(), *(v.prompt_hash() for v in variants)}
     assert len(hashes) == len(variants) + 1
@@ -39,5 +40,5 @@ def test_every_parameter_added_later_defaults_to_none() -> None:
     # left out of the hash while None; a later parameter with another default would change
     # every recorded hash
     later = [f for f in fields(ChatRequest) if f.name not in _HASHED_ALWAYS]
-    assert [f.name for f in later] == ["reasoning_effort"]
+    assert [f.name for f in later] == ["reasoning_effort", "thinking"]
     assert all(f.default is None for f in later)

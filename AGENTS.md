@@ -42,7 +42,8 @@ Add a dependency to a package: `uv add --package notinspec-api <dep>` (never pip
 ## Rules that must not be broken
 
 - **All logic in `core/`.** API, worker, CLI and Action only call into it.
-- **Our tests and our CI never call a real LLM** (SPEC §13). They replay recorded real responses through the fake provider, for every LLM role in SPEC §8 (models under test, claim extractors, task-text writer, round-trip solvers, judge). NLI uses a fake classifier in unit tests, and the real model runs only in marked slow tests. The product itself calls the real models: the CLI and the worker use Groq and the local NLI model on real docs.
+- **Our tests and our CI never call a real LLM** (SPEC §13). They replay recorded real responses through the fake provider, for every LLM role in SPEC §8 (models under test, claim extractors, task-text writer, round-trip solvers, judge). NLI uses a fake classifier in unit tests, and the real model runs only in marked slow tests. The product itself calls the real models: the CLI and the worker use the FIIT LiteLLM proxy (claim extractors), Groq (models under test) and the local NLI model on real docs.
+- **FIIT proxy: only the free local models** (`qwen3.8-flash-next`, `gemma4-26b-a4b-hpc`). The team shares one key and budget, and the paid models draw from it, so the client refuses every other model (SPEC §8). Don't widen `FIIT.allowed_models` without a team decision.
 - **Raw LLM responses are append-only**, for every LLM call. Never UPDATE or DELETE them.
 - **References are computed by code.** Same input + generator version ⇒ same references. An LLM only writes task text and extracts claims; both are frozen in the golden set.
 - **Never average levels** (L0–L4) and never produce a single overall score.

@@ -15,16 +15,22 @@ from notinspec.runner.provider import (
     Completion,
     ModelUnavailable,
     ProviderError,
+    QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.ratelimit import Limiters, RateLimiter
 
 # 498: Groq flex tier over capacity
 _TRANSIENT_STATUS = frozenset({408, 498, 500, 502, 503, 504, 520, 522, 524, 529})
+# a timeout reported by the server (LiteLLM's `Timeout` is 408, a gateway's 504, Cloudflare's
+# 524): the request reached the model, so it is retried only once, like the client's own timeout
+_TIMEOUT_STATUS = frozenset({408, 504, 524})
 _GONE_CODES = frozenset({"model_not_found", "model_decommissioned"})
 # OpenRouter says it only in the message; a bare 404 (wrong base URL) is a config error instead
-_GONE_MESSAGES = ("not a valid model", "no endpoints found")
+# LiteLLM (FIIT proxy) says "Invalid model name passed in model=..." with HTTP 400, checked live
+_GONE_MESSAGES = ("not a valid model", "no endpoints found", "invalid model name")
 # Groq rejects a best-effort json_schema answer that fails the schema with HTTP 400 and this code
 SCHEMA_FAILED = "json_validate_failed"
 
@@ -42,6 +48,10 @@ class ProviderConfig:
     structured_output_models: frozenset[str] = frozenset()
     default_model: str | None = None  # model under test when none is named
     headers: Mapping[str, str] = field(default_factory=dict)
+    timeout: float = 120.0  # seconds per request
+    # the only models this provider may be asked; None = any. A request for another model fails
+    # before it is sent
+    allowed_models: frozenset[str] | None = None
 
     def limiters(self) -> Limiters:
         """Fresh limiters, keyed the way this provider counts. Share one per API account."""
@@ -83,7 +93,26 @@ OPENROUTER = ProviderConfig(
     headers={"X-Title": "notinspec"},
 )
 
-PROVIDERS = {c.name: c for c in (GROQ, OPENROUTER)}
+# The faculty's LiteLLM proxy (fiit-ba.github.io/docs/litellm-quickstart, read 2026-11-21). One key
+# for the whole team, with a budget the paid models (Claude, GPT, OpenRouter) draw from;
+# `openrouter-free` may log prompts. The local models did not change the key's spend, so only
+# they are allowed (SPEC §8). The proxy publishes no rate limits: the limiter is a guess. A
+# request waited up to 85 s in the queue of the shared server, and a long reasoning answer ran
+# past 10 minutes.
+FIIT = ProviderConfig(
+    name="fiit",
+    base_url="https://litellm.blockfinlab.xyz/v1",
+    api_key_env="FIIT_API_KEY",
+    per_minute=20,
+    per_day=5000,
+    per_model_limits=True,
+    # confirmed live 2026-11-21 (`Retry`, valid JSON from both)
+    structured_output_models=frozenset({"qwen3.8-flash-next", "gemma4-26b-a4b-hpc"}),
+    timeout=900.0,
+    allowed_models=frozenset({"qwen3.8-flash-next", "gemma4-26b-a4b-hpc"}),
+)
+
+PROVIDERS = {c.name: c for c in (GROQ, OPENROUTER, FIIT)}
 
 
 @dataclass(frozen=True)
@@ -99,13 +128,14 @@ class OpenAICompatProvider:
         config: ProviderConfig,
         api_key: str,
         *,
-        timeout: float = 120.0,
+        timeout: float | None = None,
         transport: httpx2.BaseTransport | None = None,
     ) -> None:
         self.config = config
+        self._timeout = config.timeout if timeout is None else timeout
         self._http = httpx2.Client(
             base_url=config.base_url,
-            timeout=timeout,
+            timeout=self._timeout,
             transport=transport,
             headers={"Authorization": f"Bearer {api_key}", **config.headers},
         )
@@ -118,6 +148,13 @@ class OpenAICompatProvider:
         return cls(config, api_key)
 
     def complete(self, request: ChatRequest) -> Completion:
+        allowed = self.config.allowed_models
+        if allowed is not None and request.model not in allowed:
+            # not served to us: the extractor stops instead of failing chunk by chunk
+            raise ModelUnavailable(
+                f"{self.config.name}: model {request.model!r} is not allowed here; allowed: "
+                f"{', '.join(sorted(allowed))} (paid models share the team's budget, SPEC §8)"
+            )
         body = self._send("POST", "/chat/completions", json=chat_payload(request))
         return parse_completion(body, request.model)
 
@@ -145,6 +182,8 @@ class OpenAICompatProvider:
     def _send(self, method: str, url: str, **kwargs: Any) -> dict[str, Any]:
         try:
             response = self._http.request(method, url, **kwargs)
+        except httpx2.ReadTimeout as e:
+            raise RequestTimeout(f"no answer within {self._timeout:g}s: {e}") from e
         except httpx2.TimeoutException as e:
             raise TransientError(f"timeout: {e}") from e
         except httpx2.TransportError as e:
@@ -177,6 +216,8 @@ def chat_payload(request: ChatRequest) -> dict[str, Any]:
         payload["max_tokens"] = request.max_tokens
     if request.reasoning_effort is not None:
         payload["reasoning_effort"] = request.reasoning_effort
+    if request.thinking is not None:
+        payload["chat_template_kwargs"] = {"enable_thinking": request.thinking}
     if request.response_schema is not None:
         # best effort, not strict: strict needs every property required, and the answer's aren't
         payload["response_format"] = {
@@ -237,6 +278,10 @@ def _raise_error(status: int, error: object, headers: Mapping[str, str]) -> NoRe
     message = str(info.get("message") or error or "unknown error")
     if isinstance(code, str) and code in _GONE_CODES:
         raise ModelUnavailable(f"HTTP {status}: {message}")
+    # LiteLLM, once the key's budget is spent: HTTP 400, type `budget_exceeded`. It blocks every
+    # model of the key, the free ones too, so the run pauses
+    if info.get("type") == "budget_exceeded" or "budget has been exceeded" in message.lower():
+        raise QuotaExhausted(f"HTTP {status}: {message}")
     merged = {k.lower(): v for k, v in headers.items()}
     metadata = info.get("metadata")
     if isinstance(metadata, dict):
@@ -254,6 +299,8 @@ def _raise_for(status: int, message: str, headers: Mapping[str, str]) -> NoRetur
         raise RateLimited(detail, retry_after=_retry_after(headers))
     if any(m in message.lower() for m in _GONE_MESSAGES):
         raise ModelUnavailable(detail)
+    if status in _TIMEOUT_STATUS:
+        raise RequestTimeout(detail)
     if status in _TRANSIENT_STATUS:
         raise TransientError(detail)
     raise ProviderError(detail)

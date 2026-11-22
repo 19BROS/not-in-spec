@@ -40,7 +40,8 @@ services:
     build: { context: .., dockerfile: worker/Dockerfile }
     environment:
       <<: *app-env
-      GROQ_API_KEY: ${GROQ_API_KEY:-} # read by notinspec.runner (SPEC §8)
+      FIIT_API_KEY: ${FIIT_API_KEY:-} # claim extractors, read by notinspec.runner (SPEC §8)
+      GROQ_API_KEY: ${GROQ_API_KEY:-} # models under test, read by notinspec.runner (SPEC §8)
       NOTINSPEC_MOCK_URL: http://mock:4011 # POST /serve {"spec": "<sha256>.yaml"}, deploy/mock
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
       OMP_NUM_THREADS: "3" # torch ignores the cpus limit and would start 4 threads

@@ -44,8 +44,8 @@ def build_demo_run(
 ) -> dict[str, Any]:
     """run.json v0 from ingestion.json, results.json and claims.json (None: claims not run).
 
-    `stopped`: `<extractor>: <reason>` for each extractor whose run stopped (quota), which
-    claims.json does not record; it makes step `claims` `failed`.
+    `stopped`: `<extractor>: <reason>` for each extractor whose run stopped (quota, model gone,
+    timeout), which claims.json does not record; it makes step `claims` `failed`.
     """
     inventory = ingestion["inventory"]
     symbols: list[dict[str, Any]] = inventory["symbols"]
@@ -125,7 +125,7 @@ def build_demo_run(
         )
         if failed:
             detail += f" · {failed} chunks failed"
-        if stopped:  # quota ran out: the claims so far are kept, but the step did not finish
+        if stopped:  # e.g. no quota left: the claims so far are kept, but the step did not finish
             detail = f"stopped: {'; '.join(stopped)}; run again to continue"
         steps += [
             _step("claims", "Extract claims", "failed" if stopped else "done", detail),

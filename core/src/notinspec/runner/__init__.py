@@ -1,9 +1,10 @@
-"""Asking models: providers (Groq or another OpenAI-compatible API, recorded fake), rate limiting,
-caching, retries."""
+"""Asking models: providers (the FIIT LiteLLM proxy, Groq or another OpenAI-compatible API,
+recorded fake), rate limiting, caching, retries."""
 
 from notinspec.runner.client import CacheKey, MemoryCache, ModelClient, ResponseCache
 from notinspec.runner.fake import FakeProvider, RecordingProvider
 from notinspec.runner.openai_compat import (
+    FIIT,
     GROQ,
     OPENROUTER,
     PROVIDERS,
@@ -20,11 +21,13 @@ from notinspec.runner.provider import (
     ProviderError,
     QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.ratelimit import Limiters, RateLimiter
 
 __all__ = [
+    "FIIT",
     "GROQ",
     "OPENROUTER",
     "PROVIDERS",
@@ -44,6 +47,7 @@ __all__ = [
     "ProviderError",
     "QuotaExhausted",
     "RateLimited",
+    "RequestTimeout",
     "RateLimiter",
     "RecordingProvider",
     "ResponseCache",

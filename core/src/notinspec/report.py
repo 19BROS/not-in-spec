@@ -443,6 +443,8 @@ def _extractor_row(result: ExtractionResult) -> str:
         settings.append(f"max tokens {spec.max_tokens}")
     if spec.reasoning_effort is not None:
         settings.append(f"effort {_e(spec.reasoning_effort)}")
+    if spec.thinking is not None:
+        settings.append(f"thinking {'on' if spec.thinking else 'off'}")
     stopped = f", stopped: {result.stopped}" if result.stopped else ""
     return (
         f"<tr><th>extractor<td><code>{_e(spec.model)}</code> ({', '.join(settings)}): "

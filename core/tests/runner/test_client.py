@@ -13,6 +13,7 @@ from notinspec.runner import (
     QuotaExhausted,
     RateLimited,
     RateLimiter,
+    RequestTimeout,
     TransientError,
 )
 
@@ -62,6 +63,19 @@ def test_retries_transient_errors_with_backoff(request_: ChatRequest) -> None:
     sleeps: list[float] = []
     assert client(provider, sleeps).ask("run-1", request_) is ANSWER
     assert sleeps == [2.0, 4.0]
+
+
+def test_a_timeout_is_retried_only_once(request_: ChatRequest) -> None:
+    # the shared server may still be generating the answer the client gave up on
+    provider, sleeps = (
+        Scripted(RequestTimeout("t1"), TransientError("502"), RequestTimeout("t2")),
+        [],
+    )
+    with pytest.raises(RequestTimeout, match="t2"):
+        client(provider, sleeps).ask("r", request_)
+    assert provider.calls == 3
+    provider = Scripted(RequestTimeout("t1"), ANSWER)
+    assert client(provider, []).ask("r", request_) == ANSWER
 
 
 def test_rate_limit_waits_as_told(request_: ChatRequest) -> None:

@@ -8,6 +8,7 @@ import httpx2
 import pytest
 
 from notinspec.runner import (
+    FIIT,
     GROQ,
     OPENROUTER,
     ChatRequest,
@@ -15,7 +16,9 @@ from notinspec.runner import (
     OpenAICompatProvider,
     ProviderConfig,
     ProviderError,
+    QuotaExhausted,
     RateLimited,
+    RequestTimeout,
     TransientError,
 )
 from notinspec.runner.openai_compat import SCHEMA_FAILED
@@ -63,6 +66,7 @@ def test_sends_request_and_parses_answer(
     assert "strict" not in payload["response_format"]["json_schema"]  # best effort
     assert "max_tokens" not in payload
     assert "reasoning_effort" not in payload
+    assert "chat_template_kwargs" not in payload
 
     assert completion.content == '{"method": "GET", "path": "/pets/1"}'
     assert completion.refusal is None
@@ -84,6 +88,83 @@ def test_no_schema_means_no_response_format(request_: ChatRequest, body: dict[st
     assert "response_format" not in sent[0]
     assert sent[0]["max_tokens"] == 50
     assert sent[0]["reasoning_effort"] == "low"
+
+
+def test_thinking_off_is_sent_as_chat_template_kwargs(
+    request_: ChatRequest, body: dict[str, Any]
+) -> None:
+    sent: list[dict[str, Any]] = []
+
+    def handler(request: httpx2.Request) -> httpx2.Response:
+        sent.append(json.loads(request.content))
+        return httpx2.Response(200, json=body)
+
+    provider(handler).complete(ChatRequest(request_.model, request_.messages, thinking=False))
+    assert sent[0]["chat_template_kwargs"] == {"enable_thinking": False}
+
+
+def test_fiit_sends_only_the_free_models(request_: ChatRequest, body: dict[str, Any]) -> None:
+    sent: list[httpx2.Request] = []
+
+    def handler(request: httpx2.Request) -> httpx2.Response:
+        sent.append(request)
+        return httpx2.Response(200, json=body)
+
+    fiit = provider(handler, FIIT)
+    for model in ("claude-haiku-5.5-fiit", "gpt-6-luna-fiit", "openrouter-free"):
+        with pytest.raises(ModelUnavailable, match="not allowed"):
+            fiit.complete(ChatRequest(model, request_.messages))
+    assert sent == []  # refused before anything was sent
+    fiit.complete(ChatRequest("qwen3.8-flash-next", request_.messages))
+    assert str(sent[0].url) == "https://litellm.blockfinlab.xyz/v1/chat/completions"
+
+
+def test_litellm_unknown_model_is_unavailable(request_: ChatRequest) -> None:
+    # the FIIT proxy's answer for an alias it doesn't serve (checked live 2026-11-21)
+    message = (
+        "/chat/completions: Invalid model name passed in model=qwen3.7-does-not-exist. "
+        "Call `/v1/models` to view available models for your key."
+    )
+    error = {"message": message, "type": "invalid_request_error", "param": None, "code": "400"}
+    with pytest.raises(ModelUnavailable, match="Invalid model name"):
+        provider(reply(400, {"error": error})).complete(request_)
+
+
+def test_litellm_budget_exceeded_pauses_the_run(request_: ChatRequest) -> None:
+    message = "Budget has been exceeded! Current cost: 100.2, Max budget: 100.0"
+    error = {"message": message, "type": "budget_exceeded", "param": None, "code": "400"}
+    with pytest.raises(QuotaExhausted, match="Budget has been exceeded"):
+        provider(reply(400, {"error": error})).complete(request_)
+
+
+def test_a_read_timeout_is_a_request_timeout(request_: ChatRequest) -> None:
+    def slow(request: httpx2.Request) -> httpx2.Response:
+        raise httpx2.ReadTimeout("read timed out", request=request)
+
+    with pytest.raises(RequestTimeout, match="no answer within 120s"):
+        provider(slow).complete(request_)
+
+
+@pytest.mark.parametrize("status", [408, 504, 524])
+def test_a_server_timeout_is_a_request_timeout(request_: ChatRequest, status: int) -> None:
+    # LiteLLM's own timeout is 408 (an OpenAI-style error), a gateway's 504/524 often HTML
+    error = {"message": "Request timed out", "type": "timeout", "code": str(status)}
+    with pytest.raises(RequestTimeout, match=f"HTTP {status}"):
+        provider(reply(status, {"error": error})).complete(request_)
+    with pytest.raises(RequestTimeout, match=f"HTTP {status}"):
+        provider(lambda _: httpx2.Response(status, text="<html>timeout</html>")).complete(request_)
+
+
+def test_other_server_errors_are_not_timeouts(request_: ChatRequest) -> None:
+    with pytest.raises(TransientError) as caught:
+        provider(reply(502, {"error": {"message": "bad gateway"}})).complete(request_)
+    assert not isinstance(caught.value, RequestTimeout)
+
+
+def test_the_timeout_comes_from_the_provider() -> None:
+    assert OpenAICompatProvider(FIIT, "k")._http.timeout.read == 900.0
+    assert OpenAICompatProvider(GROQ, "k")._http.timeout.read == 120.0
+    assert OpenAICompatProvider(GROQ, "k", timeout=5)._http.timeout.read == 5
 
 
 def test_refusal_field(request_: ChatRequest, body: dict[str, Any]) -> None:
@@ -302,7 +383,8 @@ def test_schema_failure_is_an_answer(
 
 
 @pytest.mark.parametrize(
-    ("config", "env"), [(GROQ, "GROQ_API_KEY"), (OPENROUTER, "OPENROUTER_API_KEY")]
+    ("config", "env"),
+    [(GROQ, "GROQ_API_KEY"), (OPENROUTER, "OPENROUTER_API_KEY"), (FIIT, "FIIT_API_KEY")],
 )
 def test_from_env(monkeypatch: pytest.MonkeyPatch, config: ProviderConfig, env: str) -> None:
     monkeypatch.setenv(env, "sk-env")

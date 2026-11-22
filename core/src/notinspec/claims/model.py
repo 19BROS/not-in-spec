@@ -13,9 +13,12 @@ type ExtractionCause = Literal[
     "provider-error",  # no answer after the client's retries
     "model-unavailable",  # the model is gone; the rest of this extractor's chunks are not asked
     "quota-exhausted",  # the budget ran out; the rest is not asked, a later run continues
+    "timed-out",  # no answer in time, also after the retry; after `claims.extract.TIMEOUTS_TO_STOP`
+    # such chunks in a row the server counts as stuck: the rest is not asked, a later run continues
 ]
 
-# bump when the prompt text, the answer schema or the parsing rules change
+# bump when the prompt text or the answer schema change; parsing rules have their own version
+# (`claims.parse.PARSER_VERSION`)
 PROMPT_VERSION = 1
 
 
@@ -29,32 +32,57 @@ class ExtractorSpec:
     max_tokens: int | None = None  # None = the provider's default; part of the prompt hash
     # None = the provider's default; part of the prompt hash and of the reuse key
     reasoning_effort: str | None = None
+    # False turns a reasoning model's thinking off (`enable_thinking`); None = the default.
+    # Part of the prompt hash and of the reuse key
+    thinking: bool | None = None
 
 
-# SPEC §6.4: two extractors with different models; Groq limits count per model, so the two
-# don't share a budget (SPEC §8). gpt-oss-20b is a reasoning model: with Groq's default
-# completion limit it often ran out before the JSON (`json_validate_failed`, "max completion
-# tokens reached"; 4 of 11 recorded chunks), with 8192 the same chunk passed (1632 of 1877
-# completion tokens were reasoning). With Groq's default effort ("medium") it used ~3.5k tokens
-# per chunk, so the urllib3 demo pages would not fit one day's 200k tokens; "low" took 2.6k
-# instead of 5.8k tokens on User Guide > Using Timeouts (739 vs 4086 reasoning tokens).
+# SPEC §6.4: two extractors with different models, both free local models behind the FIIT
+# LiteLLM proxy (SPEC §8). Both are reasoning models. Measured 2026-11-21 on `Retry` (the urllib3
+# chunk Groq cut off at 2048 tokens): with thinking off qwen gave 54 claims (21 s of generation)
+# and gemma 57 (62 s); with thinking on qwen gave 61 claims in 7.4k tokens, and gemma never
+# finished: it thought 5.5k tokens for one claim on a trivial chunk, 16k with effort "low".
+# The longest answer was 4.8k tokens, so 16384 leaves room.
+FIIT_MAX_TOKENS = 16384
 DEFAULT_EXTRACTORS = (
+    ExtractorSpec(
+        "qwen3.8-flash-next", "qwen3.8-flash-next", max_tokens=FIIT_MAX_TOKENS, thinking=False
+    ),
+    ExtractorSpec(
+        "gemma4-26b-a4b-hpc", "gemma4-26b-a4b-hpc", max_tokens=FIIT_MAX_TOKENS, thinking=False
+    ),
+)
+
+# The extractors on Groq until 2026-11-21, kept for `--provider groq` and its recordings.
+# gpt-oss-20b is a reasoning model: with Groq's default completion limit it often ran out
+# before the JSON (`json_validate_failed`, "max completion tokens reached"; 4 of 11 recorded
+# chunks), with 8192 the same chunk passed (1632 of 1877 completion tokens were reasoning).
+# With Groq's default effort ("medium") it used ~3.5k tokens per chunk, so the urllib3 demo
+# pages would not fit one day's 200k tokens; "low" took 2.6k instead of 5.8k tokens on
+# User Guide > Using Timeouts (739 vs 4086 reasoning tokens). qwen runs at Groq's default
+# completion limit (2048): our free tier allows qwen only 1000 output tokens per minute, and
+# Groq rejects a request it expects to answer with more ("Request too large").
+GROQ_EXTRACTORS = (
     ExtractorSpec("qwen/qwen3.8-27b", "qwen/qwen3.8-27b"),
     ExtractorSpec(
         "openai/gpt-oss-20b", "openai/gpt-oss-20b", max_tokens=8192, reasoning_effort="low"
     ),
 )
-# settings of reasoning models when only the model ID is given: (max_tokens, reasoning_effort)
-REASONING_SETTINGS: dict[str, tuple[int, str | None]] = {
-    "openai/gpt-oss-20b": (8192, "low"),
-    "openai/gpt-oss-120b": (8192, None),
+
+# the settings of a model when only its ID is given (`--extractor MODEL`)
+KNOWN_EXTRACTORS: dict[str, ExtractorSpec] = {
+    s.model: s
+    for s in (
+        *DEFAULT_EXTRACTORS,
+        *GROQ_EXTRACTORS,
+        ExtractorSpec("openai/gpt-oss-120b", "openai/gpt-oss-120b", max_tokens=8192),
+    )
 }
 
 
 def extractor_for(model: str) -> ExtractorSpec:
     """The extractor for a model ID from the config or the command line."""
-    max_tokens, effort = REASONING_SETTINGS.get(model, (None, None))
-    return ExtractorSpec(model, model, max_tokens=max_tokens, reasoning_effort=effort)
+    return KNOWN_EXTRACTORS.get(model) or ExtractorSpec(model, model)
 
 
 @dataclass(frozen=True)

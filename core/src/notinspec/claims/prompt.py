@@ -129,4 +129,5 @@ def build_request(chunk: Chunk, spec: ExtractorSpec) -> ChatRequest:
         max_tokens=spec.max_tokens,
         response_schema=CLAIMS_SCHEMA,
         reasoning_effort=spec.reasoning_effort,
+        thinking=spec.thinking,
     )
