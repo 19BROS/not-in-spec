@@ -41,6 +41,7 @@ services:
     environment:
       <<: *app-env
       GROQ_API_KEY: ${GROQ_API_KEY:-} # read by notinspec.runner (SPEC §8)
+      NOTINSPEC_MOCK_URL: http://mock:4011 # POST /serve {"spec": "<sha256>.yaml"}, deploy/mock
       SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
       OMP_NUM_THREADS: "3" # torch ignores the cpus limit and would start 4 threads
     # NLI peaks at ~3.1 GB on all cores (SPEC §6.4); 1 vCPU stays for postgres, api, proxy
@@ -51,6 +52,9 @@ services:
       - hf-models:/models
       # written by `notinspec demo --runs-dir /runs` run in this container (docs/DEPLOY.md)
       - demo-runs:/runs
+      # uploaded OpenAPI specs as <sha256>.yaml for the mock service
+      - specs:/specs
+    networks: [default, sandbox]
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -115,16 +119,31 @@ services:
       postgres: { condition: service_healthy }
     restart: unless-stopped
 
-  # mock server for local dev / integration tests: docker compose --profile prism up
-  prism:
-    profiles: [prism]
-    image: stoplight/prism:5
-    # multiprocess mode crashes in the container (cluster.isPrimary undefined)
-    command: mock -h 0.0.0.0 --multiprocess=false /spec/openapi.yaml
+  # Prism on an uploaded, untrusted spec (SPEC §12): no secrets, no internet (sandbox is
+  # internal), spec read-only. The worker picks the spec through deploy/mock/control.js.
+  mock:
+    image: stoplight/prism:5.15.10 # exact: control.js runs the CLI by its path in the image
+    entrypoint: ["/sbin/tini", "--", "node", "/control.js"]
+    user: node
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    # a hostile spec (deep recursive schemas) must not take the VM's memory from the worker
+    mem_limit: 512m
     volumes:
-      - ${PRISM_SPEC:-./fixtures/openapi.yaml}:/spec/openapi.yaml:ro
-    ports:
-      - "4010:4010"
+      - ./mock/control.js:/control.js:ro
+      - specs:/specs:ro
+    networks: [sandbox]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4011/health"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+networks:
+  sandbox:
+    internal: true # no route out: Prism never fetches anything a spec points to
 
 volumes:
   pgdata:
@@ -132,3 +151,4 @@ volumes:
   caddy-data:
   hf-models:
   demo-runs:
+  specs:

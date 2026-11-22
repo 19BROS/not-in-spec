@@ -76,6 +76,15 @@ sudo docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env 
 
 Old revisions stay on the volume after a bump. Free the space with `sudo docker volume rm notinspec_hf-models` (the next deploy fetches again).
 
+## Mock service (Prism, SPEC §12)
+
+`mock` runs Prism on uploaded specs, which are untrusted. It sits only on the `sandbox` network (`internal: true`, no internet) and has no secrets. It reads the `specs` volume read-only, and the worker writes to it. The worker picks the spec with `POST http://mock:4011/serve` ([deploy/mock/control.js](../deploy/mock/control.js)).
+
+```sh
+sudo docker exec notinspec-mock-1 wget -qO- http://127.0.0.1:4011/health   # {"serving": …}
+sudo docker logs notinspec-mock-1   # Prism's output, also why a spec failed to load
+```
+
 ## Demo runs (docs/plans/demo-cli-web.md)
 
 The site's run list (`/api/demo/runs`) reads folders on the volume `demo-runs`: read-only in `api`, writable at `/runs` in `worker`. Shortcut: files, not Postgres, until the DB models are settled (SPEC §18).

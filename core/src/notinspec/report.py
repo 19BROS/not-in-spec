@@ -33,10 +33,12 @@ COMMENT_MARKER = "<!-- notinspec -->"
 NOT_EVALUATED = "LLM evaluation has not run. No L0-L4 scores or regression verdict are available."
 
 
-def build_results(ingestion: Ingestion, root: Path) -> dict[str, Any]:
-    commit = os.environ.get("NOTINSPEC_COMMIT") or _git_head(root)
+def build_results(ingestion: Ingestion, root: Path, *, commit: str | None = None) -> dict[str, Any]:
+    """`commit`: given by the caller (an upload: the OIDC token's `sha`); default:
+    NOTINSPEC_COMMIT, then `git rev-parse HEAD` in `root`."""
+    commit = commit or os.environ.get("NOTINSPEC_COMMIT") or _git_head(root)
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
-        raise ValueError("NOTINSPEC_COMMIT must be a 40-character lowercase commit SHA")
+        raise ValueError("the commit must be a 40-character lowercase SHA (NOTINSPEC_COMMIT)")
     return {
         "schema_version": 0,
         "tool": {"name": "notinspec", "version": __version__},
