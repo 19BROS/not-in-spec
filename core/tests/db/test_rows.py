@@ -1,6 +1,8 @@
 """Mapping to rows, URLs and the CLI without a database: these run everywhere, CI included."""
 
 from datetime import UTC, datetime
+from decimal import Decimal
+from typing import Any
 
 import pytest
 
@@ -8,6 +10,7 @@ from notinspec.claims.model import RawClaim
 from notinspec.claims.store import LlmCall, ReuseKey, StoredAnswer
 from notinspec.cli import main
 from notinspec.db import DatabaseUrlError, database_url, models, rows, sqlalchemy_url
+from notinspec.db.save import Registration
 
 CALL = LlmCall(
     run_id="r1",
@@ -118,3 +121,37 @@ def test_no_mutable_state_on_append_only_tables() -> None:
     assert "status" not in models.Base.metadata.tables["finding"].columns
     every = {c for t in models.Base.metadata.tables.values() for c in t.columns.keys()}
     assert not {"recommended_fix", "overall_score", "slack_webhook"} & every
+
+
+def _registration(**changes: Any) -> Registration:
+    fields: dict[str, Any] = {
+        "slug": "urllib3",
+        "repository": "urllib3/urllib3",
+        "repository_id": 2558107,
+        "default_branch": "main",
+        "workflow": "notinspec.yml",
+    }
+    return Registration(**(fields | changes))
+
+
+def test_registration_gives_the_oidc_workflow_path() -> None:
+    reg = _registration()
+    assert reg.workflow_path == "urllib3/urllib3/.github/workflows/notinspec.yml"
+
+
+@pytest.mark.parametrize(
+    ("changes", "message"),
+    [
+        ({"repository": "urllib3"}, "owner/name"),
+        ({"repository": "a/../b"}, "owner/name"),
+        ({"repository_id": 0}, "numeric ID"),
+        ({"default_branch": "refs/heads/main"}, "branch name"),
+        ({"workflow": ".github/workflows/x.yml"}, "file name"),
+        ({"slug": "a b"}, "project must match"),
+        ({"budget_per_run_usd": Decimal("-1")}, "negative"),
+        ({"max_upload_bytes": 0}, "positive"),
+    ],
+)
+def test_registration_rejects_bad_values(changes: dict[str, Any], message: str) -> None:
+    with pytest.raises(ValueError, match=message):
+        _registration(**changes)

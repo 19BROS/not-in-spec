@@ -4,7 +4,10 @@ The functions take the JSON shape of the pipeline's dataclasses (see `notinspec.
 the worker, the API and the import of old run folders share them.
 """
 
+import re
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import select
@@ -24,6 +27,78 @@ def project(session: Session, slug: str, *, name: str | None = None) -> models.P
     session.add(created)
     session.flush()
     return created
+
+
+_REPO_PART = re.compile(r"[A-Za-z0-9_.-]{1,100}")
+_SLUG = re.compile(r"[A-Za-z0-9_.-]{1,100}")
+
+
+@dataclass(frozen=True)
+class Registration:
+    """What SPEC §11 registers for a project that uploads from the Action."""
+
+    slug: str
+    repository: str  # "owner/name", for display
+    repository_id: int  # GitHub's numeric ID: the OIDC check compares this, not the name
+    default_branch: str
+    workflow: str  # file name below .github/workflows/, e.g. "notinspec.yml"
+    name: str | None = None
+    allowed_models: tuple[str, ...] = ()
+    budget_per_run_usd: Decimal | None = None
+    budget_per_month_usd: Decimal | None = None
+    max_upload_bytes: int | None = None
+
+    def __post_init__(self) -> None:
+        if not _SLUG.fullmatch(self.slug):
+            raise ValueError(f"project must match {_SLUG.pattern}: {self.slug!r}")
+        parts = self.repository.split("/")
+        if len(parts) != 2 or not all(_REPO_PART.fullmatch(p) for p in parts):
+            raise ValueError(f"repository must be owner/name: {self.repository!r}")
+        if self.repository_id <= 0:
+            raise ValueError("repository ID must be GitHub's positive numeric ID")
+        if not self.default_branch.strip() or self.default_branch.startswith("refs/"):
+            raise ValueError("default branch is a branch name like main, not a ref")
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+\.ya?ml", self.workflow):
+            raise ValueError(f"workflow must be a file name like notinspec.yml: {self.workflow!r}")
+        for value in (self.budget_per_run_usd, self.budget_per_month_usd):
+            if value is not None and value < 0:
+                raise ValueError("a budget cannot be negative")
+        if self.max_upload_bytes is not None and self.max_upload_bytes <= 0:
+            raise ValueError("the upload limit must be positive")
+
+    @property
+    def workflow_path(self) -> str:
+        """The path part of the OIDC `workflow_ref` (SPEC §11): owner/repo/.github/workflows/x."""
+        return f"{self.repository}/.github/workflows/{self.workflow}"
+
+
+def register_project(session: Session, reg: Registration) -> tuple[models.Project, bool]:
+    """Register a project for uploads, or update the registration; True when it is new.
+
+    A project a demo import created has no repository yet; registering it keeps its runs.
+    """
+    taken = session.scalar(
+        select(models.Project).where(
+            models.Project.repository_id == reg.repository_id, models.Project.slug != reg.slug
+        )
+    )
+    if taken is not None:
+        raise ValueError(f"repository ID {reg.repository_id} is registered as {taken.slug}")
+    found = session.scalar(select(models.Project).where(models.Project.slug == reg.slug))
+    proj = found or models.Project(slug=reg.slug, name=reg.name or reg.slug)
+    if reg.name is not None:
+        proj.name = reg.name
+    proj.repository = reg.repository
+    proj.repository_id = reg.repository_id
+    proj.default_branch = reg.default_branch
+    proj.workflow_path = reg.workflow_path
+    proj.allowed_models = list(reg.allowed_models)
+    proj.budget_per_run_usd = reg.budget_per_run_usd
+    proj.budget_per_month_usd = reg.budget_per_month_usd
+    proj.max_upload_bytes = reg.max_upload_bytes
+    session.add(proj)
+    session.flush()
+    return proj, found is None
 
 
 def ingestion(session: Session, proj: models.Project, doc: Doc) -> models.Ingestion:
@@ -97,7 +172,7 @@ def chunk_ids(session: Session, ingestion_id: int) -> dict[str, int]:
             models.Chunk.ingestion_id == ingestion_id
         )
     )
-    return {key: row_id for key, row_id in found.tuples()}
+    return {key: row_id for key, row_id in found}
 
 
 def claims(session: Session, run: models.Run, doc: Doc) -> int:

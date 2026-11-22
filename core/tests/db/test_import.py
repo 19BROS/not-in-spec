@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from notinspec.claims.model import RawClaim
 from notinspec.claims.store import LlmCall, ReuseKey, StoredAnswer
 from notinspec.cli import main
-from notinspec.db import models
+from notinspec.db import models, save
 from notinspec.db.importer import import_runs
 from notinspec.db.stores import DbCallLog, DbClaimStore
 
@@ -137,3 +137,29 @@ def test_db_stores_behave_like_the_jsonl_ones(engine: Engine) -> None:
     with Session(engine) as session:
         call = session.scalars(select(models.LlmCall)).one()
         assert (call.run_id, call.run_ref, call.error) == (None, "no-such-run", "x")
+
+
+def test_register_a_project_and_update_it(
+    engine: Engine, db_url: str, schema: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    with Session(engine) as session, session.begin():
+        save.project(session, "trio")  # as a demo import creates it, without a repository
+    sep = "&" if "?" in db_url else "?"
+    monkeypatch.setenv("DATABASE_URL", f"{db_url}{sep}options=-csearch_path%3D{schema}")
+    args = ["db", "add-project", "trio", "--repository", "python-trio/trio",
+            "--repository-id", "37415591", "--workflow", "notinspec.yml"]  # fmt: skip
+    assert main(args) == 0
+    assert main([*args, "--allowed-model", "qwen/qwen3.8-27b", "--budget-per-run", "0.5"]) == 0
+    with Session(engine) as session:
+        project = session.scalars(select(models.Project)).one()  # the demo project, registered
+        assert (project.repository_id, project.default_branch) == (37415591, "main")
+        assert project.workflow_path == "python-trio/trio/.github/workflows/notinspec.yml"
+        assert (project.allowed_models, str(project.budget_per_run_usd)) == (
+            ["qwen/qwen3.8-27b"],
+            "0.5000",
+        )
+    with Session(engine) as session, session.begin(), pytest.raises(ValueError, match="trio"):
+        registration = save.Registration(
+            "other", "x/y", 37415591, "main", "notinspec.yml"
+        )  # the same repository ID under another project
+        save.register_project(session, registration)
