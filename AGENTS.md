@@ -69,7 +69,7 @@ Touch every place below in the same PR, or the service will build but never depl
 | `<dir>/pyproject.toml`, `<dir>/src/<module>`, `<dir>/tests` | Python package, same shape as `api/` |
 | root `pyproject.toml` | add to `[tool.uv.workspace] members`, `known-first-party`, pytest `testpaths`; then `uv lock` |
 | `<dir>/Dockerfile` | copy `api/Dockerfile` or `worker/Dockerfile` |
-| `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `proxy` (Caddy, TLS) |
+| `deploy/docker-compose.yml` | new service using `ghcr.io/${IMAGE_OWNER}/notinspec-<name>:${TAG}`; never publish ports except `proxy` (Caddy, TLS). The deploy starts every service without a profile (plus `backup`), so a dev-only service must sit behind its own profile |
 | `deploy/nginx.conf` | only if browsers must reach it (route under `/api` or a new prefix) |
 | `.github/workflows/ci.yml` | add to the `images` matrix |
 | `AGENTS.md` layout, `docs/SPEC.md` §12 | one line each |
