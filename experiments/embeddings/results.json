@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "method": "masked mean pooling; L2 normalized; 256 wordpieces; CPU",
+  "fixture_sha256": "b6f0dc847132a8d44b99bc6d16a78d3acef7318c17cb81dc7539fc5986a1a7f8",
+  "timing": {
+    "encoding_seconds": 1.409,
+    "truncated_texts": 4,
+    "threads": 4,
+    "batch_size": 32
+  },
+  "claims": 63,
+  "chunks": 4,
+  "all_eligible_pairs": 280,
+  "pairs_with_recorded_scores": 101,
+  "recorded_relation_counts": {
+    "duplicate": 22,
+    "different": 61,
+    "contradiction": 7,
+    "more_specific": 11
+  },
+  "crosscheck_variants": [
+    {
+      "top_k": 1,
+      "candidate_pairs": 35,
+      "fraction_of_all_pairs": 0.125,
+      "recorded_relations_retained": {
+        "duplicate": {
+          "retained": 22,
+          "available": 22
+        },
+        "more_specific": {
+          "retained": 7,
+          "available": 11
+        },
+        "contradiction": {
+          "retained": 0,
+          "available": 7
+        }
+      }
+    },
+    {
+      "top_k": 2,
+      "candidate_pairs": 80,
+      "fraction_of_all_pairs": 0.2857142857142857,
+      "recorded_relations_retained": {
+        "duplicate": {
+          "retained": 22,
+          "available": 22
+        },
+        "more_specific": {
+          "retained": 11,
+          "available": 11
+        },
+        "contradiction": {
+          "retained": 7,
+          "available": 7
+        }
+      }
+    },
+    {
+      "top_k": 3,
+      "candidate_pairs": 117,
+      "fraction_of_all_pairs": 0.41785714285714287,
+      "recorded_relations_retained": {
+        "duplicate": {
+          "retained": 22,
+          "available": 22
+        },
+        "more_specific": {
+          "retained": 11,
+          "available": 11
+        },
+        "contradiction": {
+          "retained": 7,
+          "available": 7
+        }
+      }
+    },
+    {
+      "top_k": 5,
+      "candidate_pairs": 186,
+      "fraction_of_all_pairs": 0.6642857142857143,
+      "recorded_relations_retained": {
+        "duplicate": {
+          "retained": 22,
+          "available": 22
+        },
+        "more_specific": {
+          "retained": 11,
+          "available": 11
+        },
+        "contradiction": {
+          "retained": 7,
+          "available": 7
+        }
+      }
+    },
+    {
+      "top_k": 8,
+      "candidate_pairs": 255,
+      "fraction_of_all_pairs": 0.9107142857142857,
+      "recorded_relations_retained": {
+        "duplicate": {
+          "retained": 22,
+          "available": 22
+        },
+        "more_specific": {
+          "retained": 11,
+          "available": 11
+        },
+        "contradiction": {
+          "retained": 7,
+          "available": 7
+        }
+      }
+    }
+  ],
+  "diff_cases": [
+    {
+      "kind": "whitespace",
+      "chunk_id": "e1726e8f38d96ea4",
+      "source": "reference/urllib3.util",
+      "before": "## is_connection_dropped()\n\n`urllib3.util.is_connection_dropped(conn)`\n\nReturns True if the connection is dropped and should be closed. :param conn: `urllib3.connection.HTTPConnection` object.\n\n**Parameters:**\n\n- `conn` (BaseHTTPConnection)\n\nReturn type: `bool`",
+      "after": "## is_connection_dropped()\n\n`urllib3.util.is_connection_dropped(conn)`\n\nReturns  True if the connection is dropped and should be closed. :param conn: `urllib3.connection.HTTPConnection` object.\n\n**Parameters:**\n\n- `conn` (BaseHTTPConnection)\n\nReturn type: `bool`",
+      "semantic_change": false,
+      "cosine": 1.000000060791255,
+      "content_hash_changed": true
+    },
+    {
+      "kind": "boolean",
+      "chunk_id": "e1726e8f38d96ea4",
+      "source": "reference/urllib3.util",
+      "before": "## is_connection_dropped()\n\n`urllib3.util.is_connection_dropped(conn)`\n\nReturns True if the connection is dropped and should be closed. :param conn: `urllib3.connection.HTTPConnection` object.\n\n**Parameters:**\n\n- `conn` (BaseHTTPConnection)\n\nReturn type: `bool`",
+      "after": "## is_connection_dropped()\n\n`urllib3.util.is_connection_dropped(conn)`\n\nReturns False if the connection is dropped and should be closed. :param conn: `urllib3.connection.HTTPConnection` object.\n\n**Parameters:**\n\n- `conn` (BaseHTTPConnection)\n\nReturn type: `bool`",
+      "semantic_change": true,
+      "cosine": 0.9977971397172848,
+      "content_hash_changed": true
+    },
+    {
+      "kind": "unit",
+      "chunk_id": "d679418e605bafc2",
+      "source": "reference-core",
+      "before": "### sleep()\n\n`await trio.sleep(seconds: float) -> None`\n\nPause execution of the current task for the given number of seconds.\n\n**Parameters:**\n\n- `seconds` (float) – The number of seconds to sleep. May be zero to insert a checkpoint without actually blocking.\n\n**Raises:**\n\n- `ValueError` – if seconds is negative or NaN.",
+      "after": "### sleep()\n\n`await trio.sleep(milliseconds: float) -> None`\n\nPause execution of the current task for the given number of seconds.\n\n**Parameters:**\n\n- `seconds` (float) – The number of seconds to sleep. May be zero to insert a checkpoint without actually blocking.\n\n**Raises:**\n\n- `ValueError` – if seconds is negative or NaN.",
+      "semantic_change": true,
+      "cosine": 0.9952460519861408,
+      "content_hash_changed": true
+    },
+    {
+      "kind": "negation",
+      "chunk_id": "4d0da13f85e52a1f",
+      "source": "advanced-usage",
+      "before": "## Client Certificates\n\nYou can also specify a client certificate. This is useful when both the server and the client need to verify each other’s identity. Typically these certificates are issued from the same authority. To use a client certificate, provide the full path when creating a `PoolManager`:\n\n```python\nhttp = urllib3.PoolManager(\n    cert_file=\"/path/to/your/client_cert.pem\",\n    cert_reqs=\"CERT_REQUIRED\",\n    ca_certs=\"/path/to/your/certificate_bundle\"\n)\n```\n\nIf you have an encrypted client certificate private key you can use the `key_password` parameter to specify a password to decrypt the key.\n\n```python\nhttp = urllib3.PoolManager(\n    cert_file=\"/path/to/your/client_cert.pem\",\n    cert_reqs=\"CERT_REQUIRED\",\n    key_file=\"/path/to/your/client.key\",\n    key_password=\"keyfile_password\"\n)\n```\n\nIf your key isn’t encrypted the `key_password` parameter isn’t required.",
+      "after": "## Client Certificates\n\nYou can also specify a client certificate. This is useful when both the server and the client need to verify each other’s identity. Typically these certificates are issued from the same authority. To use a client certificate, provide the full path when creating a `PoolManager`:\n\n```python\nhttp = urllib3.PoolManager(\n    cert_file=\"/path/to/your/client_cert.pem\",\n    cert_reqs=\"CERT_REQUIRED\",\n    ca_certs=\"/path/to/your/certificate_bundle\"\n)\n```\n\nIf you have an encrypted client certificate private key you can use the `key_password` parameter to specify a password to decrypt the key.\n\n```python\nhttp = urllib3.PoolManager(\n    cert_file=\"/path/to/your/client_cert.pem\",\n    cert_reqs=\"CERT_REQUIRED\",\n    key_file=\"/path/to/your/client.key\",\n    key_password=\"keyfile_password\"\n)\n```\n\nIf your key isn’t encrypted the `key_password` parameter is required.",
+      "semantic_change": true,
+      "cosine": 1.0000000912929448,
+      "content_hash_changed": true
+    },
+    {
+      "kind": "version",
+      "chunk_id": "cd03d7574e56c44f",
+      "source": "advanced-usage",
+      "before": "## TLS minimum and maximum versions\n\nWhen the configured TLS versions by urllib3 aren’t compatible with the TLS versions that the server is willing to use you’ll likely see an error like this one:\n\n```default\nSSLError(1, '[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1124)')\n```\n\nStarting in v2.0 by default urllib3 uses TLS 1.2 and later so servers that only support TLS 1.1 or earlier will not work by default with urllib3.\n\nTo fix the issue you’ll need to use the `ssl_minimum_version` option along with the TLSVersion enum in the standard library `ssl` module to configure urllib3 to accept a wider range of TLS versions.\n\nFor the best security it’s a good idea to set this value to the version of TLS that’s being used by the server. For example if the server requires TLS 1.0 you’d configure urllib3 like so:\n\n```python\nimport ssl\nimport urllib3\n\nhttp = urllib3.PoolManager(\n    ssl_minimum_version=ssl.TLSVersion.TLSv1\n)\n# This request works!\nresp = http.request(\"GET\", \"https://tls-v1-0.badssl.com:1010\")\n```",
+      "after": "## TLS minimum and maximum versions\n\nWhen the configured TLS versions by urllib3 aren’t compatible with the TLS versions that the server is willing to use you’ll likely see an error like this one:\n\n```default\nSSLError(1, '[SSL: UNSUPPORTED_PROTOCOL] unsupported protocol (_ssl.c:1124)')\n```\n\nStarting in v2.0 by default urllib3 uses TLS 1.0 and later so servers that only support TLS 1.1 or earlier will not work by default with urllib3.\n\nTo fix the issue you’ll need to use the `ssl_minimum_version` option along with the TLSVersion enum in the standard library `ssl` module to configure urllib3 to accept a wider range of TLS versions.\n\nFor the best security it’s a good idea to set this value to the version of TLS that’s being used by the server. For example if the server requires TLS 1.0 you’d configure urllib3 like so:\n\n```python\nimport ssl\nimport urllib3\n\nhttp = urllib3.PoolManager(\n    ssl_minimum_version=ssl.TLSVersion.TLSv1\n)\n# This request works!\nresp = http.request(\"GET\", \"https://tls-v1-0.badssl.com:1010\")\n```",
+      "semantic_change": true,
+      "cosine": 0.9999818522836639,
+      "content_hash_changed": true
+    },
+    {
+      "kind": "identifier",
+      "chunk_id": "c46995b2a905490b",
+      "source": "advanced-usage",
+      "before": "## Proxies\n\nYou can use `ProxyManager` to tunnel requests through an HTTP proxy:\n\n```python\nimport urllib3\n\nproxy = urllib3.ProxyManager(\"https://localhost:3128/\")\nproxy.request(\"GET\", \"https://google.com/\")\n```\n\nThe usage of `ProxyManager` is the same as `PoolManager`.\n\nYou can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+      "after": "## Proxies\n\nYou can use `PoolManager` to tunnel requests through an HTTP proxy:\n\n```python\nimport urllib3\n\nproxy = urllib3.ProxyManager(\"https://localhost:3128/\")\nproxy.request(\"GET\", \"https://google.com/\")\n```\n\nThe usage of `ProxyManager` is the same as `PoolManager`.\n\nYou can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+      "semantic_change": true,
+      "cosine": 0.9982333934124277,
+      "content_hash_changed": true
+    }
+  ],
+  "diff_skipping_audit": {
+    "0.9": [
+      "boolean",
+      "unit",
+      "negation",
+      "version",
+      "identifier"
+    ],
+    "0.95": [
+      "boolean",
+      "unit",
+      "negation",
+      "version",
+      "identifier"
+    ],
+    "0.99": [
+      "boolean",
+      "unit",
+      "negation",
+      "version",
+      "identifier"
+    ]
+  },
+  "limits": [
+    "Recorded NLI relations are a silver reference, not human judgments.",
+    "Scores cover only the existing premise-overlap subset of four urllib3 chunks.",
+    "Retention is conditional on that subset; no K5b recall estimate is available.",
+    "Diff mutations are controlled examples, not a measured production distribution."
+  ]
+}
