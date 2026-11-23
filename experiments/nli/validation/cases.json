@@ -1,0 +1,110 @@
+[
+  {
+    "library": "trio", "chunk_id": "3d7728035ff947e8", "scope": "guide",
+    "citation": "cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio.",
+    "claims": [
+      ["entailment", "cookiecutter-trio is a template for Python projects using Trio."],
+      ["contradiction", "cookiecutter-trio cannot be used as a template for Python projects using Trio."],
+      ["neutral", "cookiecutter-trio is distributed under the MIT license."]
+    ]
+  },
+  {
+    "library": "trio", "chunk_id": "429a006c1f5543d8", "scope": "guide",
+    "citation": "hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+    "claims": [
+      ["entailment", "hypothesis-trio provides Trio-compatible stateful testing."],
+      ["contradiction", "hypothesis-trio does not provide Trio-compatible stateful testing."],
+      ["neutral", "hypothesis-trio requires Python 3.12 or newer."]
+    ]
+  },
+  {
+    "library": "trio", "chunk_id": "d679418e605bafc2", "scope": "api",
+    "citation": "Pause execution of the current task for the given number of seconds.",
+    "claims": [
+      ["entailment", "trio.sleep pauses the current task for the given number of seconds."],
+      ["contradiction", "The duration passed to trio.sleep is measured in milliseconds instead of seconds."],
+      ["neutral", "trio.sleep guarantees a timing precision of one millisecond."]
+    ]
+  },
+  {
+    "library": "trio", "chunk_id": "8f588e3ce9569d6b", "scope": "api",
+    "citation": "The difference between `sleep()` and `sleep_until()` is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by `current_time()`).",
+    "claims": [
+      ["entailment", "trio.sleep_until takes an absolute time according to Trio's internal clock."],
+      ["contradiction", "trio.sleep_until takes a relative duration instead of an absolute time."],
+      ["neutral", "trio.sleep_until interprets its deadline as a UTC timestamp."]
+    ]
+  },
+  {
+    "library": "hydra-zen", "chunk_id": "4800da67498b5fce", "scope": "guide",
+    "citation": "Among these, the most essential functions for creating configs are make_config() and builds().",
+    "claims": [
+      ["entailment", "hydra-zen provides make_config() and builds() for creating configs."],
+      ["contradiction", "hydra-zen's builds() cannot be used for creating configs."],
+      ["neutral", "hydra-zen's builds() caches every generated config on disk."]
+    ]
+  },
+  {
+    "library": "hydra-zen", "chunk_id": "e9d56fb2a00d04e8", "scope": "guide",
+    "citation": "bytes (support added in OmegaConf 2.2.0)",
+    "claims": [
+      ["entailment", "Support for bytes in Hydra configs was added in OmegaConf 2.2.0."],
+      ["contradiction", "Support for bytes in Hydra configs was added in OmegaConf 2.1.0."],
+      ["neutral", "Bytes values in Hydra configs are limited to 1024 bytes."]
+    ]
+  },
+  {
+    "library": "hydra-zen", "chunk_id": "b2394863a0d51d7c", "scope": "api",
+    "citation": "Broadens a type annotation until it is compatible with Hydra.",
+    "claims": [
+      ["entailment", "BuildsFn._sanitized_type broadens a type annotation until it is compatible with Hydra."],
+      ["contradiction", "BuildsFn._sanitized_type never changes a type annotation that is incompatible with Hydra."],
+      ["neutral", "BuildsFn._sanitized_type uses an LRU cache with 128 entries."]
+    ]
+  },
+  {
+    "library": "hydra-zen", "chunk_id": "307ffb4aebffb197", "scope": "api",
+    "citation": "Converts `value` to Hydra-supported type or to a config whose fields are recursively supported by `_make_hydra_compatible`. Otherwise raises `HydraZenUnsupportedPrimitiveError`.",
+    "claims": [
+      ["entailment", "BuildsFn._make_hydra_compatible raises HydraZenUnsupportedPrimitiveError for an unsupported value."],
+      ["contradiction", "BuildsFn._make_hydra_compatible silently returns None for unsupported values instead of raising an error."],
+      ["neutral", "BuildsFn._make_hydra_compatible writes unsupported values to a log file."]
+    ]
+  },
+  {
+    "library": "urllib3", "chunk_id": "c46995b2a905490b", "scope": "guide",
+    "citation": "You can connect to a proxy using HTTP, HTTPS or SOCKS.",
+    "claims": [
+      ["entailment", "urllib3 can connect to proxies using HTTP, HTTPS or SOCKS."],
+      ["contradiction", "urllib3 supports HTTP proxies only and cannot connect to HTTPS or SOCKS proxies."],
+      ["neutral", "urllib3 requires authentication for every HTTP proxy connection."]
+    ]
+  },
+  {
+    "library": "urllib3", "chunk_id": "4d0da13f85e52a1f", "scope": "guide",
+    "citation": "If your key isn’t encrypted the key_password parameter isn’t required.",
+    "claims": [
+      ["entailment", "In urllib3, key_password is not required when the private key is not encrypted."],
+      ["contradiction", "In urllib3, key_password is required even when the private key is not encrypted."],
+      ["neutral", "urllib3 accepts client certificates stored in PKCS12 files."]
+    ]
+  },
+  {
+    "library": "urllib3", "chunk_id": "3061ff6899d4cc19", "scope": "api",
+    "citation": "A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+    "claims": [
+      ["entailment", "SOCKSProxyManager routes connections through the defined SOCKS proxy."],
+      ["contradiction", "SOCKSProxyManager never routes connections through a SOCKS proxy."],
+      ["neutral", "SOCKSProxyManager maintains exactly one connection per host."]
+    ]
+  },
+  {
+    "library": "urllib3", "chunk_id": "e1726e8f38d96ea4", "scope": "api",
+    "citation": "Returns True if the connection is dropped and should be closed.",
+    "claims": [
+      ["entailment", "is_connection_dropped returns True if the connection is dropped and should be closed."],
+      ["contradiction", "is_connection_dropped returns False if the connection is dropped and should be closed."],
+      ["neutral", "is_connection_dropped retries the connection three times before returning."]
+    ]
+  }
+]

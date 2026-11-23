@@ -1,0 +1,362 @@
+[
+  {
+    "contradiction": 0.00023041829990688711,
+    "entailment": 0.00012907569180242717,
+    "hypothesis": "Bytes values in Hydra configs are limited to 1024 bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9996404647827148,
+    "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9979901313781738,
+    "entailment": 0.0013427470112219453,
+    "hypothesis": "Support for bytes in Hydra configs was added in OmegaConf 2.1.0.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0006671295268461108,
+    "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002085290616378188,
+    "entailment": 0.9978786706924438,
+    "hypothesis": "Support for bytes in Hydra configs was added in OmegaConf 2.2.0.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0019128285348415375,
+    "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0001482897059759125,
+    "entailment": 0.9996240139007568,
+    "hypothesis": "hydra-zen provides make_config() and builds() for creating configs.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0002277305320603773,
+    "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007918136543594301,
+    "entailment": 0.0002873698831535876,
+    "hypothesis": "hydra-zen's builds() caches every generated config on disk.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9989209175109863,
+    "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9994661211967468,
+    "entailment": 0.0004279284621588886,
+    "hypothesis": "hydra-zen's builds() cannot be used for creating configs.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00010599903907859698,
+    "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00041268632048740983,
+    "entailment": 0.9978598952293396,
+    "hypothesis": "BuildsFn._make_hydra_compatible raises HydraZenUnsupportedPrimitiveError for an unsupported value.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0017275047721341252,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9994151592254639,
+    "entailment": 0.00011248025839449838,
+    "hypothesis": "BuildsFn._make_hydra_compatible silently returns None for unsupported values instead of raising an error.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0004723381716758013,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004878263920545578,
+    "entailment": 0.0005091432831250131,
+    "hypothesis": "BuildsFn._make_hydra_compatible writes unsupported values to a log file.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9946126937866211,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000516386644449085,
+    "entailment": 0.996377170085907,
+    "hypothesis": "BuildsFn._sanitized_type broadens a type annotation until it is compatible with Hydra.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0031064224895089865,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9962469935417175,
+    "entailment": 0.0006657940684817731,
+    "hypothesis": "BuildsFn._sanitized_type never changes a type annotation that is incompatible with Hydra.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0030872004572302103,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002327313704881817,
+    "entailment": 0.00019372727547306567,
+    "hypothesis": "BuildsFn._sanitized_type uses an LRU cache with 128 entries.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9995735287666321,
+    "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9995662569999695,
+    "entailment": 0.0003495529235806316,
+    "hypothesis": "cookiecutter-trio cannot be used as a template for Python projects using Trio.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 8.412464376306161e-05,
+    "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00025963468942791224,
+    "entailment": 0.9993995428085327,
+    "hypothesis": "cookiecutter-trio is a template for Python projects using Trio.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00034088423126377165,
+    "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 6.558983295690268e-05,
+    "entailment": 9.678935020929202e-05,
+    "hypothesis": "cookiecutter-trio is distributed under the MIT license.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9998376369476318,
+    "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9990298748016357,
+    "entailment": 0.0006872808444313705,
+    "hypothesis": "hypothesis-trio does not provide Trio-compatible stateful testing.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0002828658907674253,
+    "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006708268774673343,
+    "entailment": 0.9974823594093323,
+    "hypothesis": "hypothesis-trio provides Trio-compatible stateful testing.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0018467727350071073,
+    "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00048047443851828575,
+    "entailment": 0.00013149427832104266,
+    "hypothesis": "hypothesis-trio requires Python 3.12 or newer.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9993879795074463,
+    "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9977269768714905,
+    "entailment": 0.00021396327065303922,
+    "hypothesis": "The duration passed to trio.sleep is measured in milliseconds instead of seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0020590368658304214,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.05514083430171013,
+    "entailment": 0.002580334898084402,
+    "hypothesis": "trio.sleep guarantees a timing precision of one millisecond.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9422788023948669,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00032752336119301617,
+    "entailment": 0.9983071088790894,
+    "hypothesis": "trio.sleep pauses the current task for the given number of seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0013654195936396718,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.020541038364171982,
+    "entailment": 0.5595279335975647,
+    "hypothesis": "trio.sleep_until interprets its deadline as a UTC timestamp.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.4199310839176178,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.8292778134346008,
+    "entailment": 0.14618462324142456,
+    "hypothesis": "trio.sleep_until takes a relative duration instead of an absolute time.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.024537526071071625,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005640476010739803,
+    "entailment": 0.998264491558075,
+    "hypothesis": "trio.sleep_until takes an absolute time according to Trio's internal clock.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0011714264983311296,
+    "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010096217738464475,
+    "entailment": 0.8611414432525635,
+    "hypothesis": "In urllib3, key_password is not required when the private key is not encrypted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.137848898768425,
+    "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9993395209312439,
+    "entailment": 0.0002381015510763973,
+    "hypothesis": "In urllib3, key_password is required even when the private key is not encrypted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00042236378067173064,
+    "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00025629409356042743,
+    "entailment": 0.00046714162454009056,
+    "hypothesis": "urllib3 accepts client certificates stored in PKCS12 files.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9992764592170715,
+    "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0003548517415765673,
+    "entailment": 0.9988781809806824,
+    "hypothesis": "urllib3 can connect to proxies using HTTP, HTTPS or SOCKS.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00076696602627635,
+    "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0017853702884167433,
+    "entailment": 0.0002882018743548542,
+    "hypothesis": "urllib3 requires authentication for every HTTP proxy connection.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9979263544082642,
+    "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9997339844703674,
+    "entailment": 0.00010595911589916795,
+    "hypothesis": "urllib3 supports HTTP proxies only and cannot connect to HTTPS or SOCKS proxies.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00016009453975129873,
+    "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0017160404240712523,
+    "entailment": 0.00045963822049088776,
+    "hypothesis": "SOCKSProxyManager maintains exactly one connection per host.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9978243112564087,
+    "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9996833801269531,
+    "entailment": 0.00015153079584706575,
+    "hypothesis": "SOCKSProxyManager never routes connections through a SOCKS proxy.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.00016506040992680937,
+    "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00033119364525191486,
+    "entailment": 0.998847246170044,
+    "hypothesis": "SOCKSProxyManager routes connections through the defined SOCKS proxy.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0008215543930418789,
+    "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0007756493869237602,
+    "entailment": 0.00011622130841715261,
+    "hypothesis": "is_connection_dropped retries the connection three times before returning.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9991081357002258,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.998439610004425,
+    "entailment": 0.0007831712136976421,
+    "hypothesis": "is_connection_dropped returns False if the connection is dropped and should be closed.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0007772203534841537,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00027945934562012553,
+    "entailment": 0.9988921284675598,
+    "hypothesis": "is_connection_dropped returns True if the connection is dropped and should be closed.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0008283787174150348,
+    "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  }
+]
