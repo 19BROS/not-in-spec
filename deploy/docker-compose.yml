@@ -2,6 +2,11 @@ name: notinspec
 
 x-app-env: &app-env
   DATABASE_URL: postgresql://notinspec:${POSTGRES_PASSWORD}@postgres:5432/notinspec
+  # Enable only after migrations and project registration (docs/hosted-ci.md).
+  NOTINSPEC_UPLOADS_ENABLED: ${NOTINSPEC_UPLOADS_ENABLED:-0}
+  NOTINSPEC_UPLOADS_DIR: /uploads
+  NOTINSPEC_RUNS_DIR: /runs
+  NOTINSPEC_PUBLIC_URL: ${NOTINSPEC_PUBLIC_URL:-https://147-175-151-17.sslip.io}
 
 services:
   postgres:
@@ -27,10 +32,10 @@ services:
       INGEST_TOKEN: ${INGEST_TOKEN:-}
       RESULTS_DIR: /results
       # shortcut: demo runs (`notinspec demo`) are folders on a volume, not in Postgres (SPEC §18)
-      NOTINSPEC_RUNS_DIR: /runs
     volumes:
       - results:/results
       - demo-runs:/runs:ro
+      - uploads:/uploads
     depends_on:
       postgres: { condition: service_healthy }
     restart: unless-stopped
@@ -40,6 +45,7 @@ services:
     build: { context: .., dockerfile: worker/Dockerfile }
     environment:
       <<: *app-env
+      NOTINSPEC_HOSTED_CLAIMS: ${NOTINSPEC_HOSTED_CLAIMS:-0}
       FIIT_API_KEY: ${FIIT_API_KEY:-} # claim extractors, read by notinspec.runner (SPEC §8)
       GROQ_API_KEY: ${GROQ_API_KEY:-} # models under test, read by notinspec.runner (SPEC §8)
       NOTINSPEC_MOCK_URL: http://mock:4011 # POST /serve {"spec": "<sha256>.yaml"}, deploy/mock
@@ -53,6 +59,7 @@ services:
       - hf-models:/models
       # written by `notinspec demo --runs-dir /runs` run in this container (docs/DEPLOY.md)
       - demo-runs:/runs
+      - uploads:/uploads
       # uploaded OpenAPI specs as <sha256>.yaml for the mock service
       - specs:/specs
     networks: [default, sandbox]
@@ -153,3 +160,4 @@ volumes:
   hf-models:
   demo-runs:
   specs:
+  uploads:
