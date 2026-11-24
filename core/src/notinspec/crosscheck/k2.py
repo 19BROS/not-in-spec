@@ -15,11 +15,16 @@ Two checks, both reported as `Finding(check="K2")`:
 
    Facts that are left out, because on urllib3 (run 009) they gave only false contradictions:
 
-   - a default of `None` or one that is not a literal (`_TYPE_DEFAULT.token`): `None` means
-     "computed inside", so "defaults to `ssl.CERT_REQUIRED`" in the prose is no contradiction
-     (with `None` defaults, 14 more contradiction pairs, all false, as many as all others);
+   - a default of `None` or `...`, or one that is not a literal (`_TYPE_DEFAULT.token`): `None`
+     means "computed inside", so "defaults to `ssl.CERT_REQUIRED`" in the prose is no
+     contradiction (with `None` defaults, 14 more contradiction pairs, all false, as many as
+     all others);
    - "is required": NLI reads it as "is not None" ("The timeout parameter … accepts None");
    - a value that differs between overloads (`tls_in_tls: Literal[False]` / `bool`).
+
+   Facts come only from the signatures of the claim's own section, and a fact that section's
+   signature block disagrees with is left out: the inventory merges every section that
+   documents a path.
 
    **Prefilter:** a claim is compared only with facts of the symbol documented in the claim's
    own section (an API description; guide claims name symbols by short, ambiguous names, so
@@ -34,15 +39,19 @@ Two checks, both reported as `Finding(check="K2")`:
    `is_connection_dropped()` prose says `HTTPConnection`, the parameter entry
    `BaseHTTPConnection`) is a contradiction only from claim to fact. A K2 finding still has
    `low` confidence: most of them are not errors in the docs (see SPEC §6.5), so they go to
-   review by our team.
+   review by our team. Facts that quote the same signature text (the default and the type of
+   `blocksize: int = 16384`) are one finding, as `Finding.key` sees them.
 
 2. **Annotation vs. documented type** (deterministic, `check_documented_types`): within one API
-   description, the signature's annotation and the type its `Parameters` entry or `Return type`
+   description, each symbol's annotation and the type its `Parameters` entry or `Return type`
    line states. urllib3's `Timeout.read_timeout: float | None` says `int, float or None` in its
-   `Return type`. Types are compared as sets of names (`type_names`): module prefixes, `|`,
-   commas and "or", `Optional`, `Literal` values and overloads (their union) do not count as a
-   difference. A finding has `medium` confidence: the comparison is code, but type text written
-   by hand is read by heuristics.
+   `Return type`. Types are compared as sets of outer type names (`type_names`): module
+   prefixes, type arguments (`dict` / `dict[str, str]` / `dict of str`), `|`, commas and "or",
+   `Optional`, `Literal` values and numpydoc's `{'r', 'w'}`, old typing aliases (`List`),
+   overloads (their union) and, with numpydoc's "optional", `None` do not count as a
+   difference. Text that is not a type name (`file-like object`) is not compared, and one
+   symbol of a description that agrees is enough. A finding has `medium` confidence: the
+   comparison is code, but type text written by hand is read by heuristics.
 
 Pure: same claims, chunks, inventory and scores ⇒ equal result, in any order of `claims`.
 """
@@ -51,7 +60,7 @@ import ast
 import re
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 from notinspec.chunking import Block, Chunk, SignatureParameter
@@ -162,6 +171,14 @@ def _facts(
     owner = _owner(symbol, symbols)
     section_id = chunk.section_id
     fields = _field_types(section)
+    # the inventory merges every section that documents the path: only this section's
+    # signatures, so no fact (or overload) comes from text the section does not have
+    symbol = replace(
+        symbol,
+        signatures=tuple(
+            s for s in symbol.signatures if any(src.section_id == section_id for src in s.sources)
+        ),
+    )
     out: list[SignatureFact] = []
 
     def fact(kind: FactKind, parameter: str | None, value: str, sentence: str, quote: str) -> None:
@@ -204,9 +221,17 @@ def _facts(
 
     for param in _parameters(symbol):
         p = param.name
-        written = _written(blocks, p)
+        # the parameter as this section's signature blocks show it (one per overload); a fact
+        # they disagree with is left out
+        shown = _shown(blocks, p)
+        written = _parameter_text(shown[0]) if shown else None
         default = _same(s.default for s in _overloads(symbol, p))
-        if default is not None and default != "None" and _literal(default):
+        if (
+            default is not None
+            and default not in ("None", "...")  # "computed inside", like a sentinel
+            and _literal(default)
+            and all(s.default == default for s in shown)
+        ):
             fact(
                 "default",
                 p,
@@ -215,9 +240,13 @@ def _facts(
                 written or f"{p}={default}",
             )
         type_ = _same(s.type for s in _overloads(symbol, p))
-        if type_ and not _is_literal_type(type_):
-            quote = written if written and ":" in written else None
-            if quote is None:
+        constraints = _same(s.constraints for s in _overloads(symbol, p))
+        enum = any(c.kind == "enum" for c in constraints or ())
+        # a `Literal[...]` annotation is an enum fact, which says more than the type
+        if type_ and not enum and all(s.annotation in (None, type_) for s in shown):
+            if written and shown[0].annotation:
+                quote = written
+            else:
                 quote = f"{p} ({type_})" if fields.get(p) == type_ else f"{p}: {type_}"
             fact(
                 "type",
@@ -226,7 +255,6 @@ def _facts(
                 f"The {p} parameter of {name} has type {_render(type_, owner)}.",
                 quote,
             )
-        constraints = _same(s.constraints for s in _overloads(symbol, p))
         for c in constraints or ():
             sentence = _constraint_sentence(c, p, name)
             if sentence:
@@ -235,10 +263,23 @@ def _facts(
     if symbol.kind not in _CLASS:
         returns = _same(sig.returns.type if sig.returns else None for sig in symbol.signatures)
         if returns:
-            arrow = next((b.type for b in blocks if b.parameters is not None and b.type), None)
-            quote = f"-> {arrow}" if arrow == returns else f"Return type: {returns}"
-            fact("returns", None, returns, f"{name} returns {_render(returns, owner)}.", quote)
+            sentence = f"{name} returns {_render(returns, owner)}."
+            fact("returns", None, returns, sentence, _return_quote(section, blocks, returns))
     return out
+
+
+def _return_quote(section: Sequence[Chunk], blocks: Sequence[Block], returns: str) -> str:
+    """Where the docs show the return type: `-> X`, the `Return type` line, or the type of the
+    `Returns` entry (shown as "(X)")."""
+    arrow = next((b.type for b in blocks if b.parameters is not None and b.type), None)
+    if arrow == returns:
+        return f"-> {arrow}"
+    fields = [b for c in section for b in c.blocks if b.type == returns]
+    if any(b.field == "return-type" for b in fields) or not any(
+        b.field == "returns" for b in fields
+    ):
+        return f"Return type: {returns}"
+    return f"({returns})"
 
 
 def _constraint_sentence(c: Constraint, p: str, name: str) -> str | None:
@@ -312,10 +353,6 @@ def _literal_node(node: ast.expr) -> bool:
     return False
 
 
-def _is_literal_type(value: str) -> bool:
-    return re.fullmatch(r"(?:typing(?:_extensions)?\.)?Literal\[.*\]", value) is not None
-
-
 def _render(type_: str, owner: str | None) -> str:
     """`bool | int | None` → "bool, int or None"; `Self` → the class; numpydoc's `, optional`
     and `, default 3` are left out (they are not the type)."""
@@ -344,16 +381,13 @@ def _short(path: str) -> str:
     return path.rsplit(".", 1)[-1]
 
 
-def _written(blocks: Sequence[Block], name: str) -> str | None:
-    """The parameter as the signature shows it: `total=10`, `keyfile: str | None = None`."""
-    for block in blocks:
-        for p in block.parameters or ():
-            if p.name.lstrip("*") == name:
-                return _parameter_text(p)
-    return None
+def _shown(blocks: Sequence[Block], name: str) -> list[SignatureParameter]:
+    """The parameter in each signature block that has it."""
+    return [p for b in blocks for p in b.parameters or () if p.name.lstrip("*") == name]
 
 
 def _parameter_text(p: SignatureParameter) -> str:
+    """The parameter as the signature shows it: `total=10`, `keyfile: str | None = None`."""
     out = p.name + (f": {p.annotation}" if p.annotation else "")
     if p.default is not None:
         out += f" = {p.default}" if p.annotation else f"={p.default}"
@@ -472,26 +506,32 @@ def _findings(
     pairs: Sequence[FactPair],
     versions: K2Versions,
 ) -> tuple[Finding, ...]:
-    """One finding per signature fact and docs text: claims that contradict the same fact and
-    quote the same text, or overlapping text of one chunk, are one problem in the docs. On run
-    009, qwen quoted ":param conn: `…HTTPConnection` object." and gemma "`param conn: …`", and
-    one of them ended a quote with a full stop where the other did not."""
-    by_fact: dict[tuple[str, str], list[tuple[int, SignatureFact, FactPair]]] = {}
+    """One finding per quoted signature text and docs text: claims that contradict facts with
+    the same quote (the default and the type of `blocksize: int = 16384`) and quote the same
+    text, or overlapping text of one chunk, are one problem in the docs, so one `Finding.key`.
+    On run 009, qwen quoted ":param conn: `…HTTPConnection` object." and gemma "`param conn:
+    …`", and one of them ended a quote with a full stop where the other did not."""
+    by_quote: dict[tuple[str, str, str], list[tuple[int, SignatureFact, FactPair]]] = {}
     for (i, f), p in zip(candidates, pairs, strict=True):
         if p.contradiction:
-            by_fact.setdefault((f.section_id, f.ref), []).append((i, f, p))
+            side = (f.section_id, f.evidence, normalize(f.quote))
+            by_quote.setdefault(side, []).append((i, f, p))
     groups: list[list[tuple[int, SignatureFact, FactPair]]] = []
-    for members in by_fact.values():
+    for members in by_quote.values():
         groups += _same_text(kept, members)
     findings = []
     for group in groups:
         # the message names the claim that comes first in the docs, in any input order
-        members = sorted(group, key=lambda m: (kept[m[0]].citation_span or (-1, -1), refs[m[0]]))
+        def place(k: int) -> tuple[int, tuple[int, int], str]:
+            span = kept[k].citation_span or (-1, -1)
+            return (by_id[kept[k].claim.chunk_id].part, span, refs[k])
+
+        members = sorted(group, key=lambda m: (place(m[0]), m[1].ref))
         i, f, _ = members[0]
-        claims = [
-            _claim_evidence(kept[k], refs[k], by_id[kept[k].claim.chunk_id]) for k, _, _ in members
-        ]
-        more = len(members) - 1
+        facts = {m[1].ref: m[1] for m in sorted(members, key=lambda m: m[1].ref)}
+        order = list(dict.fromkeys(k for k, _, _ in members))
+        claims = [_claim_evidence(kept[k], refs[k], by_id[kept[k].claim.chunk_id]) for k in order]
+        more = len(order) - 1
         findings.append(
             Finding(
                 check="K2",
@@ -502,7 +542,7 @@ def _findings(
                     f"vs `{f.quote}`" + (f" (+{more} more claims)" if more else "")
                 ),
                 confidence="low",
-                evidence=(_fact_evidence(f), *claims),
+                evidence=(*(_fact_evidence(x) for x in facts.values()), *claims),
                 nli=tuple(
                     n
                     for _, _, p in members
@@ -583,29 +623,36 @@ def check_documented_types(chunks: Sequence[Chunk]) -> tuple[Finding, ...]:
         documented = _documented(section)
         if not documented:
             continue
-        path, (chunk, blocks) = next(iter(documented.items()))
-        signatures = [b for _, bs in documented.values() for b in bs]
         for field_chunk, field in _fields(section):
+            # per symbol of the description (`.. py:function:: a(x)` / `b(y)` is two), the
+            # annotations of all its overloads
             if field.field == "param" and field.name and field.type:
                 name = field.name.lstrip("*")
-                annotations = [
-                    p.annotation
-                    for b in signatures
-                    for p in b.parameters or ()
-                    if p.name.lstrip("*") == name and p.annotation
-                ]
+                by_symbol = {
+                    path: [p.annotation for p in _shown(blocks, name) if p.annotation]
+                    for path, (_, blocks) in documented.items()
+                }
+            elif field.field == "return-type" and field.type:
+                by_symbol = {
+                    path: [b.type for b in blocks if b.type]
+                    for path, (_, blocks) in documented.items()
+                }
+            else:
+                continue
+            by_symbol = {path: a for path, a in by_symbol.items() if a}
+            # one symbol that agrees, or a type text that cannot be read: no finding
+            if not by_symbol or any(_agree(a, field.type) is not False for a in by_symbol.values()):
+                continue
+            path, annotations = next(iter(by_symbol.items()))
+            chunk, blocks = documented[path]
+            if field.field == "param":
                 written = f"{name} ({field.type})"
                 ref = f"{path}({name})"
                 what = f"the {name} parameter"
-            elif field.field == "return-type" and field.type:
-                annotations = [b.type for b in signatures if b.type]
+            else:
                 written = f"Return type: {field.type}"
                 ref = path
                 what = "the return type" if blocks[0].parameters is not None else "the type"
-            else:
-                continue
-            if not annotations or _union(annotations) == type_names(field.type):
-                continue
             shown = " / ".join(dict.fromkeys(annotations))
             kind: EvidenceKind = "parameter" if field.field == "param" else "signature"
             findings.append(
@@ -656,26 +703,46 @@ def _fields(section: Sequence[Chunk]) -> list[tuple[Chunk, Block]]:
     return out
 
 
-def _union(types: Iterable[str]) -> frozenset[str]:
-    out: set[str] = set()
-    for t in types:
-        out |= type_names(t)
-    return frozenset(out)
+def _agree(annotations: Iterable[str], documented: str) -> bool | None:
+    """Do the annotations (of all overloads, as their union) and the documented type allow the
+    same types? None when a name on either side is not a type name (`file-like object`,
+    `array-like`): such text is not compared. numpydoc's "optional" says the parameter has a
+    default, often `None`, so with it `None` on either side does not count."""
+    signature: set[str] = set()
+    for a in annotations:
+        signature |= type_names(a)
+    docs = set(type_names(documented))
+    if not all(_IDENTIFIER.fullmatch(n) for n in signature | docs):
+        return None
+    if "optional" in _split_top(documented, "|", ",", " or "):
+        signature.discard("None")
+        docs.discard("None")
+    return signature == docs
 
 
+_IDENTIFIER = re.compile(r"[A-Za-z_]\w*")
+# words and old typing aliases for the same type: case-sensitive first, then lower case
+_ALIASES = {"List": "list", "Dict": "dict", "Tuple": "tuple", "Set": "set", "Type": "type"}
+_ALIASES |= {"FrozenSet": "frozenset", "Text": "str"}
 _WORDS = {"integer": "int", "string": "str", "boolean": "bool", "none": "None"}
+_WORDS |= {w.lower(): w for w in ("Callable", "Sequence", "Iterable", "Iterator", "Mapping")}
 
 
 def type_names(text: str) -> frozenset[str]:
-    """The types a type text allows, as names: `int, float, or None` → {int, float, None},
-    `Optional[ssl.SSLSocket]` → {SSLSocket, None}, `Literal[False]` → {bool}. numpydoc's
-    "optional" and "default …" (`int, optional`) say nothing about the type and are skipped."""
+    """The types a type text allows, as names of their outer type: `int, float, or None` →
+    {int, float, None}, `Optional[ssl.SSLSocket]` → {SSLSocket, None}, `Literal[False]` →
+    {bool}, `dict[str, str]`, `dict` and `dict of str` → {dict}, numpydoc's `{'r', 'w'}` →
+    {str}. Type arguments are not compared: docs often leave them out or write them in prose.
+    numpydoc's "optional" and "default …" (`int, optional`) are not types and are skipped."""
     out: set[str] = set()
     for part in _split_top(text, "|", ",", " or "):
         part = re.sub(r"^or\s+", "", part).strip()
         if part == "optional" or re.match(r"default\b", part):
             continue
         part = re.sub(r"\btyping(?:_extensions)?\.", "", part)
+        if part.startswith("{") and part.endswith("}"):  # numpydoc: one of these values
+            out |= {_literal_type(v) for v in _split_top(part[1:-1], ",")}
+            continue
         head, bracket, rest = part.partition("[")
         inner = rest[:-1] if bracket and rest.endswith("]") else None
         if head in ("Optional", "Union") and inner is not None:
@@ -685,16 +752,19 @@ def type_names(text: str) -> frozenset[str]:
         elif head == "Literal" and inner is not None:
             out |= {_literal_type(v) for v in _split_top(inner, ",")}
         elif part:
-            name = _WORDS.get(head.lower(), head.rsplit(".", 1)[-1])
-            out.add(name + ("[" + "".join(rest.split()) if bracket else ""))
+            of = re.match(r"([\w.]+)\s+of\b", head)  # "list of str"
+            name = (of[1] if of else head).strip().rsplit(".", 1)[-1]
+            out.add(_ALIASES.get(name) or _WORDS.get(name.lower(), name))
     return frozenset(out)
 
 
 def _literal_type(value: str) -> str:
+    """The type of a `Literal` value: `'r'` → str, `Mode.READ` → Mode."""
     try:
         literal = ast.literal_eval(value)
     except (ValueError, SyntaxError):
-        return value
+        dotted = re.fullmatch(r"([\w.]+)\.\w+", value.strip())
+        return dotted[1].rsplit(".", 1)[-1] if dotted else value
     return "None" if literal is None else type(literal).__name__
 
 

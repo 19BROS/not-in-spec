@@ -419,16 +419,45 @@ def test_invalid_input() -> None:
         ("typing.Union[int, str]", {"int", "str"}),
         ("Literal[False]", {"bool"}),
         ("Literal['r', 'w'] | None", {"str", "None"}),
-        ("dict[str, str]", {"dict[str,str]"}),
-        ("tuple[None, None] | tuple[str, str | None]", {"tuple[None,None]", "tuple[str,str|None]"}),
+        # only the outer type: docs leave type arguments out or write them in prose
+        ("dict[str, str]", {"dict"}),
+        ("tuple[None, None] | tuple[str, str | None]", {"tuple"}),
+        ("tuple[ssl.SSLSocket, int]", {"tuple"}),
+        ("list of str", {"list"}),
+        ("typing.List[str]", {"list"}),
+        ("callable", {"Callable"}),
+        ("collections.abc.Callable[..., None]", {"Callable"}),
+        ("{'r', 'w'}", {"str"}),  # numpydoc: one of these values
+        ("{'r', 'w'}, optional", {"str"}),
         ("integer or string", {"int", "str"}),
         ("int, optional", {"int"}),
         ("int, default 3", {"int"}),
-        ("Literal[Mode.READ]", {"Mode.READ"}),
+        ("Literal[Mode.READ]", {"Mode"}),
+        ("file-like object", {"file-like object"}),
     ],
 )
 def test_type_names(text: str, names: set[str]) -> None:
     assert type_names(text) == names
+
+
+@pytest.mark.parametrize(
+    ("annotation", "documented"),
+    [
+        ("float | None", "float, optional"),  # numpydoc: "optional" admits None
+        ("int", "int, optional"),
+        ("dict[str, str]", "dict"),
+        ("list[str]", "list of str"),
+        ("Callable[[int], str]", "callable"),
+        ("Literal['r', 'w']", "{'r', 'w'}"),
+        ("tuple[ssl.SSLSocket, int]", "tuple[SSLSocket, int]"),
+        ("IO[bytes]", "file-like object"),  # not a type name: not compared
+    ],
+)
+def test_equivalent_types_are_no_mismatch(annotation: str, documented: str) -> None:
+    chunk = _chunk(
+        "connect", _sig("acme.connect", "function", P("x", annotation)), _field("x", documented)
+    )
+    assert check_documented_types([chunk]) == ()
 
 
 def test_documented_types() -> None:
@@ -464,3 +493,120 @@ def test_documented_parameter_type_mismatch() -> None:
     )
     assert [e.kind for e in finding.evidence] == ["parameter", "parameter"]
     assert finding.evidence[1].quote == "conn (BaseConnection)"
+
+
+def test_several_symbols_in_one_description_are_compared_one_by_one() -> None:
+    """`.. py:function:: a(x: int)` / `b(...)` in one description: a finding names the symbol
+    whose signature has the parameter, and one symbol that agrees is enough."""
+    named = _chunk(
+        "ab",
+        _sig("acme.a", "function", P("x", "int")),
+        _sig("acme.b", "function", P("y", "str")),
+        _field("y", "bytes"),
+    )
+    (finding,) = check_documented_types([named])
+    assert finding.subject == "acme.b"
+    assert [e.ref for e in finding.evidence] == ["acme.b(y).annotation", "acme.b(y).documented"]
+    pooled = _chunk(
+        "ab",
+        _sig("acme.a", "function", P("x", "int")),
+        _sig("acme.b", "function", P("x", "str")),
+        _field("x", "int"),
+    )
+    assert check_documented_types([pooled]) == ()
+
+
+# --- review of #54: facts the section's own text does not show ----------------------------------
+
+
+def test_literal_union_keeps_its_type_fact_and_ellipsis_is_no_default() -> None:
+    chunk = _chunk(
+        "request",
+        _sig(
+            "acme.request",
+            "function",
+            P("methods", "Literal['GET'] | Sequence[str]"),
+            P("timeout", default="..."),
+        ),
+    )
+    facts = {f.ref: f for f in signature_facts([chunk], build_inventory([chunk]).inventory)}
+    # not an enum (build makes one only of a whole `Literal[...]`), so the type is a fact
+    assert facts["acme.request(methods).type"].sentence == (
+        "The methods parameter of request() has type Literal['GET'] or Sequence[str]."
+    )
+    assert "acme.request(methods).enum" not in facts
+    assert "acme.request(timeout).default" not in facts  # `...` is a sentinel, like None
+
+
+def test_a_colon_in_a_default_is_no_annotation() -> None:
+    chunk = _chunk(
+        "get",
+        _sig("acme.get", "function", P("headers", default="{'a': 1}")),
+        _field("headers", "dict"),
+    )
+    facts = {f.ref: f for f in signature_facts([chunk], build_inventory([chunk]).inventory)}
+    assert facts["acme.get(headers).type"].quote == "headers (dict)"
+    assert facts["acme.get(headers).default"].quote == "headers={'a': 1}"
+
+
+def test_a_return_type_from_the_returns_entry_is_quoted_as_the_docs_show_it() -> None:
+    chunk = _chunk(
+        "count",
+        _sig("acme.count", "function"),
+        Block("field", 1, 1, 1, field="returns", type="int"),
+    )
+    facts = {f.ref: f for f in signature_facts([chunk], build_inventory([chunk]).inventory)}
+    assert facts["acme.count.returns"].quote == "(int)"  # "- (int) – the count."
+
+
+def test_facts_come_only_from_the_sections_own_signatures() -> None:
+    """Two sections document `acme.send`; the inventory merges them. Each section gets only the
+    facts of its own signature, and none its own block contradicts."""
+    first = _chunk("send", _sig("acme.send", "function", P("size", "int", "10")))
+    second = _chunk("send-again", _sig("acme.send", "function", P("size", "int", "20")))
+    inventory = build_inventory([first, second]).inventory
+    facts = signature_facts([first, second], inventory)
+    defaults = {(f.section_id, f.value) for f in facts if f.kind == "default"}
+    assert (second.section_id, "10") not in defaults
+    assert (first.section_id, "20") not in defaults
+
+
+def test_default_and_type_with_one_quote_are_one_finding() -> None:
+    """`blocksize: int = 16384` quotes the same text for its default and its type; a claim that
+    contradicts both is one problem in the docs, so one finding with one key."""
+    chunk = _chunk("read", _sig("acme.read", "function", P("blocksize", "int", "16384")))
+    inventory = build_inventory([chunk]).inventory
+    text = "The blocksize parameter defaults to 8 KiB, a string."
+    facts = {f.ref: f for f in signature_facts([chunk], inventory)}
+    scores = {}
+    for ref in ("acme.read(blocksize).default", "acme.read(blocksize).type"):
+        sentence = facts[ref].sentence
+        scores |= {(sentence, text): C, (text, sentence): N}
+    claim = _claim(text, chunk)
+    result = check_claims_against_signatures([claim], [chunk], inventory, _nli(scores))
+    (finding,) = result.findings
+    assert [e.ref for e in finding.evidence] == [
+        "acme.read(blocksize).default",
+        "acme.read(blocksize).type",
+        f"{chunk.id}/x/c1",
+    ]
+    assert finding.message.endswith("vs `blocksize: int = 16384`")  # one claim, no "+N more"
+
+
+def test_the_message_names_the_claim_of_the_first_part() -> None:
+    """A section split into parts: citation spans of different parts are not comparable, so
+    the part comes first."""
+    part2 = replace(RETRY, id=RETRY.id + "-part2", part=2)
+    first = _claim("The total parameter defaults to 3.", citation="total is 3", span=(500, 540))
+    second = _claim(
+        "The total parameter is 5 by default.",
+        part2,
+        extractor="y",
+        citation="total is 3",
+        span=(10, 40),  # a smaller offset, but in the second part
+    )
+    result = check_claims_against_signatures(
+        [second, first], [*CHUNKS, part2], INVENTORY, _contradicting(second, first)
+    )
+    (finding,) = result.findings
+    assert "“The total parameter defaults to 3.”" in finding.message
