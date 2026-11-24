@@ -14,7 +14,7 @@ deploy/   docker-compose, nginx, env template, fixtures
 docs/     SPEC, assignment, DEPLOY (production runbook), design (UI screens)
 ```
 
-The web UI design is in [docs/design/](docs/design/README.md). Follow those screens when working on the UI.
+The web UI design is in [docs/design/](docs/design/README.md). Follow those screens where they agree with SPEC, and read the README's notes on each screen: screen 1 (upload / connect a repo) is not MVP, because the web UI is read-only and runs start only from the Action (SPEC §1.1, §11.1).
 
 Python packages form one **uv workspace** (root `pyproject.toml`). Each lives in `<dir>/src/<module>` with tests in `<dir>/tests`.
 

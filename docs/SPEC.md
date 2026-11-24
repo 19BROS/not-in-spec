@@ -829,5 +829,5 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Definition of "gold context" for multi-step tasks
 - [ ] NLI for non-English docs
 - [ ] Retrieval for the `retrieved` mode (BM25, embeddings, hybrid)
-- [ ] Shape of the report and the web UI
+- [ ] Shape of the report and the web UI: target screens of the web UI in [docs/design/](design/README.md) (where they differ from this spec, the spec wins); the HTML report is still open
 - [ ] Model terms on publishing outputs ([§10](#10-data))
