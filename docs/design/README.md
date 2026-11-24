@@ -13,23 +13,23 @@ Rules for every screen:
 
 The entry page. The user uploads **built** documentation (Sphinx XML from `sphinx-build -b xml`, Markdown, `openapi.yaml`, `CHANGELOG.md`, `llms.txt`) or connects a GitHub repository by URL, branch and docs path, then starts the analysis with **Run analysis**.
 
-*Future state, not MVP.* In the MVP the web UI is read-only and runs start only from the GitHub Action ([SPEC §1.1](../SPEC.md#11-what-we-are-not-building), [§11.1](../SPEC.md#111-upload-api)). Even then, an upload is never a Sphinx project (a zip of sources): our service never builds docs, it only parses built inputs (SPEC §1.1). The screen still says "Sphinx project (.zip)" and "docs.zip"; the text above wins.
+*Future state, not MVP.* In the MVP the web UI is read-only and runs start only from the GitHub Action ([SPEC §1.1](../SPEC.md#11-what-we-are-not-building), [§11.1](../SPEC.md#111-upload-api)). Even then, an upload is never a Sphinx project (a zip of sources): our service never builds docs, it only parses built inputs (SPEC §1.1).
 
 ## 2. Run progress
 
 ![Run progress](02-run-progress.jpg)
 
-A running analysis. It shows the pipeline steps (read & chunk, inventory, cross-checks, test generation, quality control, model runs, evaluation) with counts per step, an overall progress bar, and a live log. Quality control (SPEC §6.8: checks, round-trip solvers, review) runs before items are frozen and can take a while, so it has its own step; the screen still shows it inside "Generate tests".
+A running analysis. It shows the pipeline steps (read & chunk, inventory, cross-checks, test generation, quality control, model runs, evaluation) with counts per step, an overall progress bar, and a live log. Quality control (SPEC §6.8: checks, round-trip solvers, review) runs before items are frozen and can take a while, so it has its own step.
 
 ## 3. Dashboard
 
 ![Dashboard](03-dashboard.jpg)
 
 Results of one run compared with its baseline (SPEC §7).
-- **Level tiles:** L0, L1, L3 and, for OpenAPI docs, L4 (SPEC §16.1), each shown separately. They show **one model and one mode**, chosen with a selector above them (default: the first model of the run, `gold`). The screen has no selector and no L4 tile yet.
+- **Level tiles:** L0, L1, L3 and, for OpenAPI docs, L4 (SPEC §16.1), each shown separately. They show **one model and one mode**, chosen with a selector above them (default: the first model of the run, `gold`).
 - **L3 by model × context mode** (none, retrieved, gold) and **failure categories** of the selected model and mode.
 - **Banner:** only on PR runs. It shows the run's stored verdict. When the check fails, it names the level, the change and its p-value, as the PR comment does (SPEC §2.4): "L3 · 91 % → 64 % (p = 0.01) on stable items in changed sections: the PR check fails." The build fails only on a statistically significant L3 / L4 drop on stable items in changed sections (SPEC §7), so the banner never appears just because a percentage went down. Nightly and main runs have no banner.
-- **Worst sections first:** sorted by L3 success of the selected model and mode, lowest first, with the change against the baseline and the most common error. The screen sorts by the drop instead; the order here wins.
+- **Worst sections first:** sorted by L3 success of the selected model and mode, lowest first, with the change against the baseline and the most common error.
 
 ## 4. Test item detail
 
