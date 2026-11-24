@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from sqlalchemy import Engine, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from notinspec.db import models, save
@@ -54,8 +55,10 @@ def import_run(engine: Engine, folder: Path) -> Imported:
             if exists is not None:
                 return Imported(name, "exists", f"run {doc['id']} is already in the database")
             detail = _import(session, folder, doc)
-    except (OSError, ValueError, KeyError, TypeError) as e:
-        return Imported(name, "failed", f"{type(e).__name__}: {e}")
+    # SQLAlchemyError: a CHECK or unique constraint; `session.begin()` already rolled this
+    # folder back, and the next folders are still tried
+    except (OSError, ValueError, KeyError, TypeError, SQLAlchemyError) as e:
+        return Imported(name, "failed", f"{type(e).__name__}: {_first_line(e)}")
     return Imported(name, "imported", detail)
 
 
@@ -79,8 +82,7 @@ def _import(session: Session, folder: Path, doc: dict[str, Any]) -> str:
         status="done",  # run.json is written last: the run finished
         comment_md=_text(folder / "comment.md"),
         tool_version=doc.get("tool_version", "unknown"),
-        created_at=created,
-        finished_at=created,
+        created_at=created,  # run.json does not say when the run finished: finished_at unknown
     )
     session.add(run)
     session.flush()
@@ -132,6 +134,11 @@ def _artifacts(folder: Path, run_id: int) -> list[models.RunArtifact]:
             )
         )
     return out
+
+
+def _first_line(error: Exception) -> str:
+    """SQLAlchemy appends the whole statement and its parameters; the first line is the reason."""
+    return str(error).splitlines()[0] if str(error) else ""
 
 
 def _json(path: Path) -> Any:

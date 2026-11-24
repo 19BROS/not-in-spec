@@ -1,6 +1,7 @@
 """Import of run folders and the DB stores, against a real Postgres (TEST_DATABASE_URL)."""
 
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -92,6 +93,26 @@ def test_import_stores_the_run_its_docs_and_every_file(engine: Engine, demo_runs
     assert _count(engine, models.ClaimAnswer) == 1
 
 
+def test_a_folder_the_database_refuses_does_not_stop_the_others(
+    engine: Engine, demo_runs: Path, tmp_path: Path
+) -> None:
+    good = next(p for p in demo_runs.iterdir() if (p / "run.json").is_file())
+    shutil.copytree(good, tmp_path / "b-good")
+    bad = {"id": "bad-run", "project": "lib", "created_at": "2026-11-18T10:30:00+00:00",
+           "steps": [{"id": "read", "label": "Read", "status": "weird"}]}  # fmt: skip
+    (tmp_path / "a-bad").mkdir()
+    (tmp_path / "a-bad" / "run.json").write_text(json.dumps(bad), encoding="utf-8")
+
+    outcomes = {o.folder: o for o in import_runs(engine, tmp_path)}
+    assert outcomes["a-bad"].status == "failed"
+    assert "ck_run_step_status" in outcomes["a-bad"].detail
+    assert "\n" not in outcomes["a-bad"].detail  # the reason, not the whole statement
+    assert outcomes["b-good"].status == "imported"
+    with Session(engine) as session:  # the bad run was rolled back as a whole
+        assert session.scalars(select(models.Run.public_id)).all() == [good.name]
+        assert "lib" not in session.scalars(select(models.Project.slug)).all()
+
+
 def test_import_again_skips_runs_already_in_the_database(engine: Engine, demo_runs: Path) -> None:
     import_runs(engine, demo_runs)
     again = [o.status for o in import_runs(engine, demo_runs) if o.folder != "unfinished"]
@@ -120,23 +141,14 @@ def test_db_stores_behave_like_the_jsonl_ones(engine: Engine) -> None:
     assert store.get(key) == second  # a later answer wins
     assert store.get(ReuseKey("h", "lib > A", "qwen", "m", 1, None, 2, False)) is None
 
-    DbCallLog(engine).append(
-        LlmCall(
-            "no-such-run",
-            "claim-extractor",
-            "qwen",
-            "k1",
-            "m",
-            "ph",
-            {},
-            None,
-            "x",
-            "2026-11-21T10:00:00+00:00",
-        )  # fmt: skip
-    )
+    call = LlmCall("no-such-run", "claim-extractor", "qwen", "k1", "m", "ph", {}, None, "x",
+                   "2026-11-21T10:00:00+00:00")  # fmt: skip
+    with pytest.raises(LookupError, match="no-such-run"):
+        DbCallLog(engine).append(call)  # the worker: the run must exist first
+    DbCallLog(engine, require_run=False).append(call)  # the CLI
     with Session(engine) as session:
-        call = session.scalars(select(models.LlmCall)).one()
-        assert (call.run_id, call.run_ref, call.error) == (None, "no-such-run", "x")
+        stored = session.scalars(select(models.LlmCall)).one()
+        assert (stored.run_id, stored.run_ref, stored.error) == (None, "no-such-run", "x")
 
 
 def test_register_a_project_and_update_it(

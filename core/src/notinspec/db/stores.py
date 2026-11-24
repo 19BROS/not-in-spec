@@ -13,16 +13,24 @@ from notinspec.db import models, rows
 
 
 class DbCallLog:
-    """`CallLog`: one transaction per call, so a crash keeps every earlier call (SPEC §10)."""
+    """`CallLog`: one transaction per call, so a crash keeps every earlier call (SPEC §10).
 
-    def __init__(self, engine: Engine) -> None:
+    `require_run`: the worker always creates the run first, so there a call whose run is not in
+    the database is a bug and raises. The CLI's runs are not in the database: off, the call is
+    stored with `run_id` NULL and its run ID in `run_ref`.
+    """
+
+    def __init__(self, engine: Engine, *, require_run: bool = True) -> None:
         self.engine = engine
+        self.require_run = require_run
 
     def append(self, call: LlmCall) -> None:
         with Session(self.engine) as session, session.begin():
             run_id = session.scalar(
                 select(models.Run.id).where(models.Run.public_id == call.run_id)
             )
+            if run_id is None and self.require_run:
+                raise LookupError(f"run {call.run_id} is not in the database")
             session.add(rows.llm_call(rows.plain(call), run_id))
 
 
