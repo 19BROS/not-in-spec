@@ -27,9 +27,10 @@ ostáva journal na volume; jeho import po výpadku je manuálny, nie automatick�
 
 ## Zapnutie
 
-Implementácia je závislá od vetvy `core/db-schema` a samostatnej zmeny závislostí
-`core/hosted-deps`. Konfigurácia Compose/CI je v samostatnej vetve `devops/hosted-ci-wiring`.
-Najprv treba zlúčiť a nasadiť tieto závislosti, zálohovať DB, aplikovať migrácie a registrovať
+Databázové PR #55/#56 sú od 2026-11-24 v `main`; CI vetvy sú na tento stav aktualizované.
+Zostáva samostatná zmena závislostí `core/hosted-deps` (#61), implementácia
+`core/hosted-ci` (#62) a konfigurácia `devops/hosted-ci-wiring` (#63), v tomto poradí.
+Najprv treba zlúčiť a nasadiť tieto zmeny, zálohovať DB, aplikovať migrácie a registrovať
 repozitár. Bez registrácie server upload odmietne. Funkcia je štandardne vypnutá.
 
 ```sh
@@ -70,3 +71,8 @@ spúšťania modelov pod testom a vyhodnotenia L0–L4 s baseline. Výstup preto
 Existujúca Action pri tom správne zobrazí „no result“. Tiež treba overiť reálny GitHub
 OIDC tok na nasadenej VM a PR po schválení závislostí. Produkčné nasadenie ani kompletný
 regresný výsledok tento PR nepredstiera. Pôvodný Action stub ostáva zmluvným testom klienta.
+
+V `main` už existujú deterministické referencie a generátory L0/L1
+(`notinspec.tasks`, PR #44), ale ešte netvoria kompletnú hodnotiacu pipeline workera.
+Pribudla aj krížová kontrola K2 (PR #54). Samotná dostupnosť týchto modulov
+nemení význam `verdict: null` a nepredstavuje overený regresný výsledok.
