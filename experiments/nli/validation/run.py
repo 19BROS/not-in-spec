@@ -1,6 +1,7 @@
 """SCRUM-46: recorded human benchmark and frozen controls on real Sphinx documents.
 
-Run from the repository root with `uv run --extra nli python experiments/nli/validation/run.py`.
+Run from the root with `uv run --all-packages --extra nli python
+experiments/nli/validation/run.py`.
 The 36 control labels were authored from the documentation before running NLI. They are
 AI-authored controls, not independent human labels or an estimate of production precision.
 This developer experiment can load the local model; project tests and CI do not invoke it.
@@ -10,22 +11,23 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import platform
+import tempfile
 import time
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
 
-from notinspec.chunking import CHUNKER_VERSION, WINDOWS_VERSION
-from notinspec.config import load_config
-from notinspec.grounding import (
-    GROUNDING_VERSION,
-    check_citation,
-    inventory_names,
-    missing_identifiers,
-    nli_premise,
-    section_reference,
+from notinspec.claims import (
+    ExtractedClaim,
+    ExtractionResult,
+    ExtractorSpec,
+    GroundingVersions,
+    ground_claims,
 )
+from notinspec.config import load_config
+from notinspec.grounding import check_citation
 from notinspec.ingestion import ingest
 from notinspec.nli import RecordingNli, TransformersNli
 
@@ -37,13 +39,15 @@ LABELS = ("entailment", "neutral", "contradiction")
 def metrics(rows):
     matrix = {gold: {pred: 0 for pred in LABELS} for gold in LABELS}
     for row in rows:
-        matrix[row["gold"]][row["label"]] += 1
-    tp = sum(r["gold"] == r["label"] == "entailment" for r in rows)
-    fp = sum(r["gold"] != "entailment" and r["label"] == "entailment" for r in rows)
-    fn = sum(r["gold"] == "entailment" and r["label"] != "entailment" for r in rows)
+        if row["label"] in LABELS:
+            matrix[row["gold"]][row["label"]] += 1
+    tp = sum(r["gold"] == "entailment" and r["pipeline_keep"] for r in rows)
+    fp = sum(r["gold"] != "entailment" and r["pipeline_keep"] for r in rows)
+    fn = sum(r["gold"] == "entailment" and not r["pipeline_keep"] for r in rows)
     tn = len(rows) - tp - fp - fn
     return {
         "count": len(rows),
+        "nli_scored_count": sum(r["label"] in LABELS for r in rows),
         "confusion_gold_rows": matrix,
         "correct_three_way": sum(r["gold"] == r["label"] for r in rows),
         "keep_drop": {"true_keep": tp, "false_keep": fp, "false_drop": fn, "true_drop": tn},
@@ -75,9 +79,41 @@ def historical():
         prediction = predictions[item["section"], item["extractor"], item["claim_id"]]
         # No NLI premise is a pre-NLI rejection, never an invented three-way prediction.
         label = prediction["label"] if prediction["status"].startswith("ok") else None
-        rows.append({**item, "label": label, "status": prediction["status"]})
+        rows.append(
+            {
+                **item,
+                "label": label,
+                "status": prediction["status"],
+                "pipeline_keep": label == "entailment",
+            }
+        )
     scored = [r for r in rows if r["label"] in LABELS]
+    config_file = source.parent.parent / "config.json"
+    config = json.loads(config_file.read_bytes())
+    model_id = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
     return {
+        "provenance": {
+            "mode": "replay of stored run 007 predictions, not a new model run",
+            "predictions_file": source.relative_to(ROOT).as_posix(),
+            "predictions_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            "labels_file": "experiments/nli/labels-human.csv",
+            "labels_sha256": hashlib.sha256((base / "labels-human.csv").read_bytes()).hexdigest(),
+            "config_file": config_file.relative_to(ROOT).as_posix(),
+            "config_sha256": hashlib.sha256(config_file.read_bytes()).hexdigest(),
+            "model": model_id,
+            "revision": config["hub_sha"][model_id],
+            "premise_rule": "local-block",
+            "context": "breadcrumb",
+            "window_size": 128,
+            "radius": config["radius"],
+            "decision": "argmax",
+            "grounding_version": None,
+            "chunker_version": None,
+            "windows_version": None,
+            "unrecorded_versions": "legacy experiment did not record core rule versions",
+            "git": config["git"],
+            "runtime_versions": config["versions"],
+        },
         "sample_count": len(rows),
         "nli_scored": metrics(scored),
         "pre_nli_rejections": [r for r in rows if r["label"] is None],
@@ -100,58 +136,89 @@ def historical():
     }
 
 
+def validate_cases(cases):
+    labels = Counter(gold for case in cases for gold, _ in case["claims"])
+    count = sum(labels.values())
+    if len(cases) != 12 or count != 36 or labels != dict.fromkeys(LABELS, 12):
+        raise ValueError(
+            f"expected 12 cases / 36 claims / 12 per label; got {len(cases)} cases, "
+            f"{count} claims, labels {dict(labels)}"
+        )
+
+
+def ground_case(case, data, model, index, offset=0):
+    library = case["library"]
+    chunk = next((c for c in data.chunks if c.id == case["chunk_id"]), None)
+    if chunk is None:
+        raise ValueError(f"case {index}: chunk {case['chunk_id']} not found in {library}")
+    match = check_citation(chunk, case["citation"])
+    if match.status != "found":
+        raise ValueError(f"case {index}: citation {match.status} in {library}/{chunk.id}")
+    spec = ExtractorSpec("frozen-controls", "authored-controls")
+    claims = tuple(
+        ExtractedClaim(
+            chunk.id,
+            spec.name,
+            f"control-{offset + i + 1:03}",
+            hypothesis,
+            case["citation"],
+            "fact",
+            "frozen-controls",
+            "not-an-llm-call",
+            spec.model,
+        )
+        for i, (_, hypothesis) in enumerate(case["claims"])
+    )
+    result = ExtractionResult(spec, claims, (), (), 0, 0, 0)
+    grounded = ground_claims([result], data.chunks, data.inventory, model, project=data.project)
+    return [
+        {
+            "id": item.claim.local_id,
+            "library": library,
+            "scope": case["scope"],
+            "chunk_id": chunk.id,
+            "source": chunk.source,
+            "breadcrumb": chunk.breadcrumb,
+            "input_hash": data.input_hash,
+            "content_hash": chunk.content_hash,
+            "citation": case["citation"],
+            "gold": gold,
+            "hypothesis": item.claim.text,
+            "status": item.status,
+            "citation_matches": item.citation_matches,
+            "premise_candidates": item.premise_candidates,
+            "premise": item.premise,
+            "scores": asdict(item.nli) if item.nli is not None else None,
+            "label": item.nli.label if item.nli is not None else None,
+            "missing_identifiers": item.missing,
+            "pipeline_keep": item.status == "kept",
+        }
+        for (gold, _), item in zip(case["claims"], grounded, strict=True)
+    ]
+
+
 def controls(model):
     cases_bytes = (HERE / "cases.json").read_bytes()
     cases = json.loads(cases_bytes)
+    validate_cases(cases)
     libraries = {}
     rows = []
-    for index, case in enumerate(cases):
+    for index, case in enumerate(cases, 1):
         library = case["library"]
         if library not in libraries:
             config = load_config(ROOT / "core/examples/sphinx" / library / "notinspec.yaml")
             libraries[library] = ingest(config, output=ROOT / "tmp/nli-validation")
-        data = libraries[library]
-        chunk = next(c for c in data.chunks if c.id == case["chunk_id"])
-        match = check_citation(chunk, case["citation"])
-        if match.status != "found":
-            raise ValueError(f"case {index}: citation {match.status}")
-        premises = [nli_premise(chunk, span) for span in match.spans]
-        section = [c for c in data.chunks if c.section_id == chunk.section_id]
-        reference = section_reference(section, data.inventory)
-        for gold, hypothesis in case["claims"]:
-            scores = model.score([(p.text, hypothesis) for p in premises])
-            best = max(
-                range(len(scores)),
-                key=lambda i: (scores[i].label == "entailment", scores[i].entailment),
-            )
-            missing = missing_identifiers(
-                hypothesis,
-                reference,
-                project=data.project,
-                known_names=inventory_names(data.inventory),
-            )
-            rows.append(
-                {
-                    "id": f"control-{len(rows) + 1:03}",
-                    "library": library,
-                    "scope": case["scope"],
-                    "chunk_id": chunk.id,
-                    "source": chunk.source,
-                    "breadcrumb": chunk.breadcrumb,
-                    "input_hash": data.input_hash,
-                    "content_hash": chunk.content_hash,
-                    "citation": case["citation"],
-                    "gold": gold,
-                    "hypothesis": hypothesis,
-                    "premise": premises[best].text,
-                    "scores": asdict(scores[best]),
-                    "label": scores[best].label,
-                    "missing_identifiers": missing,
-                    "pipeline_keep": scores[best].label == "entailment" and not missing,
-                }
-            )
-    assert len(rows) == 36 and Counter(r["gold"] for r in rows) == dict.fromkeys(LABELS, 12)
+        rows.extend(ground_case(case, libraries[library], model, index, len(rows)))
     return rows, hashlib.sha256(cases_bytes).hexdigest()
+
+
+def save_scores(model, path):
+    """Publish only this run's pairs; RecordingNli.save otherwise merges old entries."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="nli-scores-", dir=path.parent) as temporary:
+        fresh = Path(temporary) / "scores.json"
+        model.save(fresh)
+        os.replace(fresh, path)
 
 
 def main():
@@ -169,15 +236,12 @@ def main():
     started = time.perf_counter()
     rows, case_hash = controls(model)
     results = {
-        "schema_version": 1,
+        "schema_version": 2,
         "case_sha256": case_hash,
         "python": platform.python_version(),
         "model": model.model_id,
         "revision": model.revision,
-        "grounding_version": GROUNDING_VERSION,
-        "chunker_version": CHUNKER_VERSION,
-        "windows_version": WINDOWS_VERSION,
-        "decision": "argmax",
+        "control_grounding": asdict(GroundingVersions.of(model)),
         "annotation": "AI-authored frozen controls; independent human review pending",
         "historical_human_benchmark": historical(),
         "controls": {
@@ -198,9 +262,10 @@ def main():
         },
         "rows": rows,
     }
+    args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     if isinstance(model, RecordingNli):
-        model.save(args.out.with_name("scores.json"))
+        save_scores(model, args.out.with_name("scores.json"))
     print(
         json.dumps(
             {
