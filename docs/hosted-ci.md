@@ -28,10 +28,11 @@ ostáva journal na volume; jeho import po výpadku je manuálny, nie automatick�
 ## Zapnutie
 
 Databázové PR #55/#56 sú od 2026-11-24 v `main`; CI vetvy sú na tento stav aktualizované.
-Zostáva samostatná zmena závislostí `core/hosted-deps` (#61), implementácia
+Zostáva samostatná zmena závislostí `core/hosted-deps` (#66), implementácia
 `core/hosted-ci` (#62) a konfigurácia `devops/hosted-ci-wiring` (#63), v tomto poradí.
 Najprv treba zlúčiť a nasadiť tieto zmeny, zálohovať DB, aplikovať migrácie a registrovať
 repozitár. Bez registrácie server upload odmietne. Funkcia je štandardne vypnutá.
+PR #66 nahrádza #61, ktorý sa zatvoril po zmazaní pôvodnej cieľovej DB vetvy.
 
 ```sh
 uv sync --locked --all-packages
