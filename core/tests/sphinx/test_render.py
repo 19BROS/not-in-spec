@@ -109,6 +109,23 @@ def test_signatures() -> None:
     assert [b.kind for b in chunk.blocks] == ["heading", "signature", "signature"]
 
 
+def test_property_type_keeps_spaces_and_bare_text() -> None:
+    """urllib3's `Timeout.connect_timeout: float | _TYPE_DEFAULT | None`: `_TYPE_DEFAULT` is
+    not in a node of its own but the tail of a space node."""
+    space = '<desc_sig_space classes="w"> </desc_sig_space>'
+    bar = f"{space}<desc_sig_punctuation>|</desc_sig_punctuation>{space}"
+    signature = (
+        f"<desc_annotation>property{space}</desc_annotation>"
+        "<desc_name>connect_timeout</desc_name>"
+        f"<desc_annotation><desc_sig_punctuation>:</desc_sig_punctuation>{space}"
+        f"<reference>float</reference>{bar}_TYPE_DEFAULT{bar}<reference>None</reference>"
+        "</desc_annotation>"
+    )
+    chunk = _chunks(_desc("property", "connect_timeout", signature=signature))[0]
+    (block,) = [b for b in chunk.blocks if b.kind == "signature"]
+    assert block.type == "float | _TYPE_DEFAULT | None"
+
+
 # --- fields -----------------------------------------------------------------------------------
 
 

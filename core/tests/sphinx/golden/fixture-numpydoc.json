@@ -747,7 +747,7 @@
           "nested": false,
           "name": "fixturelib.Connection.default_timeout",
           "field": null,
-          "type": null,
+          "type": "float",
           "objtype": "py:attribute",
           "parameters": null,
           "directives": []
@@ -2031,7 +2031,7 @@
       "373a6b624c96a725e6a7d41a07fc5f3cfd77c2270e46f8d72b6f1a2839b101b9"
     ]
   ],
-  "reader_version": 2,
+  "reader_version": 3,
   "sphinx_version": "9.1.1",
   "warnings": [
     "source path outside the Sphinx source folder in guide (1x)"

@@ -388,7 +388,14 @@ def _signature_type(sig: Element) -> str | None:
     for annotation in sig.findall("desc_annotation"):
         children = [c for c in annotation if c.tag != "desc_sig_space"]
         if children and children[0].tag == "desc_sig_punctuation" and text(children[0]) == ":":
-            return collapse("".join(text(c) for c in children[1:])) or None
+            # everything after the ":", with the spaces and the bare text between nodes:
+            # in `float | _TYPE_DEFAULT | None`, `_TYPE_DEFAULT` is the tail of a space node
+            after = list(annotation)
+            after = after[after.index(children[0]) :]
+            value = (after[0].tail or "") + "".join(
+                "".join(c.itertext()) + (c.tail or "") for c in after[1:]
+            )
+            return collapse(value) or None
     return None
 
 

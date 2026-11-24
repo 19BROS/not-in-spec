@@ -1,0 +1,1802 @@
+[
+  {
+    "contradiction": 0.0020512626506388187,
+    "entailment": 0.0025645161513239145,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953842759132385,
+    "premise": "A `urllib3.exceptions.TimeoutStateError` is raised if `start_connect()` has not yet been called on the object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012057729763910174,
+    "entailment": 0.0036365906707942486,
+    "hypothesis": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9951576590538025,
+    "premise": "For Python 3.13+, the default values for the verify_flags parameter are `ssl.VERIFY_X509_PARTIAL_CHAIN` and `ssl.VERIFY_X509_STRICT`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016975022153928876,
+    "entailment": 0.7547599673271179,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.24354250729084015,
+    "premise": "If no ssl_context is provided to ssl_wrap_socket(), one will be created using create_urllib3_context().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016453833086416125,
+    "entailment": 0.7495223879814148,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.24883222579956055,
+    "premise": "If no ssl_context is provided to urllib3.util.ssl_wrap_socket(), one will be created using create_urllib3_context().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005739533808082342,
+    "entailment": 0.006844368763267994,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9874162077903748,
+    "premise": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004467361140996218,
+    "entailment": 0.005496269091963768,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9900363683700562,
+    "premise": "If the connection time has not been established, a TimeoutStateError will be raised.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006992457900196314,
+    "entailment": 0.005618946626782417,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9873886108398438,
+    "premise": "If the connection time has not been established, a `TimeoutStateError` is raised when accessing read_timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0018152185948565602,
+    "entailment": 0.009291348978877068,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.988893449306488,
+    "premise": "It is not recommended to set ssl_maximum_version to anything other than ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0018140599131584167,
+    "entailment": 0.005131879355758429,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9930540919303894,
+    "premise": "It is not recommended to set the ssl_maximum_version parameter to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014091547345742583,
+    "entailment": 0.019484981894493103,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9791058897972107,
+    "premise": "The PROTOCOL_SSLv23 default for ssl_version negotiates the highest protocol that both the server and the OpenSSL installation support.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.038473911583423615,
+    "entailment": 0.008484505116939545,
+    "hypothesis": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9530415534973145,
+    "premise": "The ca_cert_data parameter is an optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003948102239519358,
+    "entailment": 0.004900782369077206,
+    "hypothesis": "The ca_cert_data parameter is an optional string containing CA certificates in PEM format suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9911510348320007,
+    "premise": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0070290039293468,
+    "entailment": 0.004482729826122522,
+    "hypothesis": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is an optional string containing CA certificates in PEM format.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9884882569313049,
+    "premise": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.000551085511688143,
+    "entailment": 0.004980950616300106,
+    "hypothesis": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9944678544998169,
+    "premise": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003906292840838432,
+    "entailment": 0.00480416277423501,
+    "hypothesis": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9912896156311035,
+    "premise": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.014348090626299381,
+    "entailment": 0.003169313771650195,
+    "hypothesis": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9824825525283813,
+    "premise": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.14473111927509308,
+    "entailment": 0.08666826784610748,
+    "hypothesis": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.7686006426811218,
+    "premise": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is an optional string containing CA certificates in PEM format.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005880316719412804,
+    "entailment": 0.009488525800406933,
+    "hypothesis": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9846311211585999,
+    "premise": "The ca_cert_data parameter of urllib3.util.ssl_wrap_socket() is suitable for passing as the cadata parameter to SSLContext.load_verify_locations().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.1200224906206131,
+    "entailment": 0.013982671312987804,
+    "hypothesis": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8659947514533997,
+    "premise": "The ca_cert_dir parameter is a directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.026000862941145897,
+    "entailment": 0.005424029193818569,
+    "hypothesis": "The ca_cert_dir parameter is a directory containing CA certificates in multiple separate files, as supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9685750603675842,
+    "premise": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.10912427306175232,
+    "entailment": 0.008510294370353222,
+    "hypothesis": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is a directory containing CA certificates in multiple separate files.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8823654055595398,
+    "premise": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.030095800757408142,
+    "entailment": 0.004171360749751329,
+    "hypothesis": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9657328128814697,
+    "premise": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0026145458687096834,
+    "entailment": 0.00779181020334363,
+    "hypothesis": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9895936250686646,
+    "premise": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007116695400327444,
+    "entailment": 0.0023957923986017704,
+    "hypothesis": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9904875159263611,
+    "premise": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.4216010868549347,
+    "entailment": 0.0487930029630661,
+    "hypothesis": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5296059250831604,
+    "premise": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is a directory containing CA certificates in multiple separate files.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0035316008143126965,
+    "entailment": 0.01833638735115528,
+    "hypothesis": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.978131890296936,
+    "premise": "The ca_cert_dir parameter of urllib3.util.ssl_wrap_socket() is supported by OpenSSL’s -CApath flag or the capath argument to SSLContext.load_verify_locations().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00545570719987154,
+    "entailment": 0.004382323008030653,
+    "hypothesis": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9901618957519531,
+    "premise": "The cert_reqs parameter determines whether to require the certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010405936045572162,
+    "entailment": 0.003275136696174741,
+    "hypothesis": "The cert_reqs parameter determines whether to require the certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9956842660903931,
+    "premise": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0033439574763178825,
+    "entailment": 0.0017268628580495715,
+    "hypothesis": "The cert_reqs parameter of urllib3.util.create_urllib3_context() defaults to ssl.CERT_REQUIRED.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9949291944503784,
+    "premise": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009210925782099366,
+    "entailment": 0.005192174110561609,
+    "hypothesis": "The cert_reqs parameter of urllib3.util.create_urllib3_context() determines whether to require certificate verification.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9938867688179016,
+    "premise": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009500484447926283,
+    "entailment": 0.0013464667135849595,
+    "hypothesis": "The default value of the cert_reqs parameter is `ssl.CERT_REQUIRED`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.997703492641449,
+    "premise": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.035343121737241745,
+    "entailment": 0.04252617806196213,
+    "hypothesis": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9221307039260864,
+    "premise": "The cert_reqs parameter of urllib3.util.create_urllib3_context() defaults to ssl.CERT_REQUIRED.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.011944020166993141,
+    "entailment": 0.014155132696032524,
+    "hypothesis": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9739007949829102,
+    "premise": "The cert_reqs parameter of urllib3.util.create_urllib3_context() determines whether to require certificate verification.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012859964044764638,
+    "entailment": 0.017638057470321655,
+    "hypothesis": "The ciphers parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9810758829116821,
+    "premise": "The ciphers parameter is a string of ciphers the client wishes to support.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014321530470624566,
+    "entailment": 0.0007460133638232946,
+    "hypothesis": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to a secure default set of ciphers if OpenSSL 1.1.1+ is not used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9978218078613281,
+    "premise": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0011946884915232658,
+    "entailment": 0.0008316521416418254,
+    "hypothesis": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to system configured ciphers if OpenSSL 1.1.1+ is used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.997973620891571,
+    "premise": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016877037705853581,
+    "entailment": 0.004758675582706928,
+    "hypothesis": "The ciphers parameter of urllib3.util.create_urllib3_context() specifies which cipher suites to allow the server to select.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.993553638458252,
+    "premise": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016681711422279477,
+    "entailment": 0.0020985775627195835,
+    "hypothesis": "The ciphers parameter specifies which cipher suites to allow the server to select.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9962331652641296,
+    "premise": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008442826801910996,
+    "entailment": 0.0004930286668241024,
+    "hypothesis": "The default value for the ciphers parameter is either system configured ciphers if OpenSSL 1.1.1+, otherwise it uses a secure default set of ciphers.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9986627101898193,
+    "premise": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0028929305262863636,
+    "entailment": 0.0038941504899412394,
+    "hypothesis": "The ciphers parameter is a string of ciphers the client wishes to support.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9932129383087158,
+    "premise": "The ciphers parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001983336405828595,
+    "entailment": 0.00251364684663713,
+    "hypothesis": "The ciphers parameter of urllib3.util.ssl_wrap_socket() is a string of ciphers the client should support.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9955030083656311,
+    "premise": "The ciphers parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014305649092420936,
+    "entailment": 0.03270995616912842,
+    "hypothesis": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9658594131469727,
+    "premise": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to a secure default set of ciphers if OpenSSL 1.1.1+ is not used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0013417009031400084,
+    "entailment": 0.03424036130309105,
+    "hypothesis": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9644179940223694,
+    "premise": "The ciphers parameter of urllib3.util.create_urllib3_context() defaults to system configured ciphers if OpenSSL 1.1.1+ is used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003114227671176195,
+    "entailment": 0.05445742607116699,
+    "hypothesis": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9424282908439636,
+    "premise": "The ciphers parameter of urllib3.util.create_urllib3_context() specifies which cipher suites to allow the server to select.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005072509404271841,
+    "entailment": 0.7554983496665955,
+    "hypothesis": "The ciphers parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.23942917585372925,
+    "premise": "The ciphers parameter of urllib3.util.ssl_wrap_socket() is a string of ciphers the client should support.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003792328294366598,
+    "entailment": 0.006694530602544546,
+    "hypothesis": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.989513099193573,
+    "premise": "The ciphers parameter specifies which cipher suites to allow the server to select.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.15257377922534943,
+    "entailment": 0.29258888959884644,
+    "hypothesis": "The conn parameter of urllib3.util.is_connection_dropped() is a urllib3.connection.HTTPConnection object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5548374056816101,
+    "premise": "The conn parameter of is_connection_dropped() has type BaseHTTPConnection.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.2982046604156494,
+    "entailment": 0.2697290778160095,
+    "hypothesis": "The parameter conn for urllib3.util.is_connection_dropped(conn) is a urllib3.connection.HTTPConnection object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.43206632137298584,
+    "premise": "The conn parameter of is_connection_dropped() has type BaseHTTPConnection.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9468993544578552,
+    "entailment": 0.00816081278026104,
+    "hypothesis": "The conn parameter of is_connection_dropped() has type BaseHTTPConnection.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0449397899210453,
+    "premise": "The conn parameter of urllib3.util.is_connection_dropped() is a urllib3.connection.HTTPConnection object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006662304047495127,
+    "entailment": 0.002920006401836872,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9904176592826843,
+    "premise": "The connect_timeout property gets the value to use when setting a connection timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0018472302472218871,
+    "entailment": 0.008241047151386738,
+    "hypothesis": "The connect_timeout property gets the value to use when setting a connection timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9899117350578308,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006399765843525529,
+    "entailment": 0.0049795606173574924,
+    "hypothesis": "The connect_timeout property of urllib3's Timeout class returns a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9943804144859314,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016149800503626466,
+    "entailment": 0.001920780399814248,
+    "hypothesis": "The connect_timeout property of urllib3's Timeout class returns the value to use when setting a connection timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9964641332626343,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001750218914821744,
+    "entailment": 0.01783522590994835,
+    "hypothesis": "The connect_timeout value can be None, which means it will never timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.980414628982544,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0026247778441756964,
+    "entailment": 0.14904752373695374,
+    "hypothesis": "The connect_timeout value can be a positive float.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8483276963233948,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.973212718963623,
+    "entailment": 0.0032254585530608892,
+    "hypothesis": "The connect_timeout value can be a positive integer.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.023561816662549973,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014086066512390971,
+    "entailment": 0.18564927577972412,
+    "hypothesis": "The connect_timeout value can be the default system timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8129421472549438,
+    "premise": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.017977191135287285,
+    "entailment": 0.8431294560432434,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.13889330625534058,
+    "premise": "The connect_timeout property of urllib3's Timeout class returns a positive float or integer, the value None (never timeout), or the default system timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.011650791391730309,
+    "entailment": 0.003830326721072197,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9845188856124878,
+    "premise": "The connect_timeout property of urllib3's Timeout class returns the value to use when setting a connection timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005588805070146918,
+    "entailment": 0.0026157342363148928,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9968254566192627,
+    "premise": "The connect_timeout value can be None, which means it will never timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.02094349078834057,
+    "entailment": 0.023330893367528915,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9557256102561951,
+    "premise": "The connect_timeout value can be a positive float.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9952715039253235,
+    "entailment": 0.0005943850846961141,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004134073853492737,
+    "premise": "The connect_timeout value can be a positive integer.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002073443727567792,
+    "entailment": 0.002897065132856369,
+    "hypothesis": "The connect_timeout property of Timeout has type float, _TYPE_DEFAULT or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9950295090675354,
+    "premise": "The connect_timeout value can be the default system timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00035629188641905785,
+    "entailment": 0.9981929659843445,
+    "hypothesis": "create_urllib3_context() returns SSLContext.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0014507686719298363,
+    "premise": "The create_urllib3_context() function returns a constructed SSLContext object with specified options.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004465671721845865,
+    "entailment": 0.011485337279736996,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9840489625930786,
+    "premise": "The default value for ssl_maximum_version is ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016985498368740082,
+    "entailment": 0.010209359228610992,
+    "hypothesis": "The ciphers parameter of create_urllib3_context() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9880921840667725,
+    "premise": "The default value for the ciphers parameter is either system configured ciphers if OpenSSL 1.1.1+, otherwise it uses a secure default set of ciphers.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.011199774220585823,
+    "entailment": 0.013320885598659515,
+    "hypothesis": "The cert_reqs parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9754793047904968,
+    "premise": "The default value of the cert_reqs parameter is `ssl.CERT_REQUIRED`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006667634937912226,
+    "entailment": 0.008831799030303955,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.984500527381897,
+    "premise": "The default value of the ssl_maximum_version parameter is ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0013190389145165682,
+    "entailment": 0.006149997469037771,
+    "hypothesis": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9925310015678406,
+    "premise": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007050499320030212,
+    "entailment": 0.0032050032168626785,
+    "hypothesis": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9897444844245911,
+    "premise": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006393343210220337,
+    "entailment": 0.0030718424823135138,
+    "hypothesis": "The tls_in_tls parameter of urllib3.util.ssl_wrap_socket() uses SSLTransport to wrap the existing socket.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9962888956069946,
+    "premise": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009924635523930192,
+    "entailment": 0.0019037226447835565,
+    "hypothesis": "The tls_in_tls parameter uses SSLTransport to wrap the existing socket.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.997103750705719,
+    "premise": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003943685442209244,
+    "entailment": 0.00575827294960618,
+    "hypothesis": "The options parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9902980923652649,
+    "premise": "The default values for the options parameter are `ssl.OP_NO_SSLv2`, `ssl.OP_NO_SSLv3`, `ssl.OP_NO_COMPRESSION`, and `ssl.OP_NO_TICKET`.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002155446680262685,
+    "entailment": 0.9931147694587708,
+    "hypothesis": "is_connection_dropped() returns bool.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.004729711450636387,
+    "premise": "The function urllib3.util.is_connection_dropped(conn) returns True if the connection is dropped and should be closed.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.3447778820991516,
+    "entailment": 0.027423081919550896,
+    "hypothesis": "Timeout.get_connect_duration() returns float.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.6277990341186523,
+    "premise": "The get_connect_duration() function returns the elapsed time in seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019393039401620626,
+    "entailment": 0.027950847521424294,
+    "hypothesis": "The key_password parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9701098799705505,
+    "premise": "The key_password parameter is an optional password if the keyfile is encrypted.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001376427011564374,
+    "entailment": 0.006428629159927368,
+    "hypothesis": "The key_password parameter is an optional password if the keyfile is encrypted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9921950101852417,
+    "premise": "The key_password parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001869049621745944,
+    "entailment": 0.010317916050553322,
+    "hypothesis": "The key_password parameter of urllib3.util.ssl_wrap_socket() is an optional password if the keyfile is encrypted.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9878130555152893,
+    "premise": "The key_password parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003303349018096924,
+    "entailment": 0.1326100379228592,
+    "hypothesis": "The key_password parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8640866279602051,
+    "premise": "The key_password parameter of urllib3.util.ssl_wrap_socket() is an optional password if the keyfile is encrypted.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001458892016671598,
+    "entailment": 0.0011227629147469997,
+    "hypothesis": "The default values for the options parameter are `ssl.OP_NO_SSLv2`, `ssl.OP_NO_SSLv3`, `ssl.OP_NO_COMPRESSION`, and `ssl.OP_NO_TICKET`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9974182844161987,
+    "premise": "The options parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003843877464532852,
+    "entailment": 0.0008524668519385159,
+    "hypothesis": "The options parameter of urllib3.util.create_urllib3_context() defaults to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953036308288574,
+    "premise": "The options parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005636727437376976,
+    "entailment": 0.00146011752076447,
+    "hypothesis": "The options parameter of urllib3.util.create_urllib3_context() specifies specific OpenSSL options.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9929031729698181,
+    "premise": "The options parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.05945513769984245,
+    "entailment": 0.002374649280682206,
+    "hypothesis": "The options parameter specifies specific OpenSSL options.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9381702542304993,
+    "premise": "The options parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.014031916856765747,
+    "entailment": 0.022394025698304176,
+    "hypothesis": "The options parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9635740518569946,
+    "premise": "The options parameter of urllib3.util.create_urllib3_context() defaults to ssl.OP_NO_SSLv2, ssl.OP_NO_SSLv3, ssl.OP_NO_COMPRESSION, and ssl.OP_NO_TICKET.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.014917565509676933,
+    "entailment": 0.010831356979906559,
+    "hypothesis": "The options parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9742510914802551,
+    "premise": "The options parameter of urllib3.util.create_urllib3_context() specifies specific OpenSSL options.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.5912221670150757,
+    "entailment": 0.0039603146724402905,
+    "hypothesis": "The options parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.4048174321651459,
+    "premise": "The options parameter specifies specific OpenSSL options.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9843706488609314,
+    "entailment": 0.004045028239488602,
+    "hypothesis": "The conn parameter of is_connection_dropped() has type BaseHTTPConnection.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0115843266248703,
+    "premise": "The parameter conn for urllib3.util.is_connection_dropped(conn) is a urllib3.connection.HTTPConnection object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009657340124249458,
+    "entailment": 0.04356039687991142,
+    "hypothesis": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9467823505401611,
+    "premise": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006339940708130598,
+    "entailment": 0.07044106721878052,
+    "hypothesis": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9232190251350403,
+    "premise": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0002274248981848359,
+    "entailment": 0.0028952518478035927,
+    "hypothesis": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9968773126602173,
+    "premise": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0036039138212800026,
+    "entailment": 0.828781247138977,
+    "hypothesis": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.16761483252048492,
+    "premise": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00715518556535244,
+    "entailment": 0.849483847618103,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.1433609277009964,
+    "premise": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.03346545621752739,
+    "entailment": 0.01215288881212473,
+    "hypothesis": "The ca_cert_data parameter of ssl_wrap_socket() has type None, str or bytes.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9543816447257996,
+    "premise": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.014905914664268494,
+    "entailment": 0.009952816180884838,
+    "hypothesis": "The ca_cert_dir parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9751412868499756,
+    "premise": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0011605869513005018,
+    "entailment": 0.0019562309607863426,
+    "hypothesis": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.99688321352005,
+    "premise": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.01639275811612606,
+    "entailment": 0.056253623217344284,
+    "hypothesis": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9273536205291748,
+    "premise": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009090716019272804,
+    "entailment": 0.20190194249153137,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.7890073657035828,
+    "premise": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009634033776819706,
+    "entailment": 0.006389219779521227,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9839768409729004,
+    "premise": "The read_timeout property assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0060902927070856094,
+    "entailment": 0.00533257145434618,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.988577127456665,
+    "premise": "The read_timeout property assumes some time has elapsed in the connection timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.006350609939545393,
+    "entailment": 0.00330783030949533,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9903415441513062,
+    "premise": "The read_timeout property computes the read timeout appropriately.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009444573894143105,
+    "entailment": 0.0023070834577083588,
+    "hypothesis": "A `urllib3.exceptions.TimeoutStateError` is raised if `start_connect()` has not yet been called on the object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.988248348236084,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008878214284777641,
+    "entailment": 0.0005114948726259172,
+    "hypothesis": "If self.total is set, the read timeout is dependent on the amount of time taken by the connect timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9986006617546082,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0062151807360351086,
+    "entailment": 0.001348715042695403,
+    "hypothesis": "If the connection time has not been established, a TimeoutStateError will be raised.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9924361109733582,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0058711315505206585,
+    "entailment": 0.00263090617954731,
+    "hypothesis": "If the connection time has not been established, a `TimeoutStateError` is raised when accessing read_timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9914979338645935,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0281443502753973,
+    "entailment": 0.002205984201282263,
+    "hypothesis": "The read_timeout property assumes some time has elapsed in the connection timeout and computes the read timeout appropriately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9696496725082397,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0036123108584433794,
+    "entailment": 0.00170192401856184,
+    "hypothesis": "The read_timeout property assumes some time has elapsed in the connection timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9946857690811157,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002980707213282585,
+    "entailment": 0.02240029163658619,
+    "hypothesis": "The read_timeout property computes the read timeout appropriately.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9746189713478088,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001455514575354755,
+    "entailment": 0.0030948922503739595,
+    "hypothesis": "The read_timeout property of urllib3's Timeout class returns the value for the read timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9954494833946228,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007151892874389887,
+    "entailment": 0.0015357764204964042,
+    "hypothesis": "The read_timeout property raises urllib3.exceptions.TimeoutStateError if start_connect() has not yet been called on the object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9913123250007629,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004405871499329805,
+    "entailment": 0.11560334265232086,
+    "hypothesis": "The read_timeout property returns the value for the read timeout.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8799907565116882,
+    "premise": "The read_timeout property of Timeout has type float or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009909187443554401,
+    "entailment": 0.004245011601597071,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9858457446098328,
+    "premise": "The read_timeout property of urllib3's Timeout class returns the value for the read timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.009031868539750576,
+    "entailment": 0.007710788864642382,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9832573533058167,
+    "premise": "The read_timeout property raises urllib3.exceptions.TimeoutStateError if start_connect() has not yet been called on the object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.01313626766204834,
+    "entailment": 0.0035280806478112936,
+    "hypothesis": "The read_timeout property of Timeout has type float or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9833357334136963,
+    "premise": "The read_timeout property returns the value for the read timeout.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003938518464565277,
+    "entailment": 0.007730716839432716,
+    "hypothesis": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9883307218551636,
+    "premise": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.018895041197538376,
+    "entailment": 0.004998479504138231,
+    "hypothesis": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9761064648628235,
+    "premise": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0009385516750626266,
+    "entailment": 0.0016637281514704227,
+    "hypothesis": "The server_hostname parameter of urllib3.util.ssl_wrap_socket() specifies the expected hostname of the certificate when SNI is supported.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9973976612091064,
+    "premise": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008162719896063209,
+    "entailment": 0.0007145304116420448,
+    "hypothesis": "When SNI is supported, the server_hostname parameter is the expected hostname of the certificate.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9984691739082336,
+    "premise": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002337818033993244,
+    "entailment": 0.07446108758449554,
+    "hypothesis": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9232011437416077,
+    "premise": "The server_hostname parameter of urllib3.util.ssl_wrap_socket() specifies the expected hostname of the certificate when SNI is supported.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.01204672921448946,
+    "entailment": 0.017713507637381554,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9702398180961609,
+    "premise": "The ssl_context parameter accepts a pre-made SSLContext object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0019345134496688843,
+    "entailment": 0.005090606864541769,
+    "hypothesis": "If no ssl_context is provided to ssl_wrap_socket(), one will be created using create_urllib3_context().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9929748773574829,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001654427032917738,
+    "entailment": 0.006169503089040518,
+    "hypothesis": "If no ssl_context is provided to urllib3.util.ssl_wrap_socket(), one will be created using create_urllib3_context().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9921759963035583,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004025094211101532,
+    "entailment": 0.004414204508066177,
+    "hypothesis": "The parameters of urllib3.util.ssl_wrap_socket() (except server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir) have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9915607571601868,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.012641913257539272,
+    "entailment": 0.002252590376883745,
+    "hypothesis": "The parameters server_hostname, ssl_context, tls_in_tls, ca_cert_data, and ca_cert_dir do not have the same meaning as they do when using ssl.create_default_context(), ssl.SSLContext.load_cert_chain(), ssl.SSLContext.set_ciphers(), and ssl.SSLContext.wrap_socket().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9851055145263672,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.07443106919527054,
+    "entailment": 0.02241477556526661,
+    "hypothesis": "The ssl_context parameter accepts a pre-made SSLContext object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.903154194355011,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.11176600307226181,
+    "entailment": 0.009936800226569176,
+    "hypothesis": "The ssl_context parameter of urllib3.util.ssl_wrap_socket() accepts a pre-made SSLContext object.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8782972097396851,
+    "premise": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.07347181439399719,
+    "entailment": 0.3787868916988373,
+    "hypothesis": "The ssl_context parameter of ssl_wrap_socket() has type SSLContext or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5477412343025208,
+    "premise": "The ssl_context parameter of urllib3.util.ssl_wrap_socket() accepts a pre-made SSLContext object.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0020754062570631504,
+    "entailment": 0.000527131836861372,
+    "hypothesis": "It is not recommended to set ssl_maximum_version to anything other than ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9973975419998169,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0032570455223321915,
+    "entailment": 0.0005384280229918659,
+    "hypothesis": "It is not recommended to set the ssl_maximum_version parameter to anything other than ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9962045550346375,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016922669019550085,
+    "entailment": 0.0011095870286226273,
+    "hypothesis": "The default value for ssl_maximum_version is ssl.TLSVersion.MAXIMUM_SUPPORTED.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9971981048583984,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0027697754558175802,
+    "entailment": 0.001569058164022863,
+    "hypothesis": "The default value of the ssl_maximum_version parameter is ‘ssl.TLSVersion.MAXIMUM_SUPPORTED’.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9956610798835754,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0045556542463600636,
+    "entailment": 0.0013919067569077015,
+    "hypothesis": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9940524697303772,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0033945480827242136,
+    "entailment": 0.004073426593095064,
+    "hypothesis": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() specifies the maximum version of TLS to be used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9925320744514465,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0070148310624063015,
+    "entailment": 0.0011878100922331214,
+    "hypothesis": "The ssl_maximum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9917974472045898,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0032388167455792427,
+    "entailment": 0.0022083567455410957,
+    "hypothesis": "The ssl_maximum_version parameter specifies the maximum version of TLS to be used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9945527911186218,
+    "premise": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.07639574259519577,
+    "entailment": 0.006606073584407568,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9169980883598328,
+    "premise": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004734434187412262,
+    "entailment": 0.01735738106071949,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9779080748558044,
+    "premise": "The ssl_maximum_version parameter of urllib3.util.create_urllib3_context() specifies the maximum version of TLS to be used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.060365088284015656,
+    "entailment": 0.0032385289669036865,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9363964200019836,
+    "premise": "The ssl_maximum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003828332293778658,
+    "entailment": 0.005882943049073219,
+    "hypothesis": "The ssl_maximum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9902887344360352,
+    "premise": "The ssl_maximum_version parameter specifies the maximum version of TLS to be used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0051217093132436275,
+    "entailment": 0.0014434525510296226,
+    "hypothesis": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9934347867965698,
+    "premise": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003134830854833126,
+    "entailment": 0.004257654771208763,
+    "hypothesis": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() specifies the minimum version of TLS to be used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9926074743270874,
+    "premise": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007661045528948307,
+    "entailment": 0.0012138227466493845,
+    "hypothesis": "The ssl_minimum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9911251664161682,
+    "premise": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002728422172367573,
+    "entailment": 0.002067459747195244,
+    "hypothesis": "The ssl_minimum_version parameter specifies the minimum version of TLS to be used.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9952040910720825,
+    "premise": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.1202387884259224,
+    "entailment": 0.011665056459605694,
+    "hypothesis": "The ssl_version parameter is deprecated; instead use ‘ssl_minimum_version’.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.8680961728096008,
+    "premise": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.06374850869178772,
+    "entailment": 0.0068233502097427845,
+    "hypothesis": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9294281005859375,
+    "premise": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() should use the ssl.TLSVersion enum for specifying the value.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004102807026356459,
+    "entailment": 0.01635180041193962,
+    "hypothesis": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9795453548431396,
+    "premise": "The ssl_minimum_version parameter of urllib3.util.create_urllib3_context() specifies the minimum version of TLS to be used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.04368877038359642,
+    "entailment": 0.0032750151585787535,
+    "hypothesis": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9530361294746399,
+    "premise": "The ssl_minimum_version parameter should use the ‘ssl.TLSVersion’ enum for specifying the value.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0026848255656659603,
+    "entailment": 0.005380292888730764,
+    "hypothesis": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9919348955154419,
+    "premise": "The ssl_minimum_version parameter specifies the minimum version of TLS to be used.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0016842554323375225,
+    "entailment": 0.009484328329563141,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9888314008712769,
+    "premise": "The ssl_version parameter defaults to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014536307426169515,
+    "entailment": 0.0026516106445342302,
+    "hypothesis": "The ssl_minimum_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9958947896957397,
+    "premise": "The ssl_version parameter is deprecated; instead use ‘ssl_minimum_version’.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006225761026144028,
+    "entailment": 0.002540993271395564,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9968364238739014,
+    "premise": "The ssl_version parameter is deprecated; instead use ‘ssl_minimum_version’.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008572345832362771,
+    "entailment": 0.0007463290239684284,
+    "hypothesis": "The PROTOCOL_SSLv23 default for ssl_version negotiates the highest protocol that both the server and the OpenSSL installation support.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9983963370323181,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010128243593499064,
+    "entailment": 0.0004714434326160699,
+    "hypothesis": "The ssl_version parameter defaults to PROTOCOL_SSLv23 which will negotiate the highest protocol that both the server and your installation of OpenSSL support.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9985156655311584,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.002755428897216916,
+    "entailment": 0.00022797506244387478,
+    "hypothesis": "The ssl_version parameter is deprecated; instead use ‘ssl_minimum_version’.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9970166683197021,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001127746538259089,
+    "entailment": 0.0011723528150469065,
+    "hypothesis": "The ssl_version parameter of urllib3.util.create_urllib3_context() defaults to PROTOCOL_SSLv23.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9976999163627625,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0035243257880210876,
+    "entailment": 0.0007024627411738038,
+    "hypothesis": "The ssl_version parameter of urllib3.util.create_urllib3_context() is deprecated.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9957731366157532,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0038449284620583057,
+    "entailment": 0.011037735268473625,
+    "hypothesis": "The ssl_version parameter of urllib3.util.create_urllib3_context() specifies the desired protocol version to use.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9851173162460327,
+    "premise": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003950041718780994,
+    "entailment": 0.06235145777463913,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9336985349655151,
+    "premise": "The ssl_version parameter of urllib3.util.create_urllib3_context() defaults to PROTOCOL_SSLv23.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0011646427446976304,
+    "entailment": 0.00816494319587946,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9906703233718872,
+    "premise": "The ssl_version parameter of urllib3.util.create_urllib3_context() is deprecated.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.007739904336631298,
+    "entailment": 0.03463275730609894,
+    "hypothesis": "The ssl_version parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9576273560523987,
+    "premise": "The ssl_version parameter of urllib3.util.create_urllib3_context() specifies the desired protocol version to use.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0006912752287462354,
+    "entailment": 0.004415634088218212,
+    "hypothesis": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9948930740356445,
+    "premise": "The tls_in_tls parameter of urllib3.util.ssl_wrap_socket() uses SSLTransport to wrap the existing socket.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012983218766748905,
+    "entailment": 0.005408594384789467,
+    "hypothesis": "The default value of the tls_in_tls parameter of ssl_wrap_socket() is False.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.993293046951294,
+    "premise": "The tls_in_tls parameter uses SSLTransport to wrap the existing socket.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003580472432076931,
+    "entailment": 0.0006435944233089685,
+    "hypothesis": "For Python 3.13+, the default values for the verify_flags parameter are `ssl.VERIFY_X509_PARTIAL_CHAIN` and `ssl.VERIFY_X509_STRICT`.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9957758784294128,
+    "premise": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.004000510089099407,
+    "entailment": 0.0006251587183214724,
+    "hypothesis": "The verify_flags parameter of urllib3.util.create_urllib3_context() defaults to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9953742623329163,
+    "premise": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0008719983161427081,
+    "entailment": 0.0016130994772538543,
+    "hypothesis": "The verify_flags parameter of urllib3.util.create_urllib3_context() specifies the flags for certificate verification operations.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9975149631500244,
+    "premise": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0012758041266351938,
+    "entailment": 0.0008976986282505095,
+    "hypothesis": "The verify_flags parameter specifies the flags for certificate verification operations.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9978263974189758,
+    "premise": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0030531971715390682,
+    "entailment": 0.021647771820425987,
+    "hypothesis": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9752990007400513,
+    "premise": "The verify_flags parameter of urllib3.util.create_urllib3_context() defaults to ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.VERIFY_X509_STRICT for Python 3.13+.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.003564584068953991,
+    "entailment": 0.015036684460937977,
+    "hypothesis": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9813986420631409,
+    "premise": "The verify_flags parameter of urllib3.util.create_urllib3_context() specifies the flags for certificate verification operations.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.005245632492005825,
+    "entailment": 0.0038932785391807556,
+    "hypothesis": "The verify_flags parameter of create_urllib3_context() has type int or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.990861177444458,
+    "premise": "The verify_flags parameter specifies the flags for certificate verification operations.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.765950620174408,
+    "entailment": 0.005711043253540993,
+    "hypothesis": "The get_connect_duration() function returns the elapsed time in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.2283383160829544,
+    "premise": "Timeout.get_connect_duration() returns float.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.7857962250709534,
+    "entailment": 0.001963707385584712,
+    "hypothesis": "urllib3's get_connect_duration() function returns the elapsed time in seconds.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.2122400999069214,
+    "premise": "Timeout.get_connect_duration() returns float.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.46724796295166016,
+    "entailment": 0.004458307288587093,
+    "hypothesis": "urllib3's get_connect_duration() function returns the time elapsed since the call to start_connect().",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.5282937288284302,
+    "premise": "Timeout.get_connect_duration() returns float.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0037389330100268126,
+    "entailment": 0.006403191480785608,
+    "hypothesis": "The server_hostname parameter of ssl_wrap_socket() has type str or None.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9898578524589539,
+    "premise": "When SNI is supported, the server_hostname parameter is the expected hostname of the certificate.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0010853910353034735,
+    "entailment": 0.03346715867519379,
+    "hypothesis": "The create_urllib3_context() function returns a constructed SSLContext object with specified options.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9654474854469299,
+    "premise": "create_urllib3_context() returns SSLContext.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0014018624788150191,
+    "entailment": 0.012666626833379269,
+    "hypothesis": "urllib3.util.create_urllib3_context() returns a constructed SSLContext object with specified options.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9859315156936646,
+    "premise": "create_urllib3_context() returns SSLContext.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0004688221379183233,
+    "entailment": 0.005256942007690668,
+    "hypothesis": "The function urllib3.util.is_connection_dropped(conn) returns True if the connection is dropped and should be closed.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9942743182182312,
+    "premise": "is_connection_dropped() returns bool.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.0005912919295951724,
+    "entailment": 0.003445982001721859,
+    "hypothesis": "urllib3.util.is_connection_dropped() returns True if the connection is dropped and should be closed.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.9959627985954285,
+    "premise": "is_connection_dropped() returns bool.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.9301003813743591,
+    "entailment": 0.004788921680301428,
+    "hypothesis": "Timeout.get_connect_duration() returns float.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.06511064618825912,
+    "premise": "urllib3's get_connect_duration() function returns the elapsed time in seconds.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.288731187582016,
+    "entailment": 0.02807381935417652,
+    "hypothesis": "Timeout.get_connect_duration() returns float.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.6831949949264526,
+    "premise": "urllib3's get_connect_duration() function returns the time elapsed since the call to start_connect().",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.00041691568912938237,
+    "entailment": 0.9979379773139954,
+    "hypothesis": "create_urllib3_context() returns SSLContext.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0016449770191684365,
+    "premise": "urllib3.util.create_urllib3_context() returns a constructed SSLContext object with specified options.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  },
+  {
+    "contradiction": 0.001520562102086842,
+    "entailment": 0.9937543272972107,
+    "hypothesis": "is_connection_dropped() returns bool.",
+    "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "neutral": 0.0047250776551663876,
+    "premise": "urllib3.util.is_connection_dropped() returns True if the connection is dropped and should be closed.",
+    "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "truncated": false
+  }
+]

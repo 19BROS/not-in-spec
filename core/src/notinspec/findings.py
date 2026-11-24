@@ -28,7 +28,8 @@ from notinspec.nli import NliScores
 
 type Check = Literal["K1", "K2", "K3", "K4", "K5a", "K5b", "K6", "K7"]
 # what is wrong; checks add their kinds here ("unknown-parameter" for K1, "removed-symbol" for K4)
-type FindingKind = Literal["contradiction"]
+# "type-mismatch": K2, the signature's annotation and the documented type of one entry differ
+type FindingKind = Literal["contradiction", "type-mismatch"]
 type EvidenceKind = Literal[
     "claim", "signature", "parameter", "constraint", "change", "call_record", "example"
 ]
