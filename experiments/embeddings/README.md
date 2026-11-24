@@ -40,12 +40,37 @@ na novej anotovanej vzorke. Tú tento experiment nemá. Do produkcie sa
 
 ## Diff a opakované spúšťanie
 
-Pripravil som päť významových zmien skutočných sekcií: `True` na `False`,
-sekundy na milisekundy, odstránenie negácie, zmenu TLS verzie a výmenu
-`ProxyManager` za `PoolManager`. Pridal som aj formátovaciu kontrolu.
-Všetkých päť významových zmien malo cosine similarity nad 0,99. Pravidlo
-„pri podobnosti aspoň 0,99 nič nespúšťaj“ by teda vynechalo všetkých päť.
-Hash obsahu zachytil každú zmenu.
+Po review som opravil dva prípady a meranie zopakoval. Zmena jednotky teraz
+mení prose `the given number of seconds` na `the given number of milliseconds`;
+signatúra `trio.sleep(seconds: float)` zostáva rovnaká. Negácia mení skoršie
+`will not work by default` na `will work by default` v sekcii o TLS.
+Všetkých päť úprav model vidí pred limitom 256 wordpieces a pri každej sa
+menia skutočné vstupné tokeny, čo `results.json` kontroluje pre oba texty.
+
+| Zmena | Cosine | Zmena v okne pred/po | Vstupné tokeny sa zmenili |
+| --- | ---: | --- | --- |
+| `True` → `False` | 0,997797 | áno / áno | áno |
+| Jednotka v prose: sekundy → milisekundy | 0,983042 | áno / áno | áno |
+| Odstránenie negácie v TLS prose | 0,996643 | áno / áno | áno |
+| TLS 1.2 → TLS 1.0 | 0,999982 | áno / áno | áno |
+| `ProxyManager` → `PoolManager` | 0,998233 | áno / áno | áno |
+| Medzera navyše, formátovacia kontrola | 1,000000 | áno / áno | nie |
+| Pôvodná negácia za limitom, kontrola skracovania | 1,000000 | nie / nie | nie |
+
+Pravidlo „pri podobnosti aspoň 0,99 nič nespúšťaj“ by vynechalo **4 z 5**
+viditeľných významových zmien; pri 0,95 by vynechalo všetkých päť. Zmena
+jednotky je pod 0,99, takže pôvodný záver o piatich z piatich pri 0,99 bol
+nesprávny. Cross-check výsledky v prvej tabuľke ostali po opakovaní rovnaké.
+
+Pôvodnú negáciu `isn’t required` → `is required` na konci Client Certificates
+ponechávam ako samostatný `truncation_control`: oba texty majú rovnakých prvých
+256 tokenov, a preto nejde o meranie reakcie modelu na negáciu. Je uvedená
+v `encoding_blind_spots` a nepočíta sa do `diff_skipping_audit` viditeľných zmien.
+
+`content_hash_changed` je pri týchto riadených náhradách true z konštrukcie;
+nie je to samostatný benchmark detektora. Ide o SHA-256 surového textu, preto
+aj medzera navyše vynúti rerun. Takýto konzervatívny postup stojí výpočty navyše
+pri formátovacích zmenách; produkcia má používať svoj existujúci `Chunk.content_hash`.
 
 Odporúčaný postup pre diff:
 
@@ -59,18 +84,21 @@ Odporúčaný postup pre diff:
 
 ```sh
 uv sync --all-packages --extra nli
-uv run --extra nli python experiments/embeddings/benchmark.py
+uv run --all-packages --extra nli python experiments/embeddings/benchmark.py
 ```
 
 Výsledky sú v `results.json`. Vektory zostávajú v gitignored
 `tmp/embedding-vectors.json`. Opakovanie použije cache iba pri zhode
-modelu, pinned revízie a všetkých vstupných textov. Vymazanie tohto
+modelu, pinned revízie, všetkých vstupných textov a nastavení `ENCODING`
+(limit, pooling, normalizácia, dtype, tokenizer, padding, truncation, batch a vlákna).
+Zmena limitu alebo pooling už preto nepoužije staré vektory. Vymazanie tohto
 jedného cache súboru vynúti nové kódovanie. Žiadny LLM kľúč sa nepoužíva.
 
 Model používa revíziu `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, masked
 mean pooling a L2 normalizáciu podľa [model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2).
-Limit je 256 wordpieces. Štyri dlhé vstupy boli skrátené, čo je ďalší
+Limit je 256 wordpieces. Päť unikátnych dlhých vstupov bolo skrátených, čo je ďalší
 dôvod nevyužívať podobnosť celej sekcie ako záruku nezmeneného významu.
-Kódovanie po načítaní váh trvalo v tomto behu 1,409 s na CPU so štyrmi
+Kódovanie po načítaní váh trvalo v opravenom behu 3,215 s na CPU so štyrmi
 vláknami. Tento čas nezahŕňa stiahnutie ani načítanie modelu. Meranie
-vzniklo 2026-11-23, jednotlivé časy závisia od hardvéru.
+vzniklo 2026-11-23 a po review bolo zopakované 2026-11-24. Pri použití cache
+je timing pôvodného kódovania, nie nové meranie výkonu; časy závisia od hardvéru.
