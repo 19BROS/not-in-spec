@@ -17,12 +17,15 @@ explicit = true
 
 [dependency-groups]
 dev = [
+    "alembic>=1.14",  # alembic, psycopg, sqlalchemy: notinspec[db] for mypy and the DB tests
     "httpx2",  # FastAPI TestClient
     "mypy>=1.13",
     "pre-commit>=4",
+    "psycopg[binary]>=3.2",
     "pytest>=8",
     "pytest-cov>=6",
     "ruff>=0.8",
+    "sqlalchemy>=2.0",
     "types-defusedxml>=0.7.0.20260504",
     "types-pyyaml>=6.0.12.20260906",
 ]

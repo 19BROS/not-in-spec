@@ -8,6 +8,7 @@ import sys
 import uuid
 from collections.abc import Callable, Sequence
 from dataclasses import asdict
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -179,9 +180,52 @@ def main(argv: list[str] | None = None) -> int:
     )
     _provider_option(demo, FIIT.name)
 
+    db = commands.add_parser(
+        "db",
+        help="Postgres at DATABASE_URL: migrations, import of old run folders (notinspec[db])",
+    )
+    db_commands = db.add_subparsers(dest="db_command")
+    db_commands.add_parser("upgrade", help="apply every migration not applied yet")
+    db_commands.add_parser("current", help="show the migration the database is at")
+    revision = db_commands.add_parser(
+        "revision", help="write a new migration from models.py (read and fix it before committing)"
+    )
+    revision.add_argument("-m", "--message", required=True)
+    import_runs = db_commands.add_parser(
+        "import-runs",
+        help="import run folders (notinspec demo, uploads) into the database",
+        description="Imports every folder with run.json below RUNS_DIR. Runs already in the "
+        "database are skipped, so it can run again.",
+    )
+    import_runs.add_argument("runs_dir", type=Path, metavar="RUNS_DIR")
+    add_project = db_commands.add_parser(
+        "add-project",
+        help="register a project for uploads from the GitHub Action, or update it (SPEC 11)",
+        description="Uploads are accepted only from the registered repository (by its numeric "
+        "ID), its workflow file and, for push and workflow_dispatch, its default branch. "
+        "Public repositories only. Find the ID with `gh api repos/OWNER/NAME --jq .id`.",
+    )
+    add_project.add_argument("project", help="`project` of the repo's notinspec.yaml")
+    add_project.add_argument("--repository", required=True, metavar="OWNER/NAME")
+    add_project.add_argument("--repository-id", required=True, type=int)
+    add_project.add_argument("--default-branch", default="main")
+    add_project.add_argument(
+        "--workflow", required=True, help="file name in .github/workflows/, e.g. notinspec.yml"
+    )
+    add_project.add_argument("--name", help="display name (default: the project)")
+    add_project.add_argument("--allowed-model", action="append", default=[], metavar="MODEL")
+    add_project.add_argument("--budget-per-run", type=Decimal, metavar="USD")
+    add_project.add_argument("--budget-per-month", type=Decimal, metavar="USD")
+    add_project.add_argument("--max-upload-bytes", type=_positive_int)
+
     args = parser.parse_args(argv)
     # A crash must return 2, never 1 (reserved for an evaluated documentation regression).
     try:
+        if args.command == "db":
+            if args.db_command is None:
+                db.print_help()
+                return 0
+            return _db(args)
         if args.command == "claims":
             if args.claims_command == "extract":
                 return _extract_claims(args)
@@ -214,6 +258,76 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     parser.print_help()
+    return 0
+
+
+def _db(args: argparse.Namespace) -> int:
+    """`notinspec db …`; imported here, so the rest of the CLI works without notinspec[db]."""
+    try:
+        from sqlalchemy.orm import Session
+
+        from notinspec.db import database_url, make_engine, migrate
+        from notinspec.db.grants import APP_ROLE, grant_app_role
+        from notinspec.db.importer import import_runs
+        from notinspec.db.save import Registration, register_project
+    except ImportError as e:
+        print(f"error: {e.name} is missing: install notinspec[db]", file=sys.stderr)
+        return 2
+    url = database_url()
+    if args.db_command == "import-runs":
+        engine = make_engine(url)
+        try:
+            outcomes = import_runs(engine, args.runs_dir)
+        finally:
+            engine.dispose()
+        for o in outcomes:
+            print(f"{o.status:<8}  {o.folder}  {o.detail}")
+        failed = sum(o.status == "failed" for o in outcomes)
+        print(f"{len(outcomes)} folders, {failed} failed")
+        return 2 if failed else 0
+    if args.db_command == "add-project":
+        registration = Registration(
+            slug=args.project,
+            repository=args.repository,
+            repository_id=args.repository_id,
+            default_branch=args.default_branch,
+            workflow=args.workflow,
+            name=args.name,
+            allowed_models=tuple(args.allowed_model),
+            budget_per_run_usd=args.budget_per_run,
+            budget_per_month_usd=args.budget_per_month,
+            max_upload_bytes=args.max_upload_bytes,
+        )
+        engine = make_engine(url)
+        try:
+            with Session(engine) as session, session.begin():
+                project, created = register_project(session, registration)
+                print(
+                    f"{'registered' if created else 'updated'} {project.slug}: "
+                    f"{project.repository} (ID {project.repository_id}), "
+                    f"workflow {project.workflow_path}, branch {project.default_branch}"
+                )
+        finally:
+            engine.dispose()
+        return 0
+    config = migrate.alembic_config(url)
+    if args.db_command == "upgrade":
+        migrate.upgrade(config)
+        print("the database is at the latest migration")
+        engine = make_engine(url)
+        try:
+            with engine.begin() as conn:
+                granted = grant_app_role(conn)
+        finally:
+            engine.dispose()
+        if granted:
+            print(f"privileges of {APP_ROLE} are up to date")
+        else:
+            print(f"role {APP_ROLE} does not exist yet: no grants (run db upgrade again after it)")
+    elif args.db_command == "current":
+        migrate.current(config)
+    elif args.db_command == "revision":
+        migrate.revision(config, args.message)
     return 0
 
 

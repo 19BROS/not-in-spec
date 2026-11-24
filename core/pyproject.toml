@@ -16,6 +16,13 @@ dependencies = [
 [project.optional-dependencies]
 # local NLI cross-encoder (SPEC §6.4), CPU only; the worker installs it, CI and the API do not
 nli = ["torch>=2.4", "transformers>=4.56"]
+# Postgres models and migrations (notinspec.db, SPEC §18): the API and the worker install it;
+# the CLI works without it
+db = [
+    "alembic>=1.14",
+    "psycopg[binary]>=3.2",
+    "sqlalchemy>=2.0",
+]
 
 [project.scripts]
 notinspec = "notinspec.cli:main"
