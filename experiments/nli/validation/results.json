@@ -1,0 +1,1460 @@
+{
+  "schema_version": 2,
+  "case_sha256": "76fb5d3c8224265025d5465b472f693445491e06f227082e8f7d848b5a439800",
+  "python": "3.12.14",
+  "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+  "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+  "control_grounding": {
+    "grounding": 2,
+    "premise_rule": "cited±1-in-block+lead-in",
+    "windows": 1,
+    "chunker": 3,
+    "nli_model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "nli_revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+    "decision_rule": "argmax"
+  },
+  "annotation": "AI-authored frozen controls; independent human review pending",
+  "historical_human_benchmark": {
+    "provenance": {
+      "mode": "replay of stored run 007 predictions, not a new model run",
+      "predictions_file": "experiments/nli/runs/007-block-premise-new-models/results/MoritzLaurer__DeBERTa-v3-large-mnli-fever-anli-ling-wanli__ctx-breadcrumb__prem-local-block.csv",
+      "predictions_sha256": "e4000b6efc0c1000c3ec9afd471b37522b53b4ea26c19f533d81934a93330996",
+      "labels_file": "experiments/nli/labels-human.csv",
+      "labels_sha256": "010faaa31159b97ff105f109ea56eae953a4e2075727a4c59af435b645fcfd97",
+      "config_file": "experiments/nli/runs/007-block-premise-new-models/config.json",
+      "config_sha256": "b047ef752b0ef5f99243a2be4673d1fcd65703c88f66b890719cf81b248b70c7",
+      "model": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+      "revision": "b3546ea6b0346eb6f8d5d68b13c7dc6d0376b3d7",
+      "premise_rule": "local-block",
+      "context": "breadcrumb",
+      "window_size": 128,
+      "radius": 1,
+      "decision": "argmax",
+      "grounding_version": null,
+      "chunker_version": null,
+      "windows_version": null,
+      "unrecorded_versions": "legacy experiment did not record core rule versions",
+      "git": {
+        "commit": "9efe448da3e514550a516cd3ba5b8353ef9e249d",
+        "branch": "feat/nli-and-extractors-testing",
+        "dirty_experiment_files": true
+      },
+      "runtime_versions": {
+        "python": "3.12.6",
+        "torch": "2.15.0+cpu",
+        "transformers": "5.22.2"
+      }
+    },
+    "sample_count": 180,
+    "nli_scored": {
+      "count": 176,
+      "nli_scored_count": 176,
+      "confusion_gold_rows": {
+        "entailment": {
+          "entailment": 86,
+          "neutral": 4,
+          "contradiction": 2
+        },
+        "neutral": {
+          "entailment": 11,
+          "neutral": 37,
+          "contradiction": 9
+        },
+        "contradiction": {
+          "entailment": 1,
+          "neutral": 1,
+          "contradiction": 25
+        }
+      },
+      "correct_three_way": 148,
+      "keep_drop": {
+        "true_keep": 86,
+        "false_keep": 12,
+        "false_drop": 6,
+        "true_drop": 72
+      },
+      "keep_precision": 0.8775510204081632,
+      "keep_recall": 0.9347826086956522
+    },
+    "pre_nli_rejections": [
+      {
+        "section": "configuring-exponential-backoff",
+        "extractor": "sonnet-medium",
+        "claim_id": "c8",
+        "gold": "neutral",
+        "borderline": "",
+        "note": "",
+        "annotator": "human",
+        "page_id": "q747",
+        "label": null,
+        "status": "dropped:citation_not_in_prose",
+        "pipeline_keep": false
+      },
+      {
+        "section": "httpx-timeouts-fine-tuning",
+        "extractor": "sonnet-medium-outside",
+        "claim_id": "o1",
+        "gold": "neutral",
+        "borderline": "",
+        "note": "",
+        "annotator": "human",
+        "page_id": "q449",
+        "label": null,
+        "status": "dropped:citation_not_in_prose",
+        "pipeline_keep": false
+      },
+      {
+        "section": "using-timeouts",
+        "extractor": "sonnet-medium-outside",
+        "claim_id": "o2",
+        "gold": "neutral",
+        "borderline": "",
+        "note": "",
+        "annotator": "human",
+        "page_id": "q212",
+        "label": null,
+        "status": "dropped:citation_not_in_prose",
+        "pipeline_keep": false
+      },
+      {
+        "section": "using-timeouts",
+        "extractor": "sonnet-medium-outside",
+        "claim_id": "o3",
+        "gold": "neutral",
+        "borderline": "",
+        "note": "",
+        "annotator": "human",
+        "page_id": "q469",
+        "label": null,
+        "status": "dropped:citation_not_in_prose",
+        "pipeline_keep": false
+      }
+    ],
+    "pipeline_keep_drop": {
+      "true_keep": 86,
+      "false_keep": 12,
+      "false_drop": 6,
+      "true_drop": 76
+    },
+    "by_section": {
+      "changelog-2-8-0-bugfixes": {
+        "count": 38,
+        "nli_scored_count": 38,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 20,
+            "neutral": 0,
+            "contradiction": 2
+          },
+          "neutral": {
+            "entailment": 3,
+            "neutral": 8,
+            "contradiction": 2
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 3
+          }
+        },
+        "correct_three_way": 31,
+        "keep_drop": {
+          "true_keep": 20,
+          "false_keep": 3,
+          "false_drop": 2,
+          "true_drop": 13
+        },
+        "keep_precision": 0.8695652173913043,
+        "keep_recall": 0.9090909090909091
+      },
+      "changelog-2-8-0-security": {
+        "count": 35,
+        "nli_scored_count": 35,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 17,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 5,
+            "neutral": 7,
+            "contradiction": 2
+          },
+          "contradiction": {
+            "entailment": 1,
+            "neutral": 0,
+            "contradiction": 3
+          }
+        },
+        "correct_three_way": 27,
+        "keep_drop": {
+          "true_keep": 17,
+          "false_keep": 6,
+          "false_drop": 0,
+          "true_drop": 12
+        },
+        "keep_precision": 0.7391304347826086,
+        "keep_recall": 1.0
+      },
+      "configuring-exponential-backoff": {
+        "count": 29,
+        "nli_scored_count": 29,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 20,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 0,
+            "neutral": 1,
+            "contradiction": 3
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 5
+          }
+        },
+        "correct_three_way": 26,
+        "keep_drop": {
+          "true_keep": 20,
+          "false_keep": 0,
+          "false_drop": 0,
+          "true_drop": 9
+        },
+        "keep_precision": 1.0,
+        "keep_recall": 1.0
+      },
+      "httpx-timeouts-fine-tuning": {
+        "count": 29,
+        "nli_scored_count": 29,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 11,
+            "neutral": 2,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 1,
+            "neutral": 9,
+            "contradiction": 1
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 5
+          }
+        },
+        "correct_three_way": 25,
+        "keep_drop": {
+          "true_keep": 11,
+          "false_keep": 1,
+          "false_drop": 2,
+          "true_drop": 15
+        },
+        "keep_precision": 0.9166666666666666,
+        "keep_recall": 0.8461538461538461
+      },
+      "retrying-requests": {
+        "count": 26,
+        "nli_scored_count": 26,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 15,
+            "neutral": 1,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 0,
+            "neutral": 4,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 6
+          }
+        },
+        "correct_three_way": 25,
+        "keep_drop": {
+          "true_keep": 15,
+          "false_keep": 0,
+          "false_drop": 1,
+          "true_drop": 10
+        },
+        "keep_precision": 1.0,
+        "keep_recall": 0.9375
+      },
+      "using-timeouts": {
+        "count": 19,
+        "nli_scored_count": 19,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 3,
+            "neutral": 1,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 2,
+            "neutral": 8,
+            "contradiction": 1
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 1,
+            "contradiction": 3
+          }
+        },
+        "correct_three_way": 14,
+        "keep_drop": {
+          "true_keep": 3,
+          "false_keep": 2,
+          "false_drop": 1,
+          "true_drop": 13
+        },
+        "keep_precision": 0.6,
+        "keep_recall": 0.75
+      }
+    }
+  },
+  "controls": {
+    "all": {
+      "count": 36,
+      "nli_scored_count": 36,
+      "confusion_gold_rows": {
+        "entailment": {
+          "entailment": 12,
+          "neutral": 0,
+          "contradiction": 0
+        },
+        "neutral": {
+          "entailment": 1,
+          "neutral": 11,
+          "contradiction": 0
+        },
+        "contradiction": {
+          "entailment": 0,
+          "neutral": 0,
+          "contradiction": 12
+        }
+      },
+      "correct_three_way": 35,
+      "keep_drop": {
+        "true_keep": 12,
+        "false_keep": 1,
+        "false_drop": 0,
+        "true_drop": 23
+      },
+      "keep_precision": 0.9230769230769231,
+      "keep_recall": 1.0
+    },
+    "by_library": {
+      "hydra-zen": {
+        "count": 12,
+        "nli_scored_count": 12,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 4,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 0,
+            "neutral": 4,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 4
+          }
+        },
+        "correct_three_way": 12,
+        "keep_drop": {
+          "true_keep": 4,
+          "false_keep": 0,
+          "false_drop": 0,
+          "true_drop": 8
+        },
+        "keep_precision": 1.0,
+        "keep_recall": 1.0
+      },
+      "trio": {
+        "count": 12,
+        "nli_scored_count": 12,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 4,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 1,
+            "neutral": 3,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 4
+          }
+        },
+        "correct_three_way": 11,
+        "keep_drop": {
+          "true_keep": 4,
+          "false_keep": 1,
+          "false_drop": 0,
+          "true_drop": 7
+        },
+        "keep_precision": 0.8,
+        "keep_recall": 1.0
+      },
+      "urllib3": {
+        "count": 12,
+        "nli_scored_count": 12,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 4,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 0,
+            "neutral": 4,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 4
+          }
+        },
+        "correct_three_way": 12,
+        "keep_drop": {
+          "true_keep": 4,
+          "false_keep": 0,
+          "false_drop": 0,
+          "true_drop": 8
+        },
+        "keep_precision": 1.0,
+        "keep_recall": 1.0
+      }
+    },
+    "by_scope": {
+      "guide": {
+        "count": 18,
+        "nli_scored_count": 18,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 6,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 0,
+            "neutral": 6,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 6
+          }
+        },
+        "correct_three_way": 18,
+        "keep_drop": {
+          "true_keep": 6,
+          "false_keep": 0,
+          "false_drop": 0,
+          "true_drop": 12
+        },
+        "keep_precision": 1.0,
+        "keep_recall": 1.0
+      },
+      "api": {
+        "count": 18,
+        "nli_scored_count": 18,
+        "confusion_gold_rows": {
+          "entailment": {
+            "entailment": 6,
+            "neutral": 0,
+            "contradiction": 0
+          },
+          "neutral": {
+            "entailment": 1,
+            "neutral": 5,
+            "contradiction": 0
+          },
+          "contradiction": {
+            "entailment": 0,
+            "neutral": 0,
+            "contradiction": 6
+          }
+        },
+        "correct_three_way": 17,
+        "keep_drop": {
+          "true_keep": 6,
+          "false_keep": 1,
+          "false_drop": 0,
+          "true_drop": 11
+        },
+        "keep_precision": 0.8571428571428571,
+        "keep_recall": 1.0
+      }
+    },
+    "pipeline_false_drops": [],
+    "pipeline_false_keeps": [
+      "control-012"
+    ]
+  },
+  "rows": [
+    {
+      "id": "control-001",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "3d7728035ff947e8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Getting Started",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbceb399abd25e25",
+      "citation": "cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio.",
+      "gold": "entailment",
+      "hypothesis": "cookiecutter-trio is a template for Python projects using Trio.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+      "scores": {
+        "entailment": 0.9993995428085327,
+        "neutral": 0.00034088423126377165,
+        "contradiction": 0.00025963468942791224,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-002",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "3d7728035ff947e8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Getting Started",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbceb399abd25e25",
+      "citation": "cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio.",
+      "gold": "contradiction",
+      "hypothesis": "cookiecutter-trio cannot be used as a template for Python projects using Trio.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+      "scores": {
+        "entailment": 0.0003495529235806316,
+        "neutral": 8.412464376306161e-05,
+        "contradiction": 0.9995662569999695,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-003",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "3d7728035ff947e8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Getting Started",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbceb399abd25e25",
+      "citation": "cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio.",
+      "gold": "neutral",
+      "hypothesis": "cookiecutter-trio is distributed under the MIT license.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Getting Started: cookiecutter-trio - This is a cookiecutter template for Python projects that use Trio. It makes it easy to start a new project, by providing a bunch of preconfigured boilerplate.",
+      "scores": {
+        "entailment": 9.678935020929202e-05,
+        "neutral": 0.9998376369476318,
+        "contradiction": 6.558983295690268e-05,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-004",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "429a006c1f5543d8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Testing",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbc289a79f383073",
+      "citation": "hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "gold": "entailment",
+      "hypothesis": "hypothesis-trio provides Trio-compatible stateful testing.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "scores": {
+        "entailment": 0.9974823594093323,
+        "neutral": 0.0018467727350071073,
+        "contradiction": 0.0006708268774673343,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-005",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "429a006c1f5543d8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Testing",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbc289a79f383073",
+      "citation": "hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "gold": "contradiction",
+      "hypothesis": "hypothesis-trio does not provide Trio-compatible stateful testing.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "scores": {
+        "entailment": 0.0006872808444313705,
+        "neutral": 0.0002828658907674253,
+        "contradiction": 0.9990298748016357,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-006",
+      "library": "trio",
+      "scope": "guide",
+      "chunk_id": "429a006c1f5543d8",
+      "source": "awesome-trio-libraries",
+      "breadcrumb": "trio > Awesome Trio Libraries > Testing",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "fbc289a79f383073",
+      "citation": "hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "gold": "neutral",
+      "hypothesis": "hypothesis-trio requires Python 3.12 or newer.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Awesome Trio Libraries > Testing: hypothesis-trio - Hypothesis supports Trio out of the box for @given(...) tests; this extension provides Trio-compatible stateful testing.",
+      "scores": {
+        "entailment": 0.00013149427832104266,
+        "neutral": 0.9993879795074463,
+        "contradiction": 0.00048047443851828575,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [
+        "3.12"
+      ],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-007",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "d679418e605bafc2",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "0174c56667275382",
+      "citation": "Pause execution of the current task for the given number of seconds.",
+      "gold": "entailment",
+      "hypothesis": "trio.sleep pauses the current task for the given number of seconds.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+      "scores": {
+        "entailment": 0.9983071088790894,
+        "neutral": 0.0013654195936396718,
+        "contradiction": 0.00032752336119301617,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-008",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "d679418e605bafc2",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "0174c56667275382",
+      "citation": "Pause execution of the current task for the given number of seconds.",
+      "gold": "contradiction",
+      "hypothesis": "The duration passed to trio.sleep is measured in milliseconds instead of seconds.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+      "scores": {
+        "entailment": 0.00021396327065303922,
+        "neutral": 0.0020590368658304214,
+        "contradiction": 0.9977269768714905,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-009",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "d679418e605bafc2",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "0174c56667275382",
+      "citation": "Pause execution of the current task for the given number of seconds.",
+      "gold": "neutral",
+      "hypothesis": "trio.sleep guarantees a timing precision of one millisecond.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep(): Pause execution of the current task for the given number of seconds.",
+      "scores": {
+        "entailment": 0.002580334898084402,
+        "neutral": 0.9422788023948669,
+        "contradiction": 0.05514083430171013,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-010",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "8f588e3ce9569d6b",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep_until()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "354a95d1631e07d1",
+      "citation": "The difference between `sleep()` and `sleep_until()` is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by `current_time()`).",
+      "gold": "entailment",
+      "hypothesis": "trio.sleep_until takes an absolute time according to Trio's internal clock.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+      "scores": {
+        "entailment": 0.998264491558075,
+        "neutral": 0.0011714264983311296,
+        "contradiction": 0.0005640476010739803,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-011",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "8f588e3ce9569d6b",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep_until()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "354a95d1631e07d1",
+      "citation": "The difference between `sleep()` and `sleep_until()` is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by `current_time()`).",
+      "gold": "contradiction",
+      "hypothesis": "trio.sleep_until takes a relative duration instead of an absolute time.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+      "scores": {
+        "entailment": 0.14618462324142456,
+        "neutral": 0.024537526071071625,
+        "contradiction": 0.8292778134346008,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-012",
+      "library": "trio",
+      "scope": "api",
+      "chunk_id": "8f588e3ce9569d6b",
+      "source": "reference-core",
+      "breadcrumb": "trio > Trio’s core functionality > Time and clocks > sleep_until()",
+      "input_hash": "35af47c8922a8c582151549ddea1b89143e75d1d300f431b1765cb9bfd4b6a40",
+      "content_hash": "354a95d1631e07d1",
+      "citation": "The difference between `sleep()` and `sleep_until()` is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by `current_time()`).",
+      "gold": "neutral",
+      "hypothesis": "trio.sleep_until interprets its deadline as a UTC timestamp.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "trio > Trio’s core functionality > Time and clocks > sleep_until(): The difference between sleep() and sleep_until() is that the former takes a relative time and the latter takes an absolute time according to Trio’s internal clock (as returned by current_time()).",
+      "scores": {
+        "entailment": 0.5595279335975647,
+        "neutral": 0.4199310839176178,
+        "contradiction": 0.020541038364171982,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-013",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "4800da67498b5fce",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Creating, Storing, and Working with Configs",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "fee60cde3760b7ed",
+      "citation": "Among these, the most essential functions for creating configs are make_config() and builds().",
+      "gold": "entailment",
+      "hypothesis": "hydra-zen provides make_config() and builds() for creating configs.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+      "scores": {
+        "entailment": 0.9996240139007568,
+        "neutral": 0.0002277305320603773,
+        "contradiction": 0.0001482897059759125,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-014",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "4800da67498b5fce",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Creating, Storing, and Working with Configs",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "fee60cde3760b7ed",
+      "citation": "Among these, the most essential functions for creating configs are make_config() and builds().",
+      "gold": "contradiction",
+      "hypothesis": "hydra-zen's builds() cannot be used for creating configs.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+      "scores": {
+        "entailment": 0.0004279284621588886,
+        "neutral": 0.00010599903907859698,
+        "contradiction": 0.9994661211967468,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-015",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "4800da67498b5fce",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Creating, Storing, and Working with Configs",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "fee60cde3760b7ed",
+      "citation": "Among these, the most essential functions for creating configs are make_config() and builds().",
+      "gold": "neutral",
+      "hypothesis": "hydra-zen's builds() caches every generated config on disk.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Creating, Storing, and Working with Configs: hydra-zen provides us with tools for creating and working with configs. Among these, the most essential functions for creating configs are make_config() and builds(). hydra_zen.store is used to store configs so that we (and Hydra) can access them later. Then, instantiate() can be used to resolve these configs so that they return the data and class-instances that we need for our application.",
+      "scores": {
+        "entailment": 0.0002873698831535876,
+        "neutral": 0.9989209175109863,
+        "contradiction": 0.0007918136543594301,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-016",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "e9d56fb2a00d04e8",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "7ef19a0cd7efd641",
+      "citation": "bytes (support added in OmegaConf 2.2.0)",
+      "gold": "entailment",
+      "hypothesis": "Support for bytes in Hydra configs was added in OmegaConf 2.2.0.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+      "scores": {
+        "entailment": 0.9978786706924438,
+        "neutral": 0.0019128285348415375,
+        "contradiction": 0.0002085290616378188,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-017",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "e9d56fb2a00d04e8",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "7ef19a0cd7efd641",
+      "citation": "bytes (support added in OmegaConf 2.2.0)",
+      "gold": "contradiction",
+      "hypothesis": "Support for bytes in Hydra configs was added in OmegaConf 2.1.0.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+      "scores": {
+        "entailment": 0.0013427470112219453,
+        "neutral": 0.0006671295268461108,
+        "contradiction": 0.9979901313781738,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [
+        "2.1.0"
+      ],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-018",
+      "library": "hydra-zen",
+      "scope": "guide",
+      "chunk_id": "e9d56fb2a00d04e8",
+      "source": "api_reference",
+      "breadcrumb": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "7ef19a0cd7efd641",
+      "citation": "bytes (support added in OmegaConf 2.2.0)",
+      "gold": "neutral",
+      "hypothesis": "Bytes values in Hydra configs are limited to 1024 bytes.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > Reference > Configuration-Value Types Supported by Hydra and hydra-zen > Types Supported Natively by Hydra: Values of the following types can be specified directly in configs: bytes (support added in OmegaConf 2.2.0)",
+      "scores": {
+        "entailment": 0.00012907569180242717,
+        "neutral": 0.9996404647827148,
+        "contradiction": 0.00023041829990688711,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [
+        "1024"
+      ],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-019",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "b2394863a0d51d7c",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "27313a17a1928b57",
+      "citation": "Broadens a type annotation until it is compatible with Hydra.",
+      "gold": "entailment",
+      "hypothesis": "BuildsFn._sanitized_type broadens a type annotation until it is compatible with Hydra.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+      "scores": {
+        "entailment": 0.996377170085907,
+        "neutral": 0.0031064224895089865,
+        "contradiction": 0.000516386644449085,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-020",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "b2394863a0d51d7c",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "27313a17a1928b57",
+      "citation": "Broadens a type annotation until it is compatible with Hydra.",
+      "gold": "contradiction",
+      "hypothesis": "BuildsFn._sanitized_type never changes a type annotation that is incompatible with Hydra.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+      "scores": {
+        "entailment": 0.0006657940684817731,
+        "neutral": 0.0030872004572302103,
+        "contradiction": 0.9962469935417175,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-021",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "b2394863a0d51d7c",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "27313a17a1928b57",
+      "citation": "Broadens a type annotation until it is compatible with Hydra.",
+      "gold": "neutral",
+      "hypothesis": "BuildsFn._sanitized_type uses an LRU cache with 128 entries.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _sanitized_type(): Broadens a type annotation until it is compatible with Hydra.",
+      "scores": {
+        "entailment": 0.00019372727547306567,
+        "neutral": 0.9995735287666321,
+        "contradiction": 0.0002327313704881817,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [
+        "128"
+      ],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-022",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "307ffb4aebffb197",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "2e11e142c957d004",
+      "citation": "Converts `value` to Hydra-supported type or to a config whose fields are recursively supported by `_make_hydra_compatible`. Otherwise raises `HydraZenUnsupportedPrimitiveError`.",
+      "gold": "entailment",
+      "hypothesis": "BuildsFn._make_hydra_compatible raises HydraZenUnsupportedPrimitiveError for an unsupported value.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+      "scores": {
+        "entailment": 0.9978598952293396,
+        "neutral": 0.0017275047721341252,
+        "contradiction": 0.00041268632048740983,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-023",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "307ffb4aebffb197",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "2e11e142c957d004",
+      "citation": "Converts `value` to Hydra-supported type or to a config whose fields are recursively supported by `_make_hydra_compatible`. Otherwise raises `HydraZenUnsupportedPrimitiveError`.",
+      "gold": "contradiction",
+      "hypothesis": "BuildsFn._make_hydra_compatible silently returns None for unsupported values instead of raising an error.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+      "scores": {
+        "entailment": 0.00011248025839449838,
+        "neutral": 0.0004723381716758013,
+        "contradiction": 0.9994151592254639,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-024",
+      "library": "hydra-zen",
+      "scope": "api",
+      "chunk_id": "307ffb4aebffb197",
+      "source": "generated/hydra_zen.BuildsFn",
+      "breadcrumb": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible()",
+      "input_hash": "187c1576845e69ff1614fce5eab08f13b42c6cff20d17318997355cdcb7b1558",
+      "content_hash": "2e11e142c957d004",
+      "citation": "Converts `value` to Hydra-supported type or to a config whose fields are recursively supported by `_make_hydra_compatible`. Otherwise raises `HydraZenUnsupportedPrimitiveError`.",
+      "gold": "neutral",
+      "hypothesis": "BuildsFn._make_hydra_compatible writes unsupported values to a log file.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "hydra-zen > hydra_zen.BuildsFn > BuildsFn > _make_hydra_compatible(): Converts value to Hydra-supported type or to a config whose fields are recursively supported by _make_hydra_compatible. Otherwise raises HydraZenUnsupportedPrimitiveError.",
+      "scores": {
+        "entailment": 0.0005091432831250131,
+        "neutral": 0.9946126937866211,
+        "contradiction": 0.004878263920545578,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-025",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "c46995b2a905490b",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Proxies",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "d0c4a3ef6393ad4f",
+      "citation": "You can connect to a proxy using HTTP, HTTPS or SOCKS.",
+      "gold": "entailment",
+      "hypothesis": "urllib3 can connect to proxies using HTTP, HTTPS or SOCKS.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+      "scores": {
+        "entailment": 0.9988781809806824,
+        "neutral": 0.00076696602627635,
+        "contradiction": 0.0003548517415765673,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-026",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "c46995b2a905490b",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Proxies",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "d0c4a3ef6393ad4f",
+      "citation": "You can connect to a proxy using HTTP, HTTPS or SOCKS.",
+      "gold": "contradiction",
+      "hypothesis": "urllib3 supports HTTP proxies only and cannot connect to HTTPS or SOCKS proxies.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+      "scores": {
+        "entailment": 0.00010595911589916795,
+        "neutral": 0.00016009453975129873,
+        "contradiction": 0.9997339844703674,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-027",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "c46995b2a905490b",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Proxies",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "d0c4a3ef6393ad4f",
+      "citation": "You can connect to a proxy using HTTP, HTTPS or SOCKS.",
+      "gold": "neutral",
+      "hypothesis": "urllib3 requires authentication for every HTTP proxy connection.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Proxies: You can connect to a proxy using HTTP, HTTPS or SOCKS. urllib3’s behavior will be different depending on the type of proxy you selected and the destination you’re contacting.",
+      "scores": {
+        "entailment": 0.0002882018743548542,
+        "neutral": 0.9979263544082642,
+        "contradiction": 0.0017853702884167433,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-028",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "4d0da13f85e52a1f",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Client Certificates",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "6571378168b99297",
+      "citation": "If your key isn’t encrypted the key_password parameter isn’t required.",
+      "gold": "entailment",
+      "hypothesis": "In urllib3, key_password is not required when the private key is not encrypted.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+      "scores": {
+        "entailment": 0.8611414432525635,
+        "neutral": 0.137848898768425,
+        "contradiction": 0.0010096217738464475,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-029",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "4d0da13f85e52a1f",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Client Certificates",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "6571378168b99297",
+      "citation": "If your key isn’t encrypted the key_password parameter isn’t required.",
+      "gold": "contradiction",
+      "hypothesis": "In urllib3, key_password is required even when the private key is not encrypted.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+      "scores": {
+        "entailment": 0.0002381015510763973,
+        "neutral": 0.00042236378067173064,
+        "contradiction": 0.9993395209312439,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-030",
+      "library": "urllib3",
+      "scope": "guide",
+      "chunk_id": "4d0da13f85e52a1f",
+      "source": "advanced-usage",
+      "breadcrumb": "urllib3 > Advanced Usage > Client Certificates",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "6571378168b99297",
+      "citation": "If your key isn’t encrypted the key_password parameter isn’t required.",
+      "gold": "neutral",
+      "hypothesis": "urllib3 accepts client certificates stored in PKCS12 files.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Advanced Usage > Client Certificates: If your key isn’t encrypted the key_password parameter isn’t required.",
+      "scores": {
+        "entailment": 0.00046714162454009056,
+        "neutral": 0.9992764592170715,
+        "contradiction": 0.00025629409356042743,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [
+        "12"
+      ],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-031",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "3061ff6899d4cc19",
+      "source": "reference/contrib/socks",
+      "breadcrumb": "urllib3 > SOCKS Proxies > SOCKSProxyManager",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "9a6f7463ec727504",
+      "citation": "A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "gold": "entailment",
+      "hypothesis": "SOCKSProxyManager routes connections through the defined SOCKS proxy.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "scores": {
+        "entailment": 0.998847246170044,
+        "neutral": 0.0008215543930418789,
+        "contradiction": 0.00033119364525191486,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-032",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "3061ff6899d4cc19",
+      "source": "reference/contrib/socks",
+      "breadcrumb": "urllib3 > SOCKS Proxies > SOCKSProxyManager",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "9a6f7463ec727504",
+      "citation": "A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "gold": "contradiction",
+      "hypothesis": "SOCKSProxyManager never routes connections through a SOCKS proxy.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "scores": {
+        "entailment": 0.00015153079584706575,
+        "neutral": 0.00016506040992680937,
+        "contradiction": 0.9996833801269531,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-033",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "3061ff6899d4cc19",
+      "source": "reference/contrib/socks",
+      "breadcrumb": "urllib3 > SOCKS Proxies > SOCKSProxyManager",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "9a6f7463ec727504",
+      "citation": "A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "gold": "neutral",
+      "hypothesis": "SOCKSProxyManager maintains exactly one connection per host.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > SOCKS Proxies > SOCKSProxyManager: A version of the urllib3 ProxyManager that routes connections via the defined SOCKS proxy.",
+      "scores": {
+        "entailment": 0.00045963822049088776,
+        "neutral": 0.9978243112564087,
+        "contradiction": 0.0017160404240712523,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-034",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "e1726e8f38d96ea4",
+      "source": "reference/urllib3.util",
+      "breadcrumb": "urllib3 > Utilities > is_connection_dropped()",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "99d741606a961cba",
+      "citation": "Returns True if the connection is dropped and should be closed.",
+      "gold": "entailment",
+      "hypothesis": "is_connection_dropped returns True if the connection is dropped and should be closed.",
+      "status": "kept",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+      "scores": {
+        "entailment": 0.9988921284675598,
+        "neutral": 0.0008283787174150348,
+        "contradiction": 0.00027945934562012553,
+        "truncated": false
+      },
+      "label": "entailment",
+      "missing_identifiers": [],
+      "pipeline_keep": true
+    },
+    {
+      "id": "control-035",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "e1726e8f38d96ea4",
+      "source": "reference/urllib3.util",
+      "breadcrumb": "urllib3 > Utilities > is_connection_dropped()",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "99d741606a961cba",
+      "citation": "Returns True if the connection is dropped and should be closed.",
+      "gold": "contradiction",
+      "hypothesis": "is_connection_dropped returns False if the connection is dropped and should be closed.",
+      "status": "nli_contradiction",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+      "scores": {
+        "entailment": 0.0007831712136976421,
+        "neutral": 0.0007772203534841537,
+        "contradiction": 0.998439610004425,
+        "truncated": false
+      },
+      "label": "contradiction",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    },
+    {
+      "id": "control-036",
+      "library": "urllib3",
+      "scope": "api",
+      "chunk_id": "e1726e8f38d96ea4",
+      "source": "reference/urllib3.util",
+      "breadcrumb": "urllib3 > Utilities > is_connection_dropped()",
+      "input_hash": "485ca633dba6412693e547697b679df71f42019588eefce001c77aa85521d1a2",
+      "content_hash": "99d741606a961cba",
+      "citation": "Returns True if the connection is dropped and should be closed.",
+      "gold": "neutral",
+      "hypothesis": "is_connection_dropped retries the connection three times before returning.",
+      "status": "nli_neutral",
+      "citation_matches": 1,
+      "premise_candidates": 1,
+      "premise": "urllib3 > Utilities > is_connection_dropped(): Returns True if the connection is dropped and should be closed. :param conn: urllib3.connection.HTTPConnection object.",
+      "scores": {
+        "entailment": 0.00011622130841715261,
+        "neutral": 0.9991081357002258,
+        "contradiction": 0.0007756493869237602,
+        "truncated": false
+      },
+      "label": "neutral",
+      "missing_identifiers": [],
+      "pipeline_keep": false
+    }
+  ]
+}
