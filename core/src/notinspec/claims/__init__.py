@@ -2,9 +2,18 @@
 
 `extract_claims` extracts claims with their citations. `ground_claims` grounds them (citation
 check, NLI premise, NLI, identifier check, from `notinspec.grounding` and `notinspec.nli`), and
-`run_claims` does both.
+`run_claims` does both. `changes_from_claims` turns kept *change* claims into `Change`
+candidates for review (SPEC §6.3).
 """
 
+from notinspec.claims.changes import (
+    CHANGE_RULES_VERSION,
+    ChangeCandidate,
+    ChangeClaims,
+    ClaimRef,
+    SkippedChangeClaim,
+    changes_from_claims,
+)
 from notinspec.claims.extract import ROLE, extract_claims
 from notinspec.claims.model import (
     DEFAULT_EXTRACTORS,
@@ -44,6 +53,7 @@ from notinspec.claims.store import (
 )
 
 __all__ = [
+    "CHANGE_RULES_VERSION",
     "CLAIMS_SCHEMA",
     "DEFAULT_EXTRACTORS",
     "GROQ_EXTRACTORS",
@@ -51,7 +61,12 @@ __all__ = [
     "ROLE",
     "STATUSES",
     "CallLog",
+    "ChangeCandidate",
+    "ChangeClaims",
+    "ClaimRef",
     "ClaimStore",
+    "SkippedChangeClaim",
+    "changes_from_claims",
     "ClaimsRun",
     "ClaimType",
     "ExtractedClaim",
