@@ -1,5 +1,7 @@
 """Migrations against a real Postgres (TEST_DATABASE_URL): schema, append-only guard, downgrade."""
 
+import secrets
+
 import pytest
 from alembic.autogenerate import compare_metadata
 from alembic.migration import MigrationContext
@@ -8,6 +10,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
 from notinspec.db import migrate, models
+from notinspec.db.grants import grant_app_role
 
 
 def test_upgrade_creates_every_table_of_the_models(engine: Engine) -> None:
@@ -117,3 +120,35 @@ def test_downgrade_removes_everything(bare: Engine) -> None:
         migrate.upgrade(config)
         migrate.downgrade(config, "base")
     assert set(inspect(bare).get_table_names()) <= {"alembic_version"}
+
+
+def test_grant_app_role_follows_the_models(engine: Engine, schema: str) -> None:
+    role = f"test_app_{secrets.token_hex(4)}"
+    with engine.begin() as conn:
+        assert grant_app_role(conn, role) is False  # no such role yet: nothing happens
+        try:
+            conn.execute(text(f"CREATE ROLE {role} NOLOGIN"))
+        except DBAPIError:
+            pytest.skip("the test user may not create roles")
+    try:
+        with engine.begin() as conn:
+            assert grant_app_role(conn, role) is True
+            assert grant_app_role(conn, role) is True  # idempotent
+
+            def can(table: str, privilege: str) -> bool:
+                return bool(
+                    conn.scalar(
+                        text("SELECT has_table_privilege(:role, :table, :privilege)"),
+                        {"role": role, "table": f"{schema}.{table}", "privilege": privilege},
+                    )
+                )
+
+            for table in models.Base.metadata.tables:
+                assert can(table, "SELECT") and can(table, "INSERT"), table
+                mutable = table not in models.APPEND_ONLY
+                assert can(table, "UPDATE") is mutable, table
+                assert can(table, "DELETE") is mutable, table
+    finally:
+        with engine.begin() as conn:
+            conn.execute(text(f"DROP OWNED BY {role}"))
+            conn.execute(text(f"DROP ROLE {role}"))

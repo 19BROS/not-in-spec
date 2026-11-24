@@ -267,6 +267,7 @@ def _db(args: argparse.Namespace) -> int:
         from sqlalchemy.orm import Session
 
         from notinspec.db import database_url, make_engine, migrate
+        from notinspec.db.grants import APP_ROLE, grant_app_role
         from notinspec.db.importer import import_runs
         from notinspec.db.save import Registration, register_project
     except ImportError as e:
@@ -313,6 +314,16 @@ def _db(args: argparse.Namespace) -> int:
     if args.db_command == "upgrade":
         migrate.upgrade(config)
         print("the database is at the latest migration")
+        engine = make_engine(url)
+        try:
+            with engine.begin() as conn:
+                granted = grant_app_role(conn)
+        finally:
+            engine.dispose()
+        if granted:
+            print(f"privileges of {APP_ROLE} are up to date")
+        else:
+            print(f"role {APP_ROLE} does not exist yet: no grants (run db upgrade again after it)")
     elif args.db_command == "current":
         migrate.current(config)
     elif args.db_command == "revision":

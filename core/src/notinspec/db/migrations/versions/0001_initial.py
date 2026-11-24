@@ -188,6 +188,12 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column(
+            "openapi",
+            postgresql.JSONB(astext_type=sa.Text()),
+            server_default=sa.text("'[]'::jsonb"),
+            nullable=False,
+        ),
+        sa.Column(
             "created_at",
             sa.DateTime(timezone=True),
             server_default=sa.text("now()"),

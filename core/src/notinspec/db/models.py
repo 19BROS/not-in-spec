@@ -219,6 +219,9 @@ class Ingestion(Base):
     versions_hash: Mapped[str] = mapped_column(Text)
     warnings: Mapped[list[Any]] = _json()
     conflicts: Mapped[list[Any]] = _json()
+    # `Ingestion.openapi`: each spec normalized by the OpenAPI adapter (`OpenApiInput`), kept as
+    # it is until the inventory takes over everything the later stages need from it
+    openapi: Mapped[list[Any]] = _json()
     created_at: Mapped[datetime] = _created()
 
 

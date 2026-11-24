@@ -2,16 +2,23 @@
 
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from typing import Any, get_args
 
 import pytest
 
-from notinspec.claims.model import RawClaim
+from notinspec.claims.model import ClaimType, RawClaim
+from notinspec.claims.pipeline import STATUSES
 from notinspec.claims.store import LlmCall, ReuseKey, StoredAnswer
 from notinspec.cli import main
 from notinspec.db import DatabaseUrlError, database_url, models, rows, sqlalchemy_url
 from notinspec.db.save import Registration
-from notinspec.findings import Evidence, Finding
+from notinspec.findings import Check, Evidence, Finding
+from notinspec.inventory.objects import (
+    ChangeKind,
+    Confidence,
+    ParameterKind,
+    ParameterLocation,
+)
 
 CALL = LlmCall(
     run_id="r1",
@@ -169,3 +176,20 @@ def test_finding_from_the_findings_dataclass() -> None:
     assert (row.key, row.check_code, row.confidence) == (found.key, "K5a", "high")
     assert row.versions == {"k5a": "1", "nli_model": "m"}
     assert [e["ref"] for e in row.evidence] == ["a", "b"]
+
+
+@pytest.mark.parametrize(
+    ("values", "pipeline"),
+    [
+        (models.GROUNDING_STATUSES, set(STATUSES)),
+        (models.CHECKS, set(get_args(Check.__value__))),
+        (models.CONFIDENCES, set(get_args(Confidence.__value__))),
+        (models.CLAIM_TYPES, set(get_args(ClaimType.__value__))),
+        (models.CHANGE_KINDS, set(get_args(ChangeKind.__value__))),
+        (models.PARAMETER_KINDS, set(get_args(ParameterKind.__value__))),
+        (models.PARAMETER_LOCATIONS, set(get_args(ParameterLocation.__value__))),
+    ],
+)
+def test_check_values_match_the_pipeline(values: tuple[str, ...], pipeline: set[str]) -> None:
+    """A new value in the pipeline needs a migration of the CHECK, or the DB refuses it."""
+    assert set(values) == pipeline

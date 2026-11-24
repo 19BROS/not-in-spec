@@ -2,6 +2,11 @@
 
 The functions take the JSON shape of the pipeline's dataclasses (see `notinspec.db.rows`), so
 the worker, the API and the import of old run folders share them.
+
+`project` and `ingestion` look a row up, then insert it. Two transactions doing that for the
+same project or snapshot at once: the second gets an `IntegrityError` from the unique
+constraint and must retry. Fine while the worker runs one job at a time; with parallel jobs,
+switch them to `INSERT … ON CONFLICT DO NOTHING`.
 """
 
 import re
@@ -137,6 +142,7 @@ def ingestion(session: Session, proj: models.Project, doc: Doc) -> models.Ingest
         versions_hash=key,
         warnings=list(doc.get("warnings", [])),
         conflicts=list(doc.get("conflicts", [])),
+        openapi=list(doc.get("openapi", [])),
     )
     session.add(ing)
     session.flush()
