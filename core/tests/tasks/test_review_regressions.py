@@ -46,10 +46,27 @@ def test_real_urllib3_cannot_be_scored_by_always_answering_yes(urllib3):
         context=GenerationContext("urllib3", "2.8.0", snapshot),
         chunks=chunks,
         conflicts=built.conflicts,
-        writer=NoWriter(),
     )
-    assert result.items == ()
-    assert any("need both classes" in s.reason and "no=0" in s.reason for s in result.skipped)
+    counts = Counter(i.reference.exists for i in result.items if i.question_kind == "exists")
+    assert counts[True] == counts[False] > 0
+    assert any(i.question_kind == "choice" for i in result.items)
+    corpus = canonical_json((built.inventory, chunks, built.conflicts)).decode().casefold()
+    for item in result.items:
+        ref = item.reference
+        if isinstance(ref, ExistsReference) and not ref.exists:
+            name = ref.subject.parameter or ref.subject.symbol.rsplit(".", 1)[-1]
+            assert name.casefold() not in corpus
+            assert ref.tested_version is None
+        elif isinstance(ref, ChoiceReference):
+            for option in ref.options:
+                if option.id != ref.correct_id:
+                    assert option.text.rsplit(".", 1)[-1].casefold() not in corpus
+                    if ref.subject.parameter is None:
+                        assert (
+                            option.text.rpartition(".")[0] == ref.subject.symbol.rpartition(".")[0]
+                        )
+    choices = [i.reference for i in result.items if i.question_kind == "choice"]
+    assert len({tuple(o.id for o in r.options if o.id != r.correct_id) for r in choices}) > 1
 
 
 @pytest.mark.parametrize("label", ["2.8.1", "latest", "main"])

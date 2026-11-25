@@ -189,7 +189,7 @@ def test_readded_name_and_future_removal_do_not_make_distractors():
     assert answers(run(inv))[("pkg.connect", None)] is True
 
 
-def test_mcq_uses_only_three_proven_removals_for_the_same_scope():
+def test_mcq_prefers_three_proven_removals_for_the_same_scope():
     changes = tuple(removal("pkg.connect", parameter=n) for n in ("old1", "old2", "old3"))
     changes += (
         removal("pkg.connect", parameter="deprecated", kind="deprecated"),
@@ -204,10 +204,9 @@ def test_mcq_uses_only_three_proven_removals_for_the_same_scope():
         wrong = {o.text for o in ref.options if o.id != ref.correct_id}
         assert wrong == {"old1", "old2", "old3"}
         assert len({o.id for o in ref.options}) == 4
-    assert not any(
-        isinstance(i.reference, ChoiceReference)
-        for i in run(Inventory((symbol(),), changes[:2])).items
-    )
+    fallback = run(Inventory((symbol(),), changes[:2]))
+    # Its own lexical edit cannot be used to fill the third wrong option.
+    assert not any(i.question_kind == "choice" for i in fallback.items)
 
 
 def test_symbol_mcq_and_skipped_conflicting_distractors():
@@ -215,9 +214,10 @@ def test_symbol_mcq_and_skipped_conflicting_distractors():
     inv = Inventory((symbol(),), changes)
     assert any(isinstance(i.reference, ChoiceReference) for i in run(inv).items)
     conflict = Conflict("pkg.old0", "kind", "removed", "deprecated", ())
-    assert not any(
-        isinstance(i.reference, ChoiceReference) for i in run(inv, conflicts=(conflict,)).items
-    )
+    refs = [
+        i.reference for i in run(inv, conflicts=(conflict,)).items if i.question_kind == "choice"
+    ]
+    assert not refs  # two unconflicted removals; the correct symbol's edit cannot fill the gap
 
 
 def test_l1_defaults_required_and_variadics():
@@ -277,7 +277,7 @@ def test_identity_ignores_wording_generator_and_snapshot_but_not_answers_or_oper
             docs_version="2.0.0",
         ).id
     )
-    assert original.id != replace(original, operator_version=3).id
+    assert original.id != replace(original, operator_version=5).id
     assert original.id != replace(original, reference=replace(original.reference, exists=False)).id
     assert (
         original.id
@@ -364,8 +364,8 @@ def test_existing_sphinx_ingestion_to_tasks_and_local_entrypoint(tmp_path):
         for generate in (generate_l0, generate_l1)
     ]
     result = GenerationResult(tuple(i for r in results for i in r.items), ())
-    assert results[0].items == ()
-    assert any("need both classes" in s.reason for s in results[0].skipped)
+    existence = [i.reference.exists for i in results[0].items if i.question_kind == "exists"]
+    assert existence.count(True) == existence.count(False) > 0
     defaults = [i.reference for i in result.items if isinstance(i.reference, DefaultReference)]
     assert DefaultReference(Subject("fixturelib.connect", "timeout"), "None") in defaults
     required = [
@@ -388,7 +388,11 @@ def test_existing_sphinx_ingestion_to_tasks_and_local_entrypoint(tmp_path):
         == 0
     )
     assert {i.id for i in load(out).items} == {i.id for i in result.items}
-    assert all(i.status == "candidate" and i.wording.writer == "template-v2" for i in result.items)
+    assert all(i.status == "candidate" for i in result.items)
+    assert all(
+        i.wording.writer == ("template-v4" if i.level == "L0" else "template-v2")
+        for i in result.items
+    )
 
 
 def test_mcq_writer_and_model_only_receive_neutral_scope_and_options():

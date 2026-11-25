@@ -33,8 +33,8 @@ class GenerationContext:
     project: str
     docs_version: str
     input_snapshot_hash: str
-    generator_version: int = 2
-    operator_version: int = 2
+    generator_version: int = 4
+    operator_version: int | None = None
     api_version: str | None = None
 
     def __post_init__(self) -> None:
@@ -43,7 +43,15 @@ class GenerationContext:
         if self.api_version is not None and parse_version(self.api_version) is None:
             raise ValueError("api_version must be PEP 440")
         positive(self.generator_version)
-        positive(self.operator_version)
+        if self.operator_version is not None:
+            positive(self.operator_version)
+
+    def version_for(self, level: Literal["L0", "L1"]) -> int:
+        minimum = 4 if level == "L0" else 2
+        version = self.operator_version if self.operator_version is not None else minimum
+        if version < minimum:
+            raise ValueError(f"{level} operator_version must be at least {minimum}")
+        return version
 
     @property
     def comparison_version(self) -> str | None:
@@ -63,6 +71,7 @@ class Evidence:
     sources: tuple[Source, ...]
     reason: str = ""
     tested_version: str | None = None
+    anchors: tuple[str, ...] = ()  # internal provenance of synthetic names, never writer input
 
 
 def existence(
@@ -172,8 +181,9 @@ class Builder:
         s = reference.subject
         level: Literal["L0", "L1"] = "L0" if reference.kind in ("exists", "choice") else "L1"
         ctx = self.context
+        operator_version = ctx.version_for(level)
         key = content_hash(
-            identity_key(ctx.project, matched[0].id, level, ctx.operator_version, reference)
+            identity_key(ctx.project, matched[0].id, level, operator_version, reference)
         )
         if key in self.items:
             return
@@ -192,13 +202,14 @@ class Builder:
         elif isinstance(reference, PathReference):
             # Do not rely on a writer ignoring the answer hidden in another field.
             question_subject = Subject(display_name)
-        version = getattr(reference, "tested_version", None)
+        # All L0 questions ask about this snapshot. A version phrase only on removals
+        # would disclose "no". Keep the comparison version in the reference, not the writer.
         question = Question(
             reference.kind,
             question_subject,
             question_display,
             reference.model_options() if isinstance(reference, ChoiceReference) else (),
-            version,
+            None,
         )
         item = TestItem(
             project=ctx.project,
@@ -212,7 +223,7 @@ class Builder:
             input_snapshot_hash=ctx.input_snapshot_hash,
             docs_version=ctx.docs_version,
             generator_version=ctx.generator_version,
-            operator_version=ctx.operator_version,
+            operator_version=operator_version,
         )
         self.items[key] = item
 
