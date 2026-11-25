@@ -3,9 +3,10 @@ name = "notinspec-api"
 version = "0.0.0"
 requires-python = ">=3.12"
 dependencies = [
-    "notinspec",
+    "notinspec[db,hosted]",
     "fastapi>=0.115",
     "uvicorn[standard]>=0.32",
+    "python-multipart>=0.0.20",
 ]
 
 [tool.uv.sources]

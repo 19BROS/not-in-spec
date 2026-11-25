@@ -3,7 +3,7 @@ name = "notinspec-worker"
 version = "0.0.0"
 requires-python = ">=3.12"
 dependencies = [
-    "notinspec",
+    "notinspec[db]",
     "apscheduler>=3.10,<4",
 ]
 
