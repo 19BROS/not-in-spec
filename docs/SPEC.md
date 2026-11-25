@@ -825,7 +825,7 @@ A role says who builds a part and who reviews it, not who may touch it: anyone m
 | 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) | symbol profile ([§6.6](#66-per-symbol-decisions)); L0 from `Change`; L3 operators copy, adaptation, variation, migration and leave-one-out ([§6.7](#67-tasks-and-operators)); the task-text writer; quality control ([§6.8](#68-quality-control)) except round-trip; auto-approval ([§2.5](#25-golden-set-review)); stable, superseded and candidate items ([§7](#7-ci-behaviour-and-repeated-runs)) | `tasks/` |
 | 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) | the run executor (items × models × modes), response cache, resumable runs and budgets ([§8](#8-models)); the `gold` and `none` contexts; L0, L1 and L3 evaluation and error categories ([§6.10](#610-evaluation)); round-trip solvers; diagnosis ([§6.11](#611-diagnosis)); main runs, baseline lookup, the paired test, fail conditions, verdict and the PR comment text ([§7](#7-ci-behaviour-and-repeated-runs)) | `runner/`, `verify/`, the CI gate |
 
-Older documents (e.g. `docs/input-adapters/`) number roles by an earlier table.
+`docs/input-adapters/` still numbers roles by an earlier table and describes an earlier design; role 5 rewrites it for this spec.
 
 ## 18. Open items
 
