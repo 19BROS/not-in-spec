@@ -23,7 +23,11 @@ TRIO = Path(__file__).parents[2] / "examples" / "sphinx" / "trio" / "notinspec.y
 def demo_runs(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """One real `notinspec demo --no-claims` run, plus claims files like `claims run` writes."""
     runs = tmp_path_factory.mktemp("runs")
-    assert main(["demo", "--config", str(TRIO), "--runs-dir", str(runs), "--no-claims"]) == 0
+    # This fixture represents a local CLI run, even when pytest runs inside a PR Action.
+    with pytest.MonkeyPatch.context() as environment:
+        for name in ("GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_REPOSITORY", "NOTINSPEC_PR"):
+            environment.delenv(name, raising=False)
+        assert main(["demo", "--config", str(TRIO), "--runs-dir", str(runs), "--no-claims"]) == 0
     (folder,) = runs.iterdir()
     chunk = json.loads((folder / "ingestion.json").read_bytes())["chunks"][0]
     claim = {"chunk_id": chunk["id"], "extractor": "qwen", "local_id": "c1", "text": "t",

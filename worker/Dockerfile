@@ -14,6 +14,6 @@ RUN uv sync --locked --no-dev --package notinspec-worker --extra nli --no-instal
 COPY . .
 # /models, /runs and /specs owned by app: a named volume copies this owner on first use
 RUN uv sync --locked --no-dev --package notinspec-worker --extra nli && useradd --system app \
-    && mkdir /models /runs /specs && chown app /models /runs /specs
+    && mkdir /models /runs /specs /uploads && chown app /models /runs /specs /uploads
 USER app
 CMD ["notinspec-worker"]
