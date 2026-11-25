@@ -83,22 +83,22 @@ Seven roles, one person each. What each builds is in [SPEC §17](docs/SPEC.md#17
 
 Roles say who builds and who reviews, not who may touch what. Anyone may open a PR anywhere.
 
-**How many reviews.** The ruleset on `main` requires **2 approvals** on every PR, and we never ask for more than 2. Code owners are requested, not enforced, so the two can be:
+**How many reviews.** The ruleset on `main` requires 1 approval and does not enforce code owners. We aim for **2 reviewers, never more**:
 
 - **One owner** of the area the PR changes most (the code owner GitHub requests). A PR across several areas needs one owner, not all of them; mention the others if their part matters.
 - **One more reviewer**, anyone. Best is someone whose code uses the change.
-- For small PRs (docs and typos, tests only, `experiments/`, a fix of a few lines, a revert of a broken `main`) **any two** reviewers, owner or not.
+- **1 approval is enough** when only one person is free to review, and for small PRs (docs and typos, tests only, `experiments/`, a fix of a few lines, a revert of a broken `main`).
 
 **When a reviewer must be a specific role:**
 
-- **Contracts between stages** (the files that list the lead in `CODEOWNERS`: inventory, call record, claim, finding and test-item models, the DB schema, the pipeline, CLI and config) and **this file or the SPEC**: the lead (2), and the owner of the code on the other side of the contract as the second.
+- **Contracts between stages** (the files that list the lead in `CODEOWNERS`: inventory, call record, claim, finding and test-item models, the DB schema, the pipeline, CLI and config) and **this file or the SPEC**: the lead (2), and if someone else reviews too, the owner of the code on the other side of the contract.
 - **Security boundaries** (uploads and OIDC, archive extraction, `deploy/`, `.github/`, the `mock` service, the self-hosted runner): DevOps (1).
 - **Shared files** (`pyproject.toml`, `uv.lock`): DevOps (1) or the lead (2).
 
 **Flexibility.**
 
 - An owner who has not reviewed within 2 working days may be replaced by anyone who knows the area. Say so in the PR; the owner may still comment after the merge, and a fix is a new PR.
-- When the author owns the area, both approvals come from others; one of them should know the area or use the change.
+- When the author owns the area, the reviewer should be someone who knows the area or uses the change.
 
 ### Adding a new service (new top-level directory)
 

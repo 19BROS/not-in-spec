@@ -1,5 +1,5 @@
 # Who GitHub asks to review what. Roles: docs/SPEC.md §17. Review rules: AGENTS.md "Roles and reviews".
-# Requested, not enforced: the ruleset on main needs 2 approvals of anyone.
+# Requested, not enforced: the ruleset on main needs 1 approval of anyone.
 # The last matching pattern wins, so specific paths come after general ones.
 # Paths that do not exist yet (pipeline.py, retrieval/, adapters/curl/, k7.py) are listed so their first PR goes to the right owner.
 
