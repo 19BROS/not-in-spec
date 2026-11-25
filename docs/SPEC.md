@@ -850,7 +850,7 @@ Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
 - [ ] Project limits: allowed models, budget per run / per month, upload size
 - [x] Where the DB models live in code: in `core` as `notinspec.db`, installed with the extra `notinspec[db]` (API and worker), so the CLI does not need SQLAlchemy. Logic around the DB (item reuse by identity key, baselines, superseded items) is logic too, so it stays in `core`. Pipeline code never imports `notinspec.db`: it works on dataclasses, and only `db` maps them to tables. A separate workspace package was rejected: one more package, and logic would drift into it
 - [ ] `deprecated-api` for a **deprecated** symbol or parameter (it still works, but the docs say to use the new one): may it fail the CI gate, or only warn ([§6.10](#610-evaluation))?
-- [ ] Backup of the uploaded-inputs volume (today `pg_dump` only)
+- [x] Backup of the uploaded-inputs volume: the `backup` service copies new and grown files of `uploads` (archives, raw-call journals) next to the daily `pg_dump`, never pruned ([docs/DEPLOY.md](DEPLOY.md#backups-spec-6))
 - [ ] Action when our service is down or the run times out: fail the check or skip it. Proposal in [§11.1](#111-upload-api): a warning and a "no result" comment, and the job passes
 - [ ] Export format of the golden set and results for the published dataset
 - [ ] Candidates' absolute floor: its default value, and whether it may fail the build after the MVP ([§7](#7-ci-behaviour-and-repeated-runs))

@@ -39,7 +39,7 @@ Pull requests, forks included, never run on the VM.
 |---|---|
 | `/data` | 60 GB data volume (`vdb`, label `notinspec-data`), mounted via `/etc/fstab` |
 | `/data/docker` | Docker root: images, containers, **the Postgres volume** |
-| `/data/backups` | daily database dumps (see below) |
+| `/data/backups` | daily database dumps and a copy of the `uploads` volume in `uploads/` (see below) |
 | `/opt/notinspec/.env` | production secrets (Postgres password, API keys), owned by `deploy`, mode 600. **Never in git.** |
 | `/home/deploy/actions-runner` | GitHub Actions runner, systemd service `actions.runner.19BROS-not-in-spec.notinspec-vm` |
 
@@ -125,11 +125,13 @@ sudo docker cp /tmp/demo-runs/. notinspec-worker-1:/runs/ && rm -rf /tmp/demo-ru
 
 The `backup` service (in [deploy/docker-compose.yml](../deploy/docker-compose.yml)) runs `pg_dump` on start and every 24 h after that. It writes to `/data/backups/notinspec-<UTC time>.dump` and deletes dumps older than 14 days.
 
+In the same pass it copies the `uploads` volume to `/data/backups/uploads/`: the uploaded input archives (`<sha256>.tar.gz`, which the database points to) and the JSONL journal of raw LLM calls (`calls/`, the fallback copy when a database write fails). Only new and grown files are copied and nothing is pruned, because archives never change and journals are append-only. So this folder grows with every upload (at most 25 MiB each); watch `df -h /data`.
+
 **Check it works:**
 
 ```sh
-ls -lh /data/backups
-sudo docker logs notinspec-backup-1     # expect "backup ok: ..."
+ls -lh /data/backups /data/backups/uploads
+sudo docker logs notinspec-backup-1     # expect "backup ok: ..." and "uploads backup ok"
 ```
 
 **Off-machine copy (manual for now).** The dumps are on the same VM as the database. If the VM is lost, they are lost too. Until an automatic off-site target is chosen, pull the newest dump to your PC regularly, **at least weekly once real runs start**:
@@ -144,6 +146,12 @@ scp "notinspec:$f" .
 ```sh
 sudo docker cp /data/backups/<file>.dump notinspec-postgres-1:/tmp/restore.dump
 sudo docker exec notinspec-postgres-1 pg_restore -U notinspec -d notinspec --clean --if-exists /tmp/restore.dump
+```
+
+Restore the uploads too (adds the backed-up files to the volume, overwrites none that are newer):
+
+```sh
+sudo docker run --rm -v notinspec_uploads:/uploads -v /data/backups/uploads:/src:ro postgres:17 cp -a -u /src/. /uploads/
 ```
 
 Test a restore once before real data exists. A backup that was never restored is a guess.

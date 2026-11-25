@@ -108,6 +108,7 @@ services:
       PGPASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ${BACKUP_DIR:-/data/backups}:/backups
+      - uploads:/uploads:ro
     entrypoint: ["sh", "-c"]
     # shortcut: dumps stay on the VM's data disk, off-machine copy is a manual pull (docs/DEPLOY.md)
     command:
@@ -120,6 +121,12 @@ services:
             find /backups -name 'notinspec-*.dump' -mtime +14 -delete
           else
             rm -f "$$f.tmp"; echo "BACKUP FAILED"
+          fi
+          # archives are named by SHA-256 and journals only grow: copy new and grown files, never prune
+          if mkdir -p /backups/uploads && cp -a -u /uploads/. /backups/uploads/; then
+            echo "uploads backup ok"
+          else
+            echo "UPLOADS BACKUP FAILED"
           fi
           sleep 86400
         done
