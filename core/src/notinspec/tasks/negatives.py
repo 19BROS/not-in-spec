@@ -1,9 +1,12 @@
 """Conservative near-miss names for the supplied documentation snapshot, not runtime claims."""
 
+import html
+import json
 import keyword
 import re
+import string
 import unicodedata
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 
 from notinspec.adapters.canonical import canonical_json
 from notinspec.chunking import Chunk
@@ -11,7 +14,24 @@ from notinspec.inventory import Conflict, Inventory
 
 
 def normalized(text: str) -> str:
+    # Work on actual strings, not JSON syntax: JSON escapes are decoded by the index.
+    text = html.unescape(text)
+    text = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m[1], 16)), text)
+    text = re.sub(r"\\([" + re.escape(string.punctuation) + r"])", r"\1", text)
+    # Soft hyphens and zero-width formatting characters can split a rendered identifier.
+    text = "".join(c for c in text if unicodedata.category(c) != "Cf")
     return unicodedata.normalize("NFKC", text).casefold()
+
+
+def _strings(value: object) -> Iterator[str]:
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for child in value.values():
+            yield from _strings(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _strings(child)
 
 
 class AbsenceIndex:
@@ -25,7 +45,8 @@ class AbsenceIndex:
     def __init__(
         self, inventory: Inventory, chunks: Sequence[Chunk], conflicts: Sequence[Conflict]
     ) -> None:
-        self.corpus = normalized(canonical_json((inventory, chunks, conflicts)).decode())
+        values = json.loads(canonical_json((inventory, chunks, conflicts)))
+        self.corpus = "\n".join(normalized(text) for text in sorted(set(_strings(values))))
         self._cache: dict[str, bool] = {}
         sections: dict[str, set[int]] = {}
         for chunk in chunks:
@@ -43,32 +64,31 @@ class AbsenceIndex:
 
 
 def near_misses(name: str) -> tuple[str, ...]:
-    """Bounded lexical edits: last-word number, compound order, common verb alternatives.
+    """Bounded edits: unambiguous plural proposals, compound order, verb alternatives.
 
     These are proposals, never facts. Keep the original snake/camel/Pascal naming style;
     never create random strings, casing-only changes, private/dunder names or keywords.
     """
-    if not re.fullmatch(r"[A-Za-z][A-Za-z_]{2,}", name):
+    if len(name) < 3:
         return ()
-    if re.search(r"[A-Z]{2,}", name):
-        return ()  # do not silently change acronym spelling while rendering an edit
+    if "_" in name:
+        if not re.fullmatch(r"[a-z]+(?:_[a-z]+)+", name):
+            return ()  # mixed snake styles are not lowercased into a different style
+    elif not re.fullmatch(r"(?:[a-z]+|[A-Z][a-z]+)(?:[A-Z][a-z]+)*", name):
+        return ()  # private names, acronyms, digits and unsupported spellings
     words = re.sub(r"([a-z])([A-Z])", r"\1_\2", name).lower().split("_")
-    if any(not word for word in words):
-        return ()
     last = words[-1]
-    if last.endswith("ies") and len(last) > 3:
-        inflected = last[:-3] + "y"
-    elif last.endswith(("sses", "ches", "shes", "xes", "zes")):
-        inflected = last[:-2]
-    elif len(last) > 1 and last.endswith("s") and not last.endswith(("ss", "us")):
-        inflected = last[:-1]
-    elif len(last) > 1 and last.endswith("y") and last[-2] not in "aeiou":
-        inflected = last[:-1] + "ies"
-    elif last.endswith(("s", "sh", "ch", "x", "z")):
-        inflected = last + "es"
-    else:
-        inflected = last + "s"
-    edits = [words[:-1] + [inflected]]
+    edits: list[list[str]] = []
+    # No singularization: a shortened prefix is vetoed by its own documented anchor.
+    # Nor guess whether an s-ending word is plural (has, alias, analysis, series, ...).
+    if len(last) >= 3 and not last.endswith(("s", "z")):
+        if last.endswith("y") and last[-2] not in "aeiou":
+            inflected = last[:-1] + "ies"
+        elif last.endswith(("sh", "ch", "x")):
+            inflected = last + "es"
+        else:
+            inflected = last + "s"
+        edits.append(words[:-1] + [inflected])
     if len(words) > 1:
         edits.append([*words[:-2], words[-1], words[-2]])
     alternatives = {

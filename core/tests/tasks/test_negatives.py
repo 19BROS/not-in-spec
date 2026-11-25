@@ -21,11 +21,12 @@ from notinspec.tasks.negatives import AbsenceIndex, near_misses
 @pytest.fixture
 def api():
     chunks = chunk_document(
-        Document("api.md", "# API\nfetch_pool(pool_key, read_timeout)"), project="pkg"
+        Document("api.md", "# API\nfetch_pool(pool_key, read_timeout, max_size)"), project="pkg"
     )
     sources = (Source("signature", chunks[0].section_id),)
     params = tuple(
-        Parameter(n, "keyword_only", True, sources) for n in ("pool_key", "read_timeout")
+        Parameter(n, "keyword_only", True, sources)
+        for n in ("pool_key", "read_timeout", "max_size")
     )
     symbol = Symbol("pkg.fetch_pool", "function", sources, (Signature(params, sources),))
     return Inventory((symbol,)), chunks, GenerationContext("pkg", "latest", "snapshot")
@@ -40,7 +41,18 @@ def negative_names(result):
 
 
 @pytest.mark.parametrize(
-    "name", ["_private", "__getattr__", "x", "CONSTANT", "x2", "has__gap", "réseau"]
+    "name",
+    [
+        "_private",
+        "__getattr__",
+        "x",
+        "CONSTANT",
+        "x2",
+        "has__gap",
+        "réseau",
+        "set_X",
+        "Pool_Manager",
+    ],
 )
 def test_no_arbitrary_private_or_ambiguous_names(name):
     assert near_misses(name) == ()
@@ -50,13 +62,29 @@ def test_lexical_proposals_preserve_style_and_are_bounded():
     assert near_misses("get_pool") == ("fetch_pool", "get_pools", "pool_get")
     assert near_misses("getPool") == ("fetchPool", "getPools", "poolGet")
     assert near_misses("GetPool") == ("FetchPool", "GetPools", "PoolGet")
-    assert near_misses("retries") == ("retry",)
     assert near_misses("proxy") == ("proxies",)
-    assert near_misses("status") == ("statuses",)
-    assert near_misses("addresses") == ("address",)
     assert near_misses("HTTPPool") == ()
     assert all(n.isidentifier() for n in near_misses("point_y"))
     assert all(n.isidentifier() for n in near_misses("point_s"))
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "hosts",
+        "headers",
+        "addresses",
+        "retries",
+        "kwargs",
+        "has",
+        "alias",
+        "analysis",
+        "series",
+        "status",
+    ],
+)
+def test_ambiguous_s_endings_are_not_singularized_or_pluralized(name):
+    assert near_misses(name) == ()
 
 
 @pytest.mark.parametrize(
@@ -70,14 +98,30 @@ def test_lexical_proposals_preserve_style_and_are_bounded():
         "ｐｏｏｌ＿ｋｅｙｓ",
         "```python\ncall(pool_keys=1)\n```",
         "| name |\n| --- |\n| pool_keys |",
+        r"pool\_keys",
+        "pool&#95;keys",
+        "pool&lowbar;keys",
+        "pool_\u00adkeys",
+        "pool_\u200bkeys",
+        "pool_\u200dkeys",
+        r"pool_\u200bkeys",
+        r"pool\u005fkeys",
+        "pool\\_&#x200b;keys",
     ],
 )
 def test_mention_anywhere_in_docs_vetoes_short_name(api, mention):
-    inventory, chunks, _ = api
+    inventory, chunks, ctx = api
     extra = chunk_document(Document("guide.md", f"# Guide\n{mention}"), project="pkg")
     index = AbsenceIndex(inventory, chunks + extra, ())
     assert not index.absent("pool_keys")
     assert not index.absent("pkg.pool_keys")
+    result = generate_l0(inventory, context=ctx, chunks=chunks + extra)
+    assert "pool_keys" not in negative_names(result)
+    assert all(
+        "pool_keys" not in {o.text for o in i.reference.options}
+        for i in result.items
+        if i.question_kind == "choice"
+    )
 
 
 @pytest.mark.parametrize("kind", ["symbol", "parameter", "change", "replacement", "conflict"])
@@ -138,6 +182,10 @@ def test_missing_split_part_disables_absence_evidence(api):
     result = generate_l0(inventory, context=ctx, chunks=partial)
     assert result.items == ()
     assert any("need both classes" in s.reason for s in result.skipped)
+    assert (
+        sum(s.reason == "near misses disabled: incomplete chunk set" for s in result.skipped) == 1
+    )
+    assert not any("no safe near-miss" in s.reason for s in result.skipped)
 
 
 def test_balanced_deterministic_roundtrip_and_label_reuse(api):
@@ -163,7 +211,7 @@ def test_balanced_deterministic_roundtrip_and_label_reuse(api):
             writer=NoWriter(),
         )
         assert result == original
-    assert all(i.operator_version == 3 and i.generator_version == 3 for i in original.items)
+    assert all(i.operator_version == 4 and i.generator_version == 4 for i in original.items)
     l1 = generate_l1(inventory, context=ctx, chunks=chunks)
     old_l1 = generate_l1(
         inventory, context=replace(ctx, generator_version=2, operator_version=2), chunks=chunks

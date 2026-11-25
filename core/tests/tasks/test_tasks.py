@@ -205,8 +205,8 @@ def test_mcq_prefers_three_proven_removals_for_the_same_scope():
         assert wrong == {"old1", "old2", "old3"}
         assert len({o.id for o in ref.options}) == 4
     fallback = run(Inventory((symbol(),), changes[:2]))
-    ref = next(i.reference for i in fallback.items if i.question_kind == "choice")
-    assert {o.text for o in ref.options if o.id != ref.correct_id} == {"old1", "old2", "hosts"}
+    # Its own lexical edit cannot be used to fill the third wrong option.
+    assert not any(i.question_kind == "choice" for i in fallback.items)
 
 
 def test_symbol_mcq_and_skipped_conflicting_distractors():
@@ -217,8 +217,7 @@ def test_symbol_mcq_and_skipped_conflicting_distractors():
     refs = [
         i.reference for i in run(inv, conflicts=(conflict,)).items if i.question_kind == "choice"
     ]
-    assert refs
-    assert all("pkg.old0" not in {o.text for o in ref.options} for ref in refs)
+    assert not refs  # two unconflicted removals; the correct symbol's edit cannot fill the gap
 
 
 def test_l1_defaults_required_and_variadics():
@@ -278,7 +277,7 @@ def test_identity_ignores_wording_generator_and_snapshot_but_not_answers_or_oper
             docs_version="2.0.0",
         ).id
     )
-    assert original.id != replace(original, operator_version=4).id
+    assert original.id != replace(original, operator_version=5).id
     assert original.id != replace(original, reference=replace(original.reference, exists=False)).id
     assert (
         original.id
@@ -391,7 +390,7 @@ def test_existing_sphinx_ingestion_to_tasks_and_local_entrypoint(tmp_path):
     assert {i.id for i in load(out).items} == {i.id for i in result.items}
     assert all(i.status == "candidate" for i in result.items)
     assert all(
-        i.wording.writer == ("template-v3" if i.level == "L0" else "template-v2")
+        i.wording.writer == ("template-v4" if i.level == "L0" else "template-v2")
         for i in result.items
     )
 

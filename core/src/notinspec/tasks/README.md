@@ -48,14 +48,21 @@ snapshot, not a history of signatures. Changing a version cannot reconstruct an 
   yes/no counts in `skipped`; a positive-only set would give an always-yes baseline 100%.
   Proven removals are preferred to near misses when selecting negatives.
 - Near misses use at most three deterministic lexical edits per documented name: last-word
-  singular/plural, swap the last two compound words, or initial `get`/`fetch`, `set`/`update`,
+  plural proposal, swap the last two compound words, or initial `get`/`fetch`, `set`/`update`,
   `create`/`make`, `remove`/`delete`. Private names, acronyms, numbers and unsupported spellings
-  are skipped. These are proposals requiring review, not assertions about runtime behaviour.
+  are skipped. Singularization is omitted because a shortened prefix is vetoed by its own
+  anchor. Short words and ambiguous `s`/`z` endings are not inflected. Mixed styles such as
+  `set_X` and `Pool_Manager` are skipped, not converted to lowercase snake case.
+  These are proposals requiring review, not assertions about runtime behaviour.
 - `negatives.AbsenceIndex` checks the short name against the entire inventory, changes,
-  replacements, conflicts and every chunk including structured metadata. NFKC/case-folded
+  replacements, conflicts and every chunk including structured metadata. It indexes decoded
+  string values rather than JSON syntax, unescapes HTML entities, Markdown punctuation and
+  literal Unicode escapes, and removes invisible format characters before NFKC/case folding.
+  Thus `pool\_keys`, `pool&#95;keys` and zero-width/soft-hyphen splits veto `pool_keys` too. Its
   substring matching intentionally rejects even mentions within another name or namespace.
   Pass **all snapshot chunks**, not gold/retrieved context. Missing split parts disable near
-  misses; entirely omitted documents cannot be detected. The CLI already supplies all chunks.
+  misses with one explicit diagnostic; entirely omitted documents cannot be detected.
+  The CLI already supplies all chunks.
   Synthetic parameter negatives require one reliable signature and no `**kwargs`.
   Sources point to the documented anchor; the snapshot hash identifies the checked corpus.
   Absence is rechecked before frozen-item reuse. **Changes anywhere in the snapshot require
@@ -68,6 +75,9 @@ snapshot, not a history of signatures. Changing a version cannot reconstruct an 
 - MCQ freezes one confirmed positive and three verified negatives, preferring confirmed
   removals in lexical order. Synthetic choices use a deterministic hash of positive + alternative,
   within the same parent namespace for symbols and the same symbol for parameters.
+  The generator tracks all origins of an edit and excludes every edit derived from the
+  correct option itself. A lone anchor cannot manufacture its own four-option MCQ.
+  Insufficient-option diagnostics are aggregated per namespace/symbol.
   Insufficient evidence produces a `SkippedTask`. Options have content-derived IDs;
   the correct ID survives reordering. Semantic correctness comes from generation evidence;
   the dataclass additionally validates four unique options and exactly one correct ID.
@@ -111,10 +121,12 @@ Use `reference_json()` for canonical standalone references.
 its original generation metadata. New-run snapshot metadata belongs to the run. Changed
 references/operator versions create new IDs; old items remain untouched.
 
-JSON schema remains **2**. The generator version is now **3**, with L0 operator version **3**
-and `template-v3`; L1 stays at operator version **2** and `template-v2`, preserving L1 IDs.
+JSON schema remains **2**. The generator version is now **4**, with L0 operator version **4**
+and `template-v4`; L1 stays at operator version **2** and `template-v2`, preserving L1 IDs.
 `GenerationContext.operator_version=None` selects these defaults per level; an explicit value
-is an override. Old L0 items are not silently reused under the new rules. Schema 1 exports
+is an override, but versions below the implemented minimum (L0: 4, L1: 2) are rejected.
+An override of 2 can reproduce L1 v2 but cannot label the new L0 logic v2 or reuse old L0 items.
+Old L0 items are not silently reused under the new rules. Schema 1 exports
 are rejected rather than silently changing their identity.
 Keep old exports unchanged and regenerate into a new file. Within schema 2, changing only
 the docs display label preserves current-fact IDs and allows `existing=` / `--reuse` to keep
@@ -122,11 +134,14 @@ their frozen wording and original metadata.
 
 ## Text and remaining integration
 
-`TemplateWriter` is explicitly a local template implementation (`template-v3` for L0, `template-v2` for L1).
+`TemplateWriter` is explicitly a local template implementation (`template-v4` for L0, `template-v2` for L1).
 It creates two deterministic wording variants. `TaskTextWriter.write(Question) -> TaskText`
 is the replacement interface for a recorded/fake or eventual LLM writer. Never send a whole
 `TestItem` to the model under test: use `model_prompt()`. For MCQ, the writer receives a neutral
 scope and all options; internal IDs and the correct option ID are withheld.
+All L0 questions use the same snapshot framing, including positives, removals and near misses.
+No version phrase or version in writer input reveals the answer class. The comparison version
+stays internal in Change-based references, so snapshot-fact identities remain label-independent.
 
 MCQ `model_prompt()` returns `answer_format="choice-label"` with `{label, text}` options
 labelled **A-D**. Internal content-derived IDs stay in the reference. The runner can provide
@@ -153,7 +168,7 @@ incomplete chunks, determinism and invalidation before reuse. To inspect real ca
 uv run python -m notinspec.tasks core/examples/sphinx/urllib3/xml --project urllib3 --docs-version latest --out urllib3-candidates.json
 ```
 
-With the committed urllib3 snapshot, generator 3 produces **422 yes + 422 no**, **301 MCQs**
+With the committed urllib3 snapshot, generator 4 produces **417 yes + 417 no**, **281 MCQs**
 and **511 L1 candidates**. This is a generation check, not a model evaluation or approval.
 
 Class balance prevents an always-yes score of 100%, but does not prove that lexical edits

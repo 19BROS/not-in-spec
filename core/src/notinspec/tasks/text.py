@@ -6,11 +6,7 @@ from notinspec.tasks.models import Question, TaskText
 class TemplateWriter:
     def write(self, question: Question) -> TaskText:
         s = question.subject
-        at = (
-            f"in version {question.tested_version}"
-            if question.tested_version is not None
-            else "according to the supplied documentation"
-        )
+        at = "according to the supplied documentation"
         if question.kind == "exists":
             target = (
                 f"parameter `{s.parameter}` of `{s.symbol}`" if s.parameter else f"`{s.symbol}`"
@@ -30,5 +26,5 @@ class TemplateWriter:
         return TaskText(
             text,
             (f"Using the documentation: {text}", f"For this API, {text}"),
-            writer="template-v3" if question.kind in ("exists", "choice") else "template-v2",
+            writer="template-v4" if question.kind in ("exists", "choice") else "template-v2",
         )

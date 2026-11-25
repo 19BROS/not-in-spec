@@ -1,6 +1,7 @@
 """L0: documented API recognition with removals and snapshot-checked near misses."""
 
 from collections.abc import Iterable, Sequence
+from dataclasses import replace
 
 from notinspec.adapters.canonical import content_hash
 from notinspec.chunking import Chunk
@@ -29,8 +30,11 @@ def generate_l0(
     existing: Iterable[TestItem] = (),
     conflicts: Sequence[Conflict] = (),
 ) -> GenerationResult:
+    context.version_for("L0")  # fail even for empty inputs, before reuse or writer calls
     build = Builder(context, chunks, writer, existing, conflicts)
     absent = AbsenceIndex(inventory, chunks, conflicts)
+    if not absent.complete:
+        build.skip(context.project, "exists", "near misses disabled: incomplete chunk set")
     candidates: list[Candidate] = []
     symbols = {s.path: s for s in inventory.symbols}
     names = set(symbols) | {c.symbol for c in inventory.changes if c.parameter is None}
@@ -103,6 +107,9 @@ def _near_misses(
     absent: AbsenceIndex,
     candidates: list[Candidate],
 ) -> None:
+    if not absent.complete:
+        return
+    skipped: dict[str, int] = {}
     for name, proof in sorted(tuple(facts.items())):
         if proof.exists is not True:
             continue
@@ -113,17 +120,28 @@ def _near_misses(
         accepted = 0
         for variant in near_misses(short):
             candidate = f"{prefix}.{variant}" if prefix else variant
-            if candidate in facts or not absent.absent(candidate):
+            if not absent.absent(candidate):
+                continue
+            if candidate in facts:
+                previous = facts[candidate]
+                if previous.anchors:
+                    facts[candidate] = replace(
+                        previous, anchors=tuple(sorted(set((*previous.anchors, name))))
+                    )
+                    accepted += 1
                 continue
             subject = Subject(symbol or candidate, candidate if symbol else None)
             if build.conflicted(subject.symbol, proof.sources):
                 continue
-            evidence = Evidence(False, proof.sources)
+            evidence = Evidence(False, proof.sources, anchors=(name,))
             facts[candidate] = evidence
             _yes_no(build, subject, evidence, candidates)
             accepted += 1
         if not accepted:
-            build.skip(anchor.symbol, "exists", f"{name}: no safe near-miss name")
+            scope = symbol or prefix or build.context.project
+            skipped[scope] = skipped.get(scope, 0) + 1
+    for scope, count in sorted(skipped.items()):
+        build.skip(scope, "exists", f"no safe near-miss name for {count} anchors")
 
 
 def _yes_no(
@@ -174,20 +192,19 @@ def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> 
         key=lambda name: (facts[name].tested_version is None, name),
     )
     positives = sorted(name for name, fact in facts.items() if fact.exists is True)
-    if not positives or len(negatives) < 3:
-        build.skip(
-            symbol or build.context.project,
-            "choice",
-            "need one confirmed name and three verified negative names",
-        )
+    if not positives:
         return
+    skipped_scopes: set[str] = set()
     for correct in positives:
         eligible = [
             name
             for name in negatives
-            if facts[name].tested_version is not None
-            or symbol is not None
-            or name.rpartition(".")[0] == correct.rpartition(".")[0]
+            if correct not in facts[name].anchors
+            and (
+                facts[name].tested_version is not None
+                or symbol is not None
+                or name.rpartition(".")[0] == correct.rpartition(".")[0]
+            )
         ]
         eligible.sort(
             key=lambda name: (
@@ -196,7 +213,7 @@ def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> 
             )
         )
         if len(eligible) < 3:
-            build.skip(correct, "choice", "need three verified negatives in the same scope")
+            skipped_scopes.add(symbol or correct.rpartition(".")[0] or build.context.project)
             continue
         names = [correct, *eligible[:3]]
         options = tuple(Option(content_hash({"name": name}), name) for name in names)
@@ -212,4 +229,8 @@ def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> 
                 else None,
             ),
             sources,
+        )
+    for scope in sorted(skipped_scopes):
+        build.skip(
+            scope, "choice", "need three verified negatives from other anchors in the same scope"
         )
