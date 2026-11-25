@@ -432,10 +432,21 @@ Decisions are made per symbol, never for the whole documentation:
 | Has a `Signature` with source spec or signature? | L0 · L1 deterministic; adaptation, variation, composition automatic | L0 · L1 only from call records; variation and composition only after review |
 | Has a verified `Example` with a `CallRecord`? | L3: copy, adaptation + leave-one-out | with a signature: L3 from the signature only. With nothing: L3 unavailable → `Finding` |
 | Has a `Claim`? | L2 questions, plus "not in the documentation" questions via perturbation | – |
-| Has a `Change`? | L0 distractors only from names **removed** in or before the version asked about (a deprecated name still exists, so it would be a second correct answer); L3 migration | – |
+| Has a `Change`? | Change-based L0 distractors only from names **removed** in or before the version asked about (a deprecated name still exists, so it would be a second correct answer); L3 migration | L0 can use snapshot-checked near misses below |
 | Is it an OpenAPI operation? | **L4 via Prism mock** | L3 by call-record comparison only |
 
 The result is the **symbol profile**, from which test items and references are created.
+
+**L0 near-miss negatives (documented API, not runtime behaviour).** A missing inventory entry alone is not a negative. Alongside effective removals, the generator may derive candidate names from a reliable documented symbol or parameter:
+
+- Deterministic, bounded lexical edits: change the last word between singular and plural, swap the last two words of a compound name, or replace an initial verb from fixed pairs (`get`/`fetch`, `set`/`update`, `create`/`make`, `remove`/`delete`). Preserve snake/camel/Pascal style. Skip private/dunder names, acronyms, numeric names and unsupported spellings; do not ask an LLM for names or use rejected claims as negatives.
+- Veto a candidate if its short name occurs **anywhere** in the supplied snapshot: the full inventory (all signatures, even weak ones, changes and replacements), any chunk's text or structured metadata, or inventory conflicts. Matching uses Unicode NFKC + case folding and conservative substring matching, so mentions in prose, examples, links, another namespace or a longer identifier also veto it. This can skip usable negatives; false absence is worse than a smaller set.
+- Pass **all chunks** of the input snapshot, never just a symbol's section or retrieval results. Detectably incomplete split sections disable near misses. A caller omitting an entire document cannot be detected by the generator and violates this input contract. The CLI supplies the whole Sphinx snapshot.
+- Require reliable, non-conflicting source chunks for the documented anchor. Synthetic parameter negatives require one reliable signature with reliable parameters and no `**kwargs`; skip ambiguous overloads. The negative retains its anchor's sources and the input snapshot hash. Recheck absence on every generation **before** reusing a frozen item: a newly documented name invalidates the old negative and any MCQ using it, even if its source section did not change. Incremental callers must therefore revalidate these items on changes anywhere in the snapshot.
+- A near-miss reference has no semantic tested version. It asks about the **documented API in this snapshot**, not whether a name could work at runtime. Wording and writer payloads must not reveal whether the candidate was synthesized. Effective removals still use their semantic API version; deprecated names are never negatives merely because of deprecation.
+- Emit equal yes/no counts, chosen deterministically after source validation, or skip yes/no if either class is unavailable. Prefer proven removals when selecting negatives. MCQ needs one confirmed positive and three verified negatives; synthetic symbol alternatives stay within the positive's parent namespace, parameter alternatives within the same symbol. Select synthetic options by a hash of the positive and alternative to avoid repeating the same three options everywhere; the model sees shuffled A–D labels, not internal IDs.
+
+These are unapproved candidates under §2.5. Lexical plausibility and resistance to superficial name-pattern shortcuts still need human review and the validation track; balanced classes alone do not establish benchmark quality.
 
 ### 6.7 Tasks and operators
 

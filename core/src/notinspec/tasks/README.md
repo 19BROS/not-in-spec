@@ -39,22 +39,36 @@ snapshot, not a history of signatures. Changing a version cannot reconstruct an 
 
 ## Conservative generation rules
 
-- L0 yes/no tests symbols and named parameters. Positive evidence needs a reliable signature;
-  negative evidence needs an explicit effective `removed` change. Missing entries alone never
-  imply absence. Versions use the inventory's PEP 440 parser (`2.0 == 2.0.0`, `2.10 > 2.9`).
+- L0 tests the **documented API**. Positive evidence needs a reliable signature. Negatives
+  use an effective `removed` change or a near-miss name checked against the whole snapshot
+  (SPEC §6.6). A missing inventory entry alone never implies absence. Versioned changes use
+  PEP 440 (`2.0 == 2.0.0`, `2.10 > 2.9`).
 - Yes/no is emitted only when **both classes have valid source evidence**, then deterministically
   balanced to equal counts before invoking the writer. Otherwise it is disabled, with eligible
   yes/no counts in `skipped`; a positive-only set would give an always-yes baseline 100%.
-  Invented near-miss negatives are not implemented. The committed real urllib3 snapshot has
-  no confirmed removals, so it intentionally produces **0 L0 and 511 L1 candidates**.
+  Proven removals are preferred to near misses when selecting negatives.
+- Near misses use at most three deterministic lexical edits per documented name: last-word
+  singular/plural, swap the last two compound words, or initial `get`/`fetch`, `set`/`update`,
+  `create`/`make`, `remove`/`delete`. Private names, acronyms, numbers and unsupported spellings
+  are skipped. These are proposals requiring review, not assertions about runtime behaviour.
+- `negatives.AbsenceIndex` checks the short name against the entire inventory, changes,
+  replacements, conflicts and every chunk including structured metadata. NFKC/case-folded
+  substring matching intentionally rejects even mentions within another name or namespace.
+  Pass **all snapshot chunks**, not gold/retrieved context. Missing split parts disable near
+  misses; entirely omitted documents cannot be detected. The CLI already supplies all chunks.
+  Synthetic parameter negatives require one reliable signature and no `**kwargs`.
+  Sources point to the documented anchor; the snapshot hash identifies the checked corpus.
+  Absence is rechecked before frozen-item reuse. **Changes anywhere in the snapshot require
+  revalidating these negatives and MCQs**, even when their anchor chunk did not change.
 - The latest applicable change determines removal status, including re-additions. `deprecated`
   still exists; `removal_planned` is not removal. Inconsistent snapshots, invalid versions and
   changes backed only by changelog/example sources are skipped pending review. Conflicts are
   excluded conservatively by symbol or shared source section. Pass ingestion's conflicts;
   a merged inventory alone does not retain them.
-- MCQ freezes one confirmed positive and the first three distinct confirmed removed names
-  in lexical order, within the same symbol for parameters. No invented names or rejected
-  claims. Insufficient evidence produces a `SkippedTask`. Options have content-derived IDs;
+- MCQ freezes one confirmed positive and three verified negatives, preferring confirmed
+  removals in lexical order. Synthetic choices use a deterministic hash of positive + alternative,
+  within the same parent namespace for symbols and the same symbol for parameters.
+  Insufficient evidence produces a `SkippedTask`. Options have content-derived IDs;
   the correct ID survives reordering. Semantic correctness comes from generation evidence;
   the dataclass additionally validates four unique options and exactly one correct ID.
 - L1 requires exactly one reliable signature. Overloads are skipped rather than displaying a
@@ -87,8 +101,8 @@ snapshot hash, docs display label and generator version are not in the identity.
 Reference serialization uses `asdict` followed by the existing `canonical_json`:
 an explicit `kind` tag, subject (symbol/parameter), and answer; MCQ also includes its frozen
 options. The subject prevents collisions between two equal answers for different symbols in
-the same chunk. Only removal-based existence references and MCQs carry a semantic
-`tested_version`; current positive existence has `None`, and L1 has no version field.
+the same chunk. Only removal-based existence references and MCQs using removals carry a semantic
+`tested_version`; current positive existence and near misses have `None`, and L1 has no version field.
 Equivalent PEP 440 spellings normalize identically. Numeric/default expressions
 are preserved as strings, matching the inventory contract; no unit conversions are invented.
 Use `reference_json()` for canonical standalone references.
@@ -97,15 +111,18 @@ Use `reference_json()` for canonical standalone references.
 its original generation metadata. New-run snapshot metadata belongs to the run. Changed
 references/operator versions create new IDs; old items remain untouched.
 
-The corrected contract uses JSON schema **2**, generator/operator version **2** and
-`template-v2`. Schema 1 exports are rejected rather than silently changing their identity.
+JSON schema remains **2**. The generator version is now **3**, with L0 operator version **3**
+and `template-v3`; L1 stays at operator version **2** and `template-v2`, preserving L1 IDs.
+`GenerationContext.operator_version=None` selects these defaults per level; an explicit value
+is an override. Old L0 items are not silently reused under the new rules. Schema 1 exports
+are rejected rather than silently changing their identity.
 Keep old exports unchanged and regenerate into a new file. Within schema 2, changing only
 the docs display label preserves current-fact IDs and allows `existing=` / `--reuse` to keep
 their frozen wording and original metadata.
 
 ## Text and remaining integration
 
-`TemplateWriter` is explicitly a local template implementation (`writer="template-v2"`).
+`TemplateWriter` is explicitly a local template implementation (`template-v3` for L0, `template-v2` for L1).
 It creates two deterministic wording variants. `TaskTextWriter.write(Question) -> TaskText`
 is the replacement interface for a recorded/fake or eventual LLM writer. Never send a whole
 `TestItem` to the model under test: use `model_prompt()`. For MCQ, the writer receives a neutral
@@ -129,6 +146,18 @@ The example illustrates the mapping; the full runner/evaluator is separate work.
 must keep option bodies in the structured options, not bake labels into frozen question text,
 so presentation reordering remains safe. Regression tests in `core/tests/tasks/test_review_regressions.py`
 cover the real urllib3 inventory, label-only version changes, writer leakage and MCQ reordering.
+`core/tests/tasks/test_negatives.py` covers global absence vetoes, ambiguous signatures,
+incomplete chunks, determinism and invalidation before reuse. To inspect real candidates:
+
+```sh
+uv run python -m notinspec.tasks core/examples/sphinx/urllib3/xml --project urllib3 --docs-version latest --out urllib3-candidates.json
+```
+
+With the committed urllib3 snapshot, generator 3 produces **422 yes + 422 no**, **301 MCQs**
+and **511 L1 candidates**. This is a generation check, not a model evaluation or approval.
+
+Class balance prevents an always-yes score of 100%, but does not prove that lexical edits
+make a strong benchmark. Human review must still assess plausibility and name-pattern shortcuts.
 
 The generic §6.8 statement that reference values appear in task text cannot literally apply
 to recall answers (it would disclose the answer). Templates name the question's subject and

@@ -1,4 +1,4 @@
-"""L0: recognition from the current inventory and explicit versioned removal evidence."""
+"""L0: documented API recognition with removals and snapshot-checked near misses."""
 
 from collections.abc import Iterable, Sequence
 
@@ -15,6 +15,7 @@ from notinspec.tasks.models import (
     TaskTextWriter,
     TestItem,
 )
+from notinspec.tasks.negatives import AbsenceIndex, near_misses
 
 type Candidate = tuple[ExistsReference, tuple[Source, ...]]
 
@@ -29,6 +30,7 @@ def generate_l0(
     conflicts: Sequence[Conflict] = (),
 ) -> GenerationResult:
     build = Builder(context, chunks, writer, existing, conflicts)
+    absent = AbsenceIndex(inventory, chunks, conflicts)
     candidates: list[Candidate] = []
     symbols = {s.path: s for s in inventory.symbols}
     names = set(symbols) | {c.symbol for c in inventory.changes if c.parameter is None}
@@ -77,11 +79,51 @@ def generate_l0(
                 evidence = Evidence(None, (), "conflicting inventory evidence")
             facts[param] = evidence
             _yes_no(build, Subject(name, param), evidence, candidates)
+        # **kwargs and overloads can hide accepted names. Only a closed, reliable
+        # signature may anchor synthetic parameter negatives.
+        if (
+            len(symbol.signatures) == 1
+            and len(signatures) == 1
+            and all(trusted(p.sources) for p in signatures[0].parameters)
+            and not any(p.kind == "var_keyword" for p in signatures[0].parameters)
+        ):
+            _near_misses(build, name, facts, absent, candidates)
         _choices(build, name, facts)
-    # One question per known positive, with three proven removed symbols.
+    # Symbol alternatives stay within the same parent namespace for near misses.
+    _near_misses(build, None, symbol_facts, absent, candidates)
     _choices(build, None, symbol_facts)
     _balanced_yes_no(build, candidates)
     return build.result()
+
+
+def _near_misses(
+    build: Builder,
+    symbol: str | None,
+    facts: dict[str, Evidence],
+    absent: AbsenceIndex,
+    candidates: list[Candidate],
+) -> None:
+    for name, proof in sorted(tuple(facts.items())):
+        if proof.exists is not True:
+            continue
+        anchor = Subject(symbol or name, name if symbol else None)
+        if not build.source_chunks(ExistsReference(anchor, True), proof.sources):
+            continue
+        prefix, _, short = name.rpartition(".")
+        accepted = 0
+        for variant in near_misses(short):
+            candidate = f"{prefix}.{variant}" if prefix else variant
+            if candidate in facts or not absent.absent(candidate):
+                continue
+            subject = Subject(symbol or candidate, candidate if symbol else None)
+            if build.conflicted(subject.symbol, proof.sources):
+                continue
+            evidence = Evidence(False, proof.sources)
+            facts[candidate] = evidence
+            _yes_no(build, subject, evidence, candidates)
+            accepted += 1
+        if not accepted:
+            build.skip(anchor.symbol, "exists", f"{name}: no safe near-miss name")
 
 
 def _yes_no(
@@ -96,13 +138,16 @@ def _yes_no(
 
 
 def _balanced_yes_no(build: Builder, candidates: list[Candidate]) -> None:
-    """Do not emit a trivially solvable or heavily skewed yes/no test; never invent negatives.
+    """Do not emit a one-class or heavily skewed yes/no test.
 
     Check eligibility BEFORE balancing/writing so missing evidence cannot erase one class.
     Selection is deterministic and independent of input order and of the display version.
     """
     positive = sorted((c for c in candidates if c[0].exists), key=lambda c: content_hash(c[0]))
-    negative = sorted((c for c in candidates if not c[0].exists), key=lambda c: content_hash(c[0]))
+    negative = sorted(
+        (c for c in candidates if not c[0].exists),
+        key=lambda c: (c[0].tested_version is None, content_hash(c[0])),
+    )
     count = min(len(positive), len(negative))
     if not count:
         build.skip(
@@ -124,21 +169,47 @@ def _balanced_yes_no(build: Builder, candidates: list[Candidate]) -> None:
 
 
 def _choices(build: Builder, symbol: str | None, facts: dict[str, Evidence]) -> None:
-    negatives = sorted(name for name, fact in facts.items() if fact.exists is False)
+    negatives = sorted(
+        (name for name, fact in facts.items() if fact.exists is False),
+        key=lambda name: (facts[name].tested_version is None, name),
+    )
     positives = sorted(name for name, fact in facts.items() if fact.exists is True)
     if not positives or len(negatives) < 3:
         build.skip(
             symbol or build.context.project,
             "choice",
-            "need one confirmed name and three confirmed removals",
+            "need one confirmed name and three verified negative names",
         )
         return
     for correct in positives:
-        names = [correct, *negatives[:3]]
+        eligible = [
+            name
+            for name in negatives
+            if facts[name].tested_version is not None
+            or symbol is not None
+            or name.rpartition(".")[0] == correct.rpartition(".")[0]
+        ]
+        eligible.sort(
+            key=lambda name: (
+                facts[name].tested_version is None,
+                name if facts[name].tested_version is not None else content_hash((correct, name)),
+            )
+        )
+        if len(eligible) < 3:
+            build.skip(correct, "choice", "need three verified negatives in the same scope")
+            continue
+        names = [correct, *eligible[:3]]
         options = tuple(Option(content_hash({"name": name}), name) for name in names)
         sources = tuple(s for name in names for s in facts[name].sources)
         subject = Subject(symbol or correct, correct if symbol else None)
         build.add(
-            ChoiceReference(subject, options, options[0].id, build.context.comparison_version),
+            ChoiceReference(
+                subject,
+                options,
+                options[0].id,
+                build.context.comparison_version
+                if any(facts[n].tested_version is not None for n in names)
+                else None,
+            ),
             sources,
         )
