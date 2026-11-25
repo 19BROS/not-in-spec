@@ -1,4 +1,104 @@
-/deploy/        @damianecek
-/.github/       @damianecek
-/action/        @damianecek
-/docs/DEPLOY.md @damianecek
+# Who GitHub asks to review what. Roles: docs/SPEC.md §17. Review rules: AGENTS.md "Roles and reviews".
+# Requested, not enforced: the ruleset on main needs 1 approval of anyone.
+# The last matching pattern wins, so specific paths come after general ones.
+# Paths that do not exist yet (pipeline.py, retrieval/, adapters/curl/, k7.py) are listed so their first PR goes to the right owner.
+
+# 3 · Frontend & data: Jana Puchein
+/web/                                       @JanaPuchein
+/docs/design/                               @JanaPuchein
+/api/                                       @JanaPuchein
+/core/src/notinspec/db/                     @JanaPuchein
+/core/tests/db/                             @JanaPuchein
+/core/src/notinspec/report.py               @JanaPuchein
+/core/tests/test_report.py                  @JanaPuchein
+
+# 4 · Inputs, docs & claims: Erik Dusík
+/core/src/notinspec/sphinx/                 @Hinzun
+/core/src/notinspec/chunking/               @Hinzun
+/core/src/notinspec/inventory/              @Hinzun
+/core/src/notinspec/adapters/python/        @Hinzun
+/core/src/notinspec/examples/               @Hinzun
+/core/src/notinspec/claims/                 @Hinzun
+/core/src/notinspec/grounding/              @Hinzun
+/core/src/notinspec/nli/                    @Hinzun
+/core/src/notinspec/crosscheck/             @Hinzun
+/core/src/notinspec/retrieval/              @Hinzun
+/core/examples/                             @Hinzun
+/core/tests/sphinx/                         @Hinzun
+/core/tests/chunking/                       @Hinzun
+/core/tests/inventory/                      @Hinzun
+/core/tests/adapters/test_python*.py        @Hinzun
+/core/tests/examples/                       @Hinzun
+/core/tests/claims/                         @Hinzun
+/core/tests/grounding/                      @Hinzun
+/core/tests/nli/                            @Hinzun
+/core/tests/crosscheck/                     @Hinzun
+/core/tests/fixtures/sphinx/                @Hinzun
+/core/tests/test_sphinx_demo.py             @Hinzun
+
+# 5 · Inputs, OpenAPI & HTTP: Radoslav Muntág
+/core/src/notinspec/adapters/openapi/       @RadoslavMuntag
+/core/src/notinspec/adapters/curl/          @RadoslavMuntag
+/core/src/notinspec/crosscheck/k7.py        @RadoslavMuntag
+/core/tests/adapters/                       @RadoslavMuntag
+/core/tests/adapters/test_python*.py        @Hinzun
+/docs/input-adapters/                       @RadoslavMuntag
+
+# 6 · Test generation: Samuel Maliarik
+/core/src/notinspec/tasks/                  @ryzovy-nakyp
+/core/tests/tasks/                          @ryzovy-nakyp
+
+# 7 · Runs, evaluation & CI gate: Richard Sič
+/core/src/notinspec/runner/                 @figaro112
+/core/src/notinspec/verify/                 @figaro112
+/core/tests/runner/                         @figaro112
+/core/tests/verify/                         @figaro112
+
+# 1 · DevOps & Action: Damián Parigal (also the server side of uploads)
+/deploy/                                    @damianecek
+/deploy/fixtures/openapi.yaml               @damianecek @RadoslavMuntag
+/.github/                                   @damianecek
+/action/                                    @damianecek
+/docs/DEPLOY.md                             @damianecek
+/docs/hosted-ci.md                          @damianecek
+/worker/                                    @damianecek
+/api/Dockerfile                             @damianecek
+/web/Dockerfile                             @damianecek
+/core/src/notinspec/oidc.py                 @damianecek
+/core/src/notinspec/upload.py               @damianecek
+/core/src/notinspec/pack.py                 @damianecek
+/core/src/notinspec/db/hosted*.py           @damianecek
+/api/src/notinspec_api/hosted.py            @damianecek
+/core/tests/test_oidc.py                    @damianecek
+/core/tests/test_upload.py                  @damianecek
+/core/tests/test_pack.py                    @damianecek
+/core/tests/db/test_hosted.py               @damianecek
+/api/tests/test_hosted.py                   @damianecek
+
+# 2 · Architecture lead: Jakub Mitický. Contracts list the lead and the role that owns the code.
+/docs/SPEC.md                               @jmiticky4130
+/AGENTS.md                                  @jmiticky4130
+/CLAUDE.md                                  @jmiticky4130
+/README.md                                  @jmiticky4130
+/core/README.md                             @jmiticky4130
+/core/src/notinspec/pipeline.py             @jmiticky4130
+/core/src/notinspec/ingestion.py            @jmiticky4130 @Hinzun
+/core/src/notinspec/cli.py                  @jmiticky4130
+/core/src/notinspec/config.py               @jmiticky4130
+/core/src/notinspec/demo.py                 @jmiticky4130
+/core/tests/test_cli.py                     @jmiticky4130
+/core/tests/test_config.py                  @jmiticky4130
+/core/tests/test_demo.py                    @jmiticky4130
+/core/tests/test_ingestion_cli.py           @jmiticky4130
+/core/src/notinspec/inventory/objects.py    @jmiticky4130 @Hinzun
+/core/src/notinspec/adapters/canonical.py   @jmiticky4130 @Hinzun @RadoslavMuntag
+/core/src/notinspec/claims/model.py         @jmiticky4130 @Hinzun
+/core/src/notinspec/findings.py             @jmiticky4130 @Hinzun
+/core/src/notinspec/tasks/models.py         @jmiticky4130 @ryzovy-nakyp
+/core/src/notinspec/tasks/identity.py       @jmiticky4130 @ryzovy-nakyp
+/core/src/notinspec/tasks/serialization.py  @jmiticky4130 @ryzovy-nakyp
+/core/src/notinspec/db/models.py            @jmiticky4130 @JanaPuchein
+/core/src/notinspec/db/migrations/          @jmiticky4130 @JanaPuchein
+/pyproject.toml                             @jmiticky4130 @damianecek
+/core/pyproject.toml                        @jmiticky4130 @damianecek
+/uv.lock                                    @jmiticky4130 @damianecek

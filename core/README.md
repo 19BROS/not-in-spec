@@ -1,7 +1,7 @@
 # CLI prototype
 
 This branch builds on `core/chunking` (PR #7). It adds real documentation ingestion to the
-existing CLI. The parsers and chunker remain owned by role 2; the CLI calls them through
+existing CLI. The parsers and chunker are owned by role 4 (SPEC §17); the CLI calls them through
 `notinspec.ingestion.ingest`, which the API or worker can also call.
 
 From the repository root:
