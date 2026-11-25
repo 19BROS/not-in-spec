@@ -16,6 +16,7 @@ import shutil
 import tarfile
 import tempfile
 import zlib
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, Literal
@@ -24,7 +25,7 @@ from notinspec.adapters.canonical import canonical_json
 from notinspec.adapters.openapi import SpecLoadError
 from notinspec.config import ConfigError, load_config
 from notinspec.demo import build_demo_run
-from notinspec.ingestion import ingest
+from notinspec.ingestion import Ingestion, ingest
 from notinspec.report import NOT_EVALUATED, build_results, write_artifacts
 from notinspec.sphinx import SphinxInputError
 
@@ -218,9 +219,11 @@ def process_upload(
     project: str | None = None,
     commit: str | None = None,
     web_url: str | None = None,
+    claims_runner: Callable[[Ingestion, Path], dict[str, Any]] | None = None,
 ) -> UploadResult:
     """Unpack, ingest and write `runs_dir/<run_id>/` with run.json last, as `notinspec demo
-    --no-claims` does. No claims, NLI, LLM or DB.
+    --no-claims` does. A worker can supply a claims runner, with its recorded or live models
+    and append-only stores. Ingestion alone has no claims, NLI, LLM or DB.
 
     From the OIDC token (SPEC §11): `project` is the repo name, the default of the config's
     `project:`, so breadcrumbs never contain the temporary folder's random name; `commit` is
@@ -241,7 +244,7 @@ def process_upload(
     root = Path(workdir.name) / (project or _DEFAULT_FOLDER)
     try:
         with workdir:
-            counts = _run(archive, root, out, run_id, commit)
+            counts = _run(archive, root, out, run_id, commit, claims_runner)
     except _INPUT_ERRORS as error:
         shutil.rmtree(out, ignore_errors=True)
         message = _relative(str(error), root)
@@ -255,18 +258,26 @@ def process_upload(
     return UploadResult(run_id, "done", None, None, None, _comment(counts, web_url))
 
 
-def _run(archive: Path, root: Path, out: Path, run_id: str, commit: str | None) -> dict[str, Any]:
-    """`cli._demo` without claims; returns the ingestion counts of results.json."""
+def _run(
+    archive: Path,
+    root: Path,
+    out: Path,
+    run_id: str,
+    commit: str | None,
+    claims_runner: Callable[[Ingestion, Path], dict[str, Any]] | None,
+) -> dict[str, Any]:
+    """Build the same demo artifacts, optionally running the hosted claim pipeline."""
     extract_archive(archive, root)
     config = load_config(root / CONFIG_NAME)
     ingestion = ingest(config, output=out)
     # the folder above the inputs: without a commit, git must never read a .git from the archive
     results = build_results(ingestion, root.parent, commit=commit)
     write_artifacts(out, ingestion, results)
+    claims = claims_runner(ingestion, out) if claims_runner is not None else None
     run = build_demo_run(
         json.loads((out / "ingestion.json").read_bytes()),
         json.loads((out / "results.json").read_bytes()),
-        None,
+        claims,
         run_id,
     )
     # last, and atomic: a run.json that exists is complete (the API lists only those)

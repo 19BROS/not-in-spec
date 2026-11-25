@@ -9,8 +9,11 @@ from typing import Any
 from fastapi import FastAPI, Header, HTTPException, Request
 
 from notinspec import __version__
+from notinspec_api.hosted import UploadBodyLimit, router
 
 app = FastAPI(title="NOT-IN-SPEC", version=__version__)
+app.add_middleware(UploadBodyLimit)
+app.include_router(router)
 
 MAX_RESULTS_BYTES = 1_000_000  # nginx caps bodies at 1 MB too (client_max_body_size default)
 _REPO_PART = re.compile(r"[A-Za-z0-9_.-]{1,100}")
