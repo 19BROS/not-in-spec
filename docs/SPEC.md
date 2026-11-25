@@ -663,7 +663,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 
 ### 11.1 Upload API
 
-*Proposal: role 7 (the Action) to role 5 (the API). Binding once role 5 approves it.* Paths are public URLs (nginx strips `/api` before the API). Errors use FastAPI's `{"detail": "<message>"}`. The Action shows `detail` to the repo owner in the PR comment, so it must make sense to them.
+*Contract between the Action and the upload API, both reviewed by role 1 ([§17](#17-roles)).* Paths are public URLs (nginx strips `/api` before the API). Errors use FastAPI's `{"detail": "<message>"}`. The Action shows `detail` to the repo owner in the PR comment, so it must make sense to them.
 
 **`POST /api/uploads`**: one upload starts one run.
 - `Authorization: Bearer <GitHub OIDC token>`. The token's `aud` is the fixed string `notinspec`, not our URL. A token minted for another service still fails the check. The site's address can change (today `147-175-151-17.sslip.io`, which has the VM's IP in its name) without breaking the workflows of registered projects.
@@ -717,7 +717,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - **Docker Compose** services: `postgres`, `api`, `worker`, `mock` (Prism), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`.
 - The **NLI model** is not in the worker image: its weights live on a named volume (`hf-models`, `HF_HOME`), fetched once by the deploy (`python -m notinspec.nli fetch`). The worker runs with `HF_HUB_OFFLINE=1`, so a run never downloads anything. CI never downloads the model.
 - The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM).
-- **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec through a small control endpoint in `mock` (`deploy/mock/control.js`, *proposal* for role 3):
+- **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec through a small control endpoint in `mock` (`deploy/mock/control.js`, *proposal* for role 5, which owns L4, [§17](#17-roles)):
   - the worker writes the spec to the shared `specs` volume as `<sha256>.yaml` (or `.json`);
   - `POST $NOTINSPEC_MOCK_URL/serve` with `{"spec": "<sha256>.yaml"}` → `200 {"base_url": "http://mock:<port>"}` once Prism listens, `422 {"detail": …}` when Prism rejects the spec (the user's problem, the detail has Prism's log), or `503 {"detail": …}` when Prism could not run (ours: spawn error, killed, not listening in 30 s);
   - one Prism at a time: a new spec replaces the old one, and `/serve` calls are handled one after another. Each Prism gets a new port, so a run whose spec was replaced gets "connection refused" and never answers checked against another spec. The worker then calls `/serve` again. So the worker checks **one spec at a time** (all L4 tasks of a run in a row, runs with different specs one after another): two specs at once would keep replacing each other's Prism.
@@ -811,17 +811,21 @@ Faculty checkpoint dates: **TBD**.
 
 ## 17. Roles
 
-Mapping of roles to the v3 pipeline is a proposal until the team confirms it.
+Seven roles, one person each (agreed 2026-11-25). The split follows the work left until the MVP ([§16.1](#161-mvp)), so each role has about the same share of it, counting the reviews of the area it owns.
 
-| # | Role | Owns |
-|---|---|---|
-| 1 | Lead / architecture | core package, golden-set format, this spec |
-| 2 | Inputs & inventory | Sphinx and Markdown readers, chunking, prose blocks (input for NLI premises), component detector, spec / signature parsers, adapters, inventory |
-| 3 | Runner & evaluation | LLM client, rate limiting, Prism, L0–L4 evaluation, error categories |
-| 4 | ML / NLP | claim extraction, NLI grounding, cross-checks, retrieval, statistics, validation track |
-| 5 | Backend & data | FastAPI, Postgres schema, migrations, worker, run queue, uploads and OIDC auth, golden-set storage |
-| 6 | Frontend & viz | web UI, reports, charts |
-| 7 | DevOps | CI, Compose, GHCR, self-hosted runner, GitHub Action packaging, monitoring |
+A role says who builds a part and who reviews it, not who may touch it: anyone may open a PR anywhere, and the owner of the area reviews it. Review rules are in [AGENTS.md](../AGENTS.md#roles-and-reviews), and the paths each role is asked to review are in [`.github/CODEOWNERS`](../.github/CODEOWNERS). Already built parts (readers, inventory, claims, DB schema, uploads) stay with the role whose area they are in.
+
+| # | Role | Who | Builds | Reviews |
+|---|---|---|---|---|
+| 1 | DevOps & Action | Damián Parigal (`damianecek`) | the Action on the real upload API with PR comment and status check, dogfooded on our demo repo ([§11](#11-github-action)); Compose integration test, Schemathesis and Playwright in CI ([§13](#13-testing)); backups, monitoring, the `mock` service ([§12](#12-devops)); nightly runs, their diff and the Slack alert ([§7](#7-ci-behaviour-and-repeated-runs)); enforcing project limits | `deploy/`, `.github/`, `action/`, Dockerfiles, `worker/`; the server side of uploads (OIDC, archive handling, the hosted parts of `api/` and `notinspec.db`) |
+| 2 | Architecture lead | Jakub Mitický (`jmiticky4130`) | this spec and its open items ([§18](#18-open-items)); the contracts between stages; canonical serialization of a reference and the item identity key ([§10](#10-data)); `notinspec.pipeline`, which chains the stages, and the worker running it on an upload; the urllib3 pilot end to end | this spec, `AGENTS.md`, the contract files, CLI and config. Not every `core` PR |
+| 3 | Frontend & data | Jana Puchein (`JanaPuchein`) | Postgres schema and migrations, golden-set and result storage, derived states (review state, open findings, stale candidates, [§10](#10-data)); the read API for the web; web UI screens ([docs/design/](design/README.md)) on real data and the HTML report; golden-set export; the review CLI ([§2.5](#25-golden-set-review)); `pr-closed` | `web/`, `docs/design/`, `notinspec.db`, `api/` except uploads |
+| 4 | Inputs: docs & claims | Erik Dusík (`Hinzun`) | Markdown and llms.txt reader, changelog → `Change` ([§6.3](#63-inventory)), component detector, `Constraint` extraction, K1 and K4, the Python adapter for model answers, BM25 retrieval for the `retrieved` mode ([§6.9](#69-modes)); keeps up the Sphinx reader, inventory, claims, NLI grounding, K2 and K5a | `sphinx/`, `chunking/`, `inventory/`, `adapters/python/`, `examples/`, `claims/`, `grounding/`, `nli/`, `crosscheck/`, retrieval |
+| 5 | Inputs: OpenAPI & HTTP | Radoslav Muntág (`RadoslavMuntag`) | the pilot OpenAPI spec; OpenAPI → inventory (component A) and its `description` texts → chunks; the curl adapter; K7; L4 via Prism; hypothesis H1 ([§14](#14-validation-outside-ci)) | `adapters/openapi/`, `adapters/curl/`, K7, L4 |
+| 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) | symbol profile ([§6.6](#66-per-symbol-decisions)); L0 from `Change`; L3 operators copy, adaptation, variation, migration and leave-one-out ([§6.7](#67-tasks-and-operators)); the task-text writer; quality control ([§6.8](#68-quality-control)) except round-trip; auto-approval ([§2.5](#25-golden-set-review)); stable, superseded and candidate items ([§7](#7-ci-behaviour-and-repeated-runs)) | `tasks/` |
+| 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) | the run executor (items × models × modes), response cache, resumable runs and budgets ([§8](#8-models)); the `gold` and `none` contexts; L0, L1 and L3 evaluation and error categories ([§6.10](#610-evaluation)); round-trip solvers; diagnosis ([§6.11](#611-diagnosis)); main runs, baseline lookup, the paired test, fail conditions, verdict and the PR comment text ([§7](#7-ci-behaviour-and-repeated-runs)) | `runner/`, `verify/`, the CI gate |
+
+Older documents (e.g. `docs/input-adapters/`) number roles by an earlier table.
 
 ## 18. Open items
 

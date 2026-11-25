@@ -59,13 +59,46 @@ Add a dependency to a package: `uv add --package notinspec-api <dep>` (never pip
 
 - `main` is protected and auto-deploys. Work on short-lived branches, open a PR, CI must be green.
 - Branch names: `<area>/<short-topic>`, e.g. `core/oasdiff-adapter`, `web/leaderboard`.
-- Stay in your own directory. Shared files (`pyproject.toml`, `uv.lock`, `deploy/`, `.github/`) change in small separate PRs.
+- Work mostly in your role's area (below). Shared files (`pyproject.toml`, `uv.lock`, `deploy/`, `.github/`) change in small separate PRs.
 - Before opening a PR: `git pull --rebase origin main`.
 - **Lock file conflict** (`uv.lock` or `web/package-lock.json`): never merge it by hand. Resolve `pyproject.toml` / `package.json` first, then regenerate the lock (it is rebuilt from those, so either side is fine to start from):
   ```sh
   git checkout --ours uv.lock && uv lock && git add uv.lock
   cd web && git checkout --ours package-lock.json && npm install && git add package-lock.json
   ```
+
+### Roles and reviews
+
+Seven roles, one person each. What each builds is in [SPEC §17](docs/SPEC.md#17-roles); which paths each reviews is in [`.github/CODEOWNERS`](.github/CODEOWNERS), so GitHub requests the owner's review on its own.
+
+| # | Role | Who |
+|---|---|---|
+| 1 | DevOps & Action | Damián Parigal (`damianecek`) |
+| 2 | Architecture lead | Jakub Mitický (`jmiticky4130`) |
+| 3 | Frontend & data | Jana Puchein (`JanaPuchein`) |
+| 4 | Inputs: docs & claims | Erik Dusík (`Hinzun`) |
+| 5 | Inputs: OpenAPI & HTTP | Radoslav Muntág (`RadoslavMuntag`) |
+| 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) |
+| 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) |
+
+Roles say who builds and who reviews, not who may touch what. Anyone may open a PR anywhere.
+
+**How many reviews.** The ruleset on `main` enforces 1 approval and does not enforce code owners. On top of that we aim for **about 2 reviewers per PR**:
+
+- **One owner** of the area the PR changes most (the code owner GitHub requests). A PR across several areas needs one owner, not all of them; mention the others if their part matters.
+- **One more reviewer**, anyone. Best is someone whose code uses the change.
+- **1 review is enough** for small PRs: docs and typos, tests only, `experiments/`, a fix of a few lines, a revert of a broken `main`.
+
+**When the second reviewer is a specific role:**
+
+- **Contracts between stages** (the files that list the lead in `CODEOWNERS`: inventory, call record, claim, finding and test-item models, the DB schema, the pipeline, CLI and config) and **this file or the SPEC**: the lead (2), plus the role on the other side of the contract when its code uses the change.
+- **Security boundaries** (uploads and OIDC, archive extraction, `deploy/`, `.github/`, the `mock` service, the self-hosted runner): DevOps (1).
+- **Shared files** (`pyproject.toml`, `uv.lock`): DevOps (1) or the lead (2).
+
+**Flexibility.**
+
+- An owner who has not reviewed within 2 working days may be replaced by anyone who knows the area. Say so in the PR; the owner may still comment after the merge, and a fix is a new PR.
+- An owner who is the PR's author gets a second reviewer from outside the area.
 
 ### Adding a new service (new top-level directory)
 
