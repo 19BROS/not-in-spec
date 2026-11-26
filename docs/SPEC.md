@@ -207,7 +207,7 @@ The level framework is inspired by [arXiv:2605.31478](https://arxiv.org/html/260
 |---|---|---|
 | MVP | **Sphinx 9.x** project | from Sphinx's **structured output** built by the user (`sphinx-build -b xml`, i.e. the docutils doctree; never built by us, [§1.1](#11-what-we-are-not-building)), not from rendered HTML and not with our own reST/MyST parser. Sections, code blocks (`literal_block`), tables and API descriptions (`desc` nodes, input for component B) come already typed from the tree. Only Sphinx 9.x, read from the first line of `build-env.txt` ([§2.3](#23-what-the-tool-needs-from-the-user)); other versions are [future work](#163-future-development). `objects.inv` as the list of documented symbols is a *candidate*. |
 | MVP | plain Markdown, llms.txt, changelog | Markdown parser |
-| MVP | formal spec (OpenAPI) | its own parser (component A); `description` texts become chunks for component D |
+| next iteration | formal spec (OpenAPI) | its own parser (component A); `description` texts become chunks for component D. Moved out of the MVP ([§16.1](#161-mvp)) |
 | next iteration | other generators (*candidates:* MkDocs, Docusaurus, TypeDoc) | their structured output where they have one |
 | future | docs websites without a supported generator | rendered HTML → Markdown (*candidates:* `trafilatura`, `markitdown`) |
 
@@ -314,7 +314,7 @@ Adapters for component C:
 | CLI | `shlex` | flag alias mapping |
 | YAML / JSON config | `yaml` / `json` | keys and values |
 
-MVP adapters: **Python `ast` + curl**.
+MVP adapter: **Python `ast`**. curl comes with OpenAPI in the next iteration ([§16.2](#162-next-iteration)).
 
 ### 6.3 Inventory
 
@@ -728,7 +728,8 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 - **Docker Compose** services: `postgres`, `api`, `worker`, `mock` (Prism), `web` (nginx), `proxy` (Caddy, HTTPS), `backup`.
 - The **NLI model** is not in the worker image: its weights live on a named volume (`hf-models`, `HF_HOME`), fetched once by the deploy (`python -m notinspec.nli fetch`). The worker runs with `HF_HUB_OFFLINE=1`, so a run never downloads anything. CI never downloads the model.
 - The worker has the LLM key, the DB password and the Slack webhook, so it **never builds Sphinx** ([§1.1](#11-what-we-are-not-building)) and never gets the Docker socket (that would make any code in the worker root on the VM).
-- **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec through a small control endpoint in `mock` (`deploy/mock/control.js`, *proposal* for role 5, which owns L4, [§17](#17-roles)):
+- **Prism** serves L4 and K7, which come with OpenAPI in the next iteration ([§16.2](#162-next-iteration)); the `mock` service is already deployed.
+- **Prism never runs in the worker.** An uploaded spec is untrusted: even with non-local `$ref`s rejected ([§11](#11-github-action)), Prism must not run where the worker's secrets and the internal network are within reach (SSRF, local file reads). It runs in the `mock` service: no secret env vars, a network with `internal: true` (no egress), the spec on a read-only shared volume. The worker calls it over HTTP and asks it to serve a given spec through a small control endpoint in `mock` (`deploy/mock/control.js`, *proposal*; L4 has no owner until OpenAPI returns, [§17](#17-roles)):
   - the worker writes the spec to the shared `specs` volume as `<sha256>.yaml` (or `.json`);
   - `POST $NOTINSPEC_MOCK_URL/serve` with `{"spec": "<sha256>.yaml"}` → `200 {"base_url": "http://mock:<port>"}` once Prism listens, `422 {"detail": …}` when Prism rejects the spec (the user's problem, the detail has Prism's log), or `503 {"detail": …}` when Prism could not run (ours: spawn error, killed, not listening in 30 s);
   - one Prism at a time: a new spec replaces the old one, and `/serve` calls are handled one after another. Each Prism gets a new port, so a run whose spec was replaced gets "connection refused" and never answers checked against another spec. The worker then calls `/serve` again. So the worker checks **one spec at a time** (all L4 tasks of a run in a row, runs with different specs one after another): two specs at once would keep replacing each other's Prism.
@@ -763,7 +764,7 @@ In the MVP the Action is a **thin client of our hosted service** ([§3](#3-archi
 
 ## 14. Validation (outside CI)
 
-- **H1:** L3 success predicts L4 success (OpenAPI only, via Prism).
+- **H1:** L3 success predicts L4 success (OpenAPI only, via Prism; next iteration, [§16.2](#162-next-iteration)).
 - **H2:** lower levels (mainly L1) relate to L3 **per symbol**, not only across models.
 - **H3:** tool scores relate to success on tasks of existing benchmarks (those tasks are already evaluated, no need to run them in our tool).
 - **H4 (intervention):** fixing sections the tool flagged raises success more than fixing random sections.
@@ -787,25 +788,24 @@ Candidate data: [NovelAPIBench](https://arxiv.org/html/2606.03657), [CodeUpdateA
 
 ## 16. Milestones
 
-Faculty checkpoint dates: **TBD**.
+**Live demo on 2026-12-09.** Our supervisor picks a documentation built with Sphinx 9.x at random, and we run L0–L3 on it live. This is the team's goal until then. Plan, state and risks: [plans/live-demo-2026-12-09.md](plans/live-demo-2026-12-09.md). Other faculty checkpoint dates: **TBD**.
 
 ### 16.1 MVP
 
-**Order: Sphinx first.** Everything for the Python library is built first, on **urllib3**, then extended to trio (Google via napoleon) and hydra-zen (numpydoc) if that is not time-consuming. The OpenAPI parts come after the Sphinx part works: OpenAPI pilot, curl adapter, K7, L4 via Prism and H1.
+**Sphinx only** (decided 2026-11-26). The MVP covers Python libraries documented with Sphinx 9.x: built first on **urllib3**, then trio (Google via napoleon) and hydra-zen (numpydoc), and it must work on a library it has not seen (the live demo). OpenAPI with everything that needs it (its parser, the curl adapter, K7, L4 via Prism and H1) moved to the next iteration ([§16.2](#162-next-iteration)). The target metric of the MVP is therefore L3.
 
-1. One OpenAPI spec with guides + one Python library with **Sphinx-based documentation**, examples and a changelog (pilot: urllib3, see [§18](#18-open-items)).
+1. One Python library with **Sphinx-based documentation**, examples and a changelog (pilot: urllib3, see [§18](#18-open-items)), and any other Python library with Sphinx 9.x docs.
 2. Sphinx and Markdown readers, section chunking, component detector, inventory (`Symbol`, `Signature`, `Parameter`, `Constraint`, `Change`, `Source`), `Example` and `CallRecord`.
-3. Adapters Python `ast` and curl; cross-checks K1, K4, K7.
-4. L1 and L3 tasks (copy, adaptation, variation), L0 from `Change`, L4 via Prism for OpenAPI.
+3. Adapter Python `ast`; cross-checks K1 and K4; `Claim` with NLI grounding and K5a ([§6.4](#64-prose-and-changelog--claim)).
+4. L0 (also from `Change`), L1, L2 from grounded claims, L3 tasks (copy, adaptation, variation). "Not in the documentation" L2 questions (perturbation) after the live demo.
 5. 2 small models + 1 large model, 3 modes.
 6. Output: PR comment and status check (UC2) with findings and diagnosis through the thin Action; web UI with results.
-7. Check hypothesis H1 on the OpenAPI part.
-8. CI/CD to the faculty VM, nightly runs of the pilot.
-9. Hosted-only: every run on our service, everything in Postgres, the golden set versioned there and reviewed by our team ([§2.5](#25-golden-set-review), [§10](#10-data)).
+7. CI/CD to the faculty VM, nightly runs of the pilot.
+8. Hosted-only: every run on our service, everything in Postgres, the golden set versioned there and reviewed by our team ([§2.5](#25-golden-set-review), [§10](#10-data)).
 
 ### 16.2 Next iteration
 
-`Claim` and L2 (with NLI grounding), cross-checks K2, K3, K5, K6, composition, statistics in CI, HTML report, readers for other documentation generators (*candidates:* MkDocs, Docusaurus, TypeDoc).
+**OpenAPI** (moved out of the MVP): a pilot OpenAPI spec with guides, the spec parser (component A) and its `description` texts as chunks, the curl adapter, K7, L4 via Prism and hypothesis H1. Further: cross-checks K3, K5b, K6, composition, statistics in CI, HTML report, readers for other documentation generators (*candidates:* MkDocs, Docusaurus, TypeDoc).
 
 ### 16.3 Future development
 
@@ -822,21 +822,21 @@ Faculty checkpoint dates: **TBD**.
 
 ## 17. Roles
 
-Seven roles, one person each (agreed 2026-11-25). The split follows the work left until the MVP ([§16.1](#161-mvp)), so each role has about the same share of it, counting the reviews of the area it owns.
+Seven roles, one person each (agreed 2026-11-25, changed 2026-11-26 when OpenAPI left the MVP). The split follows the work left until the MVP ([§16.1](#161-mvp)), so each role has about the same share of it, counting the reviews of the area it owns. Until 2026-12-09 every role does its part of the **live demo** first ([§16](#16-milestones)); the rest of its MVP work follows.
 
 A role says who builds a part and who reviews it, not who may touch it: anyone may open a PR anywhere, and the owner of the area reviews it. Review rules are in [AGENTS.md](../AGENTS.md#roles-and-reviews), and the paths each role is asked to review are in [`.github/CODEOWNERS`](../.github/CODEOWNERS). Already built parts (readers, inventory, claims, DB schema, uploads) stay with the role whose area they are in.
 
-| # | Role | Who | Builds | Reviews |
-|---|---|---|---|---|
-| 1 | DevOps & Action | Damián Parigal (`damianecek`) | the Action on the real upload API with PR comment and status check, dogfooded on our demo repo ([§11](#11-github-action)); Compose integration test, Schemathesis and Playwright in CI ([§13](#13-testing)); backups, monitoring, the `mock` service ([§12](#12-devops)); nightly runs, their diff and the Slack alert ([§7](#7-ci-behaviour-and-repeated-runs)); enforcing project limits | `deploy/`, `.github/`, `action/`, Dockerfiles, `worker/`; the server side of uploads (OIDC, archive handling, the hosted parts of `api/` and `notinspec.db`) |
-| 2 | Architecture lead | Jakub Mitický (`jmiticky4130`) | this spec and its open items ([§18](#18-open-items)); the contracts between stages; canonical serialization of a reference and the item identity key ([§10](#10-data)); `notinspec.pipeline`, which chains the stages, and the worker running it on an upload; the urllib3 pilot end to end | this spec, `AGENTS.md`, the contract files, CLI and config. Not every `core` PR |
-| 3 | Frontend & data | Jana Puchein (`JanaPuchein`) | Postgres schema and migrations, golden-set and result storage, derived states (review state, open findings, stale candidates, [§10](#10-data)); the read API for the web; web UI screens ([docs/design/](design/README.md)) on real data and the HTML report; golden-set export; the review CLI ([§2.5](#25-golden-set-review)); `pr-closed` | `web/`, `docs/design/`, `notinspec.db`, `api/` except uploads |
-| 4 | Inputs: docs & claims | Erik Dusík (`Hinzun`) | Markdown and llms.txt reader, changelog → `Change` ([§6.3](#63-inventory)), component detector, `Constraint` extraction, K1 and K4, the Python adapter for model answers, BM25 retrieval for the `retrieved` mode ([§6.9](#69-modes)); keeps up the Sphinx reader, inventory, claims, NLI grounding, K2 and K5a | `sphinx/`, `chunking/`, `inventory/`, `adapters/python/`, `examples/`, `claims/`, `grounding/`, `nli/`, `crosscheck/`, retrieval |
-| 5 | Inputs: OpenAPI & HTTP | Radoslav Muntág (`RadoslavMuntag`) | the pilot OpenAPI spec; OpenAPI → inventory (component A) and its `description` texts → chunks; the curl adapter; K7; L4 via Prism; hypothesis H1 ([§14](#14-validation-outside-ci)) | `adapters/openapi/`, `adapters/curl/`, K7, L4 |
-| 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) | symbol profile ([§6.6](#66-per-symbol-decisions)); L0 from `Change`; L3 operators copy, adaptation, variation, migration and leave-one-out ([§6.7](#67-tasks-and-operators)); the task-text writer; quality control ([§6.8](#68-quality-control)) except round-trip; auto-approval ([§2.5](#25-golden-set-review)); stable, superseded and candidate items ([§7](#7-ci-behaviour-and-repeated-runs)) | `tasks/` |
-| 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) | the run executor (items × models × modes), response cache, resumable runs and budgets ([§8](#8-models)); the `gold` and `none` contexts; L0, L1 and L3 evaluation and error categories ([§6.10](#610-evaluation)); round-trip solvers; diagnosis ([§6.11](#611-diagnosis)); main runs, baseline lookup, the paired test, fail conditions, verdict and the PR comment text ([§7](#7-ci-behaviour-and-repeated-runs)) | `runner/`, `verify/`, the CI gate |
+| # | Role | Who | For the live demo | Then, until the MVP | Reviews |
+|---|---|---|---|---|---|
+| 1 | DevOps & Action | Damián Parigal (`damianecek`) | building the Sphinx XML of any public project on a GitHub-hosted runner ([§1.1](#11-what-we-are-not-building)); the way its inputs reach our service; a stable deploy for the demo day | the Action on the real upload API with PR comment and status check, dogfooded on our demo repo ([§11](#11-github-action)); Compose integration test, Schemathesis and Playwright in CI ([§13](#13-testing)); backups and monitoring ([§12](#12-devops)); nightly runs, their diff and the Slack alert ([§7](#7-ci-behaviour-and-repeated-runs)); enforcing project limits | `deploy/`, `.github/`, `action/`, Dockerfiles, `worker/`; the server side of uploads (OIDC, archive handling, the hosted parts of `api/` and `notinspec.db`) |
+| 2 | Architecture lead | Jakub Mitický (`jmiticky4130`) | `notinspec.pipeline`, which chains the stages from the XML to the results, and the worker running it; the result contract; rehearsals on unseen Sphinx projects | this spec and its open items ([§18](#18-open-items)); the contracts between stages; canonical serialization of a reference and the item identity key ([§10](#10-data)) | this spec, `AGENTS.md`, `docs/plans/`, the contract files, CLI and config. Not every `core` PR |
+| 3 | Frontend & data | Jana Puchein (`JanaPuchein`) | results in the web UI: per level, model and mode, failing sections, sample answers; never one score | Postgres schema and migrations, golden-set and result storage, derived states (review state, open findings, stale candidates, [§10](#10-data)); the read API for the web; the other screens ([docs/design/](design/README.md)) on real data and the HTML report; golden-set export; the review CLI ([§2.5](#25-golden-set-review)); `pr-closed` | `web/`, `docs/design/`, `notinspec.db`, `api/` except uploads |
+| 4 | Inputs: docs & claims | Erik Dusík (`Hinzun`) | the reader, inventory and examples on unseen Sphinx projects (other domains, unknown nodes, docs without an API reference); claims of a whole project within the demo's time; the Python adapter for model answers (L3) | component detector, `Constraint` extraction, K1 and K4; keeps up the Sphinx reader, inventory, claims, NLI grounding, K2 and K5a | `sphinx/`, `chunking/`, `inventory/`, `adapters/python/`, `examples/`, `claims/`, `grounding/`, `nli/`, `crosscheck/` |
+| 5 | L2 & changes | Radoslav Muntág (`RadoslavMuntag`) | L2 end to end: questions from grounded claims and their evaluation ([§6.10](#610-evaluation)) | "not in the documentation" questions (perturbation, [§6.7](#67-tasks-and-operators)) and the LLM judge; changelog → `Change` ([§6.3](#63-inventory)) and the L3 migration operator; the Markdown and llms.txt reader | L2, `Change` from the changelog, the Markdown reader, `adapters/openapi/` (dormant) |
+| 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) | L3 items: copy, adaptation, variation and leave-one-out ([§6.7](#67-tasks-and-operators)); symbol profile ([§6.6](#66-per-symbol-decisions)); L0 and L1 on unseen projects | the task-text writer; quality control ([§6.8](#68-quality-control)) with round-trip; auto-approval ([§2.5](#25-golden-set-review)); stable, superseded and candidate items ([§7](#7-ci-behaviour-and-repeated-runs)) | `tasks/` |
+| 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) | the run executor (items × models × modes) with the `none` and `gold` contexts; evaluation of L0, L1 and L3 and error categories ([§6.10](#610-evaluation)); a time and token budget that fits the demo; a second model under test ([§8](#8-models)) | resumable runs and budgets; BM25 retrieval for the `retrieved` mode ([§6.9](#69-modes)); diagnosis ([§6.11](#611-diagnosis)); main runs, baseline lookup, the paired test, fail conditions, verdict and the PR comment text ([§7](#7-ci-behaviour-and-repeated-runs)) | `runner/`, `verify/`, retrieval, the CI gate |
 
-`docs/input-adapters/` still numbers roles by an earlier table and describes an earlier design; role 5 rewrites it for this spec.
+OpenAPI, curl, K7, L4 and H1 have no owner until they return in the next iteration ([§16.2](#162-next-iteration)). `docs/input-adapters/` describes that OpenAPI design and numbers roles by an earlier table; role 5 rewrites it when OpenAPI returns.
 
 ## 18. Open items
 
@@ -846,9 +846,9 @@ A role says who builds a part and who reviews it, not who may touch it: anyone m
 - [x] Groq limits of our organization: 1 000 requests/day and 8 000 tokens/min per model, from the response headers ([§8](#8-models))
 - [ ] Is 8 000 tokens/min and 200 000 tokens/day per model enough for a nightly run of the pilot? The client-side limiter counts requests only. A token budget per model (from `usage` or the `x-ratelimit-remaining-tokens` header), output tokens per minute included, would avoid running into 429s
 - [x] Groq structured output: confirmed live on `qwen/qwen3.8-27b` and `openai/gpt-oss-20b` (the claim extractors, [§8](#8-models)). The `json_validate_failed` error with `failed_generation` is not in Groq's docs. gpt-oss-20b without a completion limit produced real ones (`core/tests/claims/fixtures/groq-fixturelib-guide.json`), and the claim parser is tested on them. Before adding another model, run `notinspec models --probe`
-- [ ] Faculty checkpoint dates
+- [ ] Faculty checkpoint dates: the live demo is on 2026-12-09 ([§16](#16-milestones)), the others TBD
 - [x] Pilot Python library: **urllib3 v2**, first; trio and hydra-zen after it if that is not time-consuming ([§16.1](#161-mvp)). Reasons: Sphinx + autodoc API reference, example-heavy user guide, parameters with units and ranges (`Timeout`, `Retry`), a v1 → v2 migration guide, and a changelog with renames and removals (e.g. `Retry(method_whitelist=…)`, deprecated in 1.26 in favour of `allowed_methods` and removed in 2.0) that exercise `Change`, migration, K4 and `deprecated-api`. Its docs are built with Sphinx 9.1 and stored in `core/examples/sphinx/urllib3/`
-- [ ] Pilot OpenAPI spec (after the Sphinx part, [§16.1](#161-mvp))
+- [ ] Pilot OpenAPI spec (next iteration, [§16.2](#162-next-iteration))
 - [x] Sphinx build environment for the pilot: built for urllib3, trio and hydra-zen with each release's pinned docs dependencies (Sphinx 9.1), in a container without secrets, stored with `build-env.txt` in `core/examples/sphinx/` (see its README). `build-env.txt` stays plain text; its first line is `sphinx-build 9.x.y` ([§2.3](#23-what-the-tool-needs-from-the-user))
 - [ ] **Main risk of section chunks:** evidence for a claim may be spread across a section (e.g. a parameter named in one paragraph, its unit in another), so grounding on the text around the citation can drop good claims. Measured in `experiments/nli`: with the breadcrumb, the NLI premise keeps 86 of 92 correct claims in a human-labelled sample. A 400-token window keeps 90, but nearly twice as many wrong ones. Check again on the pilot docs
 - [ ] Soft limit for oversized sections
