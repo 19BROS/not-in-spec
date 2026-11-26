@@ -41,6 +41,9 @@ runs:
 
     - if: steps.skip.outputs.skip != 'true' && github.event.action != 'closed'
       uses: astral-sh/setup-uv@v7
+      # the cache would key on the caller's files (none match: "No file matched" warning) and
+      # write to the caller's Actions cache; `pack` installs only core's few deps anyway
+      with: { enable-cache: false }
 
     - id: run
       if: steps.skip.outputs.skip != 'true'
