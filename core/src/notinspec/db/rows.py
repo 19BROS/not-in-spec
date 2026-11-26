@@ -8,11 +8,14 @@ that shape.
 
 import json
 from collections.abc import Mapping
+from dataclasses import asdict
 from datetime import datetime
 from typing import Any
 
 from notinspec.adapters.canonical import canonical_json, content_hash
 from notinspec.db import models
+from notinspec.tasks import TestItem, loads
+from notinspec.tasks.serialization import SCHEMA_VERSION as TASK_SCHEMA_VERSION
 
 type Doc = Mapping[str, Any]
 
@@ -246,3 +249,70 @@ def finding(f: Doc, run_id: int) -> models.Finding:
         nli=list(f.get("nli", [])),
         versions={name: value for name, value in f.get("versions", [])},
     )
+
+
+def item_doc(item: TestItem) -> dict[str, Any]:
+    """A `tasks.TestItem` as the task export writes it: every field plus its `id`.
+
+    Not `plain()`: canonical_json leaves out the references' `kind` tag (an init=False field).
+    """
+    return {**plain(asdict(item)), "id": item.id}
+
+
+def test_item(
+    item: Doc, *, project_id: int, input_snapshot_id: int, origin_run_id: int | None = None
+) -> models.TestItem:
+    """One test item (`item_doc` shape). Its `status` is not stored: the latest review decision
+    is (SPEC §10), and an item without one is a candidate."""
+    return models.TestItem(
+        project_id=project_id,
+        identity_key=item["id"],
+        level=item["level"],
+        operator=item["operator"],
+        operator_version=item["operator_version"],
+        format=item["format"],
+        difficulty=item["difficulty"],
+        question_kind=item["question_kind"],
+        chunk_key=item["chunk_id"],
+        chunk_keys=list(item["chunk_ids"]),
+        source_example_key=item["source_example_id"],
+        symbol_path=item["reference"]["subject"]["symbol"],
+        reference=dict(item["reference"]),
+        wording=dict(item["wording"]),
+        sources=list(item["sources"]),
+        generator_version=item["generator_version"],
+        input_snapshot_id=input_snapshot_id,
+        docs_version=item["docs_version"],
+        origin_run_id=origin_run_id,
+    )
+
+
+def item_from_row(row: models.TestItem, *, project: str, input_hash: str) -> TestItem:
+    """A stored row back as a `tasks.TestItem`; the task export's loader checks its identity.
+
+    Every item comes back as a candidate: the dataclass knows no other status, and the real
+    state is the latest review decision.
+    """
+    doc = {
+        "id": row.identity_key,
+        "project": project,
+        "chunk_id": row.chunk_key,
+        "chunk_ids": row.chunk_keys,
+        "level": row.level,
+        "question_kind": row.question_kind,
+        "reference": row.reference,
+        "sources": row.sources,
+        "wording": row.wording,
+        "input_snapshot_hash": input_hash,
+        "docs_version": row.docs_version,
+        "generator_version": row.generator_version,
+        "operator_version": row.operator_version,
+        "operator": row.operator,
+        "format": row.format,
+        "difficulty": row.difficulty,
+        "source_example_id": row.source_example_key,
+        "status": "candidate",
+    }
+    export = {"schema_version": TASK_SCHEMA_VERSION, "items": [doc], "skipped": []}
+    (item,) = loads(canonical_json(export)).items
+    return item
