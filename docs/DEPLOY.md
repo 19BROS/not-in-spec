@@ -28,7 +28,7 @@ Host notinspec
 Nobody deploys by hand. Merging a PR into `main` does it:
 
 1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web`, `cli` images to GHCR tagged with the commit SHA.
-2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`).
+2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`), but only if that commit is still the tip of `main`. After quick merges an older commit's CI can finish last; its deploy is skipped (a notice in the run), so production never goes back, and the tip deploys after its own CI.
 3. It checks out that commit, pulls the images for that SHA, makes sure the NLI model is on its volume (see *NLI model* below) and runs `docker compose up -d --remove-orphans` with `/opt/notinspec/.env`: every service of that commit's compose file starts (plus the `backup` profile), and services it no longer has are stopped.
 
 Pull requests, forks included, never run on the VM.
@@ -58,7 +58,7 @@ df -h / /data                                     # disk space
 ## Rollback / redeploy
 
 - **Redeploy the current version:** GitHub → Actions → *Deploy* → latest run → *Re-run jobs*.
-- **Roll back:** GitHub → Actions → *Deploy* → open an older **successful** run → *Re-run jobs*. It redeploys that run's commit and images.
+- **Roll back:** GitHub → Actions → *Deploy* → open an older **successful** run → *Re-run jobs*. It redeploys that run's commit and images. A re-run always deploys: it skips the tip-of-`main` check, also for a run whose deploy was skipped.
 - Better long-term: revert the bad PR on `main`. That deploys automatically.
 
 ## NLI model (SPEC §6.4, §12)

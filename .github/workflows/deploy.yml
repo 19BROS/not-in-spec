@@ -13,16 +13,39 @@ permissions:
   contents: read
   packages: read
 
-concurrency:
-  group: deploy
-  cancel-in-progress: false
-
 jobs:
-  deploy:
+  # CI runs of quick merges can finish out of order: deploying an older commit after a newer one
+  # would roll production back. Only main's tip deploys. This check stays outside the concurrency
+  # group: a skipped older run must never queue there, or it would cancel the tip's pending deploy.
+  # A re-run (attempt > 1) is a deliberate rollback or redeploy (docs/DEPLOY.md) and always deploys.
+  latest:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.tip.outputs.deploy }}
+    steps:
+      - id: tip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          tip=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$tip" = "$SHA" ] || [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::skipped: $SHA is no longer main's tip ($tip deploys after its own CI)"
+          fi
+
+  deploy:
+    needs: latest
+    if: needs.latest.outputs.deploy == 'true'
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
     runs-on: [self-hosted, notinspec-deploy]
     environment: production
     env:
