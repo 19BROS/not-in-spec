@@ -73,6 +73,12 @@ def missing_identifiers(
     return tuple(dict.fromkeys(out))
 
 
+def identifiers_in(claim: str, known_names: frozenset[str]) -> tuple[str, ...]:
+    """The identifiers the claim names, each once: backticked names first, then plain words,
+    each group in text order. Same rules as `missing_identifiers`; numbers are not included."""
+    return tuple(_identifiers(claim, known_names))
+
+
 def section_reference(section: Sequence[Chunk], inventory: Inventory) -> str:
     """Reference text for one section (all its parts): breadcrumb + prose (+ API names).
 

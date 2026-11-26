@@ -17,6 +17,7 @@ from notinspec.grounding.citation import (
     normalize,
 )
 from notinspec.grounding.identifiers import (
+    identifiers_in,
     inventory_names,
     missing_identifiers,
     section_reference,
@@ -37,6 +38,7 @@ __all__ = [
     "CitationStatus",
     "Premise",
     "check_citation",
+    "identifiers_in",
     "inventory_names",
     "missing_identifiers",
     "nli_premise",

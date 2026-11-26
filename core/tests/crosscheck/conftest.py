@@ -30,16 +30,16 @@ FIIT extractors `qwen3.8-flash-next` and `gemma4-26b-a4b-hpc` on three urllib3 p
 
 import json
 from pathlib import Path
-from typing import Any
 
 import pytest
 
 from notinspec.chunking import Chunk
-from notinspec.claims import ExtractedClaim, GroundedClaim
+from notinspec.claims import GroundedClaim
+from notinspec.claims.load import grounded_claim
 from notinspec.config import load_config
 from notinspec.ingestion import ingest
 from notinspec.inventory import Inventory, build_inventory
-from notinspec.nli import NliScores, RecordedNli
+from notinspec.nli import RecordedNli
 
 CORE = Path(__file__).parents[2]
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -47,27 +47,6 @@ RUN009_CLAIMS = FIXTURES / "run009-claims.json"
 RUN009_NLI = FIXTURES / "nli-k5a-run009.json"
 RUN009_K2_CLAIMS = FIXTURES / "run009-k2-claims.json"
 RUN009_K2_NLI = FIXTURES / "nli-k2-run009.json"
-
-
-def grounded_claim(row: dict[str, Any]) -> GroundedClaim:
-    """One claim of `claims.json` back as a `GroundedClaim`."""
-    nli = row["nli"]
-    return GroundedClaim(
-        claim=ExtractedClaim(**row["claim"]),
-        prompt_version=row["prompt_version"],
-        status=row["status"],
-        citation_span=_span(row["citation_span"]),
-        citation_matches=row["citation_matches"],
-        premise_candidates=row["premise_candidates"],
-        premise=row["premise"],
-        premise_span=_span(row["premise_span"]),
-        nli=NliScores(**nli) if nli else None,
-        missing=tuple(row["missing"]),
-    )
-
-
-def _span(value: list[int] | None) -> tuple[int, int] | None:
-    return (value[0], value[1]) if value else None
 
 
 @pytest.fixture(scope="session")
