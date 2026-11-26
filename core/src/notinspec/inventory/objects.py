@@ -31,8 +31,9 @@ from typing import Any, Literal
 from notinspec.adapters.canonical import canonical_json
 
 # who wrote the fact (SPEC §6.3 table): A spec parser, B signature / version directive,
-# C example normalization, D *change* claim
-type SourceType = Literal["spec", "signature", "example", "changelog"]
+# C example normalization, D *change* claim; "claim" = a grounded fact claim from prose, the source
+# of an L2 test item. It never describes an inventory fact, so it is not in SOURCE_PRIORITY
+type SourceType = Literal["spec", "signature", "example", "changelog", "claim"]
 type Confidence = Literal["high", "medium", "low"]
 
 SOURCE_CONFIDENCE: dict[SourceType, Confidence] = {
@@ -40,6 +41,7 @@ SOURCE_CONFIDENCE: dict[SourceType, Confidence] = {
     "signature": "high",
     "example": "medium",
     "changelog": "low",  # → review by our team (SPEC §2.5)
+    "claim": "low",  # extracted by an LLM, kept by NLI
 }
 # merge priority: spec > signature > example > changelog
 SOURCE_PRIORITY: tuple[SourceType, ...] = ("spec", "signature", "example", "changelog")
@@ -216,8 +218,15 @@ def _change_order(change: Change) -> tuple[str, str, str, str, bytes]:
 
 
 def source_order(source: Source) -> tuple[int, str, str]:
-    """Merge priority first, then location: the one order of sources (also used by `merge`)."""
-    return (SOURCE_PRIORITY.index(source.type), source.section_id or "", source.pointer or "")
+    """Merge priority first, then location: the one order of sources (also used by `merge`).
+
+    A type outside the merge priority ("claim", only on test items) sorts after all of them."""
+    rank = (
+        SOURCE_PRIORITY.index(source.type)
+        if source.type in SOURCE_PRIORITY
+        else len(SOURCE_PRIORITY)
+    )
+    return (rank, source.section_id or "", source.pointer or "")
 
 
 def sort_sources(obj: Any) -> None:

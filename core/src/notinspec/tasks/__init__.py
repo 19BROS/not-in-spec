@@ -5,6 +5,7 @@ from notinspec.tasks.l0 import generate_l0
 from notinspec.tasks.l1 import generate_l1
 from notinspec.tasks.models import (
     ChoiceReference,
+    ClaimReference,
     DefaultReference,
     ExistsReference,
     GenerationResult,
@@ -26,6 +27,7 @@ from notinspec.tasks.text import TemplateWriter
 
 __all__ = [
     "ChoiceReference",
+    "ClaimReference",
     "DefaultReference",
     "ExistsReference",
     "GenerationContext",

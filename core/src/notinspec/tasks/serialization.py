@@ -9,6 +9,7 @@ from notinspec.adapters.canonical import canonical_json
 from notinspec.inventory import Source
 from notinspec.tasks.models import (
     ChoiceReference,
+    ClaimReference,
     DefaultReference,
     ExistsReference,
     GenerationResult,
@@ -22,13 +23,14 @@ from notinspec.tasks.models import (
     TestItem,
 )
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 _REFERENCES: dict[str, type[Reference]] = {
     "exists": ExistsReference,
     "choice": ChoiceReference,
     "required-parameters": RequiredParametersReference,
     "default": DefaultReference,
     "path": PathReference,
+    "claim": ClaimReference,
 }
 
 
@@ -80,7 +82,7 @@ def reference_from_json(data: bytes | str) -> Reference:
 
 def _source(value: Any) -> Source:
     data = _record(value, Source)
-    if data["type"] not in ("spec", "signature", "example", "changelog"):
+    if data["type"] not in ("spec", "signature", "example", "changelog", "claim"):
         raise ValueError("invalid source type")
     for key in ("section_id", "pointer"):
         if data[key] is not None and (not isinstance(data[key], str) or not data[key].strip()):

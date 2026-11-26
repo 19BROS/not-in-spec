@@ -121,7 +121,7 @@ Use `reference_json()` for canonical standalone references.
 its original generation metadata. New-run snapshot metadata belongs to the run. Changed
 references/operator versions create new IDs; old items remain untouched.
 
-JSON schema remains **2**. The generator version is now **4**, with L0 operator version **4**
+JSON schema is **3** (L2 items: claim reference, `claim` source type, `TaskText.answer`); schema 2 exports are rejected. The generator version is now **4**, with L0 operator version **4**
 and `template-v4`; L1 stays at operator version **2** and `template-v2`, preserving L1 IDs.
 `GenerationContext.operator_version=None` selects these defaults per level; an explicit value
 is an override, but versions below the implemented minimum (L0: 4, L1: 2) are rejected.
@@ -131,6 +131,15 @@ are rejected rather than silently changing their identity.
 Keep old exports unchanged and regenerate into a new file. Within schema 2, changing only
 the docs display label preserves current-fact IDs and allows `existing=` / `--reuse` to keep
 their frozen wording and original metadata.
+
+## L2 (claims)
+
+An L2 item has `question_kind="claim"` and a `ClaimReference` built by code from a grounded fact
+claim: its resolved subject, the claim text and its `claim_ref`. Its source is
+`Source("claim", section_id=…)` (low confidence, outside the inventory's merge priority). The
+LLM writer's question, paraphrases and short `answer` phrase are task text (`TaskText.answer`):
+frozen with the item, outside its identity. Design:
+`docs/superpowers/specs/2026-11-26-l2-design.md`.
 
 ## Text and remaining integration
 

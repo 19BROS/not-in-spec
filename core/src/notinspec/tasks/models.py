@@ -8,7 +8,7 @@ from packaging.utils import canonicalize_version
 from notinspec.inventory import Source, parse_version
 from notinspec.inventory.objects import sort_sources
 
-type QuestionKind = Literal["exists", "choice", "required-parameters", "default", "path"]
+type QuestionKind = Literal["exists", "choice", "required-parameters", "default", "path", "claim"]
 
 
 def nonempty(value: str) -> None:
@@ -173,13 +173,38 @@ class PathReference:
             raise ValueError("path answer must identify the subject")
 
 
+@dataclass(frozen=True)
+class ClaimReference:
+    """L2: a grounded fact claim, built by code. The writer's answer phrase is task text."""
+
+    subject: Subject
+    claim: str  # the claim text, as extracted
+    claim_ref: str  # crosscheck.k5a.claim_ref: chunk_id/extractor/local_id
+    kind: Literal["claim"] = field(default="claim", init=False)
+
+    def __post_init__(self) -> None:
+        check_subject(self.subject)
+        nonempty(self.claim)
+        nonempty(self.claim_ref)
+
+
 type Reference = (
     ExistsReference
     | ChoiceReference
     | RequiredParametersReference
     | DefaultReference
     | PathReference
+    | ClaimReference
 )
+
+LEVEL_OF_KIND: dict[str, Literal["L0", "L1", "L2"]] = {
+    "exists": "L0",
+    "choice": "L0",
+    "required-parameters": "L1",
+    "default": "L1",
+    "path": "L1",
+    "claim": "L2",
+}
 
 
 @dataclass(frozen=True)
@@ -187,10 +212,15 @@ class TaskText:
     text: str
     paraphrases: tuple[str, ...]
     writer: str = "template-v2"
+    # L2 only: the phrase of the claim the question asks for, from the writer. Task text, not
+    # reference: it is outside the identity and evaluation never reads it
+    answer: str | None = None
 
     def __post_init__(self) -> None:
         nonempty(self.text)
         nonempty(self.writer)
+        if self.answer is not None:
+            nonempty(self.answer)
         if not isinstance(self.paraphrases, tuple):
             raise ValueError("paraphrases must be an immutable tuple")
         if len(self.paraphrases) not in (2, 3):
@@ -228,7 +258,7 @@ class TestItem:
     project: str
     chunk_id: str
     chunk_ids: tuple[str, ...]
-    level: Literal["L0", "L1"]
+    level: Literal["L0", "L1", "L2"]
     question_kind: QuestionKind
     reference: Reference
     sources: tuple[Source, ...]
@@ -269,14 +299,16 @@ class TestItem:
                 RequiredParametersReference,
                 DefaultReference,
                 PathReference,
+                ClaimReference,
             ),
         ):
             raise ValueError("unknown reference")
         if self.question_kind != self.reference.kind:
             raise ValueError("question kind and reference disagree")
-        expected = "L0" if self.question_kind in ("exists", "choice") else "L1"
-        if self.level != expected:
+        if self.level != LEVEL_OF_KIND[self.question_kind]:
             raise ValueError("level and question kind disagree")
+        if (self.level == "L2") != (self.wording.answer is not None):
+            raise ValueError("an L2 item needs the writer's answer, other levels have none")
         if self.operator is not None or self.source_example_id is not None:
             raise ValueError("inventory recall has no usage operator or source example")
         if (self.format, self.difficulty, self.status) != (
