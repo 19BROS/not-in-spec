@@ -1,7 +1,7 @@
 # Who GitHub asks to review what. Roles: docs/SPEC.md §17. Review rules: AGENTS.md "Roles and reviews".
 # Requested, not enforced: the ruleset on main needs 1 approval of anyone.
 # The last matching pattern wins, so specific paths come after general ones.
-# Paths that do not exist yet (pipeline.py, retrieval/, adapters/curl/, k7.py) are listed so their first PR goes to the right owner.
+# Paths that do not exist yet (pipeline.py, retrieval/, tasks/l2.py) are listed so their first PR goes to the right owner.
 
 # 3 · Frontend & data: Jana Puchein
 /web/                                       @JanaPuchein
@@ -22,7 +22,6 @@
 /core/src/notinspec/grounding/              @Hinzun
 /core/src/notinspec/nli/                    @Hinzun
 /core/src/notinspec/crosscheck/             @Hinzun
-/core/src/notinspec/retrieval/              @Hinzun
 /core/examples/                             @Hinzun
 /core/tests/sphinx/                         @Hinzun
 /core/tests/chunking/                       @Hinzun
@@ -36,10 +35,8 @@
 /core/tests/fixtures/sphinx/                @Hinzun
 /core/tests/test_sphinx_demo.py             @Hinzun
 
-# 5 · Inputs, OpenAPI & HTTP: Radoslav Muntág
+# 5 · L2 & changes: Radoslav Muntág (OpenAPI is out of the MVP; its code stays with him, dormant)
 /core/src/notinspec/adapters/openapi/       @RadoslavMuntag
-/core/src/notinspec/adapters/curl/          @RadoslavMuntag
-/core/src/notinspec/crosscheck/k7.py        @RadoslavMuntag
 /core/tests/adapters/                       @RadoslavMuntag
 /core/tests/adapters/test_python*.py        @Hinzun
 /docs/input-adapters/                       @RadoslavMuntag
@@ -47,12 +44,14 @@
 # 6 · Test generation: Samuel Maliarik
 /core/src/notinspec/tasks/                  @ryzovy-nakyp
 /core/tests/tasks/                          @ryzovy-nakyp
+/core/src/notinspec/tasks/l2.py             @RadoslavMuntag
 
 # 7 · Runs, evaluation & CI gate: Richard Sič
 /core/src/notinspec/runner/                 @figaro112
 /core/src/notinspec/verify/                 @figaro112
 /core/tests/runner/                         @figaro112
 /core/tests/verify/                         @figaro112
+/core/src/notinspec/retrieval/              @figaro112
 
 # 1 · DevOps & Action: Damián Parigal (also the server side of uploads)
 /deploy/                                    @damianecek
@@ -77,6 +76,7 @@
 
 # 2 · Architecture lead: Jakub Mitický. Contracts list the lead and the role that owns the code.
 /docs/SPEC.md                               @jmiticky4130
+/docs/plans/                                @jmiticky4130
 /AGENTS.md                                  @jmiticky4130
 /CLAUDE.md                                  @jmiticky4130
 /README.md                                  @jmiticky4130

@@ -2,6 +2,8 @@
 
 Instructions for humans and AI coding agents working in this repo. The product spec is [docs/SPEC.md](docs/SPEC.md); it wins over anything here.
 
+**Current goal: live demo on 2026-12-09.** Our supervisor picks a documentation built with Sphinx 9.x at random, and L0–L3 must run on it live. OpenAPI and L4 are out of the MVP. Plan and risks: [docs/plans/live-demo-2026-12-09.md](docs/plans/live-demo-2026-12-09.md).
+
 ## Layout
 
 ```
@@ -77,7 +79,7 @@ Seven roles, one person each. What each builds is in [SPEC §17](docs/SPEC.md#17
 | 2 | Architecture lead | Jakub Mitický (`jmiticky4130`) |
 | 3 | Frontend & data | Jana Puchein (`JanaPuchein`) |
 | 4 | Inputs: docs & claims | Erik Dusík (`Hinzun`) |
-| 5 | Inputs: OpenAPI & HTTP | Radoslav Muntág (`RadoslavMuntag`) |
+| 5 | L2 & changes | Radoslav Muntág (`RadoslavMuntag`) |
 | 6 | Test generation | Samuel Maliarik (`ryzovy-nakyp`) |
 | 7 | Runs, evaluation & CI gate | Richard Sič (`figaro112`) |
 
