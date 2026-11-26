@@ -30,6 +30,7 @@ Nobody deploys by hand. Merging a PR into `main` does it:
 1. `CI` runs on the push to `main`: lint, tests, Compose smoke test, then pushes `api`, `worker`, `web`, `cli` images to GHCR tagged with the commit SHA.
 2. When CI succeeds, `Deploy` runs on the **self-hosted runner on the VM** (label `notinspec-deploy`, environment `production`).
 3. It checks out that commit, pulls the images for that SHA, makes sure the NLI model is on its volume (see *NLI model* below) and runs `docker compose up -d --remove-orphans` with `/opt/notinspec/.env`: every service of that commit's compose file starts (plus the `backup` profile), and services it no longer has are stopped.
+4. Before that `up`, the deploy runs the one-shot `migrate` service, and `api` and `worker` start only after it exits 0 (see *Database* below).
 
 Pull requests, forks included, never run on the VM.
 
@@ -60,6 +61,7 @@ df -h / /data                                     # disk space
 - **Redeploy the current version:** GitHub → Actions → *Deploy* → latest run → *Re-run jobs*.
 - **Roll back:** GitHub → Actions → *Deploy* → open an older **successful** run → *Re-run jobs*. It redeploys that run's commit and images.
 - Better long-term: revert the bad PR on `main`. That deploys automatically.
+- **Not across a migration.** An older commit's `migrate` doesn't know the newer revision and fails, so that deploy changes nothing (old containers keep running). Fix forward with a PR instead.
 
 ## NLI model (SPEC §6.4, §12)
 
@@ -83,6 +85,27 @@ Old revisions stay on the volume after a bump. Free the space with `sudo docker 
 ```sh
 sudo docker exec notinspec-mock-1 wget -qO- http://127.0.0.1:4011/health   # {"serving": …}
 sudo docker logs notinspec-mock-1   # Prism's output, also why a spec failed to load
+```
+
+## Database (SPEC §10)
+
+Postgres holds everything (queue, results, raw LLM calls). Two roles:
+
+- `notinspec`: the owner (`POSTGRES_PASSWORD`). Only `migrate` and `backup` connect as it.
+- `notinspec_app` (`NOTINSPEC_APP_PASSWORD`): what `api` and `worker` connect as. It reads and inserts everywhere, updates and deletes only mutable tables, and cannot change the schema or UPDATE/DELETE append-only tables such as `llm_call` (privileges from [grants.py](../core/src/notinspec/db/grants.py), plus a trigger from migration 0001).
+
+**Every deploy** runs the one-shot `migrate` service before `up` (and `up` waits for it again before `api` and `worker`): it creates `notinspec_app` if it is missing and sets its password from `.env`, then runs `notinspec db upgrade` as the owner, which migrates to the newest revision and refreshes the role's privileges. With nothing to migrate it is a no-op. To rotate the app password, change `NOTINSPEC_APP_PASSWORD` in `/opt/notinspec/.env` and redeploy.
+
+```sh
+sudo docker logs notinspec-migrate-1     # expect "role notinspec_app is ready", "the database is at the latest migration", "privileges ... up to date"
+sudo docker compose -f deploy/docker-compose.yml --env-file /opt/notinspec/.env run --rm --entrypoint notinspec migrate db current   # which revision (as the owner)
+```
+
+**When `migrate` fails**, the deploy stops before `up`: the previous `api` and `worker` keep running. Postgres runs DDL in a transaction, so a failed migration leaves the schema as it was. (A bare `docker compose up` behaves differently: it removes the old `api` and `worker` first and leaves them stopped when `migrate` fails, so on the VM run `migrate` on its own first, as the deploy does.) Read `sudo docker logs notinspec-migrate-1`, fix it in a PR, and merge. Before merging a PR with a migration, take a dump by hand (see *Backups*):
+
+```sh
+sudo docker exec notinspec-postgres-1 pg_dump -U notinspec -Fc -f /tmp/before-migration.dump notinspec
+sudo docker cp notinspec-postgres-1:/tmp/before-migration.dump /data/backups/
 ```
 
 ## Demo runs (docs/plans/demo-cli-web.md)
@@ -117,6 +140,12 @@ Get-ChildItem tmp/runs -Directory | ForEach-Object { ssh notinspec "mkdir -p /tm
 ```sh
 # on the VM
 sudo docker cp /tmp/demo-runs/. notinspec-worker-1:/runs/ && rm -rf /tmp/demo-runs
+```
+
+**Import the runs into the database** (once after the database went live, and after copying more runs; already imported run IDs are skipped):
+
+```sh
+sudo docker exec notinspec-worker-1 notinspec db import-runs /runs
 ```
 
 **List or delete runs:** `sudo docker exec notinspec-worker-1 ls /runs`, `sudo docker exec -u root notinspec-worker-1 rm -rf /runs/<run id>`. `-u root` because `docker cp` writes as root. Every deploy runs `chown -R app /runs`, so copied runs belong to `app` again after the next one.
@@ -185,6 +214,7 @@ Only if the instance is lost. Then restore the database from your off-machine du
    sudo mkdir -p /opt/notinspec
    sudo tee /opt/notinspec/.env > /dev/null <<EOF
    POSTGRES_PASSWORD=$(openssl rand -hex 24)
+   NOTINSPEC_APP_PASSWORD=$(openssl rand -hex 24)
    IMAGE_OWNER=19bros
    WEB_PORT=80
    HTTPS_PORT=443

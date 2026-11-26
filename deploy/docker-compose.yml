@@ -1,7 +1,8 @@
 name: notinspec
 
 x-app-env: &app-env
-  DATABASE_URL: postgresql://notinspec:${POSTGRES_PASSWORD}@postgres:5432/notinspec
+  # not the owner: notinspec_app cannot change the schema or UPDATE/DELETE append-only rows (SPEC §10)
+  DATABASE_URL: postgresql://notinspec_app:${NOTINSPEC_APP_PASSWORD:?set NOTINSPEC_APP_PASSWORD in deploy/.env}@postgres:5432/notinspec
   # Enable only after migrations and project registration (docs/hosted-ci.md).
   NOTINSPEC_UPLOADS_ENABLED: ${NOTINSPEC_UPLOADS_ENABLED:-0}
   NOTINSPEC_UPLOADS_DIR: /uploads
@@ -23,6 +24,33 @@ services:
       retries: 10
     restart: unless-stopped
 
+  # one-shot before api and worker, on every `up` (docs/DEPLOY.md): creates the login role
+  # notinspec_app or resets its password from .env, then `notinspec db upgrade` as the owner,
+  # which migrates and grants the role its privileges. Both steps are idempotent.
+  migrate:
+    image: ghcr.io/${IMAGE_OWNER:-local}/notinspec-api:${TAG:-latest}
+    build: { context: .., dockerfile: api/Dockerfile }
+    environment:
+      DATABASE_URL: postgresql://notinspec:${POSTGRES_PASSWORD}@postgres:5432/notinspec
+      NOTINSPEC_APP_PASSWORD: ${NOTINSPEC_APP_PASSWORD:?set NOTINSPEC_APP_PASSWORD in deploy/.env}
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        python - <<'EOF'
+        import os, psycopg
+        from psycopg import sql
+        with psycopg.connect(os.environ["DATABASE_URL"], autocommit=True) as conn:
+            if conn.execute("SELECT 1 FROM pg_roles WHERE rolname = 'notinspec_app'").fetchone() is None:
+                conn.execute("CREATE ROLE notinspec_app LOGIN")
+            password = sql.Literal(os.environ["NOTINSPEC_APP_PASSWORD"])
+            conn.execute(sql.SQL("ALTER ROLE notinspec_app LOGIN PASSWORD {}").format(password))
+        print("role notinspec_app is ready")
+        EOF
+        exec notinspec db upgrade
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
   api:
     image: ghcr.io/${IMAGE_OWNER:-local}/notinspec-api:${TAG:-latest}
     build: { context: .., dockerfile: api/Dockerfile }
@@ -37,7 +65,7 @@ services:
       - demo-runs:/runs:ro
       - uploads:/uploads
     depends_on:
-      postgres: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
     restart: unless-stopped
 
   worker:
@@ -64,7 +92,7 @@ services:
       - specs:/specs
     networks: [default, sandbox]
     depends_on:
-      postgres: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
     restart: unless-stopped
 
   web:
