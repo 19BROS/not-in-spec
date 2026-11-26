@@ -47,7 +47,7 @@ API aj worker potrebujú `NOTINSPEC_UPLOADS_ENABLED=1`, rovnakú DB, spoločný
 Pre reálnu extrakciu worker potrebuje aj `NOTINSPEC_HOSTED_CLAIMS=1`, `FIIT_API_KEY`
 a vopred stiahnutý lokálny NLI model podľa `docs/DEPLOY.md`. Pri vypnutej extrakcii sa
 vykoná iba ingestion. Pred zapnutím na VM treba dohodnúť kapacitu a limity celých dokumentácií.
-Samotná konfigurácia nespúšťa migrácie automaticky a nemení produkciu.
+Na VM migrácie spúšťa pri každom deployi služba `migrate` (`docs/DEPLOY.md`, *Database*); ručne treba iba `add-project`.
 
 ## Overenie
 

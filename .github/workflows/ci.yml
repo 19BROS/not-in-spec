@@ -54,12 +54,20 @@ jobs:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PASSWORD: ci
+      NOTINSPEC_APP_PASSWORD: ci-app
       INGEST_TOKEN: ci
       BACKUP_DIR: /tmp/notinspec-backups # runner context isn't allowed in job-level env
     steps:
       - uses: actions/checkout@v7
       - run: docker compose -f deploy/docker-compose.yml --profile backup up -d --build --wait
       - run: curl -fsS localhost:8080/api/health
+      # migrate ran: the app role reads the schema and cannot rewrite raw LLM calls (append-only)
+      - run: >-
+          docker compose -f deploy/docker-compose.yml exec -T -e PGPASSWORD=ci-app postgres
+          psql -h 127.0.0.1 -U notinspec_app -d notinspec -v ON_ERROR_STOP=1 -c 'SELECT count(*) FROM run'
+      - run: >-
+          ! docker compose -f deploy/docker-compose.yml exec -T -e PGPASSWORD=ci-app postgres
+          psql -h 127.0.0.1 -U notinspec_app -d notinspec -v ON_ERROR_STOP=1 -c 'DELETE FROM llm_call'
       - run: sh deploy/mock/smoke.sh
       # what the Action pushes reaches the api through nginx and lands on the results volume
       - run: >-
