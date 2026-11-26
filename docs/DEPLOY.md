@@ -163,6 +163,7 @@ echo 'ssh-ed25519 AAAA... name@team' >> ~/.ssh/authorized_keys
 - **`cd /home/deploy/...` says Permission denied** as `ubuntu`. Home folders are private on Ubuntu 24.04. Use `sudo bash -c 'cd /home/deploy/actions-runner && ...'`.
 - **sudo asks for a password**: you are logged in as `deploy` (which has none). `exit` back to `ubuntu`.
 - **Deploy queued forever**: the runner is offline. Check its service (above). GitHub cancels queued jobs after 24 h, so re-run *Deploy* afterwards.
+- **Uploads get `429`**: nginx allows `POST /api/uploads` and `/api/pr-closed` 10 times a minute per client IP, with a burst of 10 ([deploy/nginx.conf](../deploy/nginx.conf)). `sudo docker logs notinspec-web-1 2>&1 | grep limiting` shows who hit it.
 - **Never publish Postgres's port** in Compose. 5432 is open on the FIIT firewall, so publishing it exposes the database to the network.
 - **Never run `mkfs` on `/dev/vdb` again.** It holds all data.
 
